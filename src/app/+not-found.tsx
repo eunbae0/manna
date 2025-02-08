@@ -3,10 +3,11 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/common/ThemedText';
 import { ThemedView } from '@/components/common/ThemedView';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NotFoundScreen() {
 	return (
-		<>
+		<SafeAreaView>
 			<Stack.Screen options={{ title: 'Oops!' }} />
 			<ThemedView style={styles.container}>
 				<ThemedText type="title">This screen doesn't exist.</ThemedText>
@@ -14,7 +15,7 @@ export default function NotFoundScreen() {
 					<ThemedText type="link">Go to home screen!</ThemedText>
 				</Link>
 			</ThemedView>
-		</>
+		</SafeAreaView>
 	);
 }
 
