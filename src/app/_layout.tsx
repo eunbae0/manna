@@ -10,7 +10,8 @@ export default function Root() {
 	const colorScheme = useColorScheme();
 
 	return (
-		<GluestackUIProvider mode={colorScheme === 'light' ? 'light' : 'dark'}>
+		<GluestackUIProvider mode={'light'}>
+			{/* <GluestackUIProvider mode={colorScheme === 'light' ? 'light' : 'dark'}> */}
 			<Slot />
 			<StatusBar style="auto" />
 		</GluestackUIProvider>
