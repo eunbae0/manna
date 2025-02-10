@@ -2,10 +2,12 @@ import { auth } from '@/firebase/config';
 import {
 	getFirestoreUser,
 	logout,
+	signInWithEmail,
 	signUp,
 	updateFirestoreUser,
 } from '@/services/auth';
 import type { AuthType, User } from '@/types/user';
+import { serverTimestamp } from 'firebase/firestore';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -24,6 +26,7 @@ type AuthActions = {
 		type: AuthType,
 		data: { email: string; password: string },
 	) => Promise<void>;
+	signInWithEmail: (email: string, password: string) => Promise<void>;
 	// login: (
 	// 	type: AuthType,
 	// 	data: { email: string; password: string },
@@ -50,6 +53,18 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 				set({ loading: true, error: null });
 				try {
 					await signUp(type, { email, password });
+				} catch (error) {
+					set({
+						error: error.message,
+						loading: false,
+					});
+				}
+			},
+
+			signInWithEmail: async (email, password) => {
+				set({ loading: true, error: null });
+				try {
+					await signInWithEmail(email, password);
 				} catch (error) {
 					set({
 						error: error.message,
@@ -87,6 +102,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					return;
 				}
 				try {
+					await updateFirestoreUser(auth.currentUser.uid, {
+						lastLogin: serverTimestamp(),
+					});
 					const user = await getFirestoreUser(auth.currentUser.uid);
 					set({ isAuthenticated: true, user });
 				} catch (err) {

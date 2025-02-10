@@ -1,7 +1,17 @@
 import { ERROR_CODES } from '@/constants/error';
-import { createUserWithEmailAndPassword, signOut } from '@/firebase/auth';
+import {
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	signOut,
+} from '@/firebase/auth';
 import { auth, database } from '@/firebase/config';
-import { doc, getDoc, setDoc, updateDoc } from '@/firebase/firestore';
+import {
+	doc,
+	getDoc,
+	serverTimestamp,
+	setDoc,
+	updateDoc,
+} from '@/firebase/firestore';
 import type { AuthType, User } from '@/types/user';
 import { createUserWithServerTimestamp } from '@/utils/auth';
 
@@ -43,6 +53,22 @@ async function signUpWithEmail(email: string, password: string) {
 		await createFirestoreUser(userCredential.user.uid, {
 			email: userCredential.user.email,
 			authType: 'EMAIL' satisfies AuthType,
+		});
+	} catch (error) {
+		throw handleAuthError(error);
+	}
+}
+
+export async function signInWithEmail(email: string, password: string) {
+	try {
+		const userCredential = await signInWithEmailAndPassword(
+			auth,
+			email,
+			password,
+		);
+
+		await updateFirestoreUser(userCredential.user.uid, {
+			lastLogin: serverTimestamp(),
 		});
 	} catch (error) {
 		throw handleAuthError(error);

@@ -1,1 +1,5 @@
-export { createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+export {
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	signOut,
+} from 'firebase/auth';
