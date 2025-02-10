@@ -41,9 +41,9 @@ export default function HomeScreen() {
 			<ScrollView showsVerticalScrollIndicator={false}>
 				<VStack className="pb-20">
 					<VStack space="xl" className="px-5">
-						<HStack className="justify-between">
-							<HStack space="sm" className="items-center">
-								<Heading size="xl">OO 사랑방</Heading>
+						<HStack className="justify-between pt-2">
+							<HStack space="md" className="items-center">
+								<Heading size="2xl">길동 사랑방</Heading>
 								<Button size="xl" variant="link">
 									<ButtonIcon as={ChevronDownIcon} />
 								</Button>
@@ -57,41 +57,45 @@ export default function HomeScreen() {
 								</Button>
 							</HStack>
 						</HStack>
-						<HStack space="lg">
-							{/* <Avatar
-									size={'2xl'}
-									uri={
-										'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80'
-									}
+						<ScrollView horizontal={true}>
+							<HStack space="xl" className="px-1 items-start">
+								<VStack space="sm" className="items-center">
+									<Avatar className="bg-yellow-600">
+										<Icon as={UserRound} size="xl" className="stroke-white" />
+										<AvatarBadge className="bg-yellow-400" />
+									</Avatar>
+									<Text size="sm" bold={true}>
+										홍길동
+									</Text>
+								</VStack>
+								<VStack space="sm" className="items-center">
+									<Avatar className="bg-yellow-600">
+										<Icon as={UserRound} size="xl" className="stroke-white" />
+									</Avatar>
+									<Text size="sm" bold={true}>
+										김철수
+									</Text>
+								</VStack>
+								<VStack space="sm" className="items-center">
+									<Avatar className="bg-yellow-600">
+										<Icon as={UserRound} size="xl" className="stroke-white" />
+									</Avatar>
+									<Text size="sm" bold={true}>
+										김영희
+									</Text>
+								</VStack>
+								<Button
+									variant="outline"
+									className="w-[42px] h-[42px] m-[2px] rounded-full"
 								>
-									<AvatarFallbackText>""</AvatarFallbackText>
-									<AvatarImage
-										source={{
-											uri: props.uri,
-										}}
+									<ButtonIcon
+										size="sm"
+										as={PlusIcon}
+										className="color-yellow-700"
 									/>
-								</Avatar> */}
-							<VStack space="sm" className="items-center">
-								<Avatar className="bg-yellow-600">
-									<Icon as={UserRound} size="xl" className="stroke-white" />
-									{/* <Badge
-										className="absolute -right-2 -top-2 w-5 h-5 bg-yellow-500 rounded-full items-center justify-center"
-										variant="solid"
-									> */}
-									{/* <Icon
-										as={Flag}
-										size="2xs"
-										className="absolute -right-2 -top-2 w-5 h-5 stroke-yellow-500 rounded-full items-center justify-center"
-									/> */}
-									{/* <BadgeText className="text-white">2</BadgeText> */}
-									{/* </Badge> */}
-									<AvatarBadge className="bg-yellow-400" />
-								</Avatar>
-								<Text size="sm" bold={true}>
-									홍길동
-								</Text>
-							</VStack>
-						</HStack>
+								</Button>
+							</HStack>
+						</ScrollView>
 					</VStack>
 					<Divider className="my-4 h-[6px]" />
 					<VStack space="lg" className="px-5">
@@ -144,11 +148,11 @@ export default function HomeScreen() {
 									</Text>
 									<Button
 										variant="link"
-										className="w-9 h-9 bg-yellow-300 rounded-full"
+										className="w-9 h-9 bg-yellow-500 rounded-full"
 									>
 										<ButtonText size="md">4</ButtonText>
 									</Button>
-									<Box className="bg-gray-300 w-1 h-1 rounded-full" />
+									<Box className="bg-gray-300 w-[6px] h-[6px] rounded-full" />
 								</VStack>
 								<VStack space="sm" className="items-center">
 									<Text size="sm" className="">
@@ -201,7 +205,7 @@ export default function HomeScreen() {
 												</Avatar>
 												<HStack space="sm" className="items-end">
 													<Text size="md" bold={true}>
-														홍길동
+														김철수
 													</Text>
 													<HStack space="xs" className="items-center">
 														<Text size="sm">사랑방원</Text>
@@ -258,7 +262,7 @@ export default function HomeScreen() {
 												</Avatar>
 												<HStack space="sm" className="items-end">
 													<Text size="md" bold={true}>
-														홍길동
+														김영희
 													</Text>
 													<HStack space="xs" className="items-center">
 														<Text size="sm">사랑방원</Text>
