@@ -7,6 +7,8 @@ import { IconSymbol } from '@/components/common/ui/IconSymbol';
 import TabBarBackground from '@/components/common/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Bell, HouseIcon, NotebookPen, UserRound } from 'lucide-react-native';
+import { Icon } from '#/components/ui/icon';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -17,22 +19,33 @@ export default function TabLayout() {
 				tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
 				headerShown: false,
 				tabBarButton: HapticTab,
-				tabBarBackground: TabBarBackground,
-				tabBarStyle: Platform.select({
-					ios: {
-						// Use a transparent background on iOS to show the blur effect
-						position: 'absolute',
-					},
-					default: {},
-				}),
+				// tabBarBackground: TabBarBackground,
+				tabBarStyle: [
+					{ paddingLeft: 14, paddingRight: 14 },
+					Platform.select({
+						ios: {
+							position: 'absolute',
+						},
+						default: {},
+					}),
+				],
 			}}
 		>
 			<Tabs.Screen
 				name="(home)"
 				options={{
-					title: '그룹',
+					title: '나의 소그룹',
 					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="house.fill" color={color} />
+						<Icon size="xl" as={HouseIcon} color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="note"
+				options={{
+					title: '나눔 노트',
+					tabBarIcon: ({ color }) => (
+						<Icon size="xl" as={NotebookPen} color={color} />
 					),
 				}}
 			/>
@@ -40,9 +53,7 @@ export default function TabLayout() {
 				name="notification"
 				options={{
 					title: '알림',
-					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="paperplane.fill" color={color} />
-					),
+					tabBarIcon: ({ color }) => <Icon size="xl" as={Bell} color={color} />,
 				}}
 			/>
 			<Tabs.Screen
@@ -50,7 +61,7 @@ export default function TabLayout() {
 				options={{
 					title: '마이페이지',
 					tabBarIcon: ({ color }) => (
-						<IconSymbol size={28} name="person" color={color} />
+						<Icon size="xl" as={UserRound} color={color} />
 					),
 				}}
 			/>

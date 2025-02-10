@@ -27,7 +27,7 @@ import {
 	HeartIcon,
 	MoreHorizontal,
 	PlusIcon,
-	User,
+	UserRound,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import { Card } from '#/components/ui/card';
@@ -73,7 +73,7 @@ export default function HomeScreen() {
 								</Avatar> */}
 							<VStack space="sm" className="items-center">
 								<Avatar className="bg-yellow-600">
-									<Icon as={User} size="xl" className="stroke-white" />
+									<Icon as={UserRound} size="xl" className="stroke-white" />
 									{/* <Badge
 										className="absolute -right-2 -top-2 w-5 h-5 bg-yellow-500 rounded-full items-center justify-center"
 										variant="solid"
@@ -193,7 +193,11 @@ export default function HomeScreen() {
 										<VStack space="2xl" className="pb-4">
 											<HStack space="sm" className="items-center">
 												<Avatar size="xs" className="bg-yellow-600">
-													<Icon as={User} size="xs" className="stroke-white" />
+													<Icon
+														as={UserRound}
+														size="xs"
+														className="stroke-white"
+													/>
 												</Avatar>
 												<HStack space="sm" className="items-end">
 													<Text size="md" bold={true}>
@@ -246,7 +250,11 @@ export default function HomeScreen() {
 										<VStack space="2xl" className="pb-4">
 											<HStack space="sm" className="items-center">
 												<Avatar size="xs" className="bg-yellow-600">
-													<Icon as={User} size="xs" className="stroke-white" />
+													<Icon
+														as={UserRound}
+														size="xs"
+														className="stroke-white"
+													/>
 												</Avatar>
 												<HStack space="sm" className="items-end">
 													<Text size="md" bold={true}>
@@ -311,7 +319,11 @@ export default function HomeScreen() {
 										<VStack space="2xl" className="pb-4">
 											<HStack space="sm" className="items-center">
 												<Avatar size="xs" className="bg-yellow-600">
-													<Icon as={User} size="xs" className="stroke-white" />
+													<Icon
+														as={UserRound}
+														size="xs"
+														className="stroke-white"
+													/>
 												</Avatar>
 												<HStack space="sm" className="items-end">
 													<Text size="md" bold={true}>
