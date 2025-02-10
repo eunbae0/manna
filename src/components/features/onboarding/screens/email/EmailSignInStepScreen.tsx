@@ -75,7 +75,6 @@ function EmailSignInStepScreen() {
 				<Button
 					onPress={async () => {
 						await signInWithEmail(email, password);
-						router.replace('/');
 					}}
 				>
 					<ButtonText>로그인</ButtonText>

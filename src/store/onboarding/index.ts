@@ -1,3 +1,4 @@
+import { updateFirestoreUser } from '@/services/auth';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 
@@ -6,6 +7,7 @@ export type OnboardingStep = 'EMAIL_SIGNUP' | 'EMAIL_SIGNIN' | 'NAME' | 'GROUP';
 type OnboardingState = {
 	currentStep: OnboardingStep;
 	userData: {
+		uid: string;
 		name: string;
 		group: string;
 	};
@@ -14,9 +16,10 @@ type OnboardingState = {
 	completeOnboarding: () => void;
 };
 
-export const useOnboardingStore = create<OnboardingState>((set) => ({
+export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 	currentStep: 'NAME',
 	userData: {
+		uid: '',
 		name: '',
 		group: '',
 	},
@@ -25,8 +28,15 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
 		set((state) => ({
 			userData: { ...state.userData, ...data },
 		})),
-	completeOnboarding: () => {
-		set({ currentStep: 'NAME' });
-		router.replace('/');
+	completeOnboarding: async () => {
+		try {
+			await updateFirestoreUser(get().userData.uid, {
+				displayName: get().userData.name,
+			});
+		} catch (error) {
+		} finally {
+			set({ currentStep: 'NAME' });
+			router.replace('/(auth)');
+		}
 	},
 }));
