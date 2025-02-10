@@ -8,7 +8,12 @@ export function useInitializeApp() {
 	const [loaded, setIsLoaded] = useState(false);
 
 	const [fontLoaded, error] = useFonts({
-		SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
+		PretendardExtraBold: require('../../assets/fonts/Pretendard-ExtraBold.otf'),
+		PretendardBold: require('../../assets/fonts/Pretendard-Bold.otf'),
+		PretendardSemiBold: require('../../assets/fonts/Pretendard-SemiBold.otf'),
+		PretendardMedium: require('../../assets/fonts/Pretendard-Medium.otf'),
+		PretendardRegular: require('../../assets/fonts/Pretendard-Regular.otf'),
+		PretendardLight: require('../../assets/fonts/Pretendard-Light.otf'),
 	});
 
 	const {
