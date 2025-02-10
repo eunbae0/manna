@@ -100,10 +100,10 @@ export default function HomeScreen() {
 					<Divider className="my-4 h-[6px]" />
 					<VStack space="lg" className="px-5">
 						{/* Date */}
-						<VStack>
-							<HStack className="px-2 justify-between">
+						<VStack space="sm">
+							<HStack className="px-1 justify-between">
 								<HStack space="xs" className="items-center">
-									<Heading size="sm">2025년 2월</Heading>
+									<Heading size="md">2025년 2월</Heading>
 									<Button size="xl" variant="link">
 										<ButtonIcon as={ChevronRightIcon} />
 									</Button>
@@ -184,7 +184,7 @@ export default function HomeScreen() {
 						<VStack className="gap-12">
 							<VStack space="md">
 								<HStack className="justify-between items-center">
-									<Heading size="lg">오늘의 기도 제목</Heading>
+									<Heading size="xl">오늘의 기도 제목</Heading>
 									<Button size="xl" variant="link">
 										<ButtonIcon as={Edit3Icon} />
 									</Button>
@@ -309,7 +309,7 @@ export default function HomeScreen() {
 							{/* 오늘의 감사 나눔 */}
 							<VStack space="md">
 								<HStack className="justify-between items-center">
-									<Heading size="lg">오늘의 감사 나눔</Heading>
+									<Heading size="xl">오늘의 감사 나눔</Heading>
 									<Button size="md" variant="link">
 										<ButtonText>감사 추가하기</ButtonText>
 										<ButtonIcon as={PlusIcon} />
