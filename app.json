@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icons/play_store_icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.eunbae.so_group"
     },
     "web": {
       "bundler": "metro",
