@@ -7,7 +7,7 @@ import { IconSymbol } from '@/components/common/ui/IconSymbol';
 import TabBarBackground from '@/components/common/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { Bell, HouseIcon, NotebookPen, UserRound } from 'lucide-react-native';
+import { Bell, HouseIcon, NotebookPen, Ellipsis } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
 
 export default function TabLayout() {
@@ -57,11 +57,11 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="mypage"
+				name="(more)"
 				options={{
-					title: '마이페이지',
+					title: '더보기',
 					tabBarIcon: ({ color }) => (
-						<Icon size="xl" as={UserRound} color={color} />
+						<Icon size="xl" as={Ellipsis} color={color} />
 					),
 				}}
 			/>
