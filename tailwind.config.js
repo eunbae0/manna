@@ -171,7 +171,7 @@ module.exports = {
 			},
 			fontFamily: {
 				heading: ["PretendardBold"],
-				body: ["PretendardRegular"],
+				body: ["PretendardMedium"],
 				"pretendard-extra-bold": ["PretendardExtraBold"],
 				"pretendard-bold": ["PretendardBold"],
 				"pretendard-semi-bold": ["PretendardSemiBold"],
