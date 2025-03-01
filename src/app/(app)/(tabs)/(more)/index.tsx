@@ -31,7 +31,7 @@ export default function TabFourScreen() {
 	return (
 		<SafeAreaView>
 			<ScrollView showsVerticalScrollIndicator={false}>
-				<VStack className="gap-14 px-5 py-8">
+				<VStack className="gap-14 px-4 py-8">
 					<VStack space="2xl">
 						<Heading size="xl">내 정보</Heading>
 						<HStack className="w-full justify-between items-center">
