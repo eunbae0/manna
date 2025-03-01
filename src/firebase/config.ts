@@ -1,7 +1,13 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import {
+	initializeAuth,
+	getReactNativePersistence,
+	getAuth,
+	type Auth,
+} from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 // Optionally import the services that you want to use
 // import {...} from 'firebase/auth';
@@ -22,8 +28,17 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = initializeAuth(app, {
-	persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-});
+
+let auth: Auth;
+if (Platform.OS !== 'web') {
+	// 네이티브 환경
+	auth = initializeAuth(app, {
+		persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+	});
+} else {
+	// 웹 환경
+	auth = getAuth(app);
+}
+export { auth };
 export const database = getFirestore(app);
 // export const analytics = getAnalytics(app);

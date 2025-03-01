@@ -10,7 +10,9 @@
 		"ios": "DARK_MODE=media expo start --ios",
 		"web": "DARK_MODE=media expo start --web",
 		"test": "jest --watchAll",
-		"format": "biome format --write"
+		"format": "biome format --write",
+		"predeploy": "npx expo export --platform web",
+		"deploy-hosting": "yarn run predeploy && firebase deploy --only hosting"
 	},
 	"jest": {
 		"preset": "jest-expo"
