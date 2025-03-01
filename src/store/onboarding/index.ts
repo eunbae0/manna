@@ -2,7 +2,7 @@ import { updateFirestoreUser } from '@/services/auth';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 
-export type OnboardingStep = 'EMAIL_SIGNUP' | 'EMAIL_SIGNIN' | 'NAME' | 'GROUP';
+export type OnboardingStep = 'EMAIL' | 'NAME' | 'GROUP';
 
 type OnboardingState = {
 	currentStep: OnboardingStep;
@@ -35,7 +35,7 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 			});
 		} catch (error) {
 		} finally {
-			set({ currentStep: 'NAME' });
+			// set({ currentStep: 'NAME' });
 			router.replace('/(auth)');
 		}
 	},

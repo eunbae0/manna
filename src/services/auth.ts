@@ -14,6 +14,13 @@ import {
 } from '@/firebase/firestore';
 import type { AuthType, User } from '@/types/user';
 import { createUserWithServerTimestamp } from '@/utils/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+	isSignInWithEmailLink,
+	sendSignInLinkToEmail,
+	signInWithEmailLink,
+	type UserCredential,
+} from 'firebase/auth';
 
 /**
  * 회원가입 및 프로필 생성
@@ -27,49 +34,77 @@ import { createUserWithServerTimestamp } from '@/utils/auth';
 // 	data: { providerToken: string },
 // ): Promise<any>;
 
-export async function signUp(
+export async function signIn<T extends AuthType>(
 	type: AuthType,
-	data: { email: string; password: string },
+	data: T extends 'EMAIL' ? { email: string } : null,
 ): Promise<void> {
-	if (data)
-		switch (type) {
-			case 'EMAIL':
-				return signUpWithEmail(data.email, data.password);
-			default:
-				return;
-		}
+	switch (type) {
+		case 'EMAIL':
+			return signInWithEmail(data!.email);
+		case 'APPLE':
+			return;
+		default:
+			return;
+	}
 }
 
-async function signUpWithEmail(email: string, password: string) {
-	try {
-		// 1. Firebase 인증
-		const userCredential = await createUserWithEmailAndPassword(
-			auth,
-			email,
-			password,
-		);
+async function retrieveEmailForSignIn(): Promise<string> {
+	const email = await AsyncStorage.getItem('emailForSignIn');
+	if (!email) {
+		throw new Error('No email found for sign-in');
+	}
+	return email;
+}
 
-		// 2. Firestore 임시 프로필 생성
+async function handleUserProfile(
+	userCredential: UserCredential,
+): Promise<void> {
+	const res = await getFirestoreUser(userCredential.user.uid);
+	if (res) {
 		await createFirestoreUser(userCredential.user.uid, {
 			email: userCredential.user.email,
 			authType: 'EMAIL' satisfies AuthType,
 		});
+	} else {
+		await updateFirestoreUser(userCredential.user.uid, {
+			lastLogin: serverTimestamp(),
+		});
+	}
+}
+
+export async function signInWithEmail(incomingLink: string): Promise<void> {
+	try {
+		if (!isSignInWithEmailLink(auth, incomingLink)) throw new Error();
+
+		const email = await retrieveEmailForSignIn();
+		const userCredential = await signInWithEmailLink(auth, email, incomingLink);
+
+		await AsyncStorage.removeItem('emailForSignIn');
+		await handleUserProfile(userCredential);
 	} catch (error) {
 		throw handleAuthError(error);
 	}
 }
 
-export async function signInWithEmail(email: string, password: string) {
+export async function sendEmailLink(email: string) {
 	try {
-		const userCredential = await signInWithEmailAndPassword(
-			auth,
-			email,
-			password,
-		);
+		const actionCodeSettings = {
+			url: 'https://so-group.web.app/login', // 웹 폴백 URL
+			handleCodeInApp: true,
+			iOS: {
+				bundleId: 'com.so-group.id',
+			},
+			android: {
+				packageName: 'com.so-group.id',
+				installApp: true,
+				minimumVersion: '12',
+			},
+			linkDomain: 'so-group.firebaseapp.com',
+		};
 
-		await updateFirestoreUser(userCredential.user.uid, {
-			lastLogin: serverTimestamp(),
-		});
+		await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+
+		await AsyncStorage.setItem('emailForSignIn', email);
 	} catch (error) {
 		throw handleAuthError(error);
 	}

@@ -8,7 +8,7 @@ export default function AuthLayout() {
 			}}
 		>
 			<Stack.Screen name="index" />
-			<Stack.Screen name="email" />
+			<Stack.Screen name="onboarding" />
 		</Stack>
 	);
 }

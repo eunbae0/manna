@@ -16,7 +16,7 @@ function NameStepScreen() {
 
 	return (
 		<VStack>
-			<Header label="00로 회원가입" onPressBackButton={() => setStep('NAME')} />
+			<Header label="정보 입력하기" onPressBackButton={() => setStep('NAME')} />
 			<VStack space="4xl" className="px-4 mt-8">
 				<VStack space="3xl">
 					<VStack space="sm">

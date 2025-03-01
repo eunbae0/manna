@@ -16,7 +16,7 @@ function NameStepScreen() {
 	return (
 		<VStack>
 			<Header
-				label="00로 회원가입"
+				label="정보 입력하기"
 				onPressBackButton={() => router.replace('/(auth)')}
 			/>
 			<VStack space="4xl" className="px-4 mt-8">

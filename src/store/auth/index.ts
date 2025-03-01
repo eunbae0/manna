@@ -2,8 +2,9 @@ import { auth } from '@/firebase/config';
 import {
 	getFirestoreUser,
 	logout,
+	sendEmailLink,
+	signIn,
 	signInWithEmail,
-	signUp,
 	updateFirestoreUser,
 } from '@/services/auth';
 import type { AuthType, User } from '@/types/user';
@@ -23,11 +24,11 @@ type AuthState = {
 };
 
 type AuthActions = {
-	signUp: (
-		type: AuthType,
-		data: { email: string; password: string },
+	signIn: <T extends AuthType>(
+		type: T,
+		data: T extends 'EMAIL' ? { email: string } : null,
 	) => Promise<void>;
-	signInWithEmail: (email: string, password: string) => Promise<void>;
+	sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
 	updateProfile: (userId: string, user: Partial<User>) => void;
 	validateUserCredentials: () => Promise<void>;
@@ -46,15 +47,15 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 				loading: true,
 				error: null,
 
-				signUp: async (type, { email, password }) => {
+				signIn: async (type, data) => {
 					set({ loading: true, error: null });
 					try {
-						await signUp(type, { email, password });
+						await signIn<typeof type>(type, data);
 						set({
 							isAuthenticated: true,
 							loading: false,
 						});
-						router.replace('/(app)/(tabs)/(home)');
+						// router.replace('/(app)/(tabs)/(home)');
 					} catch (error) {
 						set({
 							error: error.message,
@@ -63,15 +64,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					}
 				},
 
-				signInWithEmail: async (email, password) => {
+				sendEmailLink: async (email) => {
 					set({ loading: true, error: null });
 					try {
-						await signInWithEmail(email, password);
+						await sendEmailLink(email);
 						set({
-							isAuthenticated: true,
 							loading: false,
 						});
-						router.replace('/(app)/(tabs)/(home)');
 					} catch (error) {
 						set({
 							error: error.message,
