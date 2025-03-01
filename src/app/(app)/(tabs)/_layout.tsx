@@ -20,15 +20,7 @@ export default function TabLayout() {
 				headerShown: false,
 				tabBarButton: HapticTab,
 				// tabBarBackground: TabBarBackground,
-				tabBarStyle: [
-					{ paddingLeft: 14, paddingRight: 14 },
-					Platform.select({
-						ios: {
-							position: 'absolute',
-						},
-						default: {},
-					}),
-				],
+				tabBarStyle: [{ paddingLeft: 14, paddingRight: 14 }],
 			}}
 		>
 			<Tabs.Screen
