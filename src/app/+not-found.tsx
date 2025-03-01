@@ -1,33 +1,25 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { Button, ButtonText } from '#/components/ui/button';
+import { Heading } from '#/components/ui/heading';
+import { Text } from '#/components/ui/text';
+import { VStack } from '#/components/ui/vstack';
+import { Link, router, Stack } from 'expo-router';
 
-import { ThemedText } from '@/components/common/ThemedText';
-import { ThemedView } from '@/components/common/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NotFoundScreen() {
 	return (
 		<SafeAreaView>
 			<Stack.Screen options={{ title: 'Oops!' }} />
-			<ThemedView style={styles.container}>
-				<ThemedText type="title">This screen doesn't exist.</ThemedText>
-				<Link href="/" style={styles.link}>
-					<ThemedText type="link">Go to home screen!</ThemedText>
-				</Link>
-			</ThemedView>
+			<VStack space="4xl" className="px-4 mt-8 justify-between">
+				<Heading size="xl">해당 페이지는 존재하지 않습니다</Heading>
+				<Button
+					size="lg"
+					className="rounded-full"
+					onPress={() => router.replace('/')}
+				>
+					<ButtonText>홈으로 돌아가기</ButtonText>
+				</Button>
+			</VStack>
 		</SafeAreaView>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: 20,
-	},
-	link: {
-		marginTop: 15,
-		paddingVertical: 15,
-	},
-});
