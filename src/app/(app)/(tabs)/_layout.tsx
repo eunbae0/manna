@@ -21,6 +21,7 @@ export default function TabLayout() {
 				tabBarButton: HapticTab,
 				// tabBarBackground: TabBarBackground,
 				tabBarStyle: [{ paddingLeft: 14, paddingRight: 14 }],
+				sceneStyle: { backgroundColor: 'transparent' },
 			}}
 		>
 			<Tabs.Screen
