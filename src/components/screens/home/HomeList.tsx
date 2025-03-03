@@ -66,7 +66,7 @@ function HomeList() {
 								<Heading size="xl">오늘의 나눔</Heading>
 							</HStack>
 							<VStack space="3xl">
-								<HStack className="shadow-sm bg-background-0 shadow-slate-300 rounded-2xl justify-between items-center px-4 py-5">
+								<HStack className="bg-background-0 rounded-2xl justify-between items-center px-4 py-5">
 									<VStack>
 										<HStack space="sm" className="items-center">
 											<Text size="md" className="text-typography-400">
@@ -89,10 +89,7 @@ function HomeList() {
 								<Heading size="xl">오늘의 기도 제목</Heading>
 							</HStack>
 							<VStack space="3xl">
-								<Card
-									variant="filled"
-									className="shadow-sm bg-background-0 shadow-slate-300 rounded-2xl"
-								>
+								<Card variant="filled" className="bg-background-0 rounded-2xl">
 									<VStack space="lg" className="pb-4">
 										<HStack space="sm" className="items-center">
 											<Avatar size="sm" className="bg-primary-400">

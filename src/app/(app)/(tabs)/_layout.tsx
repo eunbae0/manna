@@ -34,9 +34,9 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="note"
+				name="(note)"
 				options={{
-					title: '나눔 노트',
+					title: '설교 노트',
 					tabBarIcon: ({ color }) => (
 						<Icon size="xl" as={NotebookPen} color={color} />
 					),

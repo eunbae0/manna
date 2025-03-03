@@ -22,7 +22,7 @@ export default function Root() {
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1 }}>
-			<GluestackUIProvider>
+			<GluestackUIProvider style={{ backgroundColor: '#f5f5f5cf' }}>
 				<BottomSheetProvider>
 					<Slot />
 					<StatusBar style="auto" />
