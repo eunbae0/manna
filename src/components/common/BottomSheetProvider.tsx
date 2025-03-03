@@ -13,16 +13,15 @@ import BottomSheet, {
 	BottomSheetBackdrop,
 	BottomSheetView,
 } from '@gorhom/bottom-sheet';
+import { Portal, PortalProvider, PortalHost } from '@gorhom/portal';
 
 type IBottomSheet = React.ComponentProps<typeof BottomSheet>;
 type BottomSheetContextType = {
 	visible: boolean;
 	bottomSheetRef: React.RefObject<BottomSheet>;
 	handleClose: () => void;
-	handleOpen: (
-		component: React.ReactNode,
-		customProps?: Omit<IBottomSheet, 'children'>,
-	) => void;
+	handleOpen: () => void;
+	BottomSheetContainer: React.FC<IBottomSheet>;
 };
 
 const DEFAULT_CONTEXT: BottomSheetContextType = {
@@ -30,9 +29,9 @@ const DEFAULT_CONTEXT: BottomSheetContextType = {
 	bottomSheetRef: { current: null },
 	handleClose: () => {},
 	handleOpen: () => {},
+	BottomSheetContainer: () => null,
 };
 
-const DEFAULT_SNAP_POINTS = [50];
 const ANIMATION_DELAY = 100;
 
 const BottomSheetContext =
@@ -41,38 +40,31 @@ const BottomSheetContext =
 const BottomSheetBackdropComponent = (
 	props: React.ComponentProps<typeof BottomSheetBackdrop>,
 ) => (
-	<BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+	<BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
 );
 
 const WebContent = ({
 	visible,
 	content,
-}: { visible: boolean; content: React.ReactNode }) => (
+}: {
+	visible: boolean;
+	content: React.ReactNode;
+}) => (
 	<FocusScope contain={visible} autoFocus={true} restoreFocus={true}>
 		{content}
 	</FocusScope>
 );
 
 export const BottomSheetProvider = ({ children }: PropsWithChildren) => {
-	const [content, setContent] = useState<React.ReactNode>(null);
-	const [props, setProps] = useState<Omit<IBottomSheet, 'children'>>({});
 	const [visible, setVisible] = useState(false);
 	const bottomSheetRef = useRef<BottomSheet>(null);
 
-	const handleOpen = useCallback(
-		(
-			component: React.ReactNode,
-			customProps?: Omit<IBottomSheet, 'children'>,
-		) => {
-			setContent(component);
-			setProps(customProps || {});
-			setTimeout(() => {
-				bottomSheetRef.current?.snapToIndex(1);
-			}, ANIMATION_DELAY);
-			setVisible(true);
-		},
-		[],
-	);
+	const handleOpen = useCallback(() => {
+		setTimeout(() => {
+			bottomSheetRef.current?.expand();
+		}, ANIMATION_DELAY);
+		setVisible(true);
+	}, []);
 
 	const handleClose = useCallback(() => {
 		bottomSheetRef.current?.close();
@@ -81,23 +73,49 @@ export const BottomSheetProvider = ({ children }: PropsWithChildren) => {
 
 	const handleSheetChanges = useCallback(
 		(index: number) => {
-			if (index <= 0) handleClose();
+			if (index === -1) handleClose();
 		},
 		[handleClose],
 	);
 
-	const keyDownHandlers = useMemo(() => {
-		if (Platform.OS !== 'web') return {};
+	const keyDownHandlers = useMemo(
+		() =>
+			Platform.OS === 'web'
+				? {
+						onKeyDown: (e: React.KeyboardEvent) => {
+							if (e.key === 'Escape') {
+								e.preventDefault();
+								handleClose();
+							}
+						},
+					}
+				: {},
+		[handleClose],
+	);
 
-		return {
-			onKeyDown: (e: React.KeyboardEvent) => {
-				if (e.key === 'Escape') {
-					e.preventDefault();
-					handleClose();
-				}
-			},
-		};
-	}, [handleClose]);
+	const BottomSheetContainer = useCallback(
+		({ children, ...props }: IBottomSheet) => (
+			<Portal hostName="BottomSheet">
+				<BottomSheet
+					ref={bottomSheetRef}
+					index={-1}
+					backdropComponent={BottomSheetBackdropComponent}
+					onChange={handleSheetChanges}
+					overDragResistanceFactor={0}
+					enablePanDownToClose={true}
+					handleIndicatorStyle={{ backgroundColor: 'lightgray', width: 36 }}
+					{...props}
+				>
+					<BottomSheetView {...keyDownHandlers}>
+						{Platform.OS === 'web'
+							? visible && <WebContent visible={visible} content={children} />
+							: children}
+					</BottomSheetView>
+				</BottomSheet>
+			</Portal>
+		),
+		[visible, keyDownHandlers, handleSheetChanges],
+	);
 
 	const contextValue = useMemo(
 		() => ({
@@ -105,30 +123,20 @@ export const BottomSheetProvider = ({ children }: PropsWithChildren) => {
 			bottomSheetRef,
 			handleClose,
 			handleOpen,
+			BottomSheetContainer,
 		}),
-		[visible, handleClose, handleOpen],
+		[visible, handleClose, handleOpen, BottomSheetContainer],
 	);
 
 	return (
-		<BottomSheetContext.Provider value={contextValue}>
-			{children}
-			<BottomSheet
-				ref={bottomSheetRef}
-				snapPoints={props.snapPoints || DEFAULT_SNAP_POINTS}
-				index={-1}
-				backdropComponent={BottomSheetBackdropComponent}
-				onChange={handleSheetChanges}
-				enablePanDownToClose={true}
-				{...props}
-			>
-				<BottomSheetView {...keyDownHandlers}>
-					{Platform.OS === 'web'
-						? visible && <WebContent visible={visible} content={content} />
-						: content}
-				</BottomSheetView>
-			</BottomSheet>
-		</BottomSheetContext.Provider>
+		<PortalProvider>
+			<BottomSheetContext.Provider value={contextValue}>
+				{children}
+				<PortalHost name="BottomSheet" />
+			</BottomSheetContext.Provider>
+		</PortalProvider>
 	);
 };
 
+// Hook
 export const useBottomSheet = () => useContext(BottomSheetContext);
