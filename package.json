@@ -35,6 +35,7 @@
 		"@gluestack-ui/textarea": "^0.1.24",
 		"@gluestack-ui/toast": "^1.0.8",
 		"@gorhom/bottom-sheet": "^5.1.1",
+		"@gorhom/portal": "^1.0.14",
 		"@legendapp/motion": "^2.4.0",
 		"@react-native-async-storage/async-storage": "1.23.1",
 		"@react-navigation/bottom-tabs": "^7.2.0",
