@@ -5,6 +5,9 @@ import { Heading } from '#/components/ui/heading';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card } from '#/components/ui/card';
 import { HStack } from '#/components/ui/hstack';
+import { Button, ButtonIcon } from '#/components/ui/button';
+import { PlusIcon } from 'lucide-react-native';
+import { router } from 'expo-router';
 
 export default function NoteScreen() {
 	return (
@@ -43,6 +46,14 @@ export default function NoteScreen() {
 					</VStack>
 				</ScrollView>
 			</VStack>
+			<Button
+				size="xl"
+				variant="solid"
+				className="absolute bottom-5 right-4 rounded-full"
+				onPress={() => router.push('/(app)/(tabs)/(note)/create')}
+			>
+				<ButtonIcon as={PlusIcon} />
+			</Button>
 		</SafeAreaView>
 	);
 }
