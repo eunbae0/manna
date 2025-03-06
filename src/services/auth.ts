@@ -87,23 +87,21 @@ export async function signInWithEmail(incomingLink: string): Promise<void> {
 }
 
 export async function sendEmailLink(email: string) {
+	const actionCodeSettings = {
+		url: 'https://so-group.web.app/login', // 웹 폴백 URL
+		handleCodeInApp: true,
+		iOS: {
+			bundleId: 'com.eunbae.sogroup',
+		},
+		android: {
+			packageName: 'com.eunbae.sogroup',
+			installApp: true,
+			minimumVersion: '12',
+		},
+		// linkDomain: 'so-group.web.com',
+	};
 	try {
-		const actionCodeSettings = {
-			url: 'https://so-group.web.app/login', // 웹 폴백 URL
-			handleCodeInApp: true,
-			iOS: {
-				bundleId: 'com.so-group.id',
-			},
-			android: {
-				packageName: 'com.so-group.id',
-				installApp: true,
-				minimumVersion: '12',
-			},
-			linkDomain: 'so-group.firebaseapp.com',
-		};
-
 		await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-
 		await AsyncStorage.setItem('emailForSignIn', email);
 	} catch (error) {
 		throw handleAuthError(error);
