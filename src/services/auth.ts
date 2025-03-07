@@ -15,9 +15,12 @@ import {
 import type { AuthType, User } from '@/types/user';
 import { createUserWithServerTimestamp } from '@/utils/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import {
 	isSignInWithEmailLink,
+	OAuthProvider,
 	sendSignInLinkToEmail,
+	signInWithCredential,
 	signInWithEmailLink,
 	type UserCredential,
 } from 'firebase/auth';
@@ -36,15 +39,47 @@ import {
 
 export async function signIn<T extends AuthType>(
 	type: AuthType,
-	data: T extends 'EMAIL' ? { email: string } : null,
+	data: T extends 'EMAIL' ? { email: string } : undefined,
 ): Promise<void> {
 	switch (type) {
 		case 'EMAIL':
 			return signInWithEmail(data!.email);
 		case 'APPLE':
-			return;
+			return signInWithApple();
 		default:
 			return;
+	}
+}
+
+export async function signInWithApple() {
+	try {
+		// Apple 로그인 요청
+		const appleAuthCredential = await AppleAuthentication.signInAsync({
+			requestedScopes: [
+				AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+				AppleAuthentication.AppleAuthenticationScope.EMAIL,
+			],
+		});
+
+		// Firebase 인증 정보 생성
+		const { identityToken } = appleAuthCredential;
+		if (!identityToken)
+			throw new Error('Apple 로그인 실패: 인증 정보가 없습니다');
+		const provider = new OAuthProvider('apple.com');
+		const credential = provider.credential({
+			idToken: identityToken,
+		});
+
+		// Firebase로 로그인
+		const userCredential = await signInWithCredential(auth, credential);
+
+		// 사용자 정보 처리
+		// console.log('User signed in: ', userCredential.user);
+
+		// // 사용자 이름 정보가 있으면 저장 (Apple은 첫 로그인에만 이름 정보 제공)
+		handleUserProfile(userCredential, 'APPLE');
+	} catch (error) {
+		throw new Error('Apple 로그인 에러:', error);
 	}
 }
 
@@ -58,16 +93,18 @@ async function retrieveEmailForSignIn(): Promise<string> {
 
 async function handleUserProfile(
 	userCredential: UserCredential,
+	authType: AuthType,
 ): Promise<void> {
-	const res = await getFirestoreUser(userCredential.user.uid);
-	if (res) {
-		await createFirestoreUser(userCredential.user.uid, {
-			email: userCredential.user.email,
-			authType: 'EMAIL' satisfies AuthType,
-		});
-	} else {
+	console.log(userCredential.user.uid);
+	try {
+		await getFirestoreUser(userCredential.user.uid);
 		await updateFirestoreUser(userCredential.user.uid, {
 			lastLogin: serverTimestamp(),
+		});
+	} catch (error) {
+		await createFirestoreUser(userCredential.user.uid, {
+			email: userCredential.user.email,
+			authType,
 		});
 	}
 }
@@ -80,7 +117,7 @@ export async function signInWithEmail(incomingLink: string): Promise<void> {
 		const userCredential = await signInWithEmailLink(auth, email, incomingLink);
 
 		await AsyncStorage.removeItem('emailForSignIn');
-		await handleUserProfile(userCredential);
+		await handleUserProfile(userCredential, 'EMAIL');
 	} catch (error) {
 		throw handleAuthError(error);
 	}
@@ -110,6 +147,7 @@ export async function sendEmailLink(email: string) {
 
 export async function logout(): Promise<void> {
 	try {
+		console.log(auth);
 		await signOut(auth);
 	} catch (error) {
 		throw handleAuthError(error);
@@ -121,6 +159,7 @@ export async function logout(): Promise<void> {
  */
 export async function createFirestoreUser(userId: string, user: User) {
 	const userWithTimestamp = createUserWithServerTimestamp(user);
+	console.log(userWithTimestamp);
 	try {
 		await setDoc(doc(database, 'users', userId), userWithTimestamp);
 	} catch (error) {

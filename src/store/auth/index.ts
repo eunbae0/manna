@@ -4,10 +4,12 @@ import {
 	logout,
 	sendEmailLink,
 	signIn,
-	signInWithEmail,
 	updateFirestoreUser,
-} from '@/services/auth';
-import type { AuthType, User } from '@/types/user';
+} from '@/api/auth';
+import type { User } from '@/types/user';
+import type { AuthType } from '@/api/auth/types';
+import { ApiError } from '@/api/errors/types';
+import { handleApiError } from '@/api/errors';
 import { router } from 'expo-router';
 import { serverTimestamp } from 'firebase/firestore';
 import { create } from 'zustand';
@@ -17,16 +19,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthState = {
 	user: User | null;
-	// token: string | null;
 	isAuthenticated: boolean;
 	loading: boolean;
-	error: string | null;
+	error: ApiError | null;
 };
 
 type AuthActions = {
 	signIn: <T extends AuthType>(
 		type: T,
-		data: T extends 'EMAIL' ? { email: string } : null,
+		data: T extends 'EMAIL' ? { email: string } : undefined,
 	) => Promise<void>;
 	sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
@@ -42,7 +43,6 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 		persist(
 			(set) => ({
 				user: null,
-				// token: null,
 				isAuthenticated: false,
 				loading: true,
 				error: null,
@@ -55,10 +55,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							isAuthenticated: true,
 							loading: false,
 						});
-						// router.replace('/(app)/(tabs)/(home)');
+						router.replace('/(app)/(tabs)/(home)');
 					} catch (error) {
+						const apiError = handleApiError(error);
 						set({
-							error: error.message,
+							error: apiError,
 							loading: false,
 						});
 					}
@@ -72,8 +73,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							loading: false,
 						});
 					} catch (error) {
+						const apiError = handleApiError(error);
 						set({
-							error: error.message,
+							error: apiError,
 							loading: false,
 						});
 					}
@@ -84,10 +86,12 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						await logout();
 						set({
 							user: null,
-							// token: null,
 							isAuthenticated: false,
 						});
-					} catch (error) {}
+					} catch (error) {
+						const apiError = handleApiError(error);
+						set({ error: apiError });
+					}
 				},
 				updateProfile: async (userId, user) =>
 					set(async (state) => {
@@ -96,7 +100,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							await updateFirestoreUser(userId, user);
 							state.user = { ...state.user, ...user };
 						} catch (error) {
-							throw new Error(error.message);
+							throw handleApiError(error);
 						}
 					}),
 				validateUserCredentials: async () => {
@@ -114,6 +118,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						set({ isAuthenticated: true, user });
 					} catch (err) {
 						// signOut
+						const apiError = handleApiError(err);
+						set({ error: apiError });
 					} finally {
 						set({ loading: false });
 					}
