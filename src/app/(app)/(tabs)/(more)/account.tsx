@@ -1,10 +1,11 @@
 import { Button, ButtonText } from '#/components/ui/button';
 import Header from '@/components/common/Header';
-import { logout } from '@/services/auth';
+import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
 import { SafeAreaView, Text } from 'react-native';
 
 export default function AccountSettingScreen() {
+	const { logout } = useAuthStore();
 	return (
 		<SafeAreaView>
 			<Header
