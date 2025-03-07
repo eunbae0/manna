@@ -5,22 +5,28 @@
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icons/icon.png",
-		"scheme": "myapp",
+		"scheme": "sogroup",
 		"userInterfaceStyle": "automatic",
 		"newArchEnabled": true,
 		"ios": {
+			"associatedDomains": ["applinks:so-group.firebaseapp.com"],
 			"supportsTablet": true,
 			"bundleIdentifier": "com.eunbae.sogroup",
 			"infoPlist": {
-				"ITSAppUsesNonExemptEncryption": false
-			}
+				"ITSAppUsesNonExemptEncryption": false,
+				"CFBundleDevelopmentRegion": "ko"
+			},
+			"entitlements": {
+				"com.apple.developer.applesignin": ["Default"]
+			},
+			"usesAppleSignIn": true
 		},
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/images/icons/play_store_icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.eunbae.so_group"
+			"package": "com.eunbae.sogroup"
 		},
 		"web": {
 			"bundler": "metro",
@@ -28,6 +34,7 @@
 		},
 		"plugins": [
 			"expo-router",
+			"expo-apple-authentication",
 			[
 				"expo-splash-screen",
 				{

@@ -10,8 +10,13 @@ import { Path } from 'react-native-svg';
 import { createIcon } from '#/components/ui/icon';
 import { Mail, MailIcon } from 'lucide-react-native';
 
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { auth } from '@/firebase/config';
+import { useState, useEffect } from 'react';
+import { OAuthProvider, signInWithCredential } from 'firebase/auth';
+
 function AuthStepScreen() {
-	const { isAuthenticated } = useAuthStore();
+	const { signIn } = useAuthStore();
 	const { setStep } = useOnboardingStore();
 
 	const AppleLogoIcon = createIcon({
@@ -25,6 +30,21 @@ function AuthStepScreen() {
 		displayName: 'AppleLogoIcon',
 	});
 
+	const [isAppleAuthAvailable, setIsAppleAuthAvailable] = useState(false);
+	useEffect(() => {
+		// Apple 인증이 기기에서 가능한지 확인
+		const checkAppleAuthAvailability = async () => {
+			const available = await AppleAuthentication.isAvailableAsync();
+			setIsAppleAuthAvailable(available);
+		};
+
+		checkAppleAuthAvailability();
+	}, []);
+
+	const onAppleButtonPress = async () => {
+		await signIn('APPLE', undefined);
+	};
+
 	return (
 		<SafeAreaView>
 			<VStack className="mx-4 items-center justify-between h-full gap-28 py-20">
@@ -34,7 +54,7 @@ function AuthStepScreen() {
 				</VStack>
 				<VStack space="xl" className="w-full">
 					<VStack space="md" className="w-full">
-						<Button
+						{/* <Button
 							onPress={() => {
 								setStep('EMAIL');
 								router.push('/(auth)/onboarding');
@@ -47,7 +67,21 @@ function AuthStepScreen() {
 								className="fill-white text-typography-black"
 							/>
 							<ButtonText size="lg">Apple로 계속하기</ButtonText>
-						</Button>
+						</Button> */}
+						{isAppleAuthAvailable && (
+							<AppleAuthentication.AppleAuthenticationButton
+								buttonType={
+									AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
+								}
+								buttonStyle={
+									AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+								}
+								cornerRadius={999}
+								style={{ width: '100%', height: 42 }}
+								onPress={onAppleButtonPress}
+								className="rounded-full gap-4"
+							/>
+						)}
 						<Button
 							onPress={() => {
 								setStep('EMAIL');

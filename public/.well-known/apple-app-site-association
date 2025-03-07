@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "AQ62DT56AM.com.eunbae.sogroup",
+        "paths": ["/login/*"]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": ["AQ62DT56AM.com.eunbae.sogroup"]
+  },
+  "webcredentials": {
+    "apps": ["AQ62DT56AM.com.eunbae.sogroup"]
+  }
+}
