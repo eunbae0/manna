@@ -11,7 +11,13 @@
 			"babel.config.js",
 			"biome.json",
 			"metro.config.js",
-			"tailwind.config.js"
+			"tailwind.config.js",
+			"components/ui/*",
+			"ios/*",
+			"android/*",
+			"public/*",
+			"eas.json",
+			"gluestack-ui.config.json"
 		]
 	},
 	"formatter": {
