@@ -1,35 +1,52 @@
 export enum ErrorCode {
-  // Auth Errors (1000 범위)
-  AUTH_UNKNOWN = 1000,
-  AUTH_EMAIL_EXISTS = 1001,
-  AUTH_INVALID_EMAIL = 1002,
-  AUTH_WEAK_PASSWORD = 1003,
-  AUTH_USER_NOT_FOUND = 1004,
-  AUTH_WRONG_PASSWORD = 1005,
-  
-  // 다른 API 도메인 오류들 (다른 범위)
-  // ...
+	// Firebase Auth Errors
+	AUTH_UNKNOWN = 1000,
+	AUTH_EMAIL_EXISTS = 1001,
+	AUTH_INVALID_EMAIL = 1002,
+	AUTH_WEAK_PASSWORD = 1003,
+	AUTH_USER_NOT_FOUND = 1004,
+	AUTH_WRONG_PASSWORD = 1005,
+
+	// Apple Auth Errors
+	APPLE_UNKNOWN = 2000,
+	APPLE_MISSING_ENTITLEMENT = 2001,
+	APPLE_UNSUPPORTED_PARENT_BUNDLE_LOCATION = 2002,
+	APPLE_EXTENSION_NOT_FOUND = 2003,
+	APPLE_EXTENSION_MISSING_IDENTIFIER = 2004,
+	APPLE_DUPLICATE_EXTENSION_IDENTIFIER = 2005,
+	APPLE_UNKNOWN_EXTENSION_CATEGORY = 2006,
+	APPLE_CODE_SIGNATURE_INVALID = 2007,
+	APPLE_VALIDATION_FAILED = 2008,
+	APPLE_FORBIDDEN_BY_SYSTEM_POLICY = 2009,
+	APPLE_REQUEST_CANCELED = 2010,
+	APPLE_REQUEST_SUPERSEDED = 2011,
+	APPLE_AUTHORIZATION_REQUIRED = 2012,
 }
+
+export const DISABLE_TOAST_ERROR_CODES = [ErrorCode.APPLE_REQUEST_CANCELED];
 
 export type ErrorPayload = Record<string, unknown>;
 
 export interface ApiErrorOptions {
-  code: ErrorCode;
-  message: string;
-  originalError?: unknown;
-  payload?: ErrorPayload;
+	code: ErrorCode;
+	message: string;
+	originalError?: unknown;
+	payload?: ErrorPayload;
+	disableToast?: boolean;
 }
 
 export class ApiError extends Error {
-  code: ErrorCode;
-  originalError?: unknown;
-  payload?: ErrorPayload;
+	code: ErrorCode;
+	originalError?: unknown;
+	payload?: ErrorPayload;
+	disableToast?: boolean;
 
-  constructor(options: ApiErrorOptions) {
-    super(options.message);
-    this.name = 'ApiError';
-    this.code = options.code;
-    this.originalError = options.originalError;
-    this.payload = options.payload;
-  }
+	constructor(options: ApiErrorOptions) {
+		super(options.message);
+		this.name = 'ApiError';
+		this.code = options.code;
+		this.originalError = options.originalError;
+		this.payload = options.payload;
+		this.disableToast = options.disableToast;
+	}
 }

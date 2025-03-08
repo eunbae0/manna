@@ -5,7 +5,7 @@ export default function HomeLayout() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
-				contentStyle: { backgroundColor: 'transparent' },
+				// contentStyle: { backgroundColor: 'transparent' },
 			}}
 		>
 			<Stack.Screen name="index" />

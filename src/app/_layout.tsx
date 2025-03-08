@@ -3,6 +3,7 @@ import '#/global.css';
 import { GluestackUIProvider } from '#/components/ui/gluestack-ui-provider';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import { ToastContainer } from '@/components/ui/toast/ToastContainer';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -26,6 +27,7 @@ export default function Root() {
 				<BottomSheetProvider>
 					<Slot />
 					<StatusBar style="auto" />
+					<ToastContainer />
 				</BottomSheetProvider>
 			</GluestackUIProvider>
 		</GestureHandlerRootView>

@@ -1,5 +1,5 @@
 import { auth } from '@/firebase/config';
-import { getFirestoreUser } from '@/services/auth';
+import { getFirestoreUser } from '@/api/auth';
 import { useAuthStore } from '@/store/auth';
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';

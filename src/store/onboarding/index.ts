@@ -1,4 +1,4 @@
-import { updateFirestoreUser } from '@/services/auth';
+import { updateFirestoreUser } from '@/api/auth';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 

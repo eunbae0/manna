@@ -8,7 +8,7 @@ import {
 } from '@/api/auth';
 import type { User } from '@/types/user';
 import type { AuthType } from '@/api/auth/types';
-import { ApiError } from '@/api/errors/types';
+import type { ApiError } from '@/api/errors/types';
 import { handleApiError } from '@/api/errors';
 import { router } from 'expo-router';
 import { serverTimestamp } from 'firebase/firestore';
