@@ -8,7 +8,7 @@ export interface AuthProviderInterface {
 }
 
 export interface UserProfileService {
-	getUser(userId: string): Promise<User>;
+	getUser(userId: string): Promise<User | null>;
 	createUser(userId: string, user: Partial<User>): Promise<void>;
 	updateUser(userId: string, data: Partial<User>): Promise<void>;
 }

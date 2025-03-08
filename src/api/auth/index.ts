@@ -34,7 +34,6 @@ export async function signIn<T extends AuthType>(
 		default:
 			throw handleApiError({ message: '지원하지 않는 인증 타입입니다.' });
 	}
-
 	await handleUserProfile(userCredential, type);
 }
 
@@ -67,25 +66,28 @@ async function handleUserProfile(
 
 	try {
 		// 기존 사용자 확인
-		await userProfileService.getUser(userId);
+		const user = await userProfileService.getUser(userId);
 
-		// 마지막 로그인 시간 업데이트
-		await userProfileService.updateUser(userId, {
-			lastLogin: serverTimestamp(),
-		});
-	} catch (error) {
-		// 신규 사용자 생성
+		if (user) {
+			await userProfileService.updateUser(userId, {
+				lastLogin: serverTimestamp(),
+			});
+			return;
+		}
+
 		await userProfileService.createUser(userId, {
 			email: userCredential.user.email,
 			authType,
 		});
+	} catch (error) {
+		throw handleApiError(error);
 	}
 }
 
 /**
  * 사용자 프로필 메서드 내보내기
  */
-export const getFirestoreUser = (userId: string): Promise<User> =>
+export const getFirestoreUser = (userId: string): Promise<User | null> =>
 	userProfileService.getUser(userId);
 
 export const createFirestoreUser = (
