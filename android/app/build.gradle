@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.eunbae.so_group'
+    namespace 'com.eunbae.sogroup'
     defaultConfig {
-        applicationId 'com.eunbae.so_group'
+        applicationId 'com.eunbae.sogroup'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

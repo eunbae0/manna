@@ -1,4 +1,4 @@
-package com.eunbae.so_group
+package com.eunbae.sogroup
 
 import android.app.Application
 import android.content.res.Configuration

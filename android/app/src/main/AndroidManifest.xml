@@ -26,6 +26,8 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
         <data android:scheme="com.eunbae.so_group"/>
+        <data android:scheme="sogroup"/>
+        <data android:scheme="com.eunbae.sogroup"/>
       </intent-filter>
     </activity>
   </application>

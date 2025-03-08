@@ -1,4 +1,4 @@
-package com.eunbae.so_group
+package com.eunbae.sogroup
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
