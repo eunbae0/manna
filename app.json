@@ -1,6 +1,6 @@
 {
 	"expo": {
-		"name": "so-group",
+		"name": "소그룹",
 		"slug": "so-group",
 		"version": "1.0.0",
 		"orientation": "portrait",
@@ -13,8 +13,7 @@
 			"supportsTablet": true,
 			"bundleIdentifier": "com.eunbae.sogroup",
 			"infoPlist": {
-				"ITSAppUsesNonExemptEncryption": false,
-				"CFBundleDevelopmentRegion": "ko"
+				"ITSAppUsesNonExemptEncryption": false
 			},
 			"entitlements": {
 				"com.apple.developer.applesignin": ["Default"]

@@ -6,10 +6,8 @@
     <true/>
     <key>CFBundleAllowMixedLocalizations</key>
     <true/>
-    <key>CFBundleDevelopmentRegion</key>
-    <string>ko</string>
     <key>CFBundleDisplayName</key>
-    <string>so-group</string>
+    <string>소그룹</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
