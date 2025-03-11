@@ -29,6 +29,8 @@ export default function RootLayout() {
 	return (
 		<Stack screenOptions={{ contentStyle: { backgroundColor: 'transparent' } }}>
 			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+			<Stack.Screen name="(note)" options={{ headerShown: false }} />
+			<Stack.Screen name="(more)" options={{ headerShown: false }} />
 		</Stack>
 	);
 }

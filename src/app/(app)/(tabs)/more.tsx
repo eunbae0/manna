@@ -57,45 +57,37 @@ export default function TabFourScreen() {
 							<ListItem
 								label="화면"
 								icon={Smartphone}
-								link={'/(app)/(tabs)/(more)/screen'}
+								link={'/(app)/(more)/screen'}
 							/>
 							<ListItem
 								label="알림"
 								icon={Bell}
-								link={'/(app)/(tabs)/(more)/notification'}
+								link={'/(app)/(more)/notification'}
 							/>
 							<ListItem
 								label="계정"
 								icon={UserPen}
-								link={'/(app)/(tabs)/(more)/account'}
+								link={'/(app)/(more)/account'}
 							/>
 						</VStack>
 						<VStack space="xs">
 							<ListItem
 								label="공지사항"
 								icon={Megaphone}
-								link={'/(app)/(tabs)/(more)'}
+								link={'/(app)/(more)'}
 							/>
-							<ListItem
-								label="정책"
-								icon={ScrollText}
-								link={'/(app)/(tabs)/(more)'}
-							/>
+							<ListItem label="정책" icon={ScrollText} link={'/(app)/(more)'} />
 							<ListItem
 								label="의견 남기기"
 								icon={MessageCircleMore}
-								link={'/(app)/(tabs)/(more)'}
+								link={'/(app)/(more)'}
 							/>
 							<ListItem
 								label="리뷰 남기기"
 								icon={Star}
-								link={'/(app)/(tabs)/(more)'}
+								link={'/(app)/(more)'}
 							/>
-							<ListItem
-								label="버전"
-								icon={MonitorCog}
-								link={'/(app)/(tabs)/(more)'}
-							/>
+							<ListItem label="버전" icon={MonitorCog} link={'/(app)/(more)'} />
 						</VStack>
 					</VStack>
 				</VStack>

@@ -1,31 +1,32 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Tabs } from 'expo-router';
 
 import { HapticTab } from '@/components/common/HapticTab';
-import { IconSymbol } from '@/components/common/ui/IconSymbol';
-import TabBarBackground from '@/components/common/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Bell, HouseIcon, NotebookPen, Ellipsis } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
+import { Bell, HouseIcon, NotebookPen, Ellipsis } from 'lucide-react-native';
+
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
-
 	return (
 		<Tabs
-			screenOptions={{
+			screenOptions={({ route }) => ({
 				tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
 				headerShown: false,
 				tabBarButton: HapticTab,
-				// tabBarBackground: TabBarBackground,
-				tabBarStyle: [{ paddingLeft: 14, paddingRight: 14 }],
+				tabBarStyle: [
+					{
+						paddingLeft: 14,
+						paddingRight: 14,
+					},
+				],
 				sceneStyle: { backgroundColor: 'transparent' },
-			}}
+			})}
 		>
 			<Tabs.Screen
-				name="(home)"
+				name="index"
 				options={{
 					title: '나의 소그룹',
 					tabBarIcon: ({ color }) => (
@@ -34,7 +35,7 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="(note)"
+				name="note"
 				options={{
 					title: '설교 노트',
 					tabBarIcon: ({ color }) => (
@@ -50,7 +51,7 @@ export default function TabLayout() {
 				}}
 			/>
 			<Tabs.Screen
-				name="(more)"
+				name="more"
 				options={{
 					title: '더보기',
 					tabBarIcon: ({ color }) => (

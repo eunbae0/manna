@@ -50,7 +50,7 @@ export default function NoteScreen() {
 				size="xl"
 				variant="solid"
 				className="absolute bottom-5 right-4 rounded-full"
-				onPress={() => router.push('/(app)/(tabs)/(note)/create')}
+				onPress={() => router.push('/(app)/(note)/create')}
 			>
 				<ButtonIcon as={PlusIcon} />
 			</Button>

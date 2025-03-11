@@ -5,12 +5,11 @@ export default function HomeLayout() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
-				contentStyle: { backgroundColor: 'transparent' },
+				// contentStyle: { backgroundColor: 'transparent' },
 			}}
 		>
-			<Stack.Screen name="index" />
-			<Stack.Screen name="group/[id]" />
-			<Stack.Screen name="group/create" />
+			<Stack.Screen name="create" />
+			<Stack.Screen name="[id]" />
 		</Stack>
 	);
 }
