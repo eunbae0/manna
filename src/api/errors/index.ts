@@ -2,6 +2,7 @@ import { ApiError, ErrorCode } from './types';
 import { mapFirebaseError } from './mappers/firebase';
 import { errorMessages } from '@/localization/errors';
 import { mapAppleError } from './mappers/apple';
+import { logApiError } from '../utils/logger';
 
 export function createApiError(
 	code: ErrorCode,
@@ -14,7 +15,49 @@ export function createApiError(
 	});
 }
 
-export function handleApiError(error: unknown): ApiError {
+export function handleApiError(
+	error: unknown,
+	operationName?: string,
+	moduleName?: string,
+): ApiError {
+	// Get the calling function name if operation is not provided
+	let finalOperation = operationName;
+	if (!finalOperation) {
+		try {
+			const stack = new Error().stack;
+			if (stack) {
+				const callerLine = stack.split('\n')[2];
+				finalOperation = callerLine.match(/at\s+(\S+)\s+/)?.[1] || 'unknown';
+			}
+		} catch (e) {
+			finalOperation = 'unknown';
+		}
+	}
+
+	// Try to determine the module from the error or use a default
+	let finalModule = moduleName;
+	if (!finalModule) {
+		if (
+			error &&
+			typeof error === 'object' &&
+			'code' in error &&
+			typeof error.code === 'string'
+		) {
+			if (error.code.startsWith('auth/')) {
+				finalModule = 'auth';
+			} else if (error.code.startsWith('firestore/')) {
+				finalModule = 'firestore';
+			} else {
+				finalModule = 'api';
+			}
+		} else {
+			finalModule = 'api';
+		}
+	}
+
+	// Log the error with context
+	logApiError(error, finalOperation || 'unknown', finalModule || 'api');
+
 	if (error instanceof ApiError) {
 		return error;
 	}
