@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { router } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
 import { Heading } from '#/components/ui/heading';
@@ -37,7 +37,6 @@ import CalendarTab from './CalanderTab';
 import type { YYYYMMDD } from '@/types/date';
 import { getKSTDate } from '@/utils/date';
 import { ScrollView } from 'react-native';
-import { Box } from '#/components/ui/box';
 
 function HomeList() {
 	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
@@ -47,6 +46,12 @@ function HomeList() {
 	const handleDateChange = (date: YYYYMMDD) => {
 		setSelectedDate(date);
 	};
+
+	useFocusEffect(
+		useCallback(() => {
+			setSelectedDate(getKSTDate(new Date()));
+		}, []),
+	);
 
 	return (
 		<VStack className="relative h-full">

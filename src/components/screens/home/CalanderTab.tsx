@@ -10,6 +10,7 @@ import type { YYYYMMDD } from '@/types/date';
 import { cn } from '@/utils/cn';
 import { getKSTDate } from '../../../utils/date';
 import { Box } from '#/components/ui/box';
+import { useIsFocused } from '@react-navigation/native';
 
 type Props = {
 	selectedDate: YYYYMMDD;
@@ -17,7 +18,9 @@ type Props = {
 };
 
 const CalendarTab = ({ selectedDate, onDateChange }: Props) => {
-	const days = useMemo(() => generateDays(), []);
+	const isFocused = useIsFocused();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const days = useMemo(() => generateDays(), [isFocused]);
 
 	const handleSelectDate = (day: DayInfo) => {
 		onDateChange(day.fullDate);
