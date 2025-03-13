@@ -27,10 +27,17 @@ export default function RootLayout() {
 	}
 
 	return (
-		<Stack screenOptions={{ contentStyle: { backgroundColor: 'transparent' } }}>
+		<Stack>
 			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 			<Stack.Screen name="(note)" options={{ headerShown: false }} />
 			<Stack.Screen name="(more)" options={{ headerShown: false }} />
+			<Stack.Screen
+				name="selectWorshipTypeModal"
+				options={{
+					headerShown: false,
+					presentation: 'modal',
+				}}
+			/>
 		</Stack>
 	);
 }
