@@ -12,6 +12,9 @@ import {
 	configureReanimatedLogger,
 	ReanimatedLogLevel,
 } from 'react-native-reanimated';
+import { useReactQueryDevTools } from '@dev-plugins/react-query';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -20,16 +23,21 @@ configureReanimatedLogger({
 
 export default function Root() {
 	const colorScheme = useColorScheme();
+	const queryClient = new QueryClient();
+
+	useReactQueryDevTools(queryClient);
 
 	return (
-		<GestureHandlerRootView style={{ flex: 1 }}>
-			<GluestackUIProvider style={{ backgroundColor: '#f5f5f5cf' }}>
-				<BottomSheetProvider>
-					<Slot />
-					<StatusBar style="auto" />
-					<ToastContainer />
-				</BottomSheetProvider>
-			</GluestackUIProvider>
-		</GestureHandlerRootView>
+		<QueryClientProvider client={queryClient}>
+			<GestureHandlerRootView style={{ flex: 1 }}>
+				<GluestackUIProvider style={{ backgroundColor: '#f5f5f5cf' }}>
+					<BottomSheetProvider>
+						<Slot />
+						<StatusBar style="auto" />
+						<ToastContainer />
+					</BottomSheetProvider>
+				</GluestackUIProvider>
+			</GestureHandlerRootView>
+		</QueryClientProvider>
 	);
 }
