@@ -1,41 +1,16 @@
 import { Platform } from 'react-native';
 import { FocusScope } from '@react-native-aria/focus';
-import {
-	createContext,
-	useRef,
-	useState,
-	useCallback,
-	useContext,
-	type PropsWithChildren,
-	useMemo,
-} from 'react';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import BottomSheet, {
 	BottomSheetBackdrop,
 	BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import { Portal, PortalProvider, PortalHost } from '@gorhom/portal';
+import { Portal } from '@gorhom/portal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type IBottomSheet = React.ComponentProps<typeof BottomSheet>;
-type BottomSheetContextType = {
-	visible: boolean;
-	bottomSheetRef: React.RefObject<BottomSheet>;
-	handleClose: () => void;
-	handleOpen: () => void;
-	BottomSheetContainer: React.FC<IBottomSheet>;
-};
-
-const DEFAULT_CONTEXT: BottomSheetContextType = {
-	visible: false,
-	bottomSheetRef: { current: null },
-	handleClose: () => {},
-	handleOpen: () => {},
-	BottomSheetContainer: () => null,
-};
 
 const ANIMATION_DELAY = 100;
-
-const BottomSheetContext =
-	createContext<BottomSheetContextType>(DEFAULT_CONTEXT);
 
 const BottomSheetBackdropComponent = (
 	props: React.ComponentProps<typeof BottomSheetBackdrop>,
@@ -55,9 +30,10 @@ const WebContent = ({
 	</FocusScope>
 );
 
-export const BottomSheetProvider = ({ children }: PropsWithChildren) => {
+export const useBottomSheet = () => {
 	const [visible, setVisible] = useState(false);
 	const bottomSheetRef = useRef<BottomSheet>(null);
+	const insets = useSafeAreaInsets();
 
 	const handleOpen = useCallback(() => {
 		setTimeout(() => {
@@ -95,7 +71,7 @@ export const BottomSheetProvider = ({ children }: PropsWithChildren) => {
 
 	const BottomSheetContainer = useCallback(
 		({ children, ...props }: IBottomSheet) => (
-			<Portal hostName="BottomSheet">
+			<Portal>
 				<BottomSheet
 					ref={bottomSheetRef}
 					index={-1}
@@ -106,7 +82,10 @@ export const BottomSheetProvider = ({ children }: PropsWithChildren) => {
 					handleIndicatorStyle={{ backgroundColor: 'lightgray', width: 36 }}
 					{...props}
 				>
-					<BottomSheetView {...keyDownHandlers}>
+					<BottomSheetView
+						style={{ paddingBottom: insets.bottom }}
+						{...keyDownHandlers}
+					>
 						{Platform.OS === 'web'
 							? visible && <WebContent visible={visible} content={children} />
 							: children}
@@ -114,29 +93,12 @@ export const BottomSheetProvider = ({ children }: PropsWithChildren) => {
 				</BottomSheet>
 			</Portal>
 		),
-		[visible, keyDownHandlers, handleSheetChanges],
+		[visible, insets, keyDownHandlers, handleSheetChanges],
 	);
 
-	const contextValue = useMemo(
-		() => ({
-			visible,
-			bottomSheetRef,
-			handleClose,
-			handleOpen,
-			BottomSheetContainer,
-		}),
-		[visible, handleClose, handleOpen, BottomSheetContainer],
-	);
-
-	return (
-		<PortalProvider>
-			<BottomSheetContext.Provider value={contextValue}>
-				{children}
-				<PortalHost name="BottomSheet" />
-			</BottomSheetContext.Provider>
-		</PortalProvider>
-	);
+	return {
+		handleOpen,
+		handleClose,
+		BottomSheetContainer,
+	};
 };
-
-// Hook
-export const useBottomSheet = () => useContext(BottomSheetContext);
