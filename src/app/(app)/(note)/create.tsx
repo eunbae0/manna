@@ -24,7 +24,7 @@ import { useState, useEffect } from 'react';
 import { createUserNote } from '@/api/notes';
 import { useToastStore } from '@/store/toast';
 import { Button, ButtonText } from '#/components/ui/button';
-import { useBottomSheet } from '@/components/common/BottomSheetProvider';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Timestamp } from 'firebase/firestore';
 import { fetchUserWorshipTypes } from '@/api/worshipTypes';
@@ -206,10 +206,7 @@ export default function CreateScreen() {
 
 			{/* Bottom Sheet for Date Picker */}
 			<BottomSheetContainer>
-				<View
-					className="items-center justify-center pt-5 pb-10"
-					style={{ marginBottom: insets.bottom }}
-				>
+				<View className="items-center justify-center pt-5 pb-10">
 					<DateTimePicker
 						value={selectedDate}
 						mode="date"

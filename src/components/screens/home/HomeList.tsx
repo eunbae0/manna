@@ -1,33 +1,17 @@
 import { useCallback, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
 import { Heading } from '#/components/ui/heading';
 import { VStack } from '#/components/ui/vstack';
-import {
-	ChevronDownIcon,
-	SettingsIcon,
-	MenuIcon,
-	Icon,
-	ChevronRightIcon,
-} from '#/components/ui/icon';
+import { Icon } from '#/components/ui/icon';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
+import { Avatar } from '#/components/ui/avatar';
 import {
-	Avatar,
-	AvatarGroup,
-	AvatarBadge,
-	AvatarFallbackText,
-	AvatarImage,
-} from '#/components/ui/avatar';
-import {
-	ChevronLeftIcon,
 	ChevronRight,
-	Edit3Icon,
-	Flag,
+	HandHelping,
 	Heart,
-	HeartIcon,
-	MoreHorizontal,
+	Library,
 	PlusIcon,
 	UserRound,
 } from 'lucide-react-native';
@@ -37,6 +21,12 @@ import CalendarTab from './CalanderTab';
 import type { YYYYMMDD } from '@/types/date';
 import { getKSTDate } from '@/utils/date';
 import { ScrollView } from 'react-native';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
+import {
+	BottomSheetListHeader,
+	BottomSheetListItem,
+	BottomSheetListLayout,
+} from '@/components/common/BottomSheet';
 
 function HomeList() {
 	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
@@ -52,6 +42,8 @@ function HomeList() {
 			setSelectedDate(getKSTDate(new Date()));
 		}, []),
 	);
+
+	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
 	return (
 		<VStack className="relative h-full">
@@ -128,9 +120,37 @@ function HomeList() {
 				size="xl"
 				variant="solid"
 				className="absolute bottom-14 right-4 rounded-full"
+				onPress={() => handleOpen()}
 			>
 				<ButtonIcon as={PlusIcon} />
 			</Button>
+
+			{/* BOTTOM SHEET */}
+			<BottomSheetContainer>
+				<BottomSheetListLayout>
+					<BottomSheetListHeader
+						label="무엇을 추가할까요?"
+						onPress={handleClose}
+					/>
+					<BottomSheetListItem
+						label="기도 제목 작성하기"
+						icon={HandHelping}
+						onPress={() => {
+							router.navigate('/(app)/createPrayerRequestModal');
+							handleClose();
+						}}
+					/>
+					<Divider />
+					<BottomSheetListItem
+						label="소그룹 나눔 작성하기"
+						icon={Library}
+						onPress={() => {
+							router.push('/(app)/(fellowship)/create');
+							handleClose();
+						}}
+					/>
+				</BottomSheetListLayout>
+			</BottomSheetContainer>
 		</VStack>
 	);
 }

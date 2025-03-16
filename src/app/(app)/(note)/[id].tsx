@@ -46,7 +46,7 @@ import { useEffect, useState } from 'react';
 import { getUserNote, updateUserNote } from '@/api/notes';
 import { useToastStore } from '@/store/toast';
 import { Button, ButtonText } from '#/components/ui/button';
-import { useBottomSheet } from '@/components/common/BottomSheetProvider';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Timestamp } from 'firebase/firestore';
 import type { Note } from '@/api/notes/types';
