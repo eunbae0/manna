@@ -28,9 +28,18 @@ export default function RootLayout() {
 
 	return (
 		<Stack>
+			<Stack.Screen name="(fellowship)" options={{ headerShown: false }} />
+			<Stack.Screen name="(prayerRequest)" options={{ headerShown: false }} />
 			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 			<Stack.Screen name="(note)" options={{ headerShown: false }} />
 			<Stack.Screen name="(more)" options={{ headerShown: false }} />
+			<Stack.Screen
+				name="createPrayerRequestModal"
+				options={{
+					headerShown: false,
+					presentation: 'modal',
+				}}
+			/>
 			<Stack.Screen
 				name="selectWorshipTypeModal"
 				options={{
