@@ -10,15 +10,17 @@ import { cn } from '@/utils/cn';
 import { router } from 'expo-router';
 
 type Props = {
-	label: string;
+	label?: string;
 	onPressBackButton?: () => void;
+	onPressBackButtonWithRouter?: () => void;
 	isLabelCentered?: boolean;
 	isDividerEnabled?: boolean;
 } & ViewProps;
 
 function Header({
-	label,
+	label = '',
 	onPressBackButton,
+	onPressBackButtonWithRouter,
 	isLabelCentered = false,
 	isDividerEnabled = false,
 	children,
@@ -28,14 +30,31 @@ function Header({
 	const defaultHandlePressBackButton = () => {
 		router.canGoBack() ? router.back() : router.dismissAll();
 	};
+	const handlePressBackButton = () => {
+		if (onPressBackButtonWithRouter) {
+			onPressBackButtonWithRouter();
+			defaultHandlePressBackButton();
+			return;
+		}
+		if (onPressBackButton) {
+			onPressBackButton();
+			return;
+		}
+		defaultHandlePressBackButton();
+	};
+
 	return (
 		<VStack space="xs">
-			<HStack className={cn('w-full pl-3 items-center', className)} {...props}>
-				<HStack space="sm" className="items-center">
+			<HStack
+				className={cn('w-full relative items-center', className)}
+				{...props}
+			>
+				<HStack space="sm" className="items-center w-full">
 					<Button
 						size="xl"
 						variant="link"
-						onPress={onPressBackButton || defaultHandlePressBackButton}
+						onPress={handlePressBackButton}
+						className="pl-3"
 					>
 						<ButtonIcon as={ChevronLeftIcon} className="w-8 h-8" />
 					</Button>
@@ -43,7 +62,9 @@ function Header({
 						size="2xl"
 						className={cn(
 							'font-pretendard-semi-bold',
-							isLabelCentered ? 'absolute left-0 right-0 text-center' : '',
+							isLabelCentered
+								? 'absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2'
+								: '',
 						)}
 					>
 						{label}
