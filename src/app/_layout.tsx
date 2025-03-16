@@ -7,7 +7,6 @@ import { ToastContainer } from '@/components/ui/toast/ToastContainer';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { BottomSheetProvider } from '@/components/common/BottomSheetProvider';
 import {
 	configureReanimatedLogger,
 	ReanimatedLogLevel,
@@ -15,6 +14,7 @@ import {
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { PortalProvider } from '@gorhom/portal';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -31,11 +31,11 @@ export default function Root() {
 		<QueryClientProvider client={queryClient}>
 			<GestureHandlerRootView style={{ flex: 1 }}>
 				<GluestackUIProvider style={{ backgroundColor: '#f5f5f5cf' }}>
-					<BottomSheetProvider>
+					<PortalProvider>
 						<Slot />
 						<StatusBar style="auto" />
 						<ToastContainer />
-					</BottomSheetProvider>
+					</PortalProvider>
 				</GluestackUIProvider>
 			</GestureHandlerRootView>
 		</QueryClientProvider>
