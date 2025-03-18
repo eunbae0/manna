@@ -1,7 +1,36 @@
-import { updateFirestoreUser } from '@/api/auth';
 import type { User } from '@/types/user';
 import { router } from 'expo-router';
 import { create } from 'zustand';
+
+export type Fellowship = {
+	info: {
+		date: Date;
+		preachTitle: FellowshipInfoField;
+		preacher: FellowshipInfoField;
+		preachText: FellowshipInfoField;
+		members: FellowshipMember[];
+	};
+	content: {
+		iceBreaking: FellowshipContentField[];
+		sermonTopic: FellowshipContentField[];
+		prayerRequest: FellowshipAnswerField[];
+	};
+};
+
+export type FellowShipStoreData = {
+	info: {
+		date: Date | null;
+		preachTitle: FellowshipInfoField;
+		preacher: FellowshipInfoField;
+		preachText: FellowshipInfoField;
+		members: FellowshipMember[];
+	};
+	content: {
+		iceBreaking: string[];
+		sermonTopic: string[];
+		prayerRequest: boolean;
+	};
+};
 
 export type FellowshipStep =
 	| 'INFO'
@@ -15,32 +44,31 @@ export type FellowshipMember = Partial<
 	isLeader: boolean;
 };
 
-export type FellowshipField = { value?: string; disabled: boolean };
+export type FellowshipInfoField = { value?: string; disabled: boolean };
+export type FellowshipContentField = {
+	id: string;
+	question: string;
+	answers: FellowshipAnswerField[];
+};
+export type FellowshipAnswerField = {
+	member: FellowshipMember;
+	value: string;
+};
 
 export const FELLOWSHIP_DEFAULT_STEP: FellowshipStep = 'INFO';
 
-type FellowshipState = {
+type FellowShipStoreState = FellowShipStoreData & {
 	currentStep: FellowshipStep;
-	info: {
-		date: Date | null;
-		preachTitle: FellowshipField;
-		preacher: FellowshipField;
-		preachText: FellowshipField;
-		members: FellowshipMember[];
-	};
-	content: {
-		iceBreaking: string[];
-		sermonTopic: string[];
-		prayerRequest: boolean;
-	};
 	setStep: (step: FellowshipStep) => void;
-	updateFellowshipInfo: (data: Partial<FellowshipState['info']>) => void;
-	updateFellowshipContent: (data: Partial<FellowshipState['content']>) => void;
+	updateFellowshipInfo: (data: Partial<FellowShipStoreState['info']>) => void;
+	updateFellowshipContent: (
+		data: Partial<FellowShipStoreState['content']>,
+	) => void;
 	completeFellowship: () => void;
 	clearFellowship: () => void;
 };
 
-export const useFellowshipStore = create<FellowshipState>((set, get) => ({
+export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	currentStep: FELLOWSHIP_DEFAULT_STEP,
 	info: {
 		date: null,

@@ -49,7 +49,7 @@ function Header({
 				className={cn('w-full relative items-center', className)}
 				{...props}
 			>
-				<HStack space="sm" className="items-center w-full">
+				<HStack space="sm" className="items-center">
 					<Button
 						size="xl"
 						variant="link"

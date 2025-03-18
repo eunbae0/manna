@@ -20,7 +20,7 @@ import { Card } from '#/components/ui/card';
 import CalendarTab from './CalanderTab';
 import type { YYYYMMDD } from '@/types/date';
 import { getKSTDate } from '@/utils/date';
-import { ScrollView } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
 	BottomSheetListHeader,
@@ -57,28 +57,30 @@ function HomeList() {
 			>
 				<VStack space="4xl" className="px-4 py-6">
 					{/* 오늘의 나눔 */}
-					<VStack className="gap-12">
-						<VStack space="md">
-							<HStack className="justify-between items-center">
-								<Heading size="xl">오늘의 나눔</Heading>
-							</HStack>
-							<VStack space="3xl">
-								<HStack className="bg-background-0 rounded-2xl justify-between items-center px-4 py-5">
-									<VStack>
-										<HStack space="sm" className="items-center">
-											<Text size="md" className="text-typography-400">
-												2025.02.28 QT
-											</Text>
-										</HStack>
-										<Text size="xl" className="">
-											회개하라 종말의 때가 왔도다
-										</Text>
-									</VStack>
-									<Icon as={ChevronRight} className="color-typography-400" />
+					<Pressable onPress={() => router.push('/(app)/(fellowship)/1')}>
+						<VStack className="gap-12">
+							<VStack space="md">
+								<HStack className="justify-between items-center">
+									<Heading size="xl">오늘의 나눔</Heading>
 								</HStack>
+								<VStack space="3xl">
+									<HStack className="bg-background-0 rounded-2xl justify-between items-center px-4 py-5">
+										<VStack>
+											<HStack space="sm" className="items-center">
+												<Text size="md" className="text-typography-400">
+													2025.02.28 QT
+												</Text>
+											</HStack>
+											<Text size="xl" className="">
+												회개하라 종말의 때가 왔도다
+											</Text>
+										</VStack>
+										<Icon as={ChevronRight} className="color-typography-400" />
+									</HStack>
+								</VStack>
 							</VStack>
 						</VStack>
-					</VStack>
+					</Pressable>
 					{/* 오늘의 기도 제목 */}
 					<VStack className="gap-12">
 						<VStack space="md">
