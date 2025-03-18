@@ -25,7 +25,9 @@ export class FirestoreUserProfile implements UserProfileService {
 	 * 사용자 프로필 생성
 	 */
 	async createUser(userId: string, user: Partial<User>): Promise<void> {
-		const userWithTimestamp = createUserWithServerTimestamp(user as User);
+		const userWithTimestamp = createUserWithServerTimestamp(
+			Object.assign({ id: userId }, user),
+		);
 		try {
 			await setDoc(doc(database, 'users', userId), userWithTimestamp);
 		} catch (error) {
