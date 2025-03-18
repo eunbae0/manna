@@ -1,8 +1,8 @@
 import { Pressable } from 'react-native';
-import { Button, ButtonIcon } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
 import { HStack } from '#/components/ui/hstack';
 import { Heading } from '#/components/ui/heading';
-import { Icon } from '#/components/ui/icon';
+import { AddIcon, Icon } from '#/components/ui/icon';
 import {
 	ChevronDown,
 	MenuIcon,
@@ -11,6 +11,9 @@ import {
 	Library,
 	UserRoundPen,
 	X,
+	GlobeIcon,
+	PlayIcon,
+	SettingsIcon,
 } from 'lucide-react-native';
 import { Avatar, AvatarBadge, AvatarGroup } from '#/components/ui/avatar';
 import { Divider } from '#/components/ui/divider';
@@ -21,23 +24,41 @@ import {
 	BottomSheetListItem,
 	BottomSheetListLayout,
 } from '@/components/common/BottomSheet';
+import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
 
 function HomeHeader() {
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
 	return (
 		<HStack className="items-center justify-between pt-2 px-4">
-			<HStack space="xs" className="items-center">
-				<Heading className="text-[24px]">길동 사랑방</Heading>
-				<Button size="xl" variant="link">
-					<ButtonIcon
-						as={ChevronDown}
-						width={24}
-						height={24}
-						className="color-typography-900"
-					/>
-				</Button>
-			</HStack>
+			<Menu
+				placement="bottom left"
+				offset={5}
+				trigger={({ ...triggerProps }) => {
+					return (
+						<Pressable {...triggerProps}>
+							<HStack space="xs" className="items-center">
+								<Heading className="text-[24px]">길동 사랑방</Heading>
+								<Icon
+									as={ChevronDown}
+									className="w-7 h-7 color-typography-900"
+								/>
+							</HStack>
+						</Pressable>
+					);
+				}}
+			>
+				<MenuItem key="Add account" textValue="Add account">
+					<MenuItemLabel size="lg">길동 사랑방</MenuItemLabel>
+				</MenuItem>
+				<MenuItem key="Community" textValue="Community">
+					<MenuItemLabel size="lg">철수 순</MenuItemLabel>
+				</MenuItem>
+				<MenuItem key="Plugins" textValue="Plugins">
+					<Icon as={SettingsIcon} size="lg" className="mr-2" />
+					<MenuItemLabel size="lg">소그룹 관리하기</MenuItemLabel>
+				</MenuItem>
+			</Menu>
 			<HStack space="xl" className="px-1">
 				<AvatarGroup className="justify-between items-center">
 					<Avatar size="sm" className="bg-primary-400">
