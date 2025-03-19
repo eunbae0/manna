@@ -1,12 +1,12 @@
 import type React from 'react';
 import { VStack } from '#/components/ui/vstack';
 import { Pressable, ScrollView } from 'react-native';
-import { Avatar, AvatarBadge } from '#/components/ui/avatar';
+import { Avatar } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { Text } from '#/components/ui/text';
 import { HStack } from '#/components/ui/hstack';
-import { Plus, UserRound } from 'lucide-react-native';
+import { Plus } from 'lucide-react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { Button, ButtonText } from '#/components/ui/button';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
@@ -97,14 +97,7 @@ const SermonContent = ({
 							<VStack key={answer.member.id}>
 								<VStack space="md" className="px-4 py-4">
 									<HStack space="md" className="items-center">
-										<Avatar
-											key={answer.member.id}
-											size="xs"
-											className="bg-primary-400"
-										>
-											<Icon as={UserRound} size="sm" className="stroke-white" />
-											<AvatarBadge className="bg-yellow-400" />
-										</Avatar>
+										<Avatar key={answer.member.id} size="xs" />
 										<Text size="md">{answer.member.displayName}</Text>
 									</HStack>
 									<Text size="lg">{answer.value}</Text>
@@ -141,14 +134,7 @@ const SermonContent = ({
 																: 'text-typography-700',
 														)}
 													>
-														<Avatar size="xs" className="bg-primary-400">
-															<Icon
-																as={UserRound}
-																size="sm"
-																className="stroke-white"
-															/>
-															<AvatarBadge className="bg-yellow-400" />
-														</Avatar>
+														<Avatar size="xs" />
 														<Text size="md">{member.displayName}</Text>
 													</HStack>
 												</Pressable>

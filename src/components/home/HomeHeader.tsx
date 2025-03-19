@@ -15,7 +15,6 @@ import {
 	PlayIcon,
 	SettingsIcon,
 } from 'lucide-react-native';
-import { Avatar, AvatarBadge, AvatarGroup } from '#/components/ui/avatar';
 import { Divider } from '#/components/ui/divider';
 
 import { useBottomSheet } from '@/hooks/useBottomSheet';
@@ -25,6 +24,7 @@ import {
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
 import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
+import { Avatar, AvatarGroup } from '../common/avatar';
 
 function HomeHeader() {
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
@@ -59,15 +59,10 @@ function HomeHeader() {
 					<MenuItemLabel size="lg">소그룹 관리하기</MenuItemLabel>
 				</MenuItem>
 			</Menu>
-			<HStack space="xl" className="px-1">
-				<AvatarGroup className="justify-between items-center">
-					<Avatar size="sm" className="bg-primary-400">
-						<Icon as={UserRound} size="sm" className="stroke-white" />
-					</Avatar>
-					<Avatar size="sm" className="bg-primary-400">
-						<Icon as={UserRound} size="sm" className="stroke-white" />
-						<AvatarBadge className="bg-yellow-400" />
-					</Avatar>
+			<HStack space="xl" className="px-1 items-center">
+				<AvatarGroup onPress={() => {}}>
+					<Avatar size="sm" className="bg-primary-400" />
+					<Avatar size="sm" className="bg-primary-400" />
 				</AvatarGroup>
 
 				<Button size="xl" variant="link" onPress={() => handleOpen()}>

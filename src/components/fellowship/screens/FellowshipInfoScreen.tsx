@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { Avatar, AvatarBadge } from '#/components/ui/avatar';
 import { Box } from '#/components/ui/box';
 import { Button, ButtonText } from '#/components/ui/button';
 import {
@@ -35,6 +34,7 @@ import type {
 	FellowshipInfoField,
 	FellowshipMember,
 } from '@/api/fellowship/types';
+import { Avatar } from '@/components/common/avatar';
 
 export default function FellowshipInfoScreen() {
 	const { user } = useAuthStore();
@@ -235,17 +235,11 @@ export default function FellowshipInfoScreen() {
 											}}
 										>
 											<VStack space="xs" className="items-center">
-												<Avatar size="md" className="bg-primary-400">
-													<Icon
-														as={UserRound}
-														size="md"
-														className="stroke-white"
-													/>
-													{member.isLeader && (
-														<AvatarBadge className="bg-yellow-400" />
-													)}
-												</Avatar>
-												<Text>{member.displayName}</Text>
+												<Avatar
+													size="lg"
+													type={member.isLeader ? 'leader' : 'member'}
+													label={member.displayName || ''}
+												/>
 											</VStack>
 										</Pressable>
 									))}

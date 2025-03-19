@@ -22,7 +22,6 @@ import {
 	Megaphone,
 	RefreshCcw,
 	Settings,
-	UserRound,
 	Users,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
@@ -31,14 +30,13 @@ import { useToastStore } from '@/store/toast';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { Divider } from '#/components/ui/divider';
 import { Heading } from '#/components/ui/heading';
-import { Avatar, AvatarBadge, AvatarGroup } from '#/components/ui/avatar';
+import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '#/components/ui/button';
 import SermonContent from '@/components/fellowship/SermonContent';
 import PrayerRequestList from '@/components/fellowship/PrayerRequest';
 import type {
 	ClientFellowship,
-	FellowshipContentField,
 	FellowshipMember,
 } from '@/api/fellowship/types';
 import { fetchFellowshipById, updateFellowship } from '@/api/fellowship';
@@ -279,18 +277,7 @@ export default function FellowshipDetailScreen() {
 									</HStack>
 									<AvatarGroup className="justify-between items-center">
 										{fellowship.info.members.map((member) => (
-											<Avatar
-												key={member.id}
-												size="sm"
-												className="bg-primary-400"
-											>
-												<Icon
-													as={UserRound}
-													size="sm"
-													className="stroke-white"
-												/>
-												<AvatarBadge className="bg-yellow-400" />
-											</Avatar>
+											<Avatar key={member.id} size="sm" />
 										))}
 									</AvatarGroup>
 								</HStack>

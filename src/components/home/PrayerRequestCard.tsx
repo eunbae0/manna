@@ -7,11 +7,11 @@ import type { ClientPrayerRequest, Member } from '@/api/prayer-request/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserRound, Heart } from 'lucide-react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Avatar } from '#/components/ui/avatar';
 import { Text } from '#/components/ui/text';
 import { Icon } from '#/components/ui/icon';
 import type { YYYYMMDD } from '@/types/date';
 import { useAuthStore } from '@/store/auth';
+import { Avatar } from '../common/avatar';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
@@ -56,9 +56,7 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 			<Card variant="filled" className="bg-background-0 rounded-2xl">
 				<VStack space="lg" className="pb-4">
 					<HStack space="sm" className="items-center">
-						<Avatar size="sm" className="bg-primary-400">
-							<Icon as={UserRound} className="stroke-white" />
-						</Avatar>
+						<Avatar size="sm" className="bg-primary-400" />
 						<Text size="lg" className="font-pretendard-bold">
 							{prayerRequest.member.displayName || '익명'}
 						</Text>

@@ -2,7 +2,6 @@ import { Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { type Href, router } from 'expo-router';
 
-import { Avatar } from '#/components/ui/avatar';
 import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
 import { Divider } from '#/components/ui/divider';
 import { Heading } from '#/components/ui/heading';
@@ -25,6 +24,7 @@ import {
 	UserPen,
 	UserRound,
 } from 'lucide-react-native';
+import { Avatar } from '@/components/common/avatar';
 
 export default function TabFourScreen() {
 	const { user, logout } = useAuthStore();
@@ -36,9 +36,7 @@ export default function TabFourScreen() {
 						<Heading size="xl">내 정보</Heading>
 						<HStack className="w-full justify-between items-center">
 							<HStack space="xl" className="items-center">
-								<Avatar size="lg" className="bg-yellow-600">
-									<Icon as={UserRound} size="xl" className="stroke-white" />
-								</Avatar>
+								<Avatar size="lg" />
 								<VStack space="sm">
 									<Text size="lg" bold={true}>
 										{user?.displayName ?? '이름없음'}
