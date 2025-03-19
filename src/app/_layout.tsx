@@ -1,8 +1,6 @@
 import { Slot } from 'expo-router';
-import '#/global.css';
 import { GluestackUIProvider } from '#/components/ui/gluestack-ui-provider';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
 import { ToastContainer } from '@/components/ui/toast/ToastContainer';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -15,6 +13,10 @@ import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PortalProvider } from '@gorhom/portal';
+
+import '#/global.css';
+import 'react-native-reanimated';
+import 'react-native-get-random-values';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
