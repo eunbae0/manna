@@ -1,25 +1,23 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
+import { Button, ButtonIcon } from '#/components/ui/button';
 import { Heading } from '#/components/ui/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Icon } from '#/components/ui/icon';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
-import { Avatar } from '#/components/ui/avatar';
 import {
 	ChevronRight,
 	HandHelping,
-	Heart,
 	Library,
 	PlusIcon,
-	UserRound,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
-import { Card } from '#/components/ui/card';
+import { Box } from '#/components/ui/box';
+import { Spinner } from '@/components/ui/spinner';
 import CalendarTab from './CalanderTab';
 import type { YYYYMMDD } from '@/types/date';
-import { getKSTDate, parseKSTDate } from '@/utils/date';
+import { getKSTDate } from '@/utils/date';
 import { Pressable, RefreshControl, ScrollView } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
@@ -27,23 +25,11 @@ import {
 	BottomSheetListItem,
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
-import { useQuery } from '@tanstack/react-query';
-import { fetchFellowshipsByDateRange } from '@/api/fellowship';
-
-function useFellowshipsByDate(date: YYYYMMDD) {
-	const startDate = parseKSTDate(date);
-	const endDate = new Date(startDate);
-	endDate.setHours(23, 59, 59, 999);
-
-	// Hardcoded group ID for now - in a real app, you would get this from user context or props
-	const groupId = 'oVgiDT2gRRuFUWuUV0Ya';
-
-	return useQuery({
-		queryKey: ['fellowships', groupId, date],
-		queryFn: () => fetchFellowshipsByDateRange(groupId, startDate, endDate),
-		staleTime: 5 * 60 * 1000, // 5 minutes
-	});
-}
+import { usePrayerRequestsByDate } from '@/components/home/hooks/usePrayerRequestsByDate';
+import { useFellowshipsByDate } from '@/components/home/hooks/useFellowshipsByDate';
+import type { ClientPrayerRequest } from '@/api/prayer-request/types';
+import { PrayerRequestCard } from './PrayerRequestCard';
+import { useAuthStore } from '@/store/auth';
 
 function HomeList() {
 	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
@@ -53,12 +39,24 @@ function HomeList() {
 	// State for pull-to-refresh functionality
 	const [refreshing, setRefreshing] = useState(false);
 
+	// Hardcoded group ID for now - in a real app, you would get this from user context or props
+	const groupId = 'oVgiDT2gRRuFUWuUV0Ya';
+
+	const { user } = useAuthStore();
+
 	const {
 		data: fellowships,
 		isLoading,
 		isError,
 		refetch,
 	} = useFellowshipsByDate(selectedDate);
+
+	const {
+		data: prayerRequests,
+		isLoading: isPrayerRequestsLoading,
+		isError: isPrayerRequestsError,
+		refetch: refetchPrayerRequests,
+	} = usePrayerRequestsByDate(groupId, selectedDate);
 
 	const handleDateChange = (date: YYYYMMDD) => {
 		setSelectedDate(date);
@@ -74,11 +72,11 @@ function HomeList() {
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		try {
-			await refetch();
+			await Promise.all([refetch(), refetchPrayerRequests()]);
 		} finally {
 			setRefreshing(false);
 		}
-	}, [refetch]);
+	}, [refetch, refetchPrayerRequests]);
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
@@ -168,36 +166,38 @@ function HomeList() {
 							<HStack className="justify-between items-center">
 								<Heading size="xl">오늘의 기도 제목</Heading>
 							</HStack>
-							<VStack space="3xl">
-								<Card variant="filled" className="bg-background-0 rounded-2xl">
-									<VStack space="lg" className="pb-4">
-										<HStack space="sm" className="items-center">
-											<Avatar size="sm" className="bg-primary-400">
-												<Icon as={UserRound} className="stroke-white" />
-											</Avatar>
-											<Text size="lg" className="font-pretendard-bold">
-												김철수
-											</Text>
-										</HStack>
-										<Text size="lg" className="">
-											모든 결정가운데 하나님의 말씀보다 앞서지 않게 해주세요.
-										</Text>
-									</VStack>
-									<Button
-										variant="outline"
-										size="xs"
-										className="z-10 absolute -bottom-4 right-4 rounded-full bg-white"
-									>
-										<ButtonIcon size="sm" as={Heart} className="color-black" />
-										<HStack space="xs">
-											<ButtonText size="sm">1</ButtonText>
-										</HStack>
-									</Button>
-								</Card>
-							</VStack>
+							{isPrayerRequestsLoading ? (
+								<Box className="items-center justify-center py-8">
+									<Spinner size="large" />
+								</Box>
+							) : isPrayerRequestsError ? (
+								<Text className="text-center py-8 text-danger-500">
+									기도 제목을 불러오는 중 오류가 발생했어요
+								</Text>
+							) : prayerRequests && prayerRequests.length > 0 ? (
+								<VStack space="3xl">
+									{prayerRequests.map((prayerRequest: ClientPrayerRequest) => (
+										<PrayerRequestCard
+											key={prayerRequest.id}
+											prayerRequest={prayerRequest}
+											member={{
+												id: user?.id || '',
+												displayName: user?.displayName || '',
+												photoUrl: user?.photoUrl || '',
+											}}
+											selectedDate={selectedDate}
+										/>
+									))}
+								</VStack>
+							) : (
+								<Text className="text-center py-8 text-gray-500">
+									기도 제목이 없어요
+								</Text>
+							)}
 						</VStack>
 					</VStack>
 				</VStack>
+				<Box className="h-32" />
 			</ScrollView>
 			<Button
 				size="xl"

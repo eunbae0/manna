@@ -8,7 +8,7 @@ import { Text } from '#/components/ui/text';
 
 import type { YYYYMMDD } from '@/types/date';
 import { cn } from '@/utils/cn';
-import { getKSTDate } from '../../../utils/date';
+import { getKSTDate } from '../../utils/date';
 import { Box } from '#/components/ui/box';
 import { useIsFocused } from '@react-navigation/native';
 
