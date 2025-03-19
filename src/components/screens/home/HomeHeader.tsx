@@ -23,7 +23,7 @@ import {
 	BottomSheetListHeader,
 	BottomSheetListItem,
 	BottomSheetListLayout,
-} from '@/components/common/BottomSheet';
+} from '@/components/common/bottom-sheet';
 import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
 
 function HomeHeader() {

@@ -10,7 +10,7 @@ import { Plus, UserRound } from 'lucide-react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { Button, ButtonText } from '#/components/ui/button';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
-import { BottomSheetListHeader } from '@/components/common/BottomSheet';
+import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
 import { useState } from 'react';
 import { cn } from '@/utils/cn';
 import type {

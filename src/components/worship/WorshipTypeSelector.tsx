@@ -5,7 +5,7 @@ import { Text } from '#/components/ui/text';
 import { Icon } from '#/components/ui/icon';
 import { PlusIcon } from 'lucide-react-native';
 import { useWorshipStore } from '@/store/worship';
-import type { WorshipType } from '@/api/worshipTypes/types';
+import type { WorshipType } from '@/api/worship-types/types';
 import { router } from 'expo-router';
 
 export function WorshipTypeSelector() {

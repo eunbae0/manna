@@ -26,7 +26,7 @@ import {
 	BottomSheetListHeader,
 	BottomSheetListItem,
 	BottomSheetListLayout,
-} from '@/components/common/BottomSheet';
+} from '@/components/common/bottom-sheet';
 import { useQuery } from '@tanstack/react-query';
 import { fetchFellowshipsByDateRange } from '@/api/fellowship';
 

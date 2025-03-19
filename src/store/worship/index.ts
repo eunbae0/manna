@@ -1,4 +1,4 @@
-import type { WorshipType } from '@/api/worshipTypes/types';
+import type { WorshipType } from '@/api/worship-types/types';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 

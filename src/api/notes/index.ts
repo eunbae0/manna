@@ -2,7 +2,7 @@ import type { Note, NotesByMonth } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { FirestoreNotesService } from './service';
-import type { WorshipType } from '../worshipTypes/types';
+import type { WorshipType } from '../worship-types/types';
 
 const notesService = new FirestoreNotesService();
 

@@ -15,8 +15,8 @@ import {
 import { auth, database } from '@/firebase/config';
 import type { Note, NotesByMonth } from './types';
 import { serverTimestamp } from '@/firebase/firestore';
-import { FirestoreWorshipTypesService } from '../worshipTypes/service';
-import type { WorshipType } from '../worshipTypes/types';
+import { FirestoreWorshipTypesService } from '../worship-types/service';
+import type { WorshipType } from '../worship-types/types';
 
 /**
  * Notes service class for handling Firestore operations related to sermon notes

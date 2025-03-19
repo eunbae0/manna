@@ -16,7 +16,7 @@ import { Divider } from '#/components/ui/divider';
 import { useWorshipStore } from '@/store/worship';
 import { WorshipTypeSelector } from '@/components/worship/WorshipTypeSelector';
 import { fetchUserNotes, fetchUserNotesByWorshipType } from '@/api/notes';
-import { fetchUserWorshipTypes } from '@/api/worshipTypes';
+import { fetchUserWorshipTypes } from '@/api/worship-types';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
 
 export default function NoteScreen() {

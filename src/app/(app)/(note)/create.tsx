@@ -27,7 +27,7 @@ import { Button, ButtonText } from '#/components/ui/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Timestamp } from 'firebase/firestore';
-import { fetchUserWorshipTypes } from '@/api/worshipTypes';
+import { fetchUserWorshipTypes } from '@/api/worship-types';
 import { WorshipTypeSelector } from '@/components/worship/WorshipTypeSelector';
 
 export default function CreateScreen() {
