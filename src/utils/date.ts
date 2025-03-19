@@ -11,3 +11,13 @@ export const getKSTDate = (date: Date): YYYYMMDD => {
 		.replace(/\. /g, '-')
 		.replace(/\.$/, '') as YYYYMMDD;
 };
+
+export const parseKSTDate = (kstDateString: YYYYMMDD): Date => {
+	const [year, month, day] = kstDateString.split('-').map(Number);
+
+	const date = new Date(Date.UTC(year, month - 1, day));
+
+	date.setUTCHours(0, 0, 0, 0);
+
+	return date;
+};

@@ -7,13 +7,21 @@ import { Switch } from '#/components/ui/switch';
 import { Text } from '#/components/ui/text';
 import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
+import { useAuthStore } from '@/store/auth';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { ChevronRight, CircleHelp } from 'lucide-react-native';
 import { Pressable, SafeAreaView } from 'react-native';
 
-export default function FellowshipInfoScreen() {
-	const { setStep, updateFellowshipContent, content, completeFellowship } =
-		useFellowshipStore();
+export default function FellowshipContentScreen() {
+	const { currentGroup } = useAuthStore();
+	const {
+		type,
+		fellowshipId,
+		setStep,
+		updateFellowshipContent,
+		content,
+		completeFellowship,
+	} = useFellowshipStore();
 
 	return (
 		<SafeAreaView className="h-full">
@@ -72,10 +80,13 @@ export default function FellowshipInfoScreen() {
 							<Switch
 								size="md"
 								isDisabled={false}
-								defaultValue={content.prayerRequest}
+								defaultValue={content.prayerRequest.isActive}
 								onChange={() => {
 									updateFellowshipContent({
-										prayerRequest: !content.prayerRequest,
+										prayerRequest: {
+											...content.prayerRequest,
+											isActive: !content.prayerRequest.isActive,
+										},
 									});
 								}}
 							/>
@@ -97,11 +108,17 @@ export default function FellowshipInfoScreen() {
 						size="lg"
 						variant="solid"
 						className="rounded-xl flex-1"
-						onPress={() => {
-							completeFellowship();
+						onPress={async () => {
+							await completeFellowship({
+								type,
+								groupId: currentGroup?.id || 'oVgiDT2gRRuFUWuUV0Ya', // TODO: 수정
+								fellowshipId,
+							});
 						}}
 					>
-						<ButtonText>생성하기</ButtonText>
+						<ButtonText>
+							{type === 'CREATE' ? '생성하기' : '저장하기'}
+						</ButtonText>
 					</Button>
 				</HStack>
 			</VStack>

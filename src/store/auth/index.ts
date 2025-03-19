@@ -6,7 +6,7 @@ import {
 	signIn,
 	updateFirestoreUser,
 } from '@/api/auth';
-import type { User } from '@/types/user';
+import type { Group, User } from '@/types/user';
 import type { AuthType } from '@/api/auth/types';
 import type { ApiError } from '@/api/errors/types';
 import { handleApiError } from '@/api/errors';
@@ -22,6 +22,7 @@ type AuthState = {
 	isAuthenticated: boolean;
 	loading: boolean;
 	error: ApiError | null;
+	currentGroup: Group | null;
 };
 
 type AuthActions = {
@@ -36,6 +37,7 @@ type AuthActions = {
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
+	updateCurrentGroup: (group: AuthState['currentGroup']) => void;
 };
 
 export const useAuthStore = create<AuthState & AuthActions>()(
@@ -46,6 +48,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 				isAuthenticated: false,
 				loading: true,
 				error: null,
+				currentGroup: null,
 
 				signIn: async (type, data) => {
 					set({ loading: true, error: null });
@@ -128,6 +131,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 				updateAuthenticated: (isAuthenticated) =>
 					set(() => ({ isAuthenticated })),
 				updateUser: (user) => set(() => ({ user })),
+				updateCurrentGroup: (group) => set(() => ({ currentGroup: group })),
 			}),
 			{
 				name: 'auth-storage',

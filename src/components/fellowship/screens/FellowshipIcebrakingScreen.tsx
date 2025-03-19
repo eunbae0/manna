@@ -6,17 +6,45 @@ import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { VStack } from '#/components/ui/vstack';
+import type { FellowshipContentField } from '@/api/fellowship/types';
 import Header from '@/components/common/Header';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { CircleHelp, Plus, X } from 'lucide-react-native';
-import { useState } from 'react';
-import { Pressable, SafeAreaView } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
+import { Pressable, SafeAreaView, type TextInput } from 'react-native';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function FellowshipIcebrakingScreen() {
 	const { setStep, updateFellowshipContent, content } = useFellowshipStore();
-	const [iceBreaking, setIceBreaking] = useState<string[]>(
-		content.iceBreaking.length === 0 ? [''] : content.iceBreaking,
+	const [iceBreaking, setIceBreaking] = useState<FellowshipContentField[]>(
+		content.iceBreaking.length === 0
+			? [{ id: uuidv4(), question: '', answers: [] }]
+			: content.iceBreaking,
 	);
+	const textareaRef = useRef<TextInput>(null);
+
+	const handlePressDelete = (id: string) => {
+		const updatedIceBreaking = iceBreaking.filter((item) => item.id !== id);
+		setIceBreaking(updatedIceBreaking);
+	};
+
+	const handlePressAdd = () => {
+		const updatedIceBreaking = [...iceBreaking];
+		updatedIceBreaking.push({ id: uuidv4(), question: '', answers: [] });
+		setIceBreaking(updatedIceBreaking);
+
+		// focus keyboard
+		setTimeout(() => {
+			textareaRef.current?.focus();
+		}, 100);
+	};
+
+	const handlePressFinish = () => {
+		updateFellowshipContent({
+			iceBreaking: iceBreaking.filter(({ question }) => question !== ''),
+		});
+		setStep('CONTENT');
+	};
 
 	return (
 		<SafeAreaView className="h-full">
@@ -35,15 +63,23 @@ export default function FellowshipIcebrakingScreen() {
 					</HStack>
 					<VStack space="sm">
 						<VStack space="xl">
-							{iceBreaking.map((item, index) => (
-								<HStack key={index} space="lg" className="w-full items-center">
+							{iceBreaking.map(({ id, question }, index) => (
+								<HStack key={id} space="lg" className="w-full items-center">
 									<Box className="w-2 h-2 bg-background-400 rounded-full" />
 									<Textarea size="xl" className="rounded-xl flex-1">
 										<TextareaInput
-											value={item}
+											//@ts-ignore
+											ref={
+												index === iceBreaking.length - 1 ? textareaRef : null
+											}
+											value={question}
 											onChangeText={(text) => {
 												const updatedIceBreaking = [...iceBreaking];
-												updatedIceBreaking[index] = text;
+												updatedIceBreaking[index] = {
+													id,
+													question: text,
+													answers: [],
+												};
 												setIceBreaking(updatedIceBreaking);
 											}}
 											placeholder="ex. 오늘 말씀을 삶에 어떻게 적용하면 좋을까요?"
@@ -51,9 +87,7 @@ export default function FellowshipIcebrakingScreen() {
 									</Textarea>
 									<Pressable
 										onPress={() => {
-											const updatedIceBreaking = [...iceBreaking];
-											updatedIceBreaking.splice(index, 1);
-											setIceBreaking(updatedIceBreaking);
+											handlePressDelete(id);
 										}}
 									>
 										<Icon as={X} size="lg" />
@@ -64,11 +98,7 @@ export default function FellowshipIcebrakingScreen() {
 						<HStack space="xl" className="items-center py-3 w-full">
 							<Pressable
 								className="border-[1px] border-primary-300 rounded-full p-2"
-								onPress={() => {
-									const updatedIceBreaking = [...iceBreaking];
-									updatedIceBreaking.push('');
-									setIceBreaking(updatedIceBreaking);
-								}}
+								onPress={handlePressAdd}
 							>
 								<Icon as={Plus} size="lg" className="color-primary-700" />
 							</Pressable>
@@ -85,12 +115,9 @@ export default function FellowshipIcebrakingScreen() {
 					size="lg"
 					variant="solid"
 					className="mx-5 mb-6 rounded-xl"
-					onPress={() => {
-						updateFellowshipContent({ iceBreaking });
-						setStep('CONTENT');
-					}}
+					onPress={handlePressFinish}
 				>
-					<ButtonText>확인</ButtonText>
+					<ButtonText>완료</ButtonText>
 				</Button>
 			</VStack>
 			{/* TODO: 추천세트 기능 추가 */}

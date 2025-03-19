@@ -6,31 +6,32 @@ import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { Text } from '#/components/ui/text';
 import { HStack } from '#/components/ui/hstack';
-import { Plus, UserRound } from 'lucide-react-native';
-import type {
-	Fellowship,
-	FellowshipAnswerField,
-	FellowshipMember,
-} from '@/store/createFellowship';
+import { ChevronRight, Plus, UserRound } from 'lucide-react-native';
+
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { Button, ButtonText } from '#/components/ui/button';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { BottomSheetListHeader } from '@/components/common/BottomSheet';
-import { type Dispatch, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@/utils/cn';
+import type {
+	ClientFellowship,
+	FellowshipAnswerField,
+	FellowshipMember,
+} from '@/api/fellowship/types';
 
 type PrayerRequestProps = {
 	members: FellowshipMember[];
 	prayerRequests: FellowshipAnswerField[];
-	setFellowship: Dispatch<React.SetStateAction<Fellowship>>;
-	isEditing: boolean;
+	setFellowship: (
+		updater: (prev: ClientFellowship) => ClientFellowship,
+	) => void;
 };
 
 const PrayerRequestList = ({
 	members,
 	prayerRequests,
 	setFellowship,
-	isEditing,
 }: PrayerRequestProps) => {
 	const {
 		handleOpen: handleOpenPrayerRequest,
@@ -63,40 +64,57 @@ const PrayerRequestList = ({
 				...prev,
 				content: {
 					...prev.content,
-					prayerRequest: [...newContent],
+					prayerRequest: {
+						...prev.content.prayerRequest,
+						answers: [...newContent],
+					},
 				},
 			};
 		});
 		handleClosePrayerRequest();
 	};
 
-	const handlePressPrayerRequest = (member: FellowshipMember) => {
-		setSelectedMember(member);
+	const handlePressPrayerRequest = (member?: FellowshipMember) => {
+		if (member) setSelectedMember(member);
 		handleOpenPrayerRequest();
 	};
 
 	return (
 		<>
 			<VStack space="md">
-				{prayerRequests.map(({ member, value }) => (
-					<Pressable
-						key={member.id}
-						onPress={
-							isEditing ? () => handlePressPrayerRequest(member) : undefined
-						}
-					>
-						<VStack space="md" className="bg-white rounded-xl py-4 px-4">
-							<HStack space="md" className="items-center">
-								<Avatar key={member.id} size="xs" className="bg-primary-400">
-									<Icon as={UserRound} size="sm" className="stroke-white" />
-									<AvatarBadge className="bg-yellow-400" />
-								</Avatar>
-								<Text size="md">{member.displayName}</Text>
-							</HStack>
-							<Text size="lg">{value}</Text>
-						</VStack>
+				{prayerRequests.length > 0 ? (
+					prayerRequests.map(({ member, value }) => (
+						<Pressable
+							key={member.id}
+							onPress={() => handlePressPrayerRequest(member)}
+						>
+							<VStack space="md" className="bg-white rounded-xl py-4 px-4">
+								<HStack space="md" className="items-center">
+									<Avatar key={member.id} size="xs" className="bg-primary-400">
+										<Icon as={UserRound} size="sm" className="stroke-white" />
+										<AvatarBadge className="bg-yellow-400" />
+									</Avatar>
+									<Text size="md">{member.displayName}</Text>
+								</HStack>
+								<Text size="lg">{value}</Text>
+							</VStack>
+						</Pressable>
+					))
+				) : (
+					<Pressable onPress={() => handlePressPrayerRequest()}>
+						<HStack
+							space="md"
+							className="bg-white rounded-xl py-4 px-4 items-center justify-between"
+						>
+							<Text size="lg">기도제목을 추가해보세요</Text>
+							<Icon
+								as={ChevronRight}
+								size="md"
+								className="stroke-primary-500"
+							/>
+						</HStack>
 					</Pressable>
-				))}
+				)}
 			</VStack>
 			<BottomSheetPrayerRequestContainer>
 				<VStack space="sm" className="px-6 py-2">

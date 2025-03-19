@@ -7,25 +7,26 @@ import { Divider } from '#/components/ui/divider';
 import { Text } from '#/components/ui/text';
 import { HStack } from '#/components/ui/hstack';
 import { Plus, UserRound } from 'lucide-react-native';
-import type {
-	Fellowship,
-	FellowshipContentField,
-	FellowshipMember,
-} from '@/store/createFellowship';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { Button, ButtonText } from '#/components/ui/button';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { BottomSheetListHeader } from '@/components/common/BottomSheet';
-import { type Dispatch, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@/utils/cn';
+import type {
+	ClientFellowship,
+	FellowshipContentField,
+	FellowshipMember,
+} from '@/api/fellowship/types';
 
 type SermonContentProps = {
 	index: number;
 	members: FellowshipMember[];
 	sermonTopic: FellowshipContentField;
-	setFellowship: Dispatch<React.SetStateAction<Fellowship>>;
-	contentType: Exclude<keyof Fellowship['content'], 'prayerRequest'>;
-	isEditing: boolean;
+	setFellowship: (
+		updater: (prev: ClientFellowship) => ClientFellowship,
+	) => void;
+	contentType: Exclude<keyof ClientFellowship['content'], 'prayerRequest'>;
 };
 
 const SermonContent = ({
@@ -34,7 +35,6 @@ const SermonContent = ({
 	sermonTopic,
 	setFellowship,
 	contentType,
-	isEditing,
 }: SermonContentProps) => {
 	const { id, question, answers } = sermonTopic;
 	const {
@@ -87,7 +87,7 @@ const SermonContent = ({
 
 	return (
 		<>
-			<Pressable onPress={isEditing ? handleOpenTopic : undefined}>
+			<Pressable onPress={handleOpenTopic}>
 				<VStack space="md" className="bg-white rounded-xl py-4">
 					<Text size="xl" className="px-4 font-pretendard-semi-bold">
 						{index + 1}. {question}

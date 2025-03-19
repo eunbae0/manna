@@ -1,88 +1,69 @@
-import type { User } from '@/types/user';
+import { createFellowship, updateFellowship } from '@/api/fellowship';
+import type { ClientFellowship } from '@/api/fellowship/types';
 import { router } from 'expo-router';
 import { create } from 'zustand';
+import type {
+	FellowShipStoreData,
+	FellowshipStoreStep,
+	FellowshipStoreType,
+} from './types';
 
-export type Fellowship = {
-	info: {
-		date: Date;
-		preachTitle: FellowshipInfoField;
-		preacher: FellowshipInfoField;
-		preachText: FellowshipInfoField;
-		members: FellowshipMember[];
-	};
-	content: {
-		iceBreaking: FellowshipContentField[];
-		sermonTopic: FellowshipContentField[];
-		prayerRequest: FellowshipAnswerField[];
-	};
-};
-
-export type FellowShipStoreData = {
-	info: {
-		date: Date | null;
-		preachTitle: FellowshipInfoField;
-		preacher: FellowshipInfoField;
-		preachText: FellowshipInfoField;
-		members: FellowshipMember[];
-	};
-	content: {
-		iceBreaking: string[];
-		sermonTopic: string[];
-		prayerRequest: boolean;
-	};
-};
-
-export type FellowshipStep =
-	| 'INFO'
-	| 'CONTENT'
-	| 'CONTENT_ICEBREAKING'
-	| 'CONTENT_SERMON';
-
-export type FellowshipMember = Partial<
-	Pick<User, 'id' | 'displayName' | 'photoUrl'>
-> & {
-	isLeader: boolean;
-};
-
-export type FellowshipInfoField = { value?: string; disabled: boolean };
-export type FellowshipContentField = {
-	id: string;
-	question: string;
-	answers: FellowshipAnswerField[];
-};
-export type FellowshipAnswerField = {
-	member: FellowshipMember;
-	value: string;
-};
-
-export const FELLOWSHIP_DEFAULT_STEP: FellowshipStep = 'INFO';
+export const FELLOWSHIP_DEFAULT_STEP: FellowshipStoreStep = 'INFO';
 
 type FellowShipStoreState = FellowShipStoreData & {
-	currentStep: FellowshipStep;
-	setStep: (step: FellowshipStep) => void;
+	currentStep: FellowshipStoreStep;
+	type: FellowshipStoreType;
+	fellowshipId?: string | null;
+	lastUpdatedId?: string | null;
+	setStep: (step: FellowshipStoreStep) => void;
+	setType: (type: FellowshipStoreType) => void;
+	setFellowshipId: (fellowshipId: string | null) => void;
+	getLastUpdatedIdAndReset: () => string | null;
 	updateFellowshipInfo: (data: Partial<FellowShipStoreState['info']>) => void;
 	updateFellowshipContent: (
 		data: Partial<FellowShipStoreState['content']>,
 	) => void;
-	completeFellowship: () => void;
+	transformFellowshipData: () => Omit<
+		ClientFellowship,
+		'id' | 'groupId' | 'createdAt' | 'updatedAt'
+	>;
+	completeFellowship: ({
+		type,
+		groupId,
+		fellowshipId,
+	}: {
+		type: FellowshipStoreType;
+		groupId: string;
+		fellowshipId?: string | null;
+	}) => Promise<void>;
 	clearFellowship: () => void;
 };
 
 export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	currentStep: FELLOWSHIP_DEFAULT_STEP,
+	type: 'CREATE',
+	fellowshipId: null,
 	info: {
-		date: null,
-		preachTitle: { disabled: false, value: '' },
-		preacher: { disabled: false, value: '' },
-		preachText: { disabled: false, value: '' },
+		date: new Date(),
+		preachTitle: '',
+		preacher: { isActive: true, value: '' },
+		preachText: { isActive: true, value: '' },
 		members: [],
 	},
 	content: {
 		iceBreaking: [],
 		sermonTopic: [],
-		prayerRequest: true,
+		prayerRequest: { isActive: true, answers: [] },
 	},
 	setStep: (step) => set({ currentStep: step }),
+	setType: (type) => set({ type }),
+	setFellowshipId: (fellowshipId) => set({ fellowshipId }),
+	getLastUpdatedIdAndReset: () => {
+		const id = get().lastUpdatedId || null;
+		set({ lastUpdatedId: null });
+		return id;
+	},
+
 	updateFellowshipInfo: (data) =>
 		set((state) => ({
 			info: { ...state.info, ...data },
@@ -91,24 +72,61 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 		set((state) => ({
 			content: { ...state.content, ...data },
 		})),
-	completeFellowship: async () => {
-		get().clearFellowship();
-		set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
-		router.replace('/(app)/(fellowship)/[id]');
+
+	/**
+	 * Transforms store data into the format expected by the API
+	 * @returns Fellowship data in the format expected by createFellowship API
+	 */
+	transformFellowshipData: () => {
+		const { info, content } = get();
+
+		return {
+			info,
+			content,
+		};
 	},
+
+	completeFellowship: async ({ type, fellowshipId, groupId }) => {
+		const fellowshipData = get().transformFellowshipData();
+
+		switch (type) {
+			case 'CREATE': {
+				const id = await createFellowship(groupId, fellowshipData);
+				get().clearFellowship();
+				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
+				router.replace(`/(app)/(fellowship)/${id}`);
+				break;
+			}
+			case 'EDIT': {
+				if (!fellowshipId) return;
+
+				await updateFellowship(groupId, fellowshipId, fellowshipData);
+
+				// Set lastUpdatedId to let components know this ID needs to be refreshed
+				set({ lastUpdatedId: fellowshipId });
+
+				get().clearFellowship();
+				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
+				router.back();
+				break;
+			}
+		}
+	},
+
 	clearFellowship: () => {
 		set({
+			fellowshipId: null,
 			info: {
-				date: null,
-				preachTitle: { disabled: false, value: '' },
-				preacher: { disabled: false, value: '' },
-				preachText: { disabled: false, value: '' },
+				date: new Date(),
+				preachTitle: '',
+				preacher: { isActive: false, value: '' },
+				preachText: { isActive: false, value: '' },
 				members: [],
 			},
 			content: {
 				iceBreaking: [],
 				sermonTopic: [],
-				prayerRequest: true,
+				prayerRequest: { isActive: false, answers: [] },
 			},
 		});
 	},

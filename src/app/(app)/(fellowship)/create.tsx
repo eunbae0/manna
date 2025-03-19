@@ -2,19 +2,18 @@ import { Animated } from 'react-native';
 import { Redirect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import FellowshipInfoScreen from '@/components/screens/fellowship/FellowshipInfoScreen';
-import {
-	type FellowshipStep,
-	useFellowshipStore,
-} from '@/store/createFellowship';
-import FellowshipContentScreen from '@/components/screens/fellowship/FellowshipContentScreen';
-import FellowshipIcebrakingScreen from '@/components/screens/fellowship/FellowshipIcebrakingScreen';
-import FellowshipSermonTopicScreen from '@/components/screens/fellowship/FellowshipSermonTopicScreen';
+import { useFellowshipStore } from '@/store/createFellowship';
+import type { FellowshipStoreStep } from '@/store/createFellowship/types';
+
+import FellowshipInfoScreen from '@/components/fellowship/screens/FellowshipInfoScreen';
+import FellowshipContentScreen from '@/components/fellowship/screens/FellowshipContentScreen';
+import FellowshipIcebrakingScreen from '@/components/fellowship/screens/FellowshipIcebrakingScreen';
+import FellowshipSermonTopicScreen from '@/components/fellowship/screens/FellowshipSermonTopicScreen';
 
 export default function CreateFellowshipScreen() {
 	const { currentStep } = useFellowshipStore();
 
-	const switchStep = (step: FellowshipStep) => {
+	const switchStep = (step: FellowshipStoreStep) => {
 		switch (step) {
 			case 'INFO':
 				return <FellowshipInfoScreen />;

@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { Pressable, SafeAreaView, ScrollView } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import { Avatar, AvatarBadge } from '#/components/ui/avatar';
 import { Box } from '#/components/ui/box';
 import { Button, ButtonText } from '#/components/ui/button';
@@ -17,11 +21,7 @@ import { VStack } from '#/components/ui/vstack';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/auth';
-import {
-	type FellowshipField,
-	type FellowshipMember,
-	useFellowshipStore,
-} from '@/store/createFellowship';
+import { useFellowshipStore } from '@/store/createFellowship';
 import {
 	CheckIcon,
 	CircleHelp,
@@ -30,10 +30,11 @@ import {
 	Trash,
 	UserRound,
 } from 'lucide-react-native';
-import { useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView } from 'react-native';
 import { useToastStore } from '@/store/toast';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import type {
+	FellowshipInfoField,
+	FellowshipMember,
+} from '@/api/fellowship/types';
 
 export default function FellowshipInfoScreen() {
 	const { user } = useAuthStore();
@@ -59,13 +60,14 @@ export default function FellowshipInfoScreen() {
 	const { info, setStep, updateFellowshipInfo, clearFellowship } =
 		useFellowshipStore();
 	const [selectedDate, setSelectedDate] = useState(info.date || new Date());
-	const [preachTitle, setPreachTitle] = useState<FellowshipField>({
-		value: info.preachTitle?.value || '',
-		disabled: info.preachTitle?.disabled || false,
-	});
-	const [preachText, setPreachText] = useState<FellowshipField>({
+	const [preachTitle, setPreachTitle] = useState(info.preachTitle || '');
+	const [preachText, setPreachText] = useState<FellowshipInfoField>({
 		value: info.preachText?.value || '',
-		disabled: info.preachText?.disabled || false,
+		isActive: info.preachText?.isActive || false,
+	});
+	const [preacher, setPreacher] = useState<FellowshipInfoField>({
+		value: info.preacher?.value || '',
+		isActive: info.preacher?.isActive || false,
 	});
 
 	const [selectedMember, setSelectedMember] = useState<FellowshipMember | null>(
@@ -76,8 +78,8 @@ export default function FellowshipInfoScreen() {
 			? [
 					{
 						id: user?.id || '1',
-						displayName: user?.displayName,
-						photoUrl: user?.photoUrl,
+						displayName: user?.displayName || '',
+						photoUrl: user?.photoUrl || '',
 						isLeader: true,
 					},
 				]
@@ -134,35 +136,12 @@ export default function FellowshipInfoScreen() {
 								<Text size="md" className="font-pretendard-semi-bold">
 									설교 제목
 								</Text>
-								<Checkbox
-									size="sm"
-									value={'설교 제목'}
-									onChange={() =>
-										setPreachTitle({
-											...preachTitle,
-											disabled: !preachTitle.disabled,
-										})
-									}
-									isChecked={preachTitle.disabled}
-								>
-									<CheckboxIndicator>
-										<CheckboxIcon as={CheckIcon} />
-									</CheckboxIndicator>
-									<CheckboxLabel>제목이 없어요</CheckboxLabel>
-								</Checkbox>
 							</HStack>
-							<Input
-								variant="outline"
-								size="xl"
-								className="rounded-xl"
-								isDisabled={preachTitle.disabled}
-							>
+							<Input variant="outline" size="xl" className="rounded-xl">
 								<InputField
 									placeholder="설교 제목을 입력해주세요."
-									value={preachTitle.value}
-									onChangeText={(value) =>
-										setPreachTitle({ ...preachTitle, value })
-									}
+									value={preachTitle}
+									onChangeText={(value) => setPreachTitle(value)}
 								/>
 							</Input>
 						</VStack>
@@ -177,10 +156,10 @@ export default function FellowshipInfoScreen() {
 									onChange={() =>
 										setPreachText({
 											...preachText,
-											disabled: !preachText.disabled,
+											isActive: !preachText.isActive,
 										})
 									}
-									isChecked={preachText.disabled}
+									isChecked={!preachText.isActive}
 								>
 									<CheckboxIndicator>
 										<CheckboxIcon as={CheckIcon} />
@@ -192,7 +171,7 @@ export default function FellowshipInfoScreen() {
 								variant="outline"
 								size="xl"
 								className="rounded-xl"
-								isDisabled={preachText.disabled}
+								isDisabled={!preachText.isActive}
 							>
 								<InputField
 									placeholder="ex. 창세기 1장 1~7절"
@@ -200,6 +179,41 @@ export default function FellowshipInfoScreen() {
 									onChangeText={(value) =>
 										setPreachText({ ...preachText, value })
 									}
+								/>
+							</Input>
+						</VStack>
+						<VStack space="sm">
+							<HStack className="items-center justify-between">
+								<Text size="md" className="font-pretendard-semi-bold">
+									설교자
+								</Text>
+								<Checkbox
+									size="sm"
+									value={'설교자'}
+									onChange={() =>
+										setPreacher({
+											...preacher,
+											isActive: !preacher.isActive,
+										})
+									}
+									isChecked={!preacher.isActive}
+								>
+									<CheckboxIndicator>
+										<CheckboxIcon as={CheckIcon} />
+									</CheckboxIndicator>
+									<CheckboxLabel>설교자가 없어요</CheckboxLabel>
+								</Checkbox>
+							</HStack>
+							<Input
+								variant="outline"
+								size="xl"
+								className="rounded-xl"
+								isDisabled={!preacher.isActive}
+							>
+								<InputField
+									placeholder="설교자를 입력해주세요."
+									value={preacher.value}
+									onChangeText={(value) => setPreacher({ ...preacher, value })}
 								/>
 							</Input>
 						</VStack>
@@ -254,8 +268,9 @@ export default function FellowshipInfoScreen() {
 					className="mb-6 mx-5 rounded-xl"
 					onPress={() => {
 						if (
-							(!preachTitle.value && !preachTitle.disabled) ||
-							(!preachText.value && !preachText.disabled)
+							!preachTitle ||
+							(!preachText.value && preachText.isActive) ||
+							(!preacher.value && preacher.isActive)
 						) {
 							showInfo('나눔 정보를 모두 입력해주세요');
 							return;
@@ -264,6 +279,7 @@ export default function FellowshipInfoScreen() {
 							date: selectedDate,
 							preachTitle,
 							preachText,
+							preacher,
 							members,
 						});
 						setStep('CONTENT');
