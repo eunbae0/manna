@@ -4,9 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { type OnboardingStep, useOnboardingStore } from '@/store/onboarding';
 
-import EmailSignInStepScreen from '@/components/features/onboarding/screens/EmailSignInStepScreen';
-import GroupStepScreen from '@/components/features/onboarding/screens/GroupStepScreen';
-import NameStepScreen from '@/components/features/onboarding/screens/NameStepScreen';
+import EmailSignInStepScreen from '@/features/onboarding/screens/EmailSignInStepScreen';
+import GroupStepScreen from '@/features/onboarding/screens/GroupStepScreen';
+import NameStepScreen from '@/features/onboarding/screens/NameStepScreen';
 
 function OnboardingScreen() {
 	const { currentStep } = useOnboardingStore();

@@ -14,10 +14,10 @@ import {
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import { Box } from '#/components/ui/box';
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@/components/common/spinner';
 import CalendarTab from './CalanderTab';
-import type { YYYYMMDD } from '@/types/date';
-import { getKSTDate } from '@/utils/date';
+import type { YYYYMMDD } from '@/shared/types/date';
+import { getKSTDate } from '@/shared/utils/date';
 import { Pressable, RefreshControl, ScrollView } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
@@ -25,8 +25,8 @@ import {
 	BottomSheetListItem,
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
-import { usePrayerRequestsByDate } from '@/components/home/hooks/usePrayerRequestsByDate';
-import { useFellowshipsByDate } from '@/components/home/hooks/useFellowshipsByDate';
+import { usePrayerRequestsByDate } from '@/features/home/hooks/usePrayerRequestsByDate';
+import { useFellowshipsByDate } from '@/features/home/hooks/useFellowshipsByDate';
 import type { ClientPrayerRequest } from '@/api/prayer-request/types';
 import { PrayerRequestCard } from './PrayerRequestCard';
 import { useAuthStore } from '@/store/auth';

@@ -11,7 +11,7 @@ import {
 	type CollectionReference,
 } from 'firebase/firestore';
 import { database } from '@/firebase/config';
-import type { WorshipType } from './types';
+import type { WorshipType } from './api/types';
 import { serverTimestamp } from '@/firebase/firestore';
 import { FirestoreService } from '../services';
 

@@ -1,4 +1,4 @@
-import type { ClientFellowship } from '@/api/fellowship/types';
+import type { ClientFellowship } from '@/features/fellowship/api/types';
 
 export type FellowShipStoreData = Omit<ClientFellowship, 'id' | 'groupId'>;
 

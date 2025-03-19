@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { ApiError } from '@/api/errors/types';
 import { useToastStore } from '@/store/toast';
-import { logError } from '@/utils/logger';
+import { logError } from '@/shared/utils/logger';
 
 /**
  * Enhanced error handling hook that both logs errors for developers

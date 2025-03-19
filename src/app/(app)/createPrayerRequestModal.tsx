@@ -1,5 +1,5 @@
-import { CreatePrayerRequestScreen } from '@/components/home/screens/CreatePrayerRequestScreen';
-import { getKSTDate } from '@/utils/date';
+import { CreatePrayerRequestScreen } from '@/features/home/screens/CreatePrayerRequestScreen';
+import { getKSTDate } from '@/shared/utils/date';
 
 /**
  * Modal screen for creating a new prayer request

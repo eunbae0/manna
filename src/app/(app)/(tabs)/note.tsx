@@ -9,15 +9,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heading } from '#/components/ui/heading';
 import { Button, ButtonIcon } from '#/components/ui/button';
 import { Filter, PlusIcon } from 'lucide-react-native';
-import { NoteCard } from '@/components/note/NoteCard';
+import { NoteCard } from '@/features/notes/components/NoteCard';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { useWorshipStore } from '@/store/worship';
-import { WorshipTypeSelector } from '@/components/worship/WorshipTypeSelector';
+import { WorshipTypeSelector } from '@/features/worship/WorshipTypeSelector';
 import { fetchUserNotes, fetchUserNotesByWorshipType } from '@/api/notes';
-import { fetchUserWorshipTypes } from '@/api/worship-types';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
+import { fetchUserWorshipTypes } from '@/api/worship-types';
 
 export default function NoteScreen() {
 	const { setWorshipTypes, selectedWorshipType } = useWorshipStore();

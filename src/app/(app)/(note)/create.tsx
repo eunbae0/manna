@@ -28,7 +28,7 @@ import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Timestamp } from 'firebase/firestore';
 import { fetchUserWorshipTypes } from '@/api/worship-types';
-import { WorshipTypeSelector } from '@/components/worship/WorshipTypeSelector';
+import { WorshipTypeSelector } from '@/features/worship/WorshipTypeSelector';
 
 export default function CreateScreen() {
 	const insets = useSafeAreaInsets();

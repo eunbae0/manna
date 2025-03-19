@@ -1,5 +1,5 @@
-import { createFellowship, updateFellowship } from '@/api/fellowship';
-import type { ClientFellowship } from '@/api/fellowship/types';
+import { createFellowship, updateFellowship } from '@/features/fellowship/api';
+import type { ClientFellowship } from '@/features/fellowship/api/types';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 import type {

@@ -33,7 +33,7 @@ import { useToastStore } from '@/store/toast';
 import type {
 	FellowshipInfoField,
 	FellowshipMember,
-} from '@/api/fellowship/types';
+} from '@/features/fellowship/api/types';
 import { Avatar } from '@/components/common/avatar';
 
 export default function FellowshipInfoScreen() {

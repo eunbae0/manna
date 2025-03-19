@@ -4,7 +4,7 @@ import { AppleAuthProvider } from './providers/apple';
 import { EmailAuthProvider } from './providers/email';
 import { FirestoreUserProfile } from './profile';
 import { signOut } from '@/firebase/auth';
-import type { User } from '@/types/user';
+import type { User } from '@/shared/types/user';
 import type { UserCredential } from 'firebase/auth';
 import { handleApiError } from '../errors';
 import { serverTimestamp } from '@/firebase/firestore';

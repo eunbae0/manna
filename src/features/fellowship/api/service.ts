@@ -15,9 +15,12 @@ import {
 	setDoc,
 } from 'firebase/firestore';
 import { database } from '@/firebase/config';
-import type { Fellowship, ClientFellowship } from './types';
+import type {
+	Fellowship,
+	ClientFellowship,
+} from '@/features/fellowship/api/types';
 import { serverTimestamp } from '@/firebase/firestore';
-import { FirestoreService } from '../services';
+import { FirestoreService } from '@/api/services';
 import { v4 as uuidv4 } from 'uuid';
 
 /**

@@ -13,12 +13,12 @@ import { Button, ButtonText } from '#/components/ui/button';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
 import { useState } from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import type {
 	ClientFellowship,
 	FellowshipAnswerField,
 	FellowshipMember,
-} from '@/api/fellowship/types';
+} from '@/features/fellowship/api/types';
 
 type PrayerRequestProps = {
 	members: FellowshipMember[];

@@ -1,7 +1,7 @@
-import type { Fellowship, ClientFellowship } from './types';
-import { handleApiError } from '../errors';
-import { withApiLogging } from '../utils/logger';
+import { handleApiError } from '@/api/errors';
+import { withApiLogging } from '@/api/utils/logger';
 import { FirestoreFellowshipService } from './service';
+import type { Fellowship, ClientFellowship } from './types';
 
 /**
  * Creates a fellowship service instance for a specific group

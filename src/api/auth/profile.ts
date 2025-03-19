@@ -1,7 +1,7 @@
 import { database } from '@/firebase/config';
 import { doc, getDoc, setDoc, updateDoc } from '@/firebase/firestore';
-import type { User } from '@/types/user';
-import { createUserWithServerTimestamp } from '@/utils/auth';
+import type { User } from '@/shared/types/user';
+import { createUserWithServerTimestamp } from '@/shared/utils/auth';
 import type { UserProfileService } from './types';
 import { handleApiError } from '../errors';
 

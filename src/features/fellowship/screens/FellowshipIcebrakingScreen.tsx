@@ -6,7 +6,7 @@ import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { VStack } from '#/components/ui/vstack';
-import type { FellowshipContentField } from '@/api/fellowship/types';
+import type { FellowshipContentField } from '@/features/fellowship/api/types';
 import Header from '@/components/common/Header';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { CircleHelp, Plus, X } from 'lucide-react-native';

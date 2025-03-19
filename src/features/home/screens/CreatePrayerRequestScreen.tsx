@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPrayerRequest } from '@/api/prayer-request';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
-import type { YYYYMMDD } from '@/types/date';
+import type { YYYYMMDD } from '@/shared/types/date';
 import {
 	Checkbox,
 	CheckboxIndicator,

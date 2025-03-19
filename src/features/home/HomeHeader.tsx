@@ -24,7 +24,7 @@ import {
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
 import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
-import { Avatar, AvatarGroup } from '../common/avatar';
+import { Avatar, AvatarGroup } from '../../components/common/avatar';
 
 function HomeHeader() {
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();

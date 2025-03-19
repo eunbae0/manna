@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchPrayerRequestsByDateRange } from '@/api/prayer-request';
-import { getEndOfDayKST, getStartOfDayKST, parseKSTDate } from '@/utils/date';
-import type { YYYYMMDD } from '@/types/date';
+import {
+	getEndOfDayKST,
+	getStartOfDayKST,
+	parseKSTDate,
+} from '@/shared/utils/date';
+import type { YYYYMMDD } from '@/shared/types/date';
 
 /**
  * Custom hook to fetch prayer requests for a specific date

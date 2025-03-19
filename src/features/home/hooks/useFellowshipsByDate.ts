@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchFellowshipsByDateRange } from '@/api/fellowship';
-import { getEndOfDayKST, getStartOfDayKST, parseKSTDate } from '@/utils/date';
-import type { YYYYMMDD } from '@/types/date';
+import { fetchFellowshipsByDateRange } from '@/features/fellowship/api';
+import {
+	getEndOfDayKST,
+	getStartOfDayKST,
+	parseKSTDate,
+} from '@/shared/utils/date';
+import type { YYYYMMDD } from '@/shared/types/date';
 
 /**
  * Custom hook to fetch fellowships for a specific date

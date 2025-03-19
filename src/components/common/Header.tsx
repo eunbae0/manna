@@ -6,7 +6,7 @@ import { Button, ButtonIcon } from '#/components/ui/button';
 import { ChevronLeftIcon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { VStack } from '#/components/ui/vstack';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
 
 type Props = {

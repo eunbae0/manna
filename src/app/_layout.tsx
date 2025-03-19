@@ -1,7 +1,7 @@
 import { Slot } from 'expo-router';
 import { GluestackUIProvider } from '#/components/ui/gluestack-ui-provider';
 import { StatusBar } from 'expo-status-bar';
-import { ToastContainer } from '@/components/ui/toast/ToastContainer';
+import { ToastContainer } from '@/components/common/toast/ToastContainer';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';

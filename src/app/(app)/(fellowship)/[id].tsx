@@ -33,13 +33,16 @@ import { Heading } from '#/components/ui/heading';
 import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '#/components/ui/button';
-import SermonContent from '@/components/fellowship/SermonContent';
-import PrayerRequestList from '@/components/fellowship/PrayerRequest';
+import SermonContent from '@/features/fellowship/SermonContent';
+import PrayerRequestList from '@/features/fellowship/PrayerRequest';
 import type {
 	ClientFellowship,
 	FellowshipMember,
-} from '@/api/fellowship/types';
-import { fetchFellowshipById, updateFellowship } from '@/api/fellowship';
+} from '@/features/fellowship/api/types';
+import {
+	fetchFellowshipById,
+	updateFellowship,
+} from '@/features/fellowship/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function FellowshipDetailScreen() {

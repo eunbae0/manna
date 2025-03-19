@@ -1,4 +1,4 @@
-import type { YYYYMMDD } from '@/types/date';
+import type { YYYYMMDD } from '@/shared/types/date';
 
 export const getKSTDate = (date: Date): YYYYMMDD => {
 	return new Intl.DateTimeFormat('ko-KR', {

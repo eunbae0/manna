@@ -9,9 +9,9 @@ import { UserRound, Heart } from 'lucide-react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { Text } from '#/components/ui/text';
 import { Icon } from '#/components/ui/icon';
-import type { YYYYMMDD } from '@/types/date';
+import type { YYYYMMDD } from '@/shared/types/date';
 import { useAuthStore } from '@/store/auth';
-import { Avatar } from '../common/avatar';
+import { Avatar } from '../../components/common/avatar';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;

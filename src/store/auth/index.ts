@@ -6,7 +6,7 @@ import {
 	signIn,
 	updateFirestoreUser,
 } from '@/api/auth';
-import type { Group, User } from '@/types/user';
+import type { Group, User } from '@/shared/types/user';
 import type { AuthType } from '@/api/auth/types';
 import type { ApiError } from '@/api/errors/types';
 import { handleApiError } from '@/api/errors';

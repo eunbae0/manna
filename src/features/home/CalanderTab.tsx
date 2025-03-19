@@ -6,9 +6,9 @@ import { VStack } from '#/components/ui/vstack';
 import { Divider } from '#/components/ui/divider';
 import { Text } from '#/components/ui/text';
 
-import type { YYYYMMDD } from '@/types/date';
-import { cn } from '@/utils/cn';
-import { getKSTDate } from '../../utils/date';
+import type { YYYYMMDD } from '@/shared/types/date';
+import { cn } from '@/shared/utils/cn';
+import { getKSTDate } from '../../shared/utils/date';
 import { Box } from '#/components/ui/box';
 import { useIsFocused } from '@react-navigation/native';
 

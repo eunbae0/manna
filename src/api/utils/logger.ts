@@ -1,5 +1,5 @@
 import { auth } from '@/firebase/config';
-import { logDebug, logError, logInfo, logWarning } from '@/utils/logger';
+import { logDebug, logError, logInfo, logWarning } from '@/shared/utils/logger';
 
 export interface ApiLogContext {
 	operation: string;

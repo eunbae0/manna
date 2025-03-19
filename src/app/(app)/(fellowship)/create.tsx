@@ -5,10 +5,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFellowshipStore } from '@/store/createFellowship';
 import type { FellowshipStoreStep } from '@/store/createFellowship/types';
 
-import FellowshipInfoScreen from '@/components/fellowship/screens/FellowshipInfoScreen';
-import FellowshipContentScreen from '@/components/fellowship/screens/FellowshipContentScreen';
-import FellowshipIcebrakingScreen from '@/components/fellowship/screens/FellowshipIcebrakingScreen';
-import FellowshipSermonTopicScreen from '@/components/fellowship/screens/FellowshipSermonTopicScreen';
+import FellowshipInfoScreen from '@/features/fellowship/screens/FellowshipInfoScreen';
+import FellowshipContentScreen from '@/features/fellowship/screens/FellowshipContentScreen';
+import FellowshipIcebrakingScreen from '@/features/fellowship/screens/FellowshipIcebrakingScreen';
+import FellowshipSermonTopicScreen from '@/features/fellowship/screens/FellowshipSermonTopicScreen';
 
 export default function CreateFellowshipScreen() {
 	const { currentStep } = useFellowshipStore();
