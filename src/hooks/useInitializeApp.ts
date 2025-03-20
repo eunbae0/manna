@@ -1,5 +1,5 @@
 import { auth } from '@/firebase/config';
-import { getFirestoreUser } from '@/api/auth';
+import { getUser } from '@/api/auth';
 import { useAuthStore } from '@/store/auth';
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
@@ -33,8 +33,8 @@ export function useInitializeApp() {
 				return;
 			}
 			try {
-				const userFromFirestore = await getFirestoreUser(user.uid);
-				updateUser(userFromFirestore);
+				const userFromFirestore = await getUser(user.uid);
+				console.log(userFromFirestore);
 				updateAuthenticated(true);
 			} catch (error) {
 				throw new Error('Firestore에서 유저 정보를 가져오지 못했습니다');

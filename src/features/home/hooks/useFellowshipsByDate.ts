@@ -6,6 +6,7 @@ import {
 	parseKSTDate,
 } from '@/shared/utils/date';
 import type { YYYYMMDD } from '@/shared/types/date';
+import { useAuthStore } from '@/store/auth';
 
 /**
  * Custom hook to fetch fellowships for a specific date
@@ -17,12 +18,16 @@ export function useFellowshipsByDate(date: YYYYMMDD) {
 	const startDate = getStartOfDayKST(dateObj);
 	const endDate = getEndOfDayKST(dateObj);
 
-	// Hardcoded group ID for now - in a real app, you would get this from user context or props
-	const groupId = 'oVgiDT2gRRuFUWuUV0Ya';
+	const { currentGroup } = useAuthStore();
 
 	return useQuery({
-		queryKey: ['fellowships', groupId, date],
-		queryFn: () => fetchFellowshipsByDateRange(groupId, startDate, endDate),
+		queryKey: ['fellowships', currentGroup?.groupId || '', date],
+		queryFn: () =>
+			fetchFellowshipsByDateRange(
+				currentGroup?.groupId || '',
+				startDate,
+				endDate,
+			),
 		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
 }

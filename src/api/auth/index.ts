@@ -1,52 +1,55 @@
-import { auth } from '@/firebase/config';
-import type { AuthType } from './types';
-import { AppleAuthProvider } from './providers/apple';
-import { EmailAuthProvider } from './providers/email';
-import { FirestoreUserProfile } from './profile';
-import { signOut } from '@/firebase/auth';
-import type { User } from '@/shared/types/user';
-import type { UserCredential } from 'firebase/auth';
+import { FirestoreAuthService } from './service';
+import type {
+	AppleSignInResponse,
+	AuthType,
+	ClientUser,
+	EmailSignInInput,
+	UpdateUserInput,
+} from './types';
 import { handleApiError } from '../errors';
-import { serverTimestamp } from '@/firebase/firestore';
-import { logApiStart, logApiSuccess, withApiLogging } from '../utils/logger';
+import { withApiLogging } from '../utils/logger';
+import { arrayUnion } from 'firebase/firestore';
 
-const emailAuthProvider = new EmailAuthProvider();
-const appleAuthProvider = new AppleAuthProvider();
-const userProfileService = new FirestoreUserProfile();
+// Create a single instance of the auth service
+const authService = new FirestoreAuthService();
 
 /**
- * 인증 서비스 메서드
+ * 이메일로 인증하기
  */
-export const signIn = withApiLogging(
-	async <T extends AuthType>(
-		type: AuthType,
-		data?: T extends 'EMAIL' ? { email: string } : undefined,
-	): Promise<void> => {
-		let userCredential: UserCredential;
+export const signInWithEmail = withApiLogging(
+	async (data: EmailSignInInput): Promise<void> => {
+		try {
+			if (!data.email) {
+				throw new Error('이메일은 필수입니다.');
+			}
 
-		switch (type) {
-			case 'EMAIL':
-				if (!data?.email)
-					throw handleApiError(
-						{ message: '이메일은 필수입니다.' },
-						'signIn',
-						'auth',
-					);
-				userCredential = await emailAuthProvider.signIn(data.email);
-				break;
-			case 'APPLE':
-				userCredential = await appleAuthProvider.signIn();
-				break;
-			default:
-				throw handleApiError(
-					{ message: '지원하지 않는 인증 타입입니다.' },
-					'signIn',
-					'auth',
-				);
+			const userCredential = await authService.signInWithEmail(data);
+
+			// Only handle user profile if this is an actual sign-in (not just sending a link)
+			if (data.isIncomingLink && userCredential.user) {
+				await authService.handleUserProfile(userCredential, 'EMAIL');
+			}
+		} catch (error) {
+			throw handleApiError(error);
 		}
-		await handleUserProfile(userCredential, type);
 	},
-	'signIn',
+	'signInWithEmail',
+	'auth',
+);
+
+/**
+ * Apple로 인증하기
+ */
+export const signInWithApple = withApiLogging(
+	async (): Promise<AppleSignInResponse> => {
+		try {
+			const userCredential = await authService.signInWithApple();
+			return await authService.handleUserProfile(userCredential, 'APPLE');
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'signInWithApple',
 	'auth',
 );
 
@@ -55,7 +58,11 @@ export const signIn = withApiLogging(
  */
 export const sendEmailLink = withApiLogging(
 	async (email: string): Promise<void> => {
-		await emailAuthProvider.sendEmailLink(email);
+		try {
+			await authService.signInWithEmail({ email, isIncomingLink: false });
+		} catch (error) {
+			throw handleApiError(error);
+		}
 	},
 	'sendEmailLink',
 	'auth',
@@ -67,9 +74,9 @@ export const sendEmailLink = withApiLogging(
 export const logout = withApiLogging(
 	async (): Promise<void> => {
 		try {
-			await signOut(auth);
+			await authService.signOut();
 		} catch (error) {
-			throw handleApiError(error, 'logout', 'auth');
+			throw handleApiError(error);
 		}
 	},
 	'logout',
@@ -77,54 +84,69 @@ export const logout = withApiLogging(
 );
 
 /**
- * 사용자 프로필 처리
+ * 사용자 프로필 조회
  */
-const handleUserProfile = withApiLogging(
-	async (userCredential: UserCredential, authType: AuthType): Promise<void> => {
-		const userId = userCredential.user.uid;
-
+export const getUser = withApiLogging(
+	async (userId: string): Promise<ClientUser | null> => {
 		try {
-			// 기존 사용자 확인
-			const user = await userProfileService.getUser(userId);
-
-			if (user) {
-				await userProfileService.updateUser(userId, {
-					lastLogin: serverTimestamp(),
-				});
-				return;
-			}
-
-			await userProfileService.createUser(userId, {
-				email: userCredential.user.email,
-				authType,
-			});
+			return await authService.getUser(userId);
 		} catch (error) {
-			throw handleApiError(error, 'handleUserProfile', 'auth');
+			throw handleApiError(error);
 		}
 	},
-	'handleUserProfile',
+	'getUser',
 	'auth',
 );
 
 /**
- * 사용자 프로필 메서드 내보내기
+ * 사용자 프로필 생성
  */
-export const getFirestoreUser = withApiLogging(
-	(userId: string): Promise<User | null> => userProfileService.getUser(userId),
-	'getFirestoreUser',
+export const createUser = withApiLogging(
+	async (
+		userId: string,
+		userData: Partial<ClientUser> & { authType: AuthType },
+	): Promise<void> => {
+		try {
+			await authService.createUser(userId, userData);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'createUser',
 	'auth',
 );
 
-export const createFirestoreUser = withApiLogging(
-	(userId: string, user: Partial<User>): Promise<void> =>
-		userProfileService.createUser(userId, user),
-	'createFirestoreUser',
+/**
+ * 사용자 프로필 업데이트
+ */
+export const updateUser = withApiLogging(
+	async (userId: string, data: UpdateUserInput): Promise<void> => {
+		try {
+			const { groups, ...firestoreUserData } = data;
+
+			await authService.updateUser(userId, {
+				...firestoreUserData,
+				groups: arrayUnion(...(data.groups || [])),
+			});
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'updateUser',
 	'auth',
 );
 
-export const updateFirestoreUser = withApiLogging(
-	(userId: string, data: Partial<User>): Promise<void> =>
-		userProfileService.updateUser(userId, data),
-	'updateFirestoreUser',
+/**
+ * 사용자 마지막 로그인 시간 업데이트
+ */
+export const updateLastLogin = withApiLogging(
+	async (userId: string): Promise<void> => {
+		try {
+			await authService.updateLastLogin(userId);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'updateLastLogin',
 	'auth',
 );

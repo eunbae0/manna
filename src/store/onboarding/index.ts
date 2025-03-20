@@ -1,25 +1,33 @@
-import { updateFirestoreUser } from '@/api/auth';
+import { updateUser } from '@/api/auth';
+import type { ClientUser } from '@/api/auth/types';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 
-export type OnboardingStep = 'EMAIL' | 'NAME' | 'GROUP';
+const DEFAULT_STEP: OnboardingStep = 'NAME';
+
+export type OnboardingStep =
+	| 'EMAIL'
+	| 'NAME'
+	| 'GROUP_LANDING'
+	| 'GROUP_CREATE'
+	| 'GROUP_JOIN';
 
 type OnboardingState = {
 	currentStep: OnboardingStep;
 	userData: {
-		uid: string;
+		id: string;
 		name: string;
 		group: string;
 	};
 	setStep: (step: OnboardingStep) => void;
 	updateUserData: (data: Partial<OnboardingState['userData']>) => void;
-	completeOnboarding: () => void;
+	completeOnboarding: (groups: ClientUser['groups']) => void;
 };
 
 export const useOnboardingStore = create<OnboardingState>((set, get) => ({
-	currentStep: 'NAME',
+	currentStep: DEFAULT_STEP,
 	userData: {
-		uid: '',
+		id: '',
 		name: '',
 		group: '',
 	},
@@ -28,15 +36,16 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 		set((state) => ({
 			userData: { ...state.userData, ...data },
 		})),
-	completeOnboarding: async () => {
+	completeOnboarding: async (groups: ClientUser['groups']) => {
 		try {
-			await updateFirestoreUser(get().userData.uid, {
+			await updateUser(get().userData.id, {
 				displayName: get().userData.name,
+				groups,
 			});
 		} catch (error) {
 		} finally {
-			// set({ currentStep: 'NAME' });
-			router.replace('/(auth)');
+			set({ currentStep: DEFAULT_STEP });
+			router.replace('/(app)');
 		}
 	},
 }));

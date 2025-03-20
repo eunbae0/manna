@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { TextInput } from 'react-native';
 
 import { Button, ButtonText } from '#/components/ui/button';
 import Header from '@/components/common/Header';
@@ -9,45 +10,54 @@ import { Heading } from '#/components/ui/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';
 
-function NameStepScreen() {
-	const { setStep, updateUserData } = useOnboardingStore();
-	const [name, setName] = useState('');
+export default function NameStepScreen() {
+	const { setStep, updateUserData, userData } = useOnboardingStore();
+	const [name, setName] = useState(userData.name || '');
+
+	const ref = useRef<TextInput>();
+
+	useEffect(() => {
+		setTimeout(() => {
+			ref.current?.focus();
+		}, 100);
+	}, []);
+
+	const handlePressNext = () => {
+		updateUserData({ name: name.trim() });
+		setStep('GROUP_LANDING');
+	};
 
 	return (
-		<VStack>
-			<Header
-				label="정보 입력하기"
-				onPressBackButton={() => router.replace('/(auth)')}
-			/>
-			<VStack space="4xl" className="px-4 mt-8">
-				<VStack space="xl">
+		<VStack className="flex-1 h-full">
+			<VStack className="flex-1 px-5 mt-8 gap-12">
+				<VStack space="3xl">
 					<Heading size="2xl">이름을 입력해주세요</Heading>
 					<Input
 						variant="outline"
-						size="md"
+						size="lg"
 						isDisabled={false}
 						isInvalid={false}
 						isReadOnly={false}
 						className="rounded-2xl"
 					>
 						<InputField
+							// @ts-ignore
+							ref={ref}
 							value={name}
 							onChangeText={(text) => setName(text)}
 							placeholder="이름"
 						/>
 					</Input>
 				</VStack>
-				<Button
-					onPress={() => {
-						updateUserData({ name });
-						setStep('GROUP');
-					}}
-				>
-					<ButtonText>계속하기</ButtonText>
-				</Button>
 			</VStack>
+			<Button
+				size="lg"
+				className="mx-5 mb-6 rounded-full"
+				onPress={handlePressNext}
+				isDisabled={name.trim().length === 0}
+			>
+				<ButtonText>다음</ButtonText>
+			</Button>
 		</VStack>
 	);
 }
-
-export default NameStepScreen;

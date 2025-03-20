@@ -1,18 +1,14 @@
 import { Pressable } from 'react-native';
-import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
+import { Button, ButtonIcon } from '#/components/ui/button';
 import { HStack } from '#/components/ui/hstack';
 import { Heading } from '#/components/ui/heading';
-import { AddIcon, Icon } from '#/components/ui/icon';
+import { Icon } from '#/components/ui/icon';
 import {
 	ChevronDown,
 	MenuIcon,
-	UserRound,
 	HandHelping,
 	Library,
 	UserRoundPen,
-	X,
-	GlobeIcon,
-	PlayIcon,
 	SettingsIcon,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
@@ -25,9 +21,18 @@ import {
 } from '@/components/common/bottom-sheet';
 import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
 import { Avatar, AvatarGroup } from '../../components/common/avatar';
+import type { ClientGroup } from '@/api/group/types';
+import { useAuthStore } from '@/store/auth';
 
-function HomeHeader() {
+type Props = {
+	groups: ClientGroup[];
+};
+
+function HomeHeader({ groups }: Props) {
+	const { currentGroup, updateCurrentGroup } = useAuthStore();
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
+
+	const group = groups.find((group) => group.id === currentGroup?.groupId);
 
 	return (
 		<HStack className="items-center justify-between pt-2 px-4">
@@ -38,7 +43,7 @@ function HomeHeader() {
 					return (
 						<Pressable {...triggerProps}>
 							<HStack space="xs" className="items-center">
-								<Heading className="text-[24px]">길동 사랑방</Heading>
+								<Heading className="text-[24px]">{group?.groupName}</Heading>
 								<Icon
 									as={ChevronDown}
 									className="w-7 h-7 color-typography-900"
@@ -48,12 +53,17 @@ function HomeHeader() {
 					);
 				}}
 			>
-				<MenuItem key="Add account" textValue="Add account">
-					<MenuItemLabel size="lg">길동 사랑방</MenuItemLabel>
-				</MenuItem>
-				<MenuItem key="Community" textValue="Community">
-					<MenuItemLabel size="lg">철수 순</MenuItemLabel>
-				</MenuItem>
+				{groups.length > 0 &&
+					groups.map((group) => (
+						<MenuItem
+							key={group.id}
+							textValue={group.groupName}
+							closeOnSelect
+							onPress={() => updateCurrentGroup({ groupId: group.id })}
+						>
+							<MenuItemLabel size="lg">{group.groupName}</MenuItemLabel>
+						</MenuItem>
+					))}
 				<MenuItem key="Plugins" textValue="Plugins">
 					<Icon as={SettingsIcon} size="lg" className="mr-2" />
 					<MenuItemLabel size="lg">소그룹 관리하기</MenuItemLabel>
@@ -61,8 +71,16 @@ function HomeHeader() {
 			</Menu>
 			<HStack space="xl" className="px-1 items-center">
 				<AvatarGroup onPress={() => {}}>
-					<Avatar size="sm" className="bg-primary-400" />
-					<Avatar size="sm" className="bg-primary-400" />
+					{group?.members
+						? group.members.map((member) => (
+								<Avatar
+									key={member.user.id}
+									photoUrl={member.user.photoUrl ?? undefined}
+									size="sm"
+									className="bg-primary-400"
+								/>
+							))
+						: []}
 				</AvatarGroup>
 
 				<Button size="xl" variant="link" onPress={() => handleOpen()}>

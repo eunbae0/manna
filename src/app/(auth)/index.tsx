@@ -29,6 +29,7 @@ function AuthStepScreen() {
 
 	const onAppleButtonPress = async () => {
 		await signIn('APPLE', undefined);
+		setStep('NAME');
 	};
 
 	return (
@@ -40,20 +41,6 @@ function AuthStepScreen() {
 				</VStack>
 				<VStack space="xl" className="w-full">
 					<VStack space="md" className="w-full">
-						{/* <Button
-							onPress={() => {
-								setStep('EMAIL');
-								router.push('/(auth)/onboarding');
-							}}
-							size="xl"
-							className="rounded-full gap-4"
-						>
-							<ButtonIcon
-								as={AppleLogoIcon}
-								className="fill-white text-typography-black"
-							/>
-							<ButtonText size="lg">Apple로 계속하기</ButtonText>
-						</Button> */}
 						{isAppleAuthAvailable && (
 							<AppleAuthentication.AppleAuthenticationButton
 								buttonType={

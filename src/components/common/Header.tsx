@@ -15,6 +15,7 @@ type Props = {
 	onPressBackButtonWithRouter?: () => void;
 	isLabelCentered?: boolean;
 	isDividerEnabled?: boolean;
+	disableBackButton?: boolean;
 } & ViewProps;
 
 function Header({
@@ -25,6 +26,7 @@ function Header({
 	isDividerEnabled = false,
 	children,
 	className,
+	disableBackButton = false,
 	...props
 }: Props) {
 	const defaultHandlePressBackButton = () => {
@@ -50,14 +52,16 @@ function Header({
 				{...props}
 			>
 				<HStack space="sm" className="items-center">
-					<Button
-						size="xl"
-						variant="link"
-						onPress={handlePressBackButton}
-						className="pl-3"
-					>
-						<ButtonIcon as={ChevronLeftIcon} className="w-8 h-8" />
-					</Button>
+					{!disableBackButton && (
+						<Button
+							size="xl"
+							variant="link"
+							onPress={handlePressBackButton}
+							className="pl-3"
+						>
+							<ButtonIcon as={ChevronLeftIcon} className="w-8 h-8" />
+						</Button>
+					)}
 					<Text
 						size="2xl"
 						className={cn(

@@ -20,24 +20,30 @@ type Props = {
 };
 
 const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
-	const { user } = useAuthStore();
+	const { currentGroup } = useAuthStore();
 	const queryClient = useQueryClient();
 	const hasLiked = prayerRequest.reactions.some(
 		(reaction) => reaction.type === 'LIKE' && reaction.member.id === member.id,
 	);
 
-	const groupId = 'oVgiDT2gRRuFUWuUV0Ya';
-
 	const { mutate: toggleLike } = useMutation({
 		mutationFn: async () => {
-			return togglePrayerRequestReaction(groupId, prayerRequest.id, {
-				type: 'LIKE',
-				member,
-			});
+			return togglePrayerRequestReaction(
+				currentGroup?.groupId || '',
+				prayerRequest.id,
+				{
+					type: 'LIKE',
+					member,
+				},
+			);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['prayer-requests', groupId, selectedDate],
+				queryKey: [
+					'prayer-requests',
+					currentGroup?.groupId || '',
+					selectedDate,
+				],
 			});
 		},
 	});

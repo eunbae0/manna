@@ -23,15 +23,12 @@ import { KeyboardAvoidingView } from '@/components/common/keyboard-view/Keyboard
 
 export function CreatePrayerRequestScreen({ date }: { date: YYYYMMDD }) {
 	const [prayerRequestText, setPrayerRequestText] = useState('');
-	const { user } = useAuthStore();
+	const { user, currentGroup } = useAuthStore();
 	const [isAnonymous, setIsAnonymous] = useState(false);
 
 	const ref = useRef<TextInput>(null);
 
 	const queryClient = useQueryClient();
-
-	// Hardcoded group ID for now - in a real app, you would get this from user context or props
-	const groupId = 'oVgiDT2gRRuFUWuUV0Ya';
 
 	const { mutate: submitPrayerRequest, isPending } = useMutation({
 		mutationFn: async () => {
@@ -39,7 +36,7 @@ export function CreatePrayerRequestScreen({ date }: { date: YYYYMMDD }) {
 				return;
 			}
 
-			return createPrayerRequest(groupId, {
+			return createPrayerRequest(currentGroup?.groupId || '', {
 				value: prayerRequestText.trim(),
 				date: new Date(),
 				member: {
@@ -51,7 +48,7 @@ export function CreatePrayerRequestScreen({ date }: { date: YYYYMMDD }) {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['prayer-requests', groupId, date],
+				queryKey: ['prayer-requests', currentGroup?.groupId || '', date],
 			});
 			router.back();
 		},

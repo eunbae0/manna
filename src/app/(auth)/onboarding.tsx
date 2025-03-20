@@ -7,6 +7,9 @@ import { type OnboardingStep, useOnboardingStore } from '@/store/onboarding';
 import EmailSignInStepScreen from '@/features/onboarding/screens/EmailSignInStepScreen';
 import GroupStepScreen from '@/features/onboarding/screens/GroupStepScreen';
 import NameStepScreen from '@/features/onboarding/screens/NameStepScreen';
+import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
+import CreateGroupContainerScreen from '@/features/home/group/screens/create-group/CreateGroupContainerScreen';
+import JoinGroupScreen from '@/features/home/group/screens/join-group/JoinGroupScreen';
 
 function OnboardingScreen() {
 	const { currentStep } = useOnboardingStore();
@@ -17,19 +20,19 @@ function OnboardingScreen() {
 				return <EmailSignInStepScreen />;
 			case 'NAME':
 				return <NameStepScreen />;
-			case 'GROUP':
+			case 'GROUP_LANDING':
 				return <GroupStepScreen />;
+			case 'GROUP_CREATE':
+				return <CreateGroupContainerScreen />;
+			case 'GROUP_JOIN':
+				return <JoinGroupScreen />;
 			default:
 				return <Redirect href="/+not-found" />;
 		}
 	};
 	return (
-		<SafeAreaView>
-			<Animated.View
-			// style={{ transform: [{ translateX: slideAnim }] }}
-			>
-				{switchStep(currentStep)}
-			</Animated.View>
+		<SafeAreaView className="flex-1">
+			<KeyboardAvoidingView>{switchStep(currentStep)}</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 }

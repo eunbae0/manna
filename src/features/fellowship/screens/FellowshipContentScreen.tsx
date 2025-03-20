@@ -111,7 +111,7 @@ export default function FellowshipContentScreen() {
 						onPress={async () => {
 							await completeFellowship({
 								type,
-								groupId: currentGroup?.id || 'oVgiDT2gRRuFUWuUV0Ya', // TODO: 수정
+								groupId: currentGroup?.groupId || '',
 								fellowshipId,
 							});
 						}}

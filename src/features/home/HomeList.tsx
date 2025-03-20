@@ -40,9 +40,8 @@ function HomeList() {
 	const [refreshing, setRefreshing] = useState(false);
 
 	// Hardcoded group ID for now - in a real app, you would get this from user context or props
-	const groupId = 'oVgiDT2gRRuFUWuUV0Ya';
 
-	const { user } = useAuthStore();
+	const { user, currentGroup } = useAuthStore();
 
 	const {
 		data: fellowships,
@@ -56,7 +55,7 @@ function HomeList() {
 		isLoading: isPrayerRequestsLoading,
 		isError: isPrayerRequestsError,
 		refetch: refetchPrayerRequests,
-	} = usePrayerRequestsByDate(groupId, selectedDate);
+	} = usePrayerRequestsByDate(currentGroup?.groupId || '', selectedDate);
 
 	const handleDateChange = (date: YYYYMMDD) => {
 		setSelectedDate(date);

@@ -1,7 +1,9 @@
+import type { FirestoreUser } from '@/api/auth/types';
 import { serverTimestamp } from '@/firebase/firestore';
-import type { User } from '@/shared/types/user';
 
-export function createUserWithServerTimestamp(user: User): User {
+export function createUserWithServerTimestamp(
+	user: FirestoreUser,
+): FirestoreUser {
 	return {
 		...user,
 		createdAt: serverTimestamp(),

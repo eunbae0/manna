@@ -47,7 +47,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function FellowshipDetailScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const { user } = useAuthStore();
+	const { user, currentGroup } = useAuthStore();
 
 	const queryClient = useQueryClient();
 
@@ -73,8 +73,10 @@ export default function FellowshipDetailScreen() {
 		queryKey: ['fellowship', id],
 		queryFn: async () => {
 			if (!id) throw new Error('ID가 없습니다.');
-			const groupId = 'oVgiDT2gRRuFUWuUV0Ya';
-			const data = await fetchFellowshipById(groupId, id as string);
+			const data = await fetchFellowshipById(
+				currentGroup?.groupId || '',
+				id as string,
+			);
 			if (!data) {
 				throw new Error('나눔 노트를 찾을 수 없습니다.');
 			}
@@ -113,7 +115,11 @@ export default function FellowshipDetailScreen() {
 		ClientFellowship
 	>({
 		mutationFn: async (updatedFellowship: ClientFellowship) => {
-			await updateFellowship('oVgiDT2gRRuFUWuUV0Ya', id, updatedFellowship);
+			await updateFellowship(
+				currentGroup?.groupId || '',
+				id,
+				updatedFellowship,
+			);
 			return updatedFellowship;
 		},
 		onSuccess: (updatedFellowship) => {

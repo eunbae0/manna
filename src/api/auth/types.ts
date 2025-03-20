@@ -1,14 +1,55 @@
-import type { User } from '@/shared/types/user';
-import type { UserCredential } from 'firebase/auth';
+import type { FieldValue } from 'firebase/firestore';
+import type { ClientGroup } from '../group/types';
 
-export type AuthType = 'EMAIL' | 'APPLE';
+export type AuthType = 'EMAIL' | 'APPLE' | 'GOOGLE' | 'KAKAO';
 
-export interface AuthProviderInterface {
-	signIn(data?: any): Promise<UserCredential>;
+/**
+ * Authentication types
+ */
+export enum AuthTypeEnum {
+	EMAIL = 'EMAIL',
+	APPLE = 'APPLE',
+	GOOGLE = 'GOOGLE',
+	KAKAO = 'KAKAO',
+}
+export type AuthGroup = { groupId: ClientGroup['id'] };
+
+/**
+ * Server-side User with Firestore specific fields
+ * Used for Firestore storage and retrieval
+ */
+export interface FirestoreUser {
+	id: string;
+	email?: string | null;
+	displayName?: string | null;
+	photoUrl?: string | null;
+	authType: AuthType;
+	authId?: string | null;
+	groups?: Array<AuthGroup> | null;
+	createdAt?: FieldValue;
+	lastLogin?: FieldValue;
 }
 
-export interface UserProfileService {
-	getUser(userId: string): Promise<User | null>;
-	createUser(userId: string, user: Partial<User>): Promise<void>;
-	updateUser(userId: string, data: Partial<User>): Promise<void>;
+/**
+ * Client-side User with JavaScript Date objects
+ * Used for application logic and UI rendering
+ */
+export interface ClientUser
+	extends Omit<FirestoreUser, 'createdAt' | 'lastLogin'> {}
+/**
+ * Input data for email sign-in
+ */
+export interface EmailSignInInput {
+	email: string;
+	isIncomingLink?: boolean;
 }
+
+export interface AppleSignInResponse {
+	user: ClientUser;
+	existUser: boolean;
+}
+
+/**
+ * Input data for updating user profile
+ */
+export type UpdateUserInput = Partial<Omit<ClientUser, 'id'>>;

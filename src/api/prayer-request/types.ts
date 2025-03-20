@@ -1,10 +1,10 @@
-import type { User } from '@/shared/types/user';
 import type { FieldValue, Timestamp } from 'firebase/firestore';
+import type { FirestoreUser } from '../auth/types';
 
 /**
  * Member type for prayer requests
  */
-export type Member = Pick<User, 'id' | 'displayName' | 'photoUrl'>;
+export type Member = Pick<FirestoreUser, 'id' | 'displayName' | 'photoUrl'>;
 
 /**
  * Reaction type for prayer requests

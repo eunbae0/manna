@@ -28,6 +28,7 @@ export default function RootLayout() {
 
 	return (
 		<Stack>
+			<Stack.Screen name="(group)" options={{ headerShown: false }} />
 			<Stack.Screen name="(fellowship)" options={{ headerShown: false }} />
 			<Stack.Screen name="(prayerRequest)" options={{ headerShown: false }} />
 			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />

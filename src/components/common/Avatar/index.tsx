@@ -15,7 +15,7 @@ export type AvatarProps = {
 	variant?: 'default' | 'image';
 	type?: 'leader' | 'member';
 	size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-	imageUrl?: string;
+	photoUrl?: string;
 	label?: string;
 } & ViewProps;
 
@@ -25,7 +25,7 @@ const Avatar = forwardRef<View, AvatarProps>(
 			variant = 'default',
 			type = 'member',
 			size = 'md',
-			imageUrl,
+			photoUrl,
 			label,
 			className,
 			style,
@@ -48,8 +48,8 @@ const Avatar = forwardRef<View, AvatarProps>(
 					{variant === 'default' && (
 						<Icon as={UserRound} size={size} className="stroke-white" />
 					)}
-					{variant === 'image' && imageUrl && (
-						<Image source={{ uri: imageUrl }} style={{ width, height }} />
+					{variant === 'image' && photoUrl && (
+						<Image source={{ uri: photoUrl }} style={{ width, height }} />
 					)}
 					{type === 'leader' && (
 						<View className="absolute bottom-0 right-0 bg-yellow-400 w-3 h-3 border-2 border-white rounded-full" />
