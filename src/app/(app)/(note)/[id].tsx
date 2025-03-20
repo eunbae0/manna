@@ -50,6 +50,7 @@ import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Timestamp } from 'firebase/firestore';
 import type { Note } from '@/api/notes/types';
+import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 
 export default function NoteScreen() {
 	const insets = useSafeAreaInsets();
@@ -126,214 +127,226 @@ export default function NoteScreen() {
 
 	return (
 		<SafeAreaView className="h-full">
-			<VStack space="xl" className="h-full">
-				<Header
-					label="설교 노트"
-					onPressBackButton={() => router.back()}
-					className="justify-between pr-6"
-				>
-					<Pressable
-						onPress={() =>
-							isEditing ? handleUpdateNote() : setIsEditing(true)
-						}
+			<KeyboardDismissView>
+				<VStack space="xl" className="h-full">
+					<Header
+						label="설교 노트"
+						onPressBackButton={() => router.back()}
+						className="justify-between pr-6"
 					>
+						<Pressable
+							onPress={() =>
+								isEditing ? handleUpdateNote() : setIsEditing(true)
+							}
+						>
+							{isEditing ? (
+								<Icon as={Check} size="lg" className="text-typography-900" />
+							) : (
+								<Icon as={Edit} size="lg" className="text-typography-900" />
+							)}
+						</Pressable>
+					</Header>
+					<VStack space="2xl" className="px-6 flex-1">
 						{isEditing ? (
-							<Icon as={Check} size="lg" className="text-typography-900" />
+							<TextInput
+								placeholder="설교 제목"
+								className="text-3xl font-pretendard-bold"
+								value={note.title}
+								onChangeText={(title) =>
+									setNote((prev) => ({
+										...prev,
+										title,
+									}))
+								}
+							/>
 						) : (
-							<Icon as={Edit} size="lg" className="text-typography-900" />
+							<Text className="text-3xl font-pretendard-bold">
+								{note.title}
+							</Text>
 						)}
-					</Pressable>
-				</Header>
-				<VStack space="2xl" className="px-6 flex-1">
-					{isEditing ? (
-						<TextInput
-							placeholder="설교 제목"
-							className="text-3xl font-pretendard-bold"
-							value={note.title}
-							onChangeText={(title) =>
-								setNote((prev) => ({
-									...prev,
-									title,
-								}))
-							}
-						/>
-					) : (
-						<Text className="text-3xl font-pretendard-bold">{note.title}</Text>
-					)}
 
-					<VStack space="lg">
-						<HStack space="sm" className="items-center w-full">
-							<HStack space="sm" className="w-1/4 items-center">
-								<Icon as={Calendar} size="lg" className="text-typography-600" />
-								<Text size="lg" className="text-typography-600">
-									날짜
-								</Text>
-							</HStack>
-							<TouchableOpacity
-								className="w-full flex-row items-center"
-								onPress={() => handleOpen()}
-							>
-								<Text size="lg" className="text-[16px] py-2 flex-1">
-									{selectedDate.toLocaleDateString('ko-KR', {
-										year: 'numeric',
-										month: 'long',
-										day: 'numeric',
-										weekday: 'long',
-									})}
-								</Text>
-							</TouchableOpacity>
-						</HStack>
-
-						<HStack space="sm" className="items-center w-full">
-							<HStack space="sm" className="w-1/4 items-center">
-								<Icon as={BookText} size="lg" className="text-typography-600" />
-								<Text size="lg" className="text-typography-600">
-									설교 본문
-								</Text>
-							</HStack>
-							{isEditing ? (
-								<TextInput
-									placeholder="ex. 창세기 1장 1절"
-									className="w-full text-[16px]"
-									value={note.sermon}
-									onChangeText={(sermon) =>
-										setNote((prev) => ({
-											...prev,
-											sermon,
-										}))
-									}
-								/>
-							) : (
-								<Text className="w-full text-[16px]">{note.sermon}</Text>
-							)}
-						</HStack>
-						<HStack space="sm" className="items-center w-full">
-							<HStack space="sm" className="w-1/4 items-center">
-								<Icon
-									as={AlignJustify}
-									size="lg"
-									className="text-typography-600"
-								/>
-								<Text size="lg" className="w-full text-typography-600">
-									예배 종류
-								</Text>
-							</HStack>
-							{isEditing ? (
-								<ScrollView
-									horizontal
-									showsHorizontalScrollIndicator={false}
-									contentContainerStyle={{ paddingRight: 20 }}
-									className="flex-grow"
+						<VStack space="lg">
+							<HStack space="sm" className="items-center w-full">
+								<HStack space="sm" className="w-1/4 items-center">
+									<Icon
+										as={Calendar}
+										size="lg"
+										className="text-typography-600"
+									/>
+									<Text size="lg" className="text-typography-600">
+										날짜
+									</Text>
+								</HStack>
+								<TouchableOpacity
+									className="w-full flex-row items-center"
+									onPress={() => handleOpen()}
 								>
-									<HStack space="sm" className="py-1">
-										{serviceTypes.map((type) => (
-											<TouchableOpacity
-												key={type}
-												onPress={() => setSelectedServiceType(type)}
-												className="mr-1"
-											>
-												<Text
-													size="md"
-													className={`px-2 py-1 rounded-full ${
-														selectedServiceType === type
-															? 'bg-primary-100 text-primary-700'
-															: 'bg-gray-100 text-typography-700'
-													}`}
+									<Text size="lg" className="text-[16px] py-2 flex-1">
+										{selectedDate.toLocaleDateString('ko-KR', {
+											year: 'numeric',
+											month: 'long',
+											day: 'numeric',
+											weekday: 'long',
+										})}
+									</Text>
+								</TouchableOpacity>
+							</HStack>
+
+							<HStack space="sm" className="items-center w-full">
+								<HStack space="sm" className="w-1/4 items-center">
+									<Icon
+										as={BookText}
+										size="lg"
+										className="text-typography-600"
+									/>
+									<Text size="lg" className="text-typography-600">
+										설교 본문
+									</Text>
+								</HStack>
+								{isEditing ? (
+									<TextInput
+										placeholder="ex. 창세기 1장 1절"
+										className="w-full text-[16px]"
+										value={note.sermon}
+										onChangeText={(sermon) =>
+											setNote((prev) => ({
+												...prev,
+												sermon,
+											}))
+										}
+									/>
+								) : (
+									<Text className="w-full text-[16px]">{note.sermon}</Text>
+								)}
+							</HStack>
+							<HStack space="sm" className="items-center w-full">
+								<HStack space="sm" className="w-1/4 items-center">
+									<Icon
+										as={AlignJustify}
+										size="lg"
+										className="text-typography-600"
+									/>
+									<Text size="lg" className="w-full text-typography-600">
+										예배 종류
+									</Text>
+								</HStack>
+								{isEditing ? (
+									<ScrollView
+										horizontal
+										showsHorizontalScrollIndicator={false}
+										contentContainerStyle={{ paddingRight: 20 }}
+										className="flex-grow"
+									>
+										<HStack space="sm" className="py-1">
+											{serviceTypes.map((type) => (
+												<TouchableOpacity
+													key={type}
+													onPress={() => setSelectedServiceType(type)}
+													className="mr-1"
 												>
-													{type}
-												</Text>
-											</TouchableOpacity>
-										))}
-									</HStack>
-								</ScrollView>
-							) : (
-								<Text
-									size="md"
-									className="px-2 py-1 rounded-full bg-primary-100 text-primary-700"
-								>
-									{selectedServiceType}
-								</Text>
-							)}
-						</HStack>
-						<HStack space="sm" className="items-center w-full">
-							<HStack space="sm" className="w-1/4 items-center">
-								<Icon
-									as={Megaphone}
-									size="lg"
-									className="text-typography-600"
-								/>
-								<Text size="lg" className="text-typography-600">
-									설교자
-								</Text>
+													<Text
+														size="md"
+														className={`px-2 py-1 rounded-full ${
+															selectedServiceType === type
+																? 'bg-primary-100 text-primary-700'
+																: 'bg-gray-100 text-typography-700'
+														}`}
+													>
+														{type}
+													</Text>
+												</TouchableOpacity>
+											))}
+										</HStack>
+									</ScrollView>
+								) : (
+									<Text
+										size="md"
+										className="px-2 py-1 rounded-full bg-primary-100 text-primary-700"
+									>
+										{selectedServiceType}
+									</Text>
+								)}
 							</HStack>
-							{isEditing ? (
-								<TextInput
-									placeholder="비어 있음"
-									className="w-full text-[16px]"
-									value={note.preacher}
-									onChangeText={(preacher) =>
-										setNote((prev) => ({
-											...prev,
-											preacher,
-										}))
-									}
-								/>
-							) : (
-								<Text className="w-full text-[16px]">{note.preacher}</Text>
-							)}
-						</HStack>
+							<HStack space="sm" className="items-center w-full">
+								<HStack space="sm" className="w-1/4 items-center">
+									<Icon
+										as={Megaphone}
+										size="lg"
+										className="text-typography-600"
+									/>
+									<Text size="lg" className="text-typography-600">
+										설교자
+									</Text>
+								</HStack>
+								{isEditing ? (
+									<TextInput
+										placeholder="비어 있음"
+										className="w-full text-[16px]"
+										value={note.preacher}
+										onChangeText={(preacher) =>
+											setNote((prev) => ({
+												...prev,
+												preacher,
+											}))
+										}
+									/>
+								) : (
+									<Text className="w-full text-[16px]">{note.preacher}</Text>
+								)}
+							</HStack>
+						</VStack>
+						{isEditing ? (
+							<TextInput
+								placeholder="설교 노트를 적어보세요 ..."
+								className="text-xl flex-1"
+								multiline={true}
+								textAlignVertical="top"
+								value={note.content}
+								onChangeText={(content) =>
+									setNote((prev) => ({
+										...prev,
+										content,
+									}))
+								}
+							/>
+						) : (
+							<Text className="text-xl flex-1">{note.content}</Text>
+						)}
 					</VStack>
-					{isEditing ? (
-						<TextInput
-							placeholder="설교 노트를 적어보세요 ..."
-							className="text-xl flex-1"
-							multiline={true}
-							textAlignVertical="top"
-							value={note.content}
-							onChangeText={(content) =>
-								setNote((prev) => ({
-									...prev,
-									content,
-								}))
-							}
-						/>
-					) : (
-						<Text className="text-xl flex-1">{note.content}</Text>
+
+					{isEditing && (
+						<Button
+							size="lg"
+							className="mx-6 mb-6 rounded-full"
+							onPress={handleUpdateNote}
+							disabled={isLoading}
+						>
+							<ButtonText>노트 수정하기</ButtonText>
+						</Button>
 					)}
 				</VStack>
 
-				{isEditing && (
-					<Button
-						size="lg"
-						className="mx-6 mb-6 rounded-full"
-						onPress={handleUpdateNote}
-						disabled={isLoading}
+				{/* Bottom Sheet for Date Picker */}
+				<BottomSheetContainer>
+					<View
+						className="items-center justify-center pt-5 pb-10"
+						style={{ marginBottom: insets.bottom }}
 					>
-						<ButtonText>노트 수정하기</ButtonText>
-					</Button>
-				)}
-			</VStack>
-
-			{/* Bottom Sheet for Date Picker */}
-			<BottomSheetContainer>
-				<View
-					className="items-center justify-center pt-5 pb-10"
-					style={{ marginBottom: insets.bottom }}
-				>
-					<DateTimePicker
-						value={selectedDate}
-						mode="date"
-						display="inline"
-						locale="ko"
-						onChange={(event, date) => {
-							if (date) {
-								setSelectedDate(date);
-								handleClose();
-							}
-						}}
-					/>
-				</View>
-			</BottomSheetContainer>
+						<DateTimePicker
+							value={selectedDate}
+							mode="date"
+							display="inline"
+							locale="ko"
+							onChange={(event, date) => {
+								if (date) {
+									setSelectedDate(date);
+									handleClose();
+								}
+							}}
+						/>
+					</View>
+				</BottomSheetContainer>
+			</KeyboardDismissView>
 		</SafeAreaView>
 	);
 }
