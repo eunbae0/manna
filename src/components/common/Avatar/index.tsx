@@ -69,7 +69,7 @@ export type AvatarGroupProps = {
 } & ViewProps;
 
 const AvatarGroup = forwardRef<View, AvatarGroupProps>(
-	({ children, className, spacing = -6, max = 5, onPress, ...props }, ref) => {
+	({ children, className, spacing = -6, max = 3, onPress, ...props }, ref) => {
 		// Ensure children is always an array
 		const childrenArray = React.Children.toArray(children);
 
@@ -89,7 +89,7 @@ const AvatarGroup = forwardRef<View, AvatarGroupProps>(
 
 		const animatedStyle = useAnimatedStyle(() => {
 			return {
-				gap: withSpring(isExpanded.value ? 16 : spacing, {
+				gap: withSpring(isExpanded.value ? 8 : spacing, {
 					mass: 0.5,
 					damping: 15,
 					stiffness: 100,
