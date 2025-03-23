@@ -17,6 +17,7 @@ import { PortalProvider } from '@gorhom/portal';
 import '#/global.css';
 import 'react-native-reanimated';
 import 'react-native-get-random-values';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -31,15 +32,17 @@ export default function Root() {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<GestureHandlerRootView style={{ flex: 1 }}>
-				<GluestackUIProvider style={{ backgroundColor: '#f5f5f5cf' }}>
-					<PortalProvider>
-						<Slot />
-						<StatusBar style="auto" />
-						<ToastContainer />
-					</PortalProvider>
-				</GluestackUIProvider>
-			</GestureHandlerRootView>
+			<KeyboardProvider>
+				<GestureHandlerRootView style={{ flex: 1 }}>
+					<GluestackUIProvider style={{ backgroundColor: '#f5f5f5cf' }}>
+						<PortalProvider>
+							<Slot />
+							<StatusBar style="auto" />
+							<ToastContainer />
+						</PortalProvider>
+					</GluestackUIProvider>
+				</GestureHandlerRootView>
+			</KeyboardProvider>
 		</QueryClientProvider>
 	);
 }
