@@ -1,9 +1,6 @@
-import {
-	KeyboardAvoidingView as RNKeyboardAvoidingView,
-	Platform,
-	type KeyboardAvoidingViewProps,
-} from 'react-native';
+import { Platform, type KeyboardAvoidingViewProps } from 'react-native';
 import { KeyboardDismissView } from './KeyboardDismissView';
+import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native-keyboard-controller';
 
 const KeyboardAvoidingView = ({ children }: KeyboardAvoidingViewProps) => {
 	return (
