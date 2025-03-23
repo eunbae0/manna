@@ -40,10 +40,10 @@ export const fetchGroupsByGroupIds = withApiLogging(
 			// The withApiLogging wrapper will include this context in the success log
 			return Object.assign(result, { __logContext: context });
 		} catch (error) {
-			throw handleApiError(error, 'fetchAllGroups', 'group');
+			throw handleApiError(error, 'fetchGroupsByGroupIds', 'group');
 		}
 	},
-	'fetchAllGroups',
+	'fetchGroupsByGroupIds',
 	'group',
 );
 

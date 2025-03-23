@@ -11,13 +11,15 @@ import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { Button, ButtonText } from '#/components/ui/button';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { TextInput as RNTextInput } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 import type {
 	ClientFellowship,
 	FellowshipContentField,
 	FellowshipMember,
 } from '@/features/fellowship/api/types';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 type SermonContentProps = {
 	index: number;
@@ -41,6 +43,8 @@ const SermonContent = ({
 		handleOpen: handleOpenTopic,
 		handleClose: handleCloseTopic,
 		BottomSheetContainer: BottomSheetAnswerContainer,
+		TextInput,
+		isOpen,
 	} = useBottomSheet();
 
 	const [content, setContent] = useState<FellowshipContentField>({
@@ -54,11 +58,11 @@ const SermonContent = ({
 				.map((member) => ({ member, value: '' })),
 		],
 	});
-	const [selectedMember, setSelectedMember] = useState<FellowshipMember>(
-		members[0],
-	);
+	const [selectedMemberId, setSelectedMemberId] = useState<
+		FellowshipMember['id']
+	>(members[0].id);
 	const memberIndex = members.findIndex(
-		(member) => member.id === selectedMember.id,
+		(member) => member.id === selectedMemberId,
 	);
 
 	const handlePressSaveButton = () => {
@@ -83,6 +87,16 @@ const SermonContent = ({
 			};
 		});
 		handleCloseTopic();
+	};
+
+	// auto focus
+	const textInputRef = useRef<RNTextInput>();
+
+	const handlePressMember = (memberId: FellowshipMember['id']) => {
+		setSelectedMemberId(memberId);
+		setTimeout(() => {
+			textInputRef.current?.focus();
+		}, 50);
 	};
 
 	return (
@@ -118,18 +132,18 @@ const SermonContent = ({
 						<VStack space="2xl">
 							<VStack>
 								<HStack className="items-center justify-between">
-									<ScrollView horizontal>
+									<ScrollView horizontal keyboardShouldPersistTaps="always">
 										<HStack>
 											{members.map((member) => (
 												<Pressable
 													key={member.id}
-													onPress={() => setSelectedMember(member)}
+													onPress={() => handlePressMember(member.id)}
 												>
 													<HStack
 														space="sm"
 														className={cn(
 															'items-center px-3 py-2',
-															selectedMember.id === member.id
+															selectedMemberId === member.id
 																? 'border-b-2 border-primary-500'
 																: 'text-typography-700',
 														)}
@@ -147,22 +161,21 @@ const SermonContent = ({
 								</HStack>
 								<Divider />
 							</VStack>
-							<Textarea size="lg">
-								<TextareaInput
-									value={content.answers[memberIndex].value}
-									onChangeText={(value) =>
-										setContent({
-											...content,
-											answers: [
-												...content.answers.slice(0, memberIndex),
-												{ ...content.answers[memberIndex], value: value },
-												...content.answers.slice(memberIndex + 1),
-											],
-										})
-									}
-									placeholder="나눔을 입력해주세요..."
-								/>
-							</Textarea>
+							<BottomSheetTextInput
+								ref={textInputRef}
+								value={content.answers[memberIndex].value}
+								onChangeText={(value) =>
+									setContent({
+										...content,
+										answers: [
+											...content.answers.slice(0, memberIndex),
+											{ ...content.answers[memberIndex], value: value },
+											...content.answers.slice(memberIndex + 1),
+										],
+									})
+								}
+								placeholder="나눔을 입력해주세요..."
+							/>
 						</VStack>
 						<Button
 							size="lg"

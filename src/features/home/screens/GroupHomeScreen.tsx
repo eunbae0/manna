@@ -2,6 +2,7 @@ import HomeHeader from '@/features/home/HomeHeader';
 import HomeList from '@/features/home/HomeList';
 import { useGroups } from '../group/hooks/useGroups';
 import { useAuthStore } from '@/store/auth';
+import { Text } from 'react-native';
 
 export default function GroupHomeScreen() {
 	const { user } = useAuthStore();
@@ -12,7 +13,7 @@ export default function GroupHomeScreen() {
 
 	return (
 		<>
-			<HomeHeader groups={groups} />
+			{isLoading ? <Text>로딩중</Text> : <HomeHeader groups={groups} />}
 			<HomeList />
 		</>
 	);

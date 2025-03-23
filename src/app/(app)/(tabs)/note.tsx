@@ -1,7 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { RefreshControl, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
 
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
@@ -15,38 +14,22 @@ import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { useWorshipStore } from '@/store/worship';
 import { WorshipTypeSelector } from '@/features/worship/WorshipTypeSelector';
-import { fetchUserNotes, fetchUserNotesByWorshipType } from '@/api/notes';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
-import { fetchUserWorshipTypes } from '@/api/worship-types';
+import { useNotes } from '@/features/notes/hooks/useNotes';
+import { useWorshipTypes } from '@/features/notes/hooks/useWorshipTypes';
 
 export default function NoteScreen() {
 	const { setWorshipTypes, selectedWorshipType } = useWorshipStore();
 
 	const {
-		data,
+		notes,
+		notesByMonth,
 		isLoading: loading,
 		isRefetching: refreshing,
 		refetch: refetchNotes,
-	} = useQuery({
-		queryKey: ['notes', selectedWorshipType],
-		queryFn: async () => {
-			if (!selectedWorshipType) {
-				const { notes, notesByMonth } = await fetchUserNotes();
-				return { notes, notesByMonth };
-			}
-			const { notes, notesByMonth } = await fetchUserNotesByWorshipType(
-				selectedWorshipType.name,
-			);
-			return { notes, notesByMonth };
-		},
-	});
+	} = useNotes(selectedWorshipType);
 
-	const { data: worshipTypes, refetch: refetchWorshipTypes } = useQuery({
-		queryKey: ['worshipTypes'],
-		queryFn: () => fetchUserWorshipTypes(),
-	});
-
-	const { notes, notesByMonth } = data || { notes: [], notesByMonth: {} };
+	const { worshipTypes, refetch: refetchWorshipTypes } = useWorshipTypes();
 
 	const onRefresh = useCallback(() => {
 		refetchNotes();
@@ -58,9 +41,6 @@ export default function NoteScreen() {
 			setWorshipTypes(worshipTypes);
 		}
 	}, [worshipTypes, setWorshipTypes]);
-
-	useRefreshOnFocus(refetchNotes); // TODO: invalidateQueries로 변경 가능한지 확인
-	useRefreshOnFocus(refetchWorshipTypes);
 
 	return (
 		<SafeAreaView>
