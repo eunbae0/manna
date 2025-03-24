@@ -41,9 +41,9 @@ export const NoteCard = ({
 						<Text
 							size="md"
 							numberOfLines={1}
-							className="font-pretendard-regular text-typography-500 flex-auto"
+							className="font-pretendard-regular text-typography-500"
 						>
-							{content}
+							{content.trim()}
 						</Text>
 					</HStack>
 				</VStack>
