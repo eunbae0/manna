@@ -6,5 +6,5 @@ import { getKSTDate } from '@/shared/utils/date';
  * This is a wrapper component that uses the implementation from components/home/screens
  */
 export default function CreatePrayerRequestModal() {
-	return <CreatePrayerRequestScreen date={getKSTDate(new Date())} />;
+	return <CreatePrayerRequestScreen />;
 }

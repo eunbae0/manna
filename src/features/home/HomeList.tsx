@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { Button, ButtonIcon } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
 import { Heading } from '#/components/ui/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Icon } from '#/components/ui/icon';
@@ -10,12 +10,13 @@ import {
 	ChevronRight,
 	HandHelping,
 	Library,
+	Pen,
 	PlusIcon,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import { Box } from '#/components/ui/box';
 import { Spinner } from '@/components/common/spinner';
-import CalendarTab from './CalanderTab';
+
 import type { YYYYMMDD } from '@/shared/types/date';
 import { getKSTDate } from '@/shared/utils/date';
 import { Pressable, RefreshControl, ScrollView } from 'react-native';
@@ -28,18 +29,16 @@ import {
 import { usePrayerRequestsByDate } from '@/features/home/hooks/usePrayerRequestsByDate';
 import { useFellowshipsByDate } from '@/features/home/hooks/useFellowshipsByDate';
 import type { ClientPrayerRequest } from '@/api/prayer-request/types';
-import { PrayerRequestCard } from './PrayerRequestCard';
+import { PrayerRequestCard } from './components/PrayerRequestCard';
 import { useAuthStore } from '@/store/auth';
+import ServiceGroups from './components/ServiceGroups';
 
 function HomeList() {
 	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
 		getKSTDate(new Date()),
 	);
 
-	// State for pull-to-refresh functionality
 	const [refreshing, setRefreshing] = useState(false);
-
-	// Hardcoded group ID for now - in a real app, you would get this from user context or props
 
 	const { user, currentGroup } = useAuthStore();
 
@@ -77,7 +76,9 @@ function HomeList() {
 		}
 	}, [refetch, refetchPrayerRequests]);
 
-	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
+	const handlePressAddButton = () => {
+		router.navigate('/(app)/createPrayerRequestModal');
+	};
 
 	// Get the first fellowship for the selected date (if any)
 	const todaysFellowship =
@@ -85,10 +86,10 @@ function HomeList() {
 
 	return (
 		<VStack className="relative h-full">
-			<CalendarTab
+			{/* <CalendarTab
 				selectedDate={selectedDate}
 				onDateChange={handleDateChange}
-			/>
+			/> */}
 			<ScrollView
 				showsVerticalScrollIndicator={false}
 				className="h-full flex-1"
@@ -102,12 +103,13 @@ function HomeList() {
 					/>
 				}
 			>
-				<VStack space="4xl" className="px-4 py-6">
+				<VStack space="2xl" className="py-4">
+					<ServiceGroups />
 					{/* 오늘의 나눔 */}
-					<VStack className="gap-12">
+					{/* <VStack className="gap-12">
 						<VStack space="md">
 							<HStack className="justify-between items-center">
-								<Heading size="xl">오늘의 나눔</Heading>
+								<Heading className="text-[20px]">오늘의 나눔</Heading>
 							</HStack>
 							<VStack space="3xl">
 								{isLoading ? (
@@ -138,7 +140,6 @@ function HomeList() {
 															})
 															.replace(/\. /g, '.')
 															.replace(/\.$/, '')}{' '}
-														QT
 													</Text>
 												</HStack>
 												<Text size="xl" className="">
@@ -158,12 +159,13 @@ function HomeList() {
 								)}
 							</VStack>
 						</VStack>
-					</VStack>
+					</VStack> */}
+					<Divider className="h-2 bg-background-100" />
 					{/* 오늘의 기도 제목 */}
-					<VStack className="gap-12">
-						<VStack space="md">
+					<VStack className="gap-12 px-4 py-1">
+						<VStack space="lg">
 							<HStack className="justify-between items-center">
-								<Heading size="xl">오늘의 기도 제목</Heading>
+								<Heading className="text-[20px]">오늘의 기도 제목</Heading>
 							</HStack>
 							{isPrayerRequestsLoading ? (
 								<Box className="items-center justify-center py-8">
@@ -174,19 +176,25 @@ function HomeList() {
 									기도 제목을 불러오는 중 오류가 발생했어요
 								</Text>
 							) : prayerRequests && prayerRequests.length > 0 ? (
-								<VStack space="3xl">
-									{prayerRequests.map((prayerRequest: ClientPrayerRequest) => (
-										<PrayerRequestCard
-											key={prayerRequest.id}
-											prayerRequest={prayerRequest}
-											member={{
-												id: user?.id || '',
-												displayName: user?.displayName || '',
-												photoUrl: user?.photoUrl || '',
-											}}
-											selectedDate={selectedDate}
-										/>
-									))}
+								<VStack>
+									{prayerRequests.map(
+										(prayerRequest: ClientPrayerRequest, index) => (
+											<VStack key={prayerRequest.id}>
+												{index > 0 && (
+													<Divider className="bg-background-100 h-[1px]" />
+												)}
+												<PrayerRequestCard
+													prayerRequest={prayerRequest}
+													member={{
+														id: user?.id || '',
+														displayName: user?.displayName || '',
+														photoUrl: user?.photoUrl || '',
+													}}
+													selectedDate={selectedDate}
+												/>
+											</VStack>
+										),
+									)}
 								</VStack>
 							) : (
 								<Text className="text-center py-8 text-gray-500">
@@ -199,16 +207,17 @@ function HomeList() {
 				<Box className="h-32" />
 			</ScrollView>
 			<Button
-				size="xl"
+				size="lg"
 				variant="solid"
 				className="absolute bottom-14 right-4 rounded-full"
-				onPress={() => handleOpen()}
+				onPress={handlePressAddButton}
 			>
-				<ButtonIcon as={PlusIcon} />
+				<ButtonText>작성하기</ButtonText>
+				<ButtonIcon as={Pen} />
 			</Button>
 
 			{/* BOTTOM SHEET */}
-			<BottomSheetContainer>
+			{/* <BottomSheetContainer>
 				<BottomSheetListLayout>
 					<BottomSheetListHeader
 						label="무엇을 추가할까요?"
@@ -232,7 +241,7 @@ function HomeList() {
 						}}
 					/>
 				</BottomSheetListLayout>
-			</BottomSheetContainer>
+			</BottomSheetContainer> */}
 		</VStack>
 	);
 }

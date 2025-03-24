@@ -18,6 +18,7 @@ import '#/global.css';
 import 'react-native-reanimated';
 import 'react-native-get-random-values';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import * as SystemUI from 'expo-system-ui';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -34,7 +35,7 @@ export default function Root() {
 		<QueryClientProvider client={queryClient}>
 			<KeyboardProvider>
 				<GestureHandlerRootView style={{ flex: 1 }}>
-					<GluestackUIProvider style={{ backgroundColor: '#f5f5f5cf' }}>
+					<GluestackUIProvider>
 						<PortalProvider>
 							<Slot />
 							<StatusBar style="auto" />
