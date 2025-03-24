@@ -1,5 +1,11 @@
-import { useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView } from 'react-native';
+import { useRef, useState } from 'react';
+import {
+	Keyboard,
+	Pressable,
+	SafeAreaView,
+	ScrollView,
+	type TextInput,
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Box } from '#/components/ui/box';
@@ -36,6 +42,8 @@ import type {
 } from '@/features/fellowship/api/types';
 import { Avatar } from '@/components/common/avatar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 export default function FellowshipInfoScreen() {
 	const { user } = useAuthStore();
@@ -93,175 +101,203 @@ export default function FellowshipInfoScreen() {
 		handleCloseMember();
 	};
 
+	const handleOpenCreateMemberButton = () => {
+		// if (Keyboard.isVisible()) {
+		// 	Keyboard.dismiss();
+		// }
+		handleOpenCreate();
+		// setTimeout(() => {
+		// 	addMemberInputRef.current?.focus();
+		// }, 200);
+	};
+
+	const handlePressAddMember = () => {
+		setMembers((prev) => [
+			...prev,
+			{
+				id: Math.random().toString(),
+				displayName: memberNameInput,
+				isLeader: false,
+			},
+		]);
+		setMemberNameInput('');
+		handleCloseCreate();
+	};
+
+	const addMemberInputRef = useRef<TextInput>(null);
+
 	return (
 		<SafeAreaView className="h-full">
 			<KeyboardDismissView>
 				<VStack className="flex-1">
 					<Header onPressBackButtonWithRouter={() => clearFellowship()} />
-					<VStack className="px-5 py-6 gap-10 flex-1">
-						<HStack className="items-center justify-between">
-							<Heading className="text-[24px]">
-								나눔 정보를 입력해주세요
-							</Heading>
-							<Pressable>
-								<Icon
-									as={CircleHelp}
-									size="lg"
-									className="color-typography-600"
-								/>
-							</Pressable>
-						</HStack>
-						<VStack space="4xl" className="">
-							<VStack space="sm">
-								<HStack className="items-center justify-between">
-									<Text size="md" className="font-pretendard-semi-bold">
-										나눔 날짜
-									</Text>
-								</HStack>
-								<Pressable
-									onPress={() => {
-										handleOpenDate();
-									}}
-								>
-									<Box className="w-full rounded-xl border-[1px] border-typography-300 px-3 py-3">
-										<Text size="xl" className="text-typography-700">
-											{selectedDate.toLocaleDateString('ko-KR', {
-												year: 'numeric',
-												month: 'long',
-												day: 'numeric',
-												weekday: 'long',
-											})}
-										</Text>
-									</Box>
+					<KeyboardAwareScrollView keyboardShouldPersistTaps="always">
+						<VStack className="px-5 py-6 gap-10 flex-1">
+							<HStack className="items-center justify-between">
+								<Heading className="text-[24px]">
+									나눔 정보를 입력해주세요
+								</Heading>
+								<Pressable>
+									<Icon
+										as={CircleHelp}
+										size="lg"
+										className="color-typography-600"
+									/>
 								</Pressable>
-							</VStack>
-							<VStack space="sm">
-								<HStack className="items-center justify-between">
-									<Text size="md" className="font-pretendard-semi-bold">
-										설교 제목
-									</Text>
-								</HStack>
-								<Input variant="outline" size="xl" className="rounded-xl">
-									<InputField
-										placeholder="설교 제목을 입력해주세요."
-										value={preachTitle}
-										onChangeText={(value) => setPreachTitle(value)}
-									/>
-								</Input>
-							</VStack>
-							<VStack space="sm">
-								<HStack className="items-center justify-between">
-									<Text size="md" className="font-pretendard-semi-bold">
-										설교 본문
-									</Text>
-									<Checkbox
-										size="sm"
-										value={'설교 본문'}
-										onChange={() =>
-											setPreachText({
-												...preachText,
-												isActive: !preachText.isActive,
-											})
-										}
-										isChecked={!preachText.isActive}
-									>
-										<CheckboxIndicator>
-											<CheckboxIcon as={CheckIcon} />
-										</CheckboxIndicator>
-										<CheckboxLabel>본문이 없어요</CheckboxLabel>
-									</Checkbox>
-								</HStack>
-								<Input
-									variant="outline"
-									size="xl"
-									className="rounded-xl"
-									isDisabled={!preachText.isActive}
-								>
-									<InputField
-										placeholder="ex. 창세기 1장 1~7절"
-										value={preachText.value}
-										onChangeText={(value) =>
-											setPreachText({ ...preachText, value })
-										}
-									/>
-								</Input>
-							</VStack>
-							<VStack space="sm">
-								<HStack className="items-center justify-between">
-									<Text size="md" className="font-pretendard-semi-bold">
-										설교자
-									</Text>
-									<Checkbox
-										size="sm"
-										value={'설교자'}
-										onChange={() =>
-											setPreacher({
-												...preacher,
-												isActive: !preacher.isActive,
-											})
-										}
-										isChecked={!preacher.isActive}
-									>
-										<CheckboxIndicator>
-											<CheckboxIcon as={CheckIcon} />
-										</CheckboxIndicator>
-										<CheckboxLabel>설교자가 없어요</CheckboxLabel>
-									</Checkbox>
-								</HStack>
-								<Input
-									variant="outline"
-									size="xl"
-									className="rounded-xl"
-									isDisabled={!preacher.isActive}
-								>
-									<InputField
-										placeholder="설교자를 입력해주세요."
-										value={preacher.value}
-										onChangeText={(value) =>
-											setPreacher({ ...preacher, value })
-										}
-									/>
-								</Input>
-							</VStack>
-
-							<VStack space="lg">
-								<HStack className="items-center justify-between">
-									<Text size="md" className="font-pretendard-semi-bold">
-										나눔 인원
-									</Text>
-								</HStack>
-								<ScrollView horizontal className="pl-2">
-									<HStack space="xl" className="items-start">
-										{members.map((member) => (
-											<Pressable
-												key={member.id}
-												onPress={() => {
-													setSelectedMember(member);
-													handleOpenMember();
-												}}
-											>
-												<VStack space="xs" className="items-center">
-													<Avatar
-														size="lg"
-														type={member.isLeader ? 'leader' : 'member'}
-														label={member.displayName || ''}
-													/>
-												</VStack>
-											</Pressable>
-										))}
-										<Pressable
-											onPress={() => {
-												handleOpenCreate();
-											}}
-											className="p-3 border-[1px] border-primary-300 rounded-full"
-										>
-											<Icon as={Plus} size="lg" className="color-primary-700" />
-										</Pressable>
+							</HStack>
+							<VStack space="4xl" className="">
+								<VStack space="sm">
+									<HStack className="items-center justify-between">
+										<Text size="md" className="font-pretendard-semi-bold">
+											나눔 날짜
+										</Text>
 									</HStack>
-								</ScrollView>
+									<Pressable
+										onPress={() => {
+											handleOpenDate();
+										}}
+									>
+										<Box className="w-full rounded-xl border-[1px] border-typography-300 px-3 py-3">
+											<Text size="xl" className="text-typography-700">
+												{selectedDate.toLocaleDateString('ko-KR', {
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric',
+													weekday: 'long',
+												})}
+											</Text>
+										</Box>
+									</Pressable>
+								</VStack>
+								<VStack space="sm">
+									<HStack className="items-center justify-between">
+										<Text size="md" className="font-pretendard-semi-bold">
+											설교 제목
+										</Text>
+									</HStack>
+									<Input variant="outline" size="xl" className="rounded-xl">
+										<InputField
+											placeholder="설교 제목을 입력해주세요."
+											value={preachTitle}
+											onChangeText={(value) => setPreachTitle(value)}
+										/>
+									</Input>
+								</VStack>
+								<VStack space="sm">
+									<HStack className="items-center justify-between">
+										<Text size="md" className="font-pretendard-semi-bold">
+											설교 본문
+										</Text>
+										<Checkbox
+											size="sm"
+											value={'설교 본문'}
+											onChange={() =>
+												setPreachText({
+													...preachText,
+													isActive: !preachText.isActive,
+												})
+											}
+											isChecked={!preachText.isActive}
+										>
+											<CheckboxIndicator>
+												<CheckboxIcon as={CheckIcon} />
+											</CheckboxIndicator>
+											<CheckboxLabel>본문이 없어요</CheckboxLabel>
+										</Checkbox>
+									</HStack>
+									<Input
+										variant="outline"
+										size="xl"
+										className="rounded-xl"
+										isDisabled={!preachText.isActive}
+									>
+										<InputField
+											placeholder="ex. 창세기 1장 1~7절"
+											value={preachText.value}
+											onChangeText={(value) =>
+												setPreachText({ ...preachText, value })
+											}
+										/>
+									</Input>
+								</VStack>
+								<VStack space="sm">
+									<HStack className="items-center justify-between">
+										<Text size="md" className="font-pretendard-semi-bold">
+											설교자
+										</Text>
+										<Checkbox
+											size="sm"
+											value={'설교자'}
+											onChange={() =>
+												setPreacher({
+													...preacher,
+													isActive: !preacher.isActive,
+												})
+											}
+											isChecked={!preacher.isActive}
+										>
+											<CheckboxIndicator>
+												<CheckboxIcon as={CheckIcon} />
+											</CheckboxIndicator>
+											<CheckboxLabel>설교자가 없어요</CheckboxLabel>
+										</Checkbox>
+									</HStack>
+									<Input
+										variant="outline"
+										size="xl"
+										className="rounded-xl"
+										isDisabled={!preacher.isActive}
+									>
+										<InputField
+											placeholder="설교자를 입력해주세요."
+											value={preacher.value}
+											onChangeText={(value) =>
+												setPreacher({ ...preacher, value })
+											}
+										/>
+									</Input>
+								</VStack>
+								<VStack space="lg">
+									<HStack className="items-center justify-between">
+										<Text size="md" className="font-pretendard-semi-bold">
+											나눔 인원
+										</Text>
+									</HStack>
+									<ScrollView horizontal className="pl-2">
+										<HStack space="xl" className="items-start">
+											{members.map((member) => (
+												<Pressable
+													key={member.id}
+													onPress={() => {
+														setSelectedMember(member);
+														handleOpenMember();
+													}}
+												>
+													<VStack space="xs" className="items-center">
+														<Avatar
+															size="lg"
+															type={member.isLeader ? 'leader' : 'member'}
+															label={member.displayName || ''}
+														/>
+													</VStack>
+												</Pressable>
+											))}
+											<Pressable
+												onPress={handleOpenCreateMemberButton}
+												className="p-3 border-[1px] border-primary-300 rounded-full"
+											>
+												<Icon
+													as={Plus}
+													size="lg"
+													className="color-primary-700"
+												/>
+											</Pressable>
+										</HStack>
+									</ScrollView>
+								</VStack>
 							</VStack>
 						</VStack>
-					</VStack>
+					</KeyboardAwareScrollView>
 					<Button
 						size="lg"
 						variant="solid"
@@ -353,30 +389,18 @@ export default function FellowshipInfoScreen() {
 					<VStack className="px-5 py-6 gap-10">
 						<VStack space="3xl">
 							<Heading size="xl">나눔 인원 추가하기</Heading>
-							<Input variant="outline" size="xl" className="rounded-xl">
-								<InputField
-									placeholder="이름을 입력해주세요"
-									value={memberNameInput}
-									onChangeText={setMemberNameInput}
-								/>
-							</Input>
+							<BottomSheetTextInput
+								ref={addMemberInputRef}
+								placeholder="이름을 입력해주세요"
+								value={memberNameInput}
+								onChangeText={setMemberNameInput}
+							/>
 						</VStack>
 						<Button
 							size="lg"
 							variant="solid"
 							className="rounded-xl"
-							onPress={() => {
-								setMembers((prev) => [
-									...prev,
-									{
-										id: Math.random().toString(),
-										displayName: memberNameInput,
-										isLeader: false,
-									},
-								]);
-								setMemberNameInput('');
-								handleCloseCreate();
-							}}
+							onPress={handlePressAddMember}
 						>
 							<ButtonText>추가하기</ButtonText>
 						</Button>

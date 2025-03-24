@@ -1,12 +1,36 @@
-import { Platform } from 'react-native';
+import {
+	Keyboard,
+	type NativeSyntheticEvent,
+	Platform,
+	TextInput as RNTextInput,
+	type TextInputFocusEventData,
+} from 'react-native';
 import { FocusScope } from '@react-native-aria/focus';
-import { useRef, useState, useCallback, useMemo } from 'react';
+import {
+	useRef,
+	useState,
+	useCallback,
+	useMemo,
+	useEffect,
+	forwardRef,
+} from 'react';
 import BottomSheet, {
 	BottomSheetBackdrop,
+	BottomSheetTextInput,
 	BottomSheetView,
+	useBottomSheetInternal,
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+	KeyboardAvoidingView,
+	KeyboardStickyView,
+	useKeyboardAnimation,
+	useKeyboardHandler,
+} from 'react-native-keyboard-controller';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
+import type { BottomSheetTextInputProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetTextInput';
 
 type IBottomSheet = React.ComponentProps<typeof BottomSheet>;
 
@@ -44,6 +68,7 @@ export const useBottomSheet = () => {
 
 	const handleClose = useCallback(() => {
 		bottomSheetRef.current?.close();
+		Keyboard.dismiss();
 		setVisible(false);
 	}, []);
 
@@ -69,6 +94,8 @@ export const useBottomSheet = () => {
 		[handleClose],
 	);
 
+	const isOpen = useMemo(() => visible, [visible]);
+
 	const BottomSheetContainer = useCallback(
 		({ children, ...props }: IBottomSheet) => (
 			<Portal>
@@ -80,25 +107,63 @@ export const useBottomSheet = () => {
 					overDragResistanceFactor={0}
 					enablePanDownToClose={true}
 					handleIndicatorStyle={{ backgroundColor: 'lightgray', width: 36 }}
+					keyboardBehavior="interactive"
 					{...props}
 				>
-					<BottomSheetView
-						style={{ paddingBottom: insets.bottom }}
-						{...keyDownHandlers}
-					>
-						{Platform.OS === 'web'
-							? visible && <WebContent visible={visible} content={children} />
-							: children}
-					</BottomSheetView>
+					<KeyboardDismissView>
+						<BottomSheetView
+							style={{ paddingBottom: insets.bottom }}
+							{...keyDownHandlers}
+						>
+							{Platform.OS === 'web'
+								? visible && <WebContent visible={visible} content={children} />
+								: children}
+						</BottomSheetView>
+					</KeyboardDismissView>
 				</BottomSheet>
 			</Portal>
 		),
 		[visible, insets, keyDownHandlers, handleSheetChanges],
 	);
 
+	const TextInput = forwardRef<RNTextInput, BottomSheetTextInputProps>(
+		({ onFocus, onBlur, ...rest }, ref) => {
+			//#region hooks
+			const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
+			const handleOnFocus = useCallback(
+				(args: NativeSyntheticEvent<TextInputFocusEventData>) => {
+					shouldHandleKeyboardEvents.value = true;
+					if (onFocus) {
+						onFocus(args);
+					}
+				},
+				[onFocus, shouldHandleKeyboardEvents],
+			);
+			const handleOnBlur = useCallback(
+				(args: NativeSyntheticEvent<TextInputFocusEventData>) => {
+					shouldHandleKeyboardEvents.value = false;
+					if (onBlur) {
+						onBlur(args);
+					}
+				},
+				[onBlur, shouldHandleKeyboardEvents],
+			);
+			return (
+				<RNTextInput
+					ref={ref}
+					onFocus={handleOnFocus}
+					onBlur={handleOnBlur}
+					{...rest}
+				/>
+			);
+		},
+	);
+
 	return {
 		handleOpen,
 		handleClose,
 		BottomSheetContainer,
+		TextInput,
+		isOpen,
 	};
 };

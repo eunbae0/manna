@@ -14,6 +14,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Pressable, SafeAreaView, type TextInput } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 export default function FellowshipIcebrakingScreen() {
 	const { setStep, updateFellowshipContent, content } = useFellowshipStore();
@@ -60,67 +61,71 @@ export default function FellowshipIcebrakingScreen() {
 			<KeyboardDismissView>
 				<VStack className="flex-1">
 					<Header onPressBackButton={() => setStep('CONTENT')} />
-					<VStack className="px-5 py-6 gap-10 flex-1">
-						<HStack className="items-center justify-between">
-							<Heading className="text-[24px]">아이스 브레이킹</Heading>
-							<Pressable>
-								<Icon
-									as={CircleHelp}
-									size="lg"
-									className="color-typography-600"
-								/>
-							</Pressable>
-						</HStack>
-						<VStack space="sm">
-							<VStack space="xl">
-								{iceBreaking.map(({ id, question }, index) => (
-									<HStack key={id} space="lg" className="w-full items-center">
-										<Box className="w-2 h-2 bg-background-400 rounded-full" />
-										<Textarea size="xl" className="rounded-xl flex-1">
-											<TextareaInput
-												//@ts-ignore
-												ref={
-													index === iceBreaking.length - 1 ? textareaRef : null
-												}
-												value={question}
-												onChangeText={(text) => {
-													const updatedIceBreaking = [...iceBreaking];
-													updatedIceBreaking[index] = {
-														id,
-														question: text,
-														answers: [],
-													};
-													setIceBreaking(updatedIceBreaking);
-												}}
-												placeholder="ex. 오늘 말씀을 삶에 어떻게 적용하면 좋을까요?"
-											/>
-										</Textarea>
-										<Pressable
-											onPress={() => {
-												handlePressDelete(id);
-											}}
-										>
-											<Icon as={X} size="lg" />
-										</Pressable>
-									</HStack>
-								))}
-							</VStack>
-							<HStack space="xl" className="items-center py-3 w-full">
-								<Pressable
-									className="border-[1px] border-primary-300 rounded-full p-2"
-									onPress={handlePressAdd}
-								>
-									<Icon as={Plus} size="lg" className="color-primary-700" />
+					<KeyboardAwareScrollView>
+						<VStack className="px-5 py-6 gap-10 flex-1">
+							<HStack className="items-center justify-between">
+								<Heading className="text-[24px]">아이스 브레이킹</Heading>
+								<Pressable>
+									<Icon
+										as={CircleHelp}
+										size="lg"
+										className="color-typography-600"
+									/>
 								</Pressable>
-								<Text
-									size="lg"
-									className="font-pretendard-semi-bold text-typography-600"
-								>
-									추가하기
-								</Text>
 							</HStack>
+							<VStack space="sm">
+								<VStack space="xl">
+									{iceBreaking.map(({ id, question }, index) => (
+										<HStack key={id} space="lg" className="w-full items-center">
+											<Box className="w-2 h-2 bg-background-400 rounded-full" />
+											<Textarea size="xl" className="rounded-xl flex-1">
+												<TextareaInput
+													//@ts-ignore
+													ref={
+														index === iceBreaking.length - 1
+															? textareaRef
+															: null
+													}
+													value={question}
+													onChangeText={(text) => {
+														const updatedIceBreaking = [...iceBreaking];
+														updatedIceBreaking[index] = {
+															id,
+															question: text,
+															answers: [],
+														};
+														setIceBreaking(updatedIceBreaking);
+													}}
+													placeholder="ex. 오늘 말씀을 삶에 어떻게 적용하면 좋을까요?"
+												/>
+											</Textarea>
+											<Pressable
+												onPress={() => {
+													handlePressDelete(id);
+												}}
+											>
+												<Icon as={X} size="lg" />
+											</Pressable>
+										</HStack>
+									))}
+								</VStack>
+								<HStack space="xl" className="items-center py-3 w-full">
+									<Pressable
+										className="border-[1px] border-primary-300 rounded-full p-2"
+										onPress={handlePressAdd}
+									>
+										<Icon as={Plus} size="lg" className="color-primary-700" />
+									</Pressable>
+									<Text
+										size="lg"
+										className="font-pretendard-semi-bold text-typography-600"
+									>
+										추가하기
+									</Text>
+								</HStack>
+							</VStack>
 						</VStack>
-					</VStack>
+					</KeyboardAwareScrollView>
 					<Button
 						size="lg"
 						variant="solid"
