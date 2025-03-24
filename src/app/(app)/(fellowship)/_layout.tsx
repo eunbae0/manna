@@ -5,6 +5,7 @@ export default function HomeLayout() {
 		<Stack
 			screenOptions={{
 				headerShown: false,
+				contentStyle: { backgroundColor: 'white' },
 			}}
 		>
 			<Stack.Screen name="create" />
