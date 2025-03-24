@@ -37,7 +37,7 @@ export default function NoteScreen() {
 	}, [refetchNotes, refetchWorshipTypes]);
 
 	useEffect(() => {
-		if (worshipTypes) {
+		if (worshipTypes.length > 0) {
 			setWorshipTypes(worshipTypes);
 		}
 	}, [worshipTypes, setWorshipTypes]);
