@@ -8,36 +8,30 @@ import { useQuery } from '@tanstack/react-query';
  * @returns Object containing notes data, loading state, and refetch function
  */
 export function useNotes(selectedWorshipType: WorshipType | null) {
-  const {
-    data,
-    isLoading,
-    isRefetching,
-    refetch,
-    error
-  } = useQuery({
-    queryKey: ['notes', selectedWorshipType?.name],
-    queryFn: async () => {
-      if (!selectedWorshipType) {
-        const { notes, notesByMonth } = await fetchUserNotes();
-        return { notes, notesByMonth };
-      }
-      
-      const { notes, notesByMonth } = await fetchUserNotesByWorshipType(
-        selectedWorshipType.name
-      );
-      return { notes, notesByMonth };
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-  
-  const { notes = [], notesByMonth = {} } = data || {};
+	const { data, isLoading, isRefetching, refetch, error } = useQuery({
+		queryKey: ['notes', selectedWorshipType?.name],
+		queryFn: async () => {
+			if (!selectedWorshipType) {
+				const { notes, notesByMonth } = await fetchUserNotes();
+				return { notes, notesByMonth };
+			}
 
-  return {
-    notes,
-    notesByMonth,
-    isLoading,
-    isRefetching,
-    refetch,
-    error
-  };
+			const { notes, notesByMonth } = await fetchUserNotesByWorshipType(
+				selectedWorshipType.name,
+			);
+			return { notes, notesByMonth };
+		},
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	});
+
+	const { notes = [], notesByMonth = {} } = data || {};
+
+	return {
+		notes,
+		notesByMonth,
+		isLoading,
+		isRefetching,
+		refetch,
+		error,
+	};
 }

@@ -20,7 +20,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Alert, Pressable } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import { usePrayerRequestMutations } from '../hooks/usePrayerRequestMutations';
+import { usePrayerRequestMutations } from '@/features/home/hooks/usePrayerRequestMutations';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
@@ -47,13 +47,18 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 			);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: [
-					'prayer-requests',
-					currentGroup?.groupId || '',
-					selectedDate,
-				],
-			});
+			Promise.all([
+				queryClient.invalidateQueries({
+					queryKey: [
+						'prayer-requests',
+						currentGroup?.groupId || '',
+						selectedDate,
+					],
+				}),
+				queryClient.invalidateQueries({
+					queryKey: ['all-prayer-requests', currentGroup?.groupId || ''],
+				}),
+			]);
 		},
 	});
 
@@ -99,13 +104,21 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 						onSuccess: () => {
 							// Toast or notification could be shown here
 							console.log('Prayer request deleted successfully');
-							queryClient.invalidateQueries({
-								queryKey: [
-									'prayer-requests',
-									currentGroup?.groupId || '',
-									selectedDate,
-								],
-							});
+							Promise.all([
+								queryClient.invalidateQueries({
+									queryKey: [
+										'prayer-requests',
+										currentGroup?.groupId || '',
+										selectedDate,
+									],
+								}),
+								queryClient.invalidateQueries({
+									queryKey: [
+										'all-prayer-requests',
+										currentGroup?.groupId || '',
+									],
+								}),
+							]);
 						},
 						onError: (error: Error) => {
 							console.error('Failed to delete prayer request:', error);

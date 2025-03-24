@@ -29,7 +29,7 @@ import {
 import { usePrayerRequestsByDate } from '@/features/home/hooks/usePrayerRequestsByDate';
 import { useFellowshipsByDate } from '@/features/home/hooks/useFellowshipsByDate';
 import type { ClientPrayerRequest } from '@/api/prayer-request/types';
-import { PrayerRequestCard } from './components/PrayerRequestCard';
+import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
 import { useAuthStore } from '@/store/auth';
 import ServiceGroups from './components/ServiceGroups';
 

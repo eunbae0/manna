@@ -43,7 +43,7 @@ export default function NoteScreen() {
 	}, [worshipTypes, setWorshipTypes]);
 
 	return (
-		<SafeAreaView>
+		<SafeAreaView className="bg-background-100">
 			<VStack space="xl" className="px-4 h-full">
 				<VStack space="sm">
 					<VStack space="xl">

@@ -47,7 +47,11 @@ export default function CreateScreen() {
 	const titleRef = useRef<TextInput>(null);
 
 	// Use custom hooks for API operations
-	const { worshipTypeNames, defaultWorshipType, isLoading: isLoadingWorshipTypes } = useWorshipTypes();
+	const {
+		worshipTypeNames,
+		defaultWorshipType,
+		isLoading: isLoadingWorshipTypes,
+	} = useWorshipTypes();
 	const [selectedWorshipType, setSelectedWorshipType] = useState('');
 
 	const { createNote, isLoading } = useCreateNote({

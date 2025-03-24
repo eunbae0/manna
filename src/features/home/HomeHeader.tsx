@@ -23,6 +23,7 @@ import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
 import { Avatar, AvatarGroup } from '../../components/common/avatar';
 import type { ClientGroup } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
+import { router } from 'expo-router';
 
 type Props = {
 	groups: ClientGroup[];
@@ -33,6 +34,11 @@ function HomeHeader({ groups }: Props) {
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
 	const group = groups.find((group) => group.id === currentGroup?.groupId);
+
+	const handlePressPrayerRequestList = () => {
+		router.push('/(app)/(prayerRequest)/list');
+		handleClose();
+	};
 
 	return (
 		<HStack className="items-center justify-between pt-2 px-4">
@@ -96,9 +102,9 @@ function HomeHeader({ groups }: Props) {
 				<BottomSheetListLayout>
 					<BottomSheetListHeader label="소그룹 메뉴" onPress={handleClose} />
 					<BottomSheetListItem
-						label="기도 제목"
+						label="기도 제목 모아보기"
 						icon={HandHelping}
-						onPress={handleClose}
+						onPress={handlePressPrayerRequestList}
 					/>
 					<Divider />
 					<BottomSheetListItem

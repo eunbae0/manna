@@ -9,8 +9,7 @@ import { Button, ButtonText } from '#/components/ui/button';
 import { Heading } from '#/components/ui/heading';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { useEffect, useRef, useState } from 'react';
-import { createPrayerRequest } from '@/api/prayer-request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
 import type { YYYYMMDD } from '@/shared/types/date';
 import { usePrayerRequestMutations } from '../hooks/usePrayerRequestMutations';
@@ -23,6 +22,7 @@ import {
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getKSTDate } from '@/shared/utils/date';
+import { useCreatePrayerRequest } from '@/features/prayer-request/hooks/useCreatePrayerRequest';
 
 export function CreatePrayerRequestScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -49,27 +49,9 @@ export function CreatePrayerRequestScreen() {
 
 	const todayDate = getKSTDate(new Date());
 
-	// Create prayer request mutation
-	const { mutate: submitPrayerRequest, isPending: isCreating } = useMutation({
-		mutationFn: async () => {
-			if (!prayerRequestText.trim()) {
-				return;
-			}
-
-			return createPrayerRequest(currentGroup?.groupId || '', {
-				value: prayerRequestText.trim(),
-				date: new Date(),
-				member: {
-					id: user?.id || '',
-					displayName: isAnonymous ? '익명' : user?.displayName || '',
-					photoUrl: isAnonymous ? '' : user?.photoUrl || '',
-				},
-			});
-		},
+	// Use the custom hook for creating prayer requests
+	const { createPrayerRequest: submitPrayerRequest, isLoading: isCreating } = useCreatePrayerRequest({
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['prayer-requests', currentGroup?.groupId || '', todayDate],
-			});
 			router.back();
 		},
 	});
@@ -90,13 +72,26 @@ export function CreatePrayerRequestScreen() {
 
 			// Manually handle navigation since we're not using the onSuccess callback
 			setTimeout(() => {
-				queryClient.invalidateQueries({
-					queryKey: ['prayer-requests', currentGroup?.groupId || '', editDate],
-				});
+				Promise.all([
+					queryClient.invalidateQueries({
+						queryKey: [
+							'prayer-requests',
+							currentGroup?.groupId || '',
+							editDate,
+						],
+					}),
+					queryClient.invalidateQueries({
+						queryKey: ['all-prayer-requests', currentGroup?.groupId || ''],
+					}),
+				]);
 				router.back();
 			}, 500);
 		} else {
-			submitPrayerRequest();
+			submitPrayerRequest({
+				value: prayerRequestText,
+				date: new Date(),
+				isAnonymous,
+			});
 		}
 	};
 
