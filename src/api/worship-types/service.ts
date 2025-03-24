@@ -1,19 +1,30 @@
 import {
 	collection,
 	doc,
+	getDoc,
 	getDocs,
 	orderBy,
 	query,
 	addDoc,
+	updateDoc,
+	deleteDoc,
 	where,
 	type DocumentData,
 	writeBatch,
 	type CollectionReference,
+	Timestamp,
+	setDoc,
 } from 'firebase/firestore';
 import { database } from '@/firebase/config';
-import type { WorshipType } from './api/types';
+import type {
+	WorshipType,
+	ClientWorshipType,
+	CreateWorshipTypeInput,
+	UpdateWorshipTypeInput,
+} from './types';
 import { serverTimestamp } from '@/firebase/firestore';
 import { FirestoreService } from '../services';
+import { v4 as uuidv4 } from 'uuid';
 
 const DEFAULT_WORSHIP_TYPES = ['주일예배', '수요예배', '새벽기도회'];
 
@@ -21,6 +32,10 @@ const DEFAULT_WORSHIP_TYPES = ['주일예배', '수요예배', '새벽기도회'
  * Worship types service class for handling Firestore operations related to worship types
  */
 export class FirestoreWorshipTypesService extends FirestoreService {
+	/**
+	 * Gets the reference to the worship types collection for the current user
+	 * @returns Collection reference
+	 */
 	getWorshipTypesCollectionRef(): CollectionReference<
 		DocumentData,
 		DocumentData
@@ -28,37 +43,50 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 		this.updateUserId();
 		return collection(database, 'users', this.userId, 'worshipTypes');
 	}
+
 	/**
-	 * Fetches all worship types for a specific user
-	 * @returns Array of worship types
+	 * Converts a Firestore worship type to a client worship type
+	 * @param id ID of the worship type
+	 * @param data Firestore worship type data
+	 * @returns Client worship type
 	 */
-	async getUserWorshipTypes(): Promise<WorshipType[]> {
+	private convertToClientWorshipType(
+		id: string,
+		data: DocumentData,
+	): ClientWorshipType {
+		return {
+			id,
+			name: data.name || '',
+		};
+	}
+
+	/**
+	 * Fetches all worship types for the current user
+	 * @returns Array of client worship types
+	 */
+	async getUserWorshipTypes(): Promise<ClientWorshipType[]> {
 		const ref = this.getWorshipTypesCollectionRef();
 		const q = query(ref, orderBy('createdAt', 'asc'));
 		const querySnapshot = await getDocs(q);
-		const worshipTypes: WorshipType[] = [];
-		for (const doc of querySnapshot.docs) {
-			const data = doc.data();
-			worshipTypes.push({
-				id: doc.id,
-				name: data.name || '',
-				createdAt: data.createdAt,
-				updatedAt: data.updatedAt,
-			});
+		const worshipTypes: ClientWorshipType[] = [];
+
+		for (const docSnapshot of querySnapshot.docs) {
+			const data = docSnapshot.data();
+			worshipTypes.push(this.convertToClientWorshipType(docSnapshot.id, data));
 		}
 
 		return worshipTypes;
 	}
 
 	/**
-	 * Creates a new worship type for a user
-	 * @param name Name of the worship type
+	 * Creates a new worship type for the current user
+	 * @param input Worship type input data
 	 * @returns ID of the created worship type
 	 */
-	async createWorshipType(name: string): Promise<string> {
+	async createWorshipType(input: CreateWorshipTypeInput): Promise<string> {
 		const ref = this.getWorshipTypesCollectionRef();
-		// Check if worship type with the same name already exists
-		const q = query(ref, where('name', '==', name));
+		// Check if worship type with the same ID already exists
+		const q = query(ref, where('id', '==', input.id));
 		const querySnapshot = await getDocs(q);
 
 		if (!querySnapshot.empty) {
@@ -66,36 +94,89 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 			return querySnapshot.docs[0].id;
 		}
 
-		const worshipTypeData = {
-			name,
+		const worshipTypeId = input.id || uuidv4();
+		const docRef = doc(ref, worshipTypeId);
+
+		const worshipTypeData: WorshipType = {
+			id: worshipTypeId,
+			name: input.name,
 			createdAt: serverTimestamp(),
 			updatedAt: serverTimestamp(),
 		};
 
-		const docRef = await addDoc(ref, worshipTypeData);
-		return docRef.id;
+		await setDoc(docRef, worshipTypeData);
+		return worshipTypeId;
+	}
+
+	/**
+	 * Updates an existing worship type
+	 * @param worshipTypeId ID of the worship type to update
+	 * @param input Updated worship type data
+	 * @returns true if successful, false if worship type not found
+	 */
+	async updateWorshipType(
+		worshipTypeId: string,
+		input: UpdateWorshipTypeInput,
+	): Promise<boolean> {
+		const ref = doc(this.getWorshipTypesCollectionRef(), worshipTypeId);
+		const docSnapshot = await getDoc(ref);
+
+		if (!docSnapshot.exists()) {
+			return false;
+		}
+
+		await updateDoc(ref, {
+			name: input.name,
+		});
+
+		return true;
+	}
+
+	/**
+	 * Deletes a worship type
+	 * @param worshipTypeId ID of the worship type to delete
+	 * @returns true if successful, false if worship type not found
+	 */
+	async deleteWorshipType(worshipTypeId: string): Promise<boolean> {
+		const ref = doc(this.getWorshipTypesCollectionRef(), worshipTypeId);
+		const docSnapshot = await getDoc(ref);
+
+		if (!docSnapshot.exists()) {
+			return false;
+		}
+
+		await deleteDoc(ref);
+		return true;
 	}
 	/**
-	 * Creates default worship types for a user
-	 * @returns void
+	 * Creates default worship types for the current user
+	 * @returns Array of created worship type IDs
 	 */
-	async createDefaultWorshipType(): Promise<void> {
+	async createDefaultWorshipTypes(): Promise<string[]> {
 		const ref = this.getWorshipTypesCollectionRef();
 		const querySnapshot = await getDocs(ref);
 
-		if (!querySnapshot.empty) return;
+		// If user already has worship types, don't create defaults
+		if (!querySnapshot.empty) {
+			return [];
+		}
 
 		const batch = writeBatch(database);
+		const createdIds: string[] = [];
 
-		for (let i = 0; i < DEFAULT_WORSHIP_TYPES.length; i++) {
-			const docRef = doc(ref);
+		for (const typeName of DEFAULT_WORSHIP_TYPES) {
+			const worshipTypeId = uuidv4();
+			const docRef = doc(ref, worshipTypeId);
+
 			batch.set(docRef, {
-				name: DEFAULT_WORSHIP_TYPES[i],
-				createdAt: serverTimestamp(),
-				updatedAt: serverTimestamp(),
+				id: worshipTypeId,
+				name: typeName,
 			});
+
+			createdIds.push(worshipTypeId);
 		}
 
 		await batch.commit();
+		return createdIds;
 	}
 }

@@ -1,53 +1,132 @@
-import type { WorshipType } from './types';
+import type {
+	ClientWorshipType,
+	CreateWorshipTypeInput,
+	UpdateWorshipTypeInput,
+} from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { FirestoreWorshipTypesService } from './service';
 
-const worshipTypesService = new FirestoreWorshipTypesService();
+/**
+ * Creates a worship types service instance
+ * @returns Worship types service instance
+ */
+function createWorshipTypesService() {
+	return new FirestoreWorshipTypesService();
+}
 
+/**
+ * Fetches all worship types for the current user
+ * @returns Array of worship type data
+ */
 export const fetchUserWorshipTypes = withApiLogging(
-	async (): Promise<WorshipType[]> => {
+	async (): Promise<ClientWorshipType[]> => {
 		try {
-			await worshipTypesService.createDefaultWorshipType();
-			const worshipTypes = await worshipTypesService.getUserWorshipTypes();
+			const worshipTypesService = createWorshipTypesService();
+			// Create default worship types if none exist
+			await worshipTypesService.createDefaultWorshipTypes();
+			const result = await worshipTypesService.getUserWorshipTypes();
 
 			// Pass metadata to the withApiLogging wrapper via context
 			const context = {
-				count: worshipTypes.length,
+				count: result.length,
 			};
 
 			// The withApiLogging wrapper will include this context in the success log
-			return Object.assign(worshipTypes, { __logContext: context });
+			return Object.assign(result, { __logContext: context });
 		} catch (error) {
-			throw handleApiError(error, 'fetchUserWorshipTypes', 'notes');
+			throw handleApiError(error, 'fetchUserWorshipTypes', 'worship-types');
 		}
 	},
 	'fetchUserWorshipTypes',
-	'notes',
+	'worship-types',
 );
 
 /**
- * Creates a new worship type for the currently logged-in user
- * @param name Name of the worship type
+ * Creates a new worship type for the current user
+ * @param input Worship type input data
  * @returns ID of the created worship type
  */
 export const createUserWorshipType = withApiLogging(
-	async (name: string): Promise<string> => {
+	async (input: CreateWorshipTypeInput): Promise<string> => {
 		try {
-			const worshipTypeId = await worshipTypesService.createWorshipType(name);
+			const worshipTypesService = createWorshipTypesService();
+			const worshipTypeId = await worshipTypesService.createWorshipType(input);
 
 			// Pass metadata to the withApiLogging wrapper via context
 			const context = {
 				worshipTypeId,
-				name,
+				input,
 			};
 
 			// The withApiLogging wrapper will include this context in the success log
 			return Object.assign(worshipTypeId, { __logContext: context });
 		} catch (error) {
-			throw handleApiError(error, 'createUserWorshipType', 'notes');
+			throw handleApiError(error, 'createUserWorshipType', 'worship-types');
 		}
 	},
 	'createUserWorshipType',
-	'notes',
+	'worship-types',
+);
+
+/**
+ * Updates an existing worship type
+ * @param worshipTypeId ID of the worship type to update
+ * @param input Updated worship type data
+ * @returns true if successful, false if worship type not found
+ */
+export const updateUserWorshipType = withApiLogging(
+	async (
+		worshipTypeId: string,
+		input: UpdateWorshipTypeInput,
+	): Promise<boolean> => {
+		try {
+			const worshipTypesService = createWorshipTypesService();
+			const result = await worshipTypesService.updateWorshipType(
+				worshipTypeId,
+				input,
+			);
+
+			// Pass metadata to the withApiLogging wrapper via context
+			const context = {
+				worshipTypeId,
+				input,
+				success: result,
+			};
+
+			// The withApiLogging wrapper will include this context in the success log
+			return Object.assign(result, { __logContext: context });
+		} catch (error) {
+			throw handleApiError(error, 'updateUserWorshipType', 'worship-types');
+		}
+	},
+	'updateUserWorshipType',
+	'worship-types',
+);
+
+/**
+ * Deletes a worship type
+ * @param worshipTypeId ID of the worship type to delete
+ * @returns true if successful, false if worship type not found
+ */
+export const deleteUserWorshipType = withApiLogging(
+	async (worshipTypeId: string): Promise<boolean> => {
+		try {
+			const worshipTypesService = createWorshipTypesService();
+			const result = await worshipTypesService.deleteWorshipType(worshipTypeId);
+
+			// Pass metadata to the withApiLogging wrapper via context
+			const context = {
+				worshipTypeId,
+				success: result,
+			};
+
+			// The withApiLogging wrapper will include this context in the success log
+			return Object.assign(result, { __logContext: context });
+		} catch (error) {
+			throw handleApiError(error, 'deleteUserWorshipType', 'worship-types');
+		}
+	},
+	'deleteUserWorshipType',
+	'worship-types',
 );
