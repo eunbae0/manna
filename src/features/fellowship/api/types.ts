@@ -1,4 +1,4 @@
-import type { User } from '@/shared/types/user';
+import type { ClientUser } from '@/shared/types/user';
 import type { FieldValue, Timestamp } from 'firebase/firestore';
 
 /**
@@ -51,7 +51,7 @@ export interface ClientFellowship extends BaseFellowship {
 }
 
 export type FellowshipMember = Partial<
-	Pick<User, 'id' | 'displayName' | 'photoUrl'>
+	Pick<ClientUser, 'id' | 'displayName' | 'photoUrl'>
 > & {
 	isLeader: boolean;
 };
