@@ -19,9 +19,10 @@ import { Text } from '#/components/ui/text';
 import {
 	BookText,
 	Calendar,
+	Captions,
 	Megaphone,
 	RefreshCcw,
-	Settings,
+	Edit,
 	Users,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
@@ -179,7 +180,7 @@ export default function FellowshipDetailScreen() {
 				>
 					{isLeader && (
 						<Pressable onPress={handlePressSettingButton}>
-							<Icon as={Settings} size="lg" className="text-typography-900" />
+							<Icon as={Edit} size="lg" className="text-typography-900" />
 						</Pressable>
 					)}
 				</Header>
@@ -212,10 +213,23 @@ export default function FellowshipDetailScreen() {
 						</VStack>
 					) : fellowship ? (
 						<VStack space="2xl" className="px-5 flex-1 pb-8">
-							<Text className="text-3xl font-pretendard-bold">
-								{fellowship.info.preachTitle}
-							</Text>
-							<VStack space="lg">
+							<VStack space="xl">
+								<HStack space="sm" className="items-center w-full">
+									<HStack space="sm" className="w-1/4 items-center">
+										<Icon
+											as={Captions}
+											size="lg"
+											className="text-typography-600"
+										/>
+										<Text size="lg" className="text-typography-600">
+											설교 제목
+										</Text>
+									</HStack>
+
+									<Text size="lg" className="text-[16px] flex-1">
+										{fellowship.info.preachTitle}
+									</Text>
+								</HStack>
 								<HStack space="sm" className="items-center w-full">
 									<HStack space="sm" className="w-1/4 items-center">
 										<Icon
@@ -228,7 +242,7 @@ export default function FellowshipDetailScreen() {
 										</Text>
 									</HStack>
 
-									<Text size="lg" className="text-[16px] py-2 flex-1">
+									<Text size="lg" className="text-[16px] flex-1">
 										{fellowship.info.date?.toLocaleDateString('ko-KR', {
 											year: 'numeric',
 											month: 'long',

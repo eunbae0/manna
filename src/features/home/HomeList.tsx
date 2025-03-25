@@ -1,53 +1,45 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
 import { Heading } from '#/components/ui/heading';
 import { VStack } from '#/components/ui/vstack';
-import { Icon } from '#/components/ui/icon';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
-import {
-	ChevronRight,
-	HandHelping,
-	Library,
-	Pen,
-	PlusIcon,
-} from 'lucide-react-native';
+import { Pen } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import { Box } from '#/components/ui/box';
 import { Spinner } from '@/components/common/spinner';
-
 import type { YYYYMMDD } from '@/shared/types/date';
 import { getKSTDate } from '@/shared/utils/date';
-import { Pressable, RefreshControl, ScrollView } from 'react-native';
-import { useBottomSheet } from '@/hooks/useBottomSheet';
-import {
-	BottomSheetListHeader,
-	BottomSheetListItem,
-	BottomSheetListLayout,
-} from '@/components/common/bottom-sheet';
+import { RefreshControl, ScrollView } from 'react-native';
 import { usePrayerRequestsByDate } from '@/features/home/hooks/usePrayerRequestsByDate';
 import { useFellowshipsByDate } from '@/features/home/hooks/useFellowshipsByDate';
 import type { ClientPrayerRequest } from '@/api/prayer-request/types';
 import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
 import { useAuthStore } from '@/store/auth';
+import NotificationBox from './components/NotificationBox';
 import ServiceGroups from './components/ServiceGroups';
+import { useRecentFellowships } from '@/features/fellowship/hooks/useRecentFellowships';
+import { LayoutAnimation, Platform, UIManager } from 'react-native';
+
+// Animation removed as requested
 
 function HomeList() {
 	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
 		getKSTDate(new Date()),
 	);
-
 	const [refreshing, setRefreshing] = useState(false);
+	const [showNotification, setShowNotification] = useState(false);
 
 	const { user, currentGroup } = useAuthStore();
 
+	// Query for recent fellowships (created within the last 6 hours)
 	const {
-		data: fellowships,
-		isLoading,
-		isError,
-		refetch,
-	} = useFellowshipsByDate(selectedDate);
+		data: recentFellowships,
+		isLoading: isLoadingRecentFellowships,
+		isError: isErrorRecentFellowships,
+		refetch: refetchRecentFellowships,
+	} = useRecentFellowships();
 
 	const {
 		data: prayerRequests,
@@ -56,33 +48,38 @@ function HomeList() {
 		refetch: refetchPrayerRequests,
 	} = usePrayerRequestsByDate(currentGroup?.groupId || '', selectedDate);
 
-	const handleDateChange = (date: YYYYMMDD) => {
-		setSelectedDate(date);
-	};
-
 	useFocusEffect(
 		useCallback(() => {
 			setSelectedDate(getKSTDate(new Date()));
-		}, []),
+			refetchRecentFellowships();
+		}, [refetchRecentFellowships]),
 	);
 
 	// Handle pull-to-refresh
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		try {
-			await Promise.all([refetch(), refetchPrayerRequests()]);
+			await Promise.all([refetchPrayerRequests(), refetchRecentFellowships()]);
 		} finally {
 			setRefreshing(false);
 		}
-	}, [refetch, refetchPrayerRequests]);
+	}, [refetchPrayerRequests, refetchRecentFellowships]);
 
 	const handlePressAddButton = () => {
 		router.navigate('/(app)/createPrayerRequestModal');
 	};
 
-	// Get the first fellowship for the selected date (if any)
-	const todaysFellowship =
-		fellowships && fellowships.length > 0 ? fellowships[0] : null;
+	const handleDismissNotification = useCallback(() => {
+		setShowNotification(false);
+	}, []);
+
+	useEffect(() => {
+		if (!isLoadingRecentFellowships) {
+			setTimeout(() => {
+				setShowNotification(recentFellowships !== null);
+			}, 500);
+		}
+	}, [recentFellowships, isLoadingRecentFellowships]);
 
 	return (
 		<VStack className="relative h-full">
@@ -97,70 +94,26 @@ function HomeList() {
 					<RefreshControl
 						refreshing={refreshing}
 						onRefresh={onRefresh}
-						tintColor="#4F46E5" // Primary color for the refresh indicator
+						tintColor="#362303"
 						title="새로고침 중..."
-						titleColor="#4B5563"
+						titleColor="#362303"
 					/>
 				}
 			>
 				<VStack space="2xl" className="py-4">
-					<ServiceGroups />
-					{/* 오늘의 나눔 */}
-					{/* <VStack className="gap-12">
-						<VStack space="md">
-							<HStack className="justify-between items-center">
-								<Heading className="text-[20px]">오늘의 나눔</Heading>
-							</HStack>
-							<VStack space="3xl">
-								{isLoading ? (
-									<HStack className="bg-background-0 rounded-2xl justify-between items-center px-4 py-5">
-										<Text size="md">로딩 중...</Text>
-									</HStack>
-								) : isError ? (
-									<HStack className="bg-background-0 rounded-2xl justify-between items-center px-4 py-5">
-										<Text size="md" className="text-red-500">
-											데이터를 불러오는 중 오류가 발생했어요.
-										</Text>
-									</HStack>
-								) : todaysFellowship ? (
-									<Pressable
-										onPress={() =>
-											router.push(`/(app)/(fellowship)/${todaysFellowship.id}`)
-										}
-									>
-										<HStack className="bg-background-0 rounded-2xl justify-between items-center px-4 py-5">
-											<VStack>
-												<HStack space="sm" className="items-center">
-													<Text size="md" className="text-typography-400">
-														{todaysFellowship.info.date
-															.toLocaleDateString('ko-KR', {
-																year: 'numeric',
-																month: '2-digit',
-																day: '2-digit',
-															})
-															.replace(/\. /g, '.')
-															.replace(/\.$/, '')}{' '}
-													</Text>
-												</HStack>
-												<Text size="xl" className="">
-													{todaysFellowship.info.preachTitle}
-												</Text>
-											</VStack>
-											<Icon
-												as={ChevronRight}
-												className="color-typography-400"
-											/>
-										</HStack>
-									</Pressable>
-								) : (
-									<HStack className="bg-background-0 rounded-2xl justify-between items-center px-4 py-5">
-										<Text size="lg">나눔이 없어요.</Text>
-									</HStack>
-								)}
-							</VStack>
-						</VStack>
-					</VStack> */}
+					<VStack space="lg">
+						<NotificationBox
+							title={'새 나눔이 등록되었어요'}
+							description={'클릭해서 나눔에 참여해보세요'}
+							visible={showNotification}
+							onPress={() => router.push('/(app)/(fellowship)/list')}
+							onDismiss={handleDismissNotification}
+						/>
+						<ServiceGroups />
+					</VStack>
+
 					<Divider className="h-2 bg-background-100" />
+
 					{/* 오늘의 기도 제목 */}
 					<VStack className="gap-12 px-4 py-1">
 						<VStack space="lg">
