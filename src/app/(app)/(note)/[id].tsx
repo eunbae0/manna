@@ -40,6 +40,7 @@ import {
 	Check,
 	Edit,
 	Megaphone,
+	Plus,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
 import { useEffect, useState } from 'react';
@@ -48,6 +49,8 @@ import { Button, ButtonText } from '#/components/ui/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import type { Note } from '@/api/notes/types';
+import { useWorshipStore } from '@/store/worship';
+import type { ClientWorshipType } from '@/api/worship-types/types';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { useNote, useUpdateNote } from '@/features/notes/hooks/useNote';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -59,15 +62,15 @@ export default function NoteScreen() {
 
 	const [isEditing, setIsEditing] = useState(false);
 	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [selectedWorshipType, setSelectedWorshipType] =
+		useState<ClientWorshipType | null>(null);
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
-	const serviceTypes = ['주일예배', '수요예배', '금요철야', '새벽기도회'];
-	const [selectedServiceType, setSelectedServiceType] = useState(
-		serviceTypes[0],
-	);
-
 	const { showSuccess } = useToastStore();
+
+	// Get worship types from global store
+	const { worshipTypes } = useWorshipStore();
 
 	// Use custom hooks for API operations
 	const { note, isLoading: isLoadingNote } = useNote(id);
@@ -92,10 +95,16 @@ export default function NoteScreen() {
 				setSelectedDate(note.date.toDate());
 			}
 			if (note.worshipType) {
-				setSelectedServiceType(note.worshipType);
+				// Find the matching worship type from the global store
+				const matchingType = worshipTypes.find(
+					(type) => type.name === note.worshipType,
+				);
+				if (matchingType) {
+					setSelectedWorshipType(matchingType);
+				}
 			}
 		}
-	}, [note]);
+	}, [note, worshipTypes]);
 
 	const handleUpdateNoteSubmit = () => {
 		if (!editableNote.title) {
@@ -109,7 +118,7 @@ export default function NoteScreen() {
 			content: editableNote.content || '',
 			sermon: editableNote.sermon || '',
 			preacher: editableNote.preacher || '',
-			worshipType: selectedServiceType,
+			worshipType: selectedWorshipType?.name || '',
 		});
 	};
 
@@ -234,34 +243,48 @@ export default function NoteScreen() {
 										contentContainerStyle={{ paddingRight: 20 }}
 										className="flex-grow"
 									>
-										<HStack space="sm" className="py-1">
-											{serviceTypes.map((type) => (
+										<HStack space="sm" className="py-1 items-center">
+											{worshipTypes.map((type) => (
 												<TouchableOpacity
-													key={type}
-													onPress={() => setSelectedServiceType(type)}
+													key={type.id.toString()}
+													onPress={() => setSelectedWorshipType(type)}
 													className="mr-1"
 												>
 													<Text
 														size="md"
 														className={`px-2 py-1 rounded-full ${
-															selectedServiceType === type
+															selectedWorshipType?.id === type.id
 																? 'bg-primary-100 text-primary-700'
 																: 'bg-gray-100 text-typography-700'
 														}`}
 													>
-														{type}
+														{type.name}
 													</Text>
 												</TouchableOpacity>
 											))}
+											<TouchableOpacity
+												onPress={() =>
+													router.push('/(app)/selectWorshipTypeModal')
+												}
+												className="mr-1"
+											>
+												<Icon
+													as={Plus}
+													size="md"
+													className="px-4 py-3 rounded-full bg-background-0 text-typography-700"
+												/>
+											</TouchableOpacity>
 										</HStack>
 									</ScrollView>
 								) : (
-									<Text
-										size="md"
-										className="px-2 py-1 rounded-full bg-primary-100 text-primary-700"
-									>
-										{selectedServiceType}
-									</Text>
+									<HStack space="sm" className="py-1">
+										<Text
+											size="md"
+											className="px-2 py-1 rounded-full bg-primary-100 text-primary-700"
+										>
+											{selectedWorshipType?.name || '예배 종류 없음'}
+										</Text>
+									</HStack>
 								)}
 							</HStack>
 							<HStack space="sm" className="items-center w-full">
@@ -311,17 +334,17 @@ export default function NoteScreen() {
 							<Text className="text-xl flex-1">{note.content}</Text>
 						)}
 					</VStack>
-					{isEditing && (
-						<Button
-							size="lg"
-							className="mx-6 mb-6 rounded-full"
-							onPress={handleUpdateNoteSubmit}
-							disabled={isLoading}
-						>
-							<ButtonText>노트 수정하기</ButtonText>
-						</Button>
-					)}
 				</KeyboardAwareScrollView>
+				{isEditing && (
+					<Button
+						size="lg"
+						className="mx-6 mb-6 rounded-full"
+						onPress={handleUpdateNoteSubmit}
+						disabled={isLoading}
+					>
+						<ButtonText>노트 수정하기</ButtonText>
+					</Button>
+				)}
 			</VStack>
 
 			{/* Bottom Sheet for Date Picker */}

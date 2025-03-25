@@ -1,17 +1,17 @@
-import type { WorshipType } from '@/api/worship-types/types';
+import type { ClientWorshipType } from '@/api/worship-types/types';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 type WorshipState = {
-	worshipTypes: WorshipType[];
-	selectedWorshipType: WorshipType | null;
+	worshipTypes: ClientWorshipType[];
+	selectedWorshipType: ClientWorshipType | null;
 };
 
 type WorshipActions = {
-	setWorshipTypes: (types: WorshipType[]) => void;
-	addWorshipType: (type: WorshipType) => void;
-	removeWorshipType: (type: WorshipType) => void;
-	setSelectedWorshipType: (type: WorshipType | null) => void;
+	setWorshipTypes: (types: ClientWorshipType[]) => void;
+	addWorshipType: (type: ClientWorshipType) => void;
+	removeWorshipType: (type: ClientWorshipType) => void;
+	setSelectedWorshipType: (type: ClientWorshipType | null) => void;
 };
 
 export const useWorshipStore = create<WorshipState & WorshipActions>()(

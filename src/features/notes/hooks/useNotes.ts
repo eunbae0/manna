@@ -1,5 +1,5 @@
 import { fetchUserNotes, fetchUserNotesByWorshipType } from '@/api/notes';
-import type { WorshipType } from '@/api/worship-types/types';
+import type { ClientWorshipType } from '@/api/worship-types/types';
 import { useQuery } from '@tanstack/react-query';
 
 /**
@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
  * @param selectedWorshipType Optional worship type to filter notes by
  * @returns Object containing notes data, loading state, and refetch function
  */
-export function useNotes(selectedWorshipType: WorshipType | null) {
+export function useNotes(selectedWorshipType: ClientWorshipType | null) {
 	const { data, isLoading, isRefetching, refetch, error } = useQuery({
 		queryKey: ['notes', selectedWorshipType?.name],
 		queryFn: async () => {

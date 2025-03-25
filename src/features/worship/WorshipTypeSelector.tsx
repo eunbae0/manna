@@ -5,14 +5,14 @@ import { Text } from '#/components/ui/text';
 import { Icon } from '#/components/ui/icon';
 import { PlusIcon } from 'lucide-react-native';
 import { useWorshipStore } from '@/store/worship';
-import type { WorshipType } from '@/api/worship-types/types';
+import type { ClientWorshipType } from '@/api/worship-types/types';
 import { router } from 'expo-router';
 
 export function WorshipTypeSelector() {
 	const { worshipTypes, selectedWorshipType, setSelectedWorshipType } =
 		useWorshipStore();
 
-	const handlePressItem = (type: WorshipType) => {
+	const handlePressItem = (type: ClientWorshipType) => {
 		if (selectedWorshipType?.name === type.name) {
 			setSelectedWorshipType(null);
 		} else {
