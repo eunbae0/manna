@@ -72,11 +72,11 @@ export default function FellowshipInfoScreen() {
 	const [preachTitle, setPreachTitle] = useState(info.preachTitle || '');
 	const [preachText, setPreachText] = useState<FellowshipInfoField>({
 		value: info.preachText?.value || '',
-		isActive: info.preachText?.isActive || false,
+		isActive: info.preachText?.isActive || true,
 	});
 	const [preacher, setPreacher] = useState<FellowshipInfoField>({
 		value: info.preacher?.value || '',
-		isActive: info.preacher?.isActive || false,
+		isActive: info.preacher?.isActive || true,
 	});
 
 	const [selectedMember, setSelectedMember] = useState<FellowshipMember | null>(
