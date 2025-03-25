@@ -1,8 +1,12 @@
-import { Pressable } from 'react-native';
-import { Button, ButtonIcon } from '#/components/ui/button';
+import { Pressable, View } from 'react-native';
+import { useState } from 'react';
+import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
 import { HStack } from '#/components/ui/hstack';
+import { VStack } from '#/components/ui/vstack';
+import { Text } from '#/components/ui/text';
 import { Heading } from '#/components/ui/heading';
 import { Icon } from '#/components/ui/icon';
+import * as Clipboard from 'expo-clipboard';
 import {
 	ChevronDown,
 	MenuIcon,
@@ -10,6 +14,7 @@ import {
 	Library,
 	UserRoundPen,
 	SettingsIcon,
+	Copy,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 
@@ -23,7 +28,10 @@ import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
 import { Avatar, AvatarGroup } from '../../components/common/avatar';
 import type { ClientGroup } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
+import { useToastStore } from '@/store/toast';
 import { router } from 'expo-router';
+import { Box } from '#/components/ui/box';
+import { cn } from '@/shared/utils/cn';
 
 type Props = {
 	groups: ClientGroup[];
@@ -31,13 +39,52 @@ type Props = {
 
 function HomeHeader({ groups }: Props) {
 	const { currentGroup, updateCurrentGroup } = useAuthStore();
-	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
+	const {
+		handleOpen: handleOpenMenu,
+		handleClose: handleCloseMenu,
+		BottomSheetContainer: MenuBottomSheetContainer,
+	} = useBottomSheet();
+	const {
+		handleOpen: handleOpenMember,
+		handleClose: handleCloseMember,
+		BottomSheetContainer: MemberBottomSheetContainer,
+	} = useBottomSheet();
+	const { showToast } = useToastStore();
 
 	const group = groups.find((group) => group.id === currentGroup?.groupId);
 
 	const handlePressPrayerRequestList = () => {
 		router.push('/(app)/(prayerRequest)/list');
-		handleClose();
+		handleCloseMenu();
+	};
+
+	const handlePressMemberGroup = () => {
+		handleOpenMember();
+	};
+
+	const handleCopyInviteCode = async () => {
+		if (group?.inviteCode) {
+			try {
+				await Clipboard.setStringAsync(group.inviteCode);
+				showToast({
+					title: '성공',
+					message: '초대 코드가 클립보드에 복사되었습니다.',
+					type: 'success',
+				});
+			} catch (error) {
+				showToast({
+					title: '오류',
+					message: '초대 코드 복사에 실패했습니다. 직접 코드를 입력해주세요.',
+					type: 'error',
+				});
+				console.error('Clipboard error:', error);
+			}
+		}
+	};
+
+	const handlePressManageMember = () => {
+		router.push('/(app)/(group)/manage-group');
+		closeMenu();
 	};
 
 	return (
@@ -76,7 +123,7 @@ function HomeHeader({ groups }: Props) {
 				</MenuItem>
 			</Menu>
 			<HStack space="xl" className="px-1 items-center">
-				<AvatarGroup onPress={() => {}}>
+				<AvatarGroup onPress={handlePressMemberGroup}>
 					{group?.members
 						? group.members.map((member) => (
 								<Avatar
@@ -89,7 +136,7 @@ function HomeHeader({ groups }: Props) {
 						: []}
 				</AvatarGroup>
 
-				<Button size="xl" variant="link" onPress={() => handleOpen()}>
+				<Button size="xl" variant="link" onPress={() => handleOpenMenu()}>
 					<ButtonIcon
 						as={MenuIcon}
 						width={24}
@@ -98,9 +145,12 @@ function HomeHeader({ groups }: Props) {
 					/>
 				</Button>
 			</HStack>
-			<BottomSheetContainer>
+			<MenuBottomSheetContainer>
 				<BottomSheetListLayout>
-					<BottomSheetListHeader label="소그룹 메뉴" onPress={handleClose} />
+					<BottomSheetListHeader
+						label="소그룹 메뉴"
+						onPress={handleCloseMenu}
+					/>
 					<BottomSheetListItem
 						label="기도 제목 모아보기"
 						icon={HandHelping}
@@ -110,16 +160,88 @@ function HomeHeader({ groups }: Props) {
 					<BottomSheetListItem
 						label="나눔 기록"
 						icon={Library}
-						onPress={handleClose}
+						onPress={handleCloseMenu}
 					/>
 					<Divider />
 					<BottomSheetListItem
 						label="소그룹원 관리하기"
 						icon={UserRoundPen}
-						onPress={handleClose}
+						onPress={handlePressManageMember}
 					/>
 				</BottomSheetListLayout>
-			</BottomSheetContainer>
+			</MenuBottomSheetContainer>
+
+			{/* Group Members Bottom Sheet */}
+			<MemberBottomSheetContainer>
+				<VStack space="md" className="px-6 py-2">
+					<BottomSheetListHeader
+						label="그룹원 목록"
+						onPress={handleCloseMember}
+					/>
+
+					{/* Group Members List */}
+					<VStack space="md" className="pb-5">
+						{group?.members && group.members.length > 0 ? (
+							group.members.map((member) => (
+								<View key={member.user.id} className="bg-white rounded-xl py-4">
+									<HStack className="items-center justify-between">
+										<HStack space="md" className="items-center">
+											<Avatar
+												size="sm"
+												photoUrl={member.user.photoUrl || undefined}
+											/>
+											<VStack>
+												<Text size="lg" className="font-pretendard-semi-bold">
+													{member.user.displayName || '이름없음'}
+												</Text>
+											</VStack>
+											<Box
+												className={cn(
+													'px-2 rounded-full py-1',
+													member.role === 'leader'
+														? 'bg-primary-400'
+														: 'bg-gray-500',
+												)}
+											>
+												<Text size="xs" className="text-typography-50">
+													{member.role === 'leader' ? '리더' : '그룹원'}
+												</Text>
+											</Box>
+										</HStack>
+									</HStack>
+								</View>
+							))
+						) : (
+							<Text className="text-center py-4">그룹원이 없습니다.</Text>
+						)}
+					</VStack>
+					<VStack space="md" className="py-2">
+						<Text size="sm">
+							아래 코드를 공유하여 새로운 그룹원을 초대해보세요
+						</Text>
+
+						<HStack className="items-center justify-between bg-gray-100 rounded-lg p-4">
+							<Text size="lg" className="font-pretendard-semi-bold">
+								{group?.inviteCode}
+							</Text>
+							<Pressable onPress={handleCopyInviteCode} className="p-2">
+								<Icon as={Copy} size="md" className="stroke-primary-500" />
+							</Pressable>
+						</HStack>
+					</VStack>
+					{/* Action Buttons */}
+					<HStack space="md" className="w-full py-2">
+						<Button
+							size="lg"
+							variant="solid"
+							className="rounded-full flex-1"
+							onPress={handleCopyInviteCode}
+						>
+							<ButtonText>초대링크 복사하기</ButtonText>
+						</Button>
+					</HStack>
+				</VStack>
+			</MemberBottomSheetContainer>
 		</HStack>
 	);
 }

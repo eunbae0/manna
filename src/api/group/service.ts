@@ -241,11 +241,13 @@ export class FirestoreGroupService {
 			throw new Error(`Group with ID ${groupId} not found`);
 		}
 
-		const userRef = doc(database, `users/${userId}`);
+		if (group.members.length <= 1) {
+			throw new Error('Cannot remove last member from group');
+		}
 
 		// Find the member to remove
 		const memberIndex = group.members.findIndex(
-			(member) => (member.user as any).path === userRef.path,
+			(member) => member.user.id === userId,
 		);
 
 		if (memberIndex < 0) {
