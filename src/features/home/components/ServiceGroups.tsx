@@ -11,8 +11,16 @@ export default function ServiceGroups() {
 		router.push('/(app)/(fellowship)/create');
 	};
 
+	const handlePressNotes = () => {
+		router.replace('/(app)/(tabs)/note');
+	};
+
+	const handlePressFellowships = () => {
+		router.push('/(app)/(fellowship)/list');
+	};
+
 	return (
-		<HStack space="md" className="px-4">
+		<VStack space="md" className="px-4">
 			<Pressable className="flex-1" onPress={handlePressCreateFellowship}>
 				<HStack className="bg-primary-500 rounded-2xl justify-between px-6 py-5">
 					<VStack space="xs">
@@ -28,13 +36,47 @@ export default function ServiceGroups() {
 						autoPlay
 						loop
 						style={{
-							width: 52,
-							height: 52,
-							paddingTop: 4,
+							width: 50,
+							height: 50,
+							marginTop: 4,
 						}}
 					/>
 				</HStack>
 			</Pressable>
-		</HStack>
+			<HStack space="md">
+				<Pressable className="flex-1" onPress={handlePressNotes}>
+					<HStack className="bg-gray-200 rounded-2xl justify-between pl-5 pt-4">
+						<VStack space="xs">
+							<Heading size="md">내 설교 노트</Heading>
+						</VStack>
+						<LottieView
+							source={require('../../../../assets/lotties/notes.json')}
+							autoPlay
+							loop
+							style={{
+								width: 80,
+								height: 80,
+							}}
+						/>
+					</HStack>
+				</Pressable>
+				<Pressable className="flex-1" onPress={handlePressFellowships}>
+					<HStack className="bg-gray-200 rounded-2xl justify-between pl-5 pt-4">
+						<VStack space="xs">
+							<Heading size="md">나눔 기록</Heading>
+						</VStack>
+						<LottieView
+							source={require('../../../../assets/lotties/fellowships.json')}
+							autoPlay
+							loop
+							style={{
+								width: 80,
+								height: 80,
+							}}
+						/>
+					</HStack>
+				</Pressable>
+			</HStack>
+		</VStack>
 	);
 }
