@@ -84,7 +84,7 @@ function HomeHeader({ groups }: Props) {
 
 	const handlePressManageMember = () => {
 		router.push('/(app)/(group)/manage-group');
-		closeMenu();
+		handleCloseMenu();
 	};
 
 	return (
