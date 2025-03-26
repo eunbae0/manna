@@ -206,11 +206,9 @@ export class FirestoreGroupService {
 			throw new Error(`Group with ID ${groupId} not found`);
 		}
 
-		const userRef = doc(database, `users/${memberData.user.id}`);
-
 		// Check if the user is already a member
 		const existingMemberIndex = group.members.findIndex(
-			(member) => (member.user as any).path === userRef.path,
+			(member) => member.user.id === memberData.user.id,
 		);
 
 		if (existingMemberIndex >= 0) {
@@ -218,7 +216,7 @@ export class FirestoreGroupService {
 		}
 
 		const newMember: GroupMember = {
-			user: userRef,
+			user: memberData.user,
 			role: memberData.role,
 		};
 
@@ -320,7 +318,7 @@ export class FirestoreGroupService {
 		}
 
 		await this.addGroupMember(group.id, {
-			user: { id: user.id },
+			user,
 			role: 'member',
 		});
 

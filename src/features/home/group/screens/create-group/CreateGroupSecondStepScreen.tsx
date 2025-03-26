@@ -21,7 +21,7 @@ export default function CreateGroupSecondStepScreen({ group }: Props) {
 			router.back();
 			return;
 		}
-		completeOnboarding(group ? [{ groupId: group.id }] : []);
+		completeOnboarding();
 	};
 
 	return (

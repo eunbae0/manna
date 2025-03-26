@@ -1,5 +1,5 @@
 import { updateUser } from '@/api/auth';
-import type { ClientUser } from '@/api/auth/types';
+import type { AuthGroup } from '@/api/auth/types';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 
@@ -17,11 +17,12 @@ type OnboardingState = {
 	userData: {
 		id: string;
 		name: string;
-		group: string;
+		group: AuthGroup | null;
 	};
 	setStep: (step: OnboardingStep) => void;
+	setOnboarding: (id: string) => void;
 	updateUserData: (data: Partial<OnboardingState['userData']>) => void;
-	completeOnboarding: (groups: ClientUser['groups']) => void;
+	completeOnboarding: () => Promise<void>;
 };
 
 export const useOnboardingStore = create<OnboardingState>((set, get) => ({
@@ -29,22 +30,31 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 	userData: {
 		id: '',
 		name: '',
-		group: '',
+		group: null,
 	},
 	setStep: (step) => set({ currentStep: step }),
+	setOnboarding: (id: string) =>
+		set((state) => ({
+			currentStep: 'NAME',
+			userData: { ...state.userData, id },
+		})),
 	updateUserData: (data) =>
 		set((state) => ({
 			userData: { ...state.userData, ...data },
 		})),
-	completeOnboarding: async (groups: ClientUser['groups']) => {
+	completeOnboarding: async () => {
+		const { id, name, group } = get().userData;
 		try {
-			await updateUser(get().userData.id, {
-				displayName: get().userData.name,
-				groups,
+			await updateUser(id, {
+				displayName: name,
+				groups: group ? [group] : [],
 			});
 		} catch (error) {
 		} finally {
-			set({ currentStep: DEFAULT_STEP });
+			set({
+				currentStep: DEFAULT_STEP,
+				userData: { id: '', name: '', group: null },
+			});
 			router.replace('/(app)');
 		}
 	},

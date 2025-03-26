@@ -25,6 +25,7 @@ export default function CreateGroupFirstStepScreen({
 	const [groupName, setGroupName] = useState('');
 	const ref = useRef<TextInput>(null);
 	const { user, updateProfile } = useAuthStore();
+	const { updateUserData } = useOnboardingStore();
 
 	const { mutate: submitPrayerRequest } = useMutation({
 		mutationFn: async () => {
@@ -42,11 +43,19 @@ export default function CreateGroupFirstStepScreen({
 			});
 		},
 		onSuccess: async (res) => {
-			setGroup(res ?? null);
+			if (!res) {
+				return;
+			}
+			setGroup(res);
 			updateProfile(user?.id ?? '', {
-				groups: res?.id ? [{ groupId: res.id }] : [],
+				groups: res.id ? [{ groupId: res.id }] : [],
 			});
 			setStep('CODE');
+			if (isOnboarding) {
+				updateUserData({
+					group: { groupId: res.id },
+				});
+			}
 		},
 	});
 

@@ -9,29 +9,71 @@ import { Heading } from '#/components/ui/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';
 import { cn } from '@/shared/utils/cn';
+import { router } from 'expo-router';
+import { joinGroup } from '@/api/group';
+import { useAuthStore } from '@/store/auth';
+import { getUser, updateUser } from '@/api';
 
 export default function JoinGroupScreen() {
-	const { setStep, currentStep, completeOnboarding } = useOnboardingStore();
+	const { user, updateProfile, updateCurrentGroup } = useAuthStore();
+	const { setStep, currentStep, updateUserData, completeOnboarding } =
+		useOnboardingStore();
 	const [code, setCode] = useState('');
 
 	const isOnboarding = currentStep === 'GROUP_JOIN';
 
 	// TODO: add join group feature
-	const handlePressJoin = () => {
+	const handlePressJoin = async () => {
+		if (!user) return;
+
+		// update firestore group member
+		const groupId = await joinGroup({
+			user: {
+				id: user.id,
+				displayName: user.displayName,
+				photoUrl: user.photoUrl,
+			},
+			inviteCode: code,
+		});
 		if (!isOnboarding) {
-			// TODO: handle non-onboarding case
+			// update firestore user groups
+			await updateUser(user.id, {
+				groups: [{ groupId }],
+			});
+			// get user from firestore
+			const updatedUser = await getUser(user.id);
+			if (!updatedUser) return;
+			// local user store update
+			updateProfile(user.id, {
+				groups: updatedUser.groups,
+			});
+			updateCurrentGroup({
+				groupId,
+			});
+			router.back();
 			return;
 		}
-		completeOnboarding([]);
+		updateUserData({
+			group: { groupId },
+		});
+		await completeOnboarding();
 	};
 
-	const handlePressLater = () => {
-		completeOnboarding([]);
+	const handlePressLater = async () => {
+		await completeOnboarding();
+	};
+
+	const onPressBackButton = () => {
+		if (!isOnboarding) {
+			router.back();
+			return;
+		}
+		setStep('GROUP_LANDING');
 	};
 
 	return (
 		<VStack>
-			<Header onPressBackButton={() => setStep('GROUP_LANDING')} />
+			<Header onPressBackButton={onPressBackButton} />
 			<VStack space="4xl" className="px-4 mt-8">
 				<VStack space="3xl">
 					<VStack space="sm">

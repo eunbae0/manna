@@ -27,7 +27,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 	const isOnboarding = currentStep === 'GROUP_LANDING';
 
 	const handlePressLater = () => {
-		completeOnboarding([]);
+		completeOnboarding();
 	};
 
 	const buttonText = useMemo(() => {

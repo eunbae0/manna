@@ -11,11 +11,10 @@ import { Mail } from 'lucide-react-native';
 
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuthStore } from '@/store/auth';
-import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
 function AuthStepScreen() {
 	const { signIn } = useAuthStore();
-	const { setStep } = useOnboardingStore();
+	const { setStep, setOnboarding } = useOnboardingStore();
 
 	const [isAppleAuthAvailable, setIsAppleAuthAvailable] = useState(false);
 	useEffect(() => {
@@ -29,13 +28,13 @@ function AuthStepScreen() {
 	}, []);
 
 	const onAppleButtonPress = async () => {
-		await signIn('APPLE', undefined);
-		setStep('NAME');
+		const { id } = await signIn('APPLE', undefined);
+		setOnboarding(id);
 	};
 
 	const onGoogleButtonPress = async () => {
-		await signIn('GOOGLE', undefined);
-		setStep('NAME');
+		const { id } = await signIn('GOOGLE', undefined);
+		setOnboarding(id);
 	};
 
 	return (
