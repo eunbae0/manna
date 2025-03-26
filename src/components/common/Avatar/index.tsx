@@ -14,7 +14,7 @@ import { VStack } from '#/components/ui/vstack';
 export type AvatarProps = {
 	variant?: 'default' | 'image';
 	type?: 'leader' | 'member';
-	size: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+	size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 	photoUrl?: string;
 	label?: string;
 } & ViewProps;
@@ -166,7 +166,7 @@ const AvatarGroup = forwardRef<View, AvatarGroupProps>(
 
 export { Avatar, AvatarGroup };
 
-function getAvatarSize(size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') {
+function getAvatarSize(size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl') {
 	switch (size) {
 		case 'xs':
 			return { width: 24, height: 24 };
@@ -178,5 +178,9 @@ function getAvatarSize(size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') {
 			return { width: 40, height: 40 };
 		case 'xl':
 			return { width: 48, height: 48 };
+		case '2xl':
+			return { width: 56, height: 56 };
+		case '3xl':
+			return { width: 64, height: 64 };
 	}
 }

@@ -38,7 +38,7 @@ type AuthActions = {
 	) => Promise<void>;
 	sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
-	updateProfile: (userId: string, user: UpdateUserInput) => void;
+	updateProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
 	validateUserCredentials: () => Promise<void>;
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
@@ -138,16 +138,17 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						set({ error: apiError });
 					}
 				},
-				updateProfile: async (userId, user) =>
-					set(async (state) => {
-						if (!state.user) return;
-						try {
-							await updateUser(userId, user);
-							state.user = { ...state.user, ...user };
-						} catch (error) {
-							throw handleApiError(error);
-						}
-					}),
+				updateProfile: async (userId, user) => {
+					if (!get().user) return;
+					try {
+						await updateUser(userId, user);
+						set((state) => ({
+							user: state.user ? { ...state.user, ...user } : null,
+						}));
+					} catch (error) {
+						throw handleApiError(error);
+					}
+				},
 				validateUserCredentials: async () => {
 					set({ loading: true });
 					await auth.authStateReady();
