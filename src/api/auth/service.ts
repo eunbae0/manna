@@ -298,13 +298,10 @@ export class FirestoreAuthService {
 			await deleteUser(currentUser);
 
 			// 3. Firestore에서 사용자 데이터 soft delete 처리
-			// Authentication에서 삭제가 성공한 후 Firestore 업데이트 실행
 			await updateDoc(userDocRef, {
 				isDeleted: true,
 				deletedAt: serverTimestamp(),
 			});
-
-			this.signOut(null);
 		} catch (error: unknown) {
 			// 재인증 관련 에러 처리
 			if (
@@ -350,21 +347,7 @@ export class FirestoreAuthService {
 			return { user: newUser, existUser: false };
 		}
 
-		// 기존 사용자
-
-		console.log(user);
-
-		if (user.isDeleted) {
-			Alert.alert(
-				'계정 정보 확인 필요',
-				'계정이 삭제되었거나 존재하지 않아요. 고객센터에 문의해주세요.',
-				[{ text: '확인' }],
-			);
-			throw new Error(
-				'계정이 삭제되었거나 존재하지 않아요. 고객센터에 문의해주세요.',
-			);
-		}
 		await this.updateLastLogin(userId);
-		return { user, existUser: true, userCredential };
+		return { user, existUser: true };
 	}
 }

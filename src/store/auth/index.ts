@@ -37,7 +37,7 @@ type AuthActions = {
 	signIn: <T extends AuthType>(
 		type: T,
 		data: T extends 'EMAIL' ? { email: string } : undefined,
-	) => Promise<void>;
+	) => Promise<{ id: string }>;
 	sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
 	updateProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
@@ -70,7 +70,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 									isAuthenticated: true,
 									loading: false,
 								});
-								break;
+								return { id: '' };
 							}
 							case 'APPLE': {
 								const { user, existUser } = await signInWithApple();
@@ -85,7 +85,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 								} else {
 									router.push('/(auth)/onboarding');
 								}
-								break;
+								return { id: user.id };
 							}
 							case 'GOOGLE': {
 								const { user, existUser } = await signInWithGoogle();
@@ -100,7 +100,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 								} else {
 									router.push('/(auth)/onboarding');
 								}
-								break;
+								return { id: user.id };
 							}
 						}
 					} catch (error) {
@@ -134,6 +134,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						await logout(authType);
 						set({
 							user: null,
+							currentGroup: null,
 							isAuthenticated: false,
 						});
 					} catch (error) {
@@ -178,10 +179,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 				clearError: () => set({ error: null }),
 				updateAuthenticated: (isAuthenticated) =>
 					set(() => ({ isAuthenticated })),
-				updateUser: (user) => set(() => ({ user })),
-				updateCurrentGroup: (group) => set(() => ({ currentGroup: group })),
+				updateUser: (user) =>
+					set((state) => ({
+						user: state.user ? { ...state.user, ...user } : null,
+					})),
+				updateCurrentGroup: (group) =>
+					set({
+						currentGroup: group,
+					}),
 				deleteAccount: async () => {
 					await deleteAccount();
+					set({
+						user: null,
+						currentGroup: null,
+						isAuthenticated: false,
+					});
 				},
 			}),
 			{
