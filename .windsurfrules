@@ -123,3 +123,13 @@ Example:
 - `가입하겠습니까?` -> `가입할까요?`
 - `리뷰를 남기겠습니다.` -> `리뷰를 남길게요.`
 - `소통할 수 있습니다.` -> `소통해보세요.`
+
+# Use Generated Component
+
+- Use generated components instead of generating new components.
+Example:
+- Header: `import { Header } from '@/components/common/Header';`
+- Toast: `import { useToastStore } from '@/store/toast';`
+- Icon: `import { Icon } from '#/components/ui/icon';`
+- KeyboardAvoidingView: `import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';`
+- KeyboardDismissView: `import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';`
