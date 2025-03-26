@@ -19,7 +19,9 @@
 			"entitlements": {
 				"com.apple.developer.applesignin": ["Default"]
 			},
-			"usesAppleSignIn": true
+			"usesAppleSignIn": true,
+			"googleServicesFile": "./assets/google/GoogleService-Info.plist",
+			"appleTeamId": "AQ62DT56AM"
 		},
 		"android": {
 			"adaptiveIcon": {
@@ -42,6 +44,12 @@
 					"imageWidth": 200,
 					"resizeMode": "contain",
 					"backgroundColor": "#ffffff"
+				}
+			],
+			[
+				"@react-native-google-signin/google-signin",
+				{
+					"iosUrlScheme": "com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob"
 				}
 			]
 		],

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "892340902140",
+    "firebase_url": "https://so-group-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "so-group",
+    "storage_bucket": "so-group.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892340902140:android:49dd46600514b5a962df79",
+        "android_client_info": {
+          "package_name": "com.eunbae.sogroup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbC-krg4xNsLT_hzb-1UX4Z_QLQFuZNHc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "892340902140-luknmdbkvedhndta0r65ajru5ltimfob.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.eunbae.sogroup",
+                "app_store_id": "6742793378"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

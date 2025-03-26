@@ -6,6 +6,8 @@
     <true/>
     <key>CFBundleAllowMixedLocalizations</key>
     <true/>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
     <string>소그룹</string>
     <key>CFBundleExecutable</key>
@@ -29,6 +31,18 @@
         <array>
           <string>sogroup</string>
           <string>com.eunbae.sogroup</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+so-group</string>
         </array>
       </dict>
     </array>
