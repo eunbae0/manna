@@ -19,6 +19,7 @@ import type {
 	FellowshipAnswerField,
 	FellowshipMember,
 } from '@/features/fellowship/api/types';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 type PrayerRequestProps = {
 	members: FellowshipMember[];
@@ -88,7 +89,10 @@ const PrayerRequestList = ({
 							key={member.id}
 							onPress={() => handlePressPrayerRequest(member)}
 						>
-							<VStack space="md" className="bg-white rounded-xl py-4 px-4">
+							<VStack
+								space="md"
+								className="bg-background-100 rounded-xl py-4 px-4"
+							>
 								<HStack space="md" className="items-center">
 									<Avatar key={member.id} size="xs" />
 									<Text size="md">{member.displayName}</Text>
@@ -153,7 +157,7 @@ const PrayerRequestList = ({
 								<Divider />
 							</VStack>
 							<Textarea size="lg">
-								<TextareaInput
+								<BottomSheetTextInput
 									value={content[memberIndex].value}
 									onChangeText={(value) =>
 										setContent([
