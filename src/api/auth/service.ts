@@ -7,8 +7,10 @@ import {
 	serverTimestamp,
 } from 'firebase/firestore';
 import {
+	deleteUser,
 	GoogleAuthProvider,
 	isSignInWithEmailLink,
+	reauthenticateWithCredential,
 	sendSignInLinkToEmail,
 	signInWithEmailLink,
 	signOut,
@@ -29,6 +31,7 @@ import type {
 	EmailSignInInput,
 	AppleSignInResponse,
 } from './types';
+import { Alert } from 'react-native';
 
 /**
  * Firestore service for user authentication and profile operations
@@ -50,6 +53,7 @@ export class FirestoreAuthService {
 			authType: data.authType,
 			authId: data.authId,
 			groups: data.groups,
+			isDeleted: data.isDeleted,
 		};
 	}
 
@@ -231,6 +235,99 @@ export class FirestoreAuthService {
 	}
 
 	/**
+	 * Deletes the current user account
+	 * @returns Promise that resolves when the account is deleted
+	 */
+	async deleteAccount(): Promise<void> {
+		const currentUser = auth.currentUser;
+		if (!currentUser) {
+			throw new Error('로그인된 사용자가 없어요.');
+		}
+
+		const userId = currentUser.uid;
+		const userDocRef = doc(database, this.usersCollectionPath, userId);
+
+		try {
+			// 1. 재인증 실행
+			// 인증 제공자에 따라 적절한 방법으로 재인증 실행
+			const providerData = currentUser.providerData[0];
+			if (providerData?.providerId === 'apple.com') {
+				// Apple 인증의 경우
+				try {
+					// Apple 인증 정보 가져오기
+					const appleCredential = await AppleAuthentication.refreshAsync({
+						user: userId,
+					});
+
+					const provider = new OAuthProvider('apple.com');
+					const authCredential = provider.credential({
+						idToken: appleCredential.identityToken || '',
+						accessToken: appleCredential.authorizationCode || '',
+					});
+
+					await reauthenticateWithCredential(currentUser, authCredential);
+				} catch (appleError) {
+					throw new Error('재인증에 실패했어요. 다시 시도해주세요.');
+				}
+			} else if (providerData?.providerId === 'google.com') {
+				// Google 인증의 경우
+				try {
+					// Google 인증 정보 가져오기
+					await GoogleSignin.hasPlayServices();
+					const response = await GoogleSignin.signIn();
+
+					if (!isSuccessResponse(response)) {
+						throw new Error('Google 재인증 실패: 유저가 로그인을 취소했어요.');
+					}
+
+					const { idToken } = response.data;
+					if (!idToken) {
+						throw new Error('Google 재인증 실패: 인증 정보가 없어요');
+					}
+
+					const authCredential = GoogleAuthProvider.credential(idToken);
+
+					await reauthenticateWithCredential(currentUser, authCredential);
+				} catch (googleError) {
+					console.error('Google 재인증 오류:', googleError);
+					throw new Error('재인증에 실패했어요. 다시 시도해주세요.');
+				}
+			}
+
+			// 2. Firebase Authentication에서 사용자 삭제
+			await deleteUser(currentUser);
+
+			// 3. Firestore에서 사용자 데이터 soft delete 처리
+			// Authentication에서 삭제가 성공한 후 Firestore 업데이트 실행
+			await updateDoc(userDocRef, {
+				isDeleted: true,
+				deletedAt: serverTimestamp(),
+			});
+
+			this.signOut(null);
+		} catch (error: unknown) {
+			// 재인증 관련 에러 처리
+			if (
+				typeof error === 'object' &&
+				error !== null &&
+				'code' in error &&
+				typeof error.code === 'string' &&
+				error.code === 'auth/requires-recent-login'
+			) {
+				// 사용자에게 알림 표시
+				Alert.alert(
+					'다시 로그인해주세요',
+					'보안을 위해 다시 로그인한 후 탈퇴해주세요.',
+					[{ text: '확인' }],
+				);
+			}
+
+			// 기타 모든 에러는 그대로 전파
+			throw error;
+		}
+	}
+
+	/**
 	 * Handles user profile after authentication
 	 * @param userCredential User credential
 	 * @param authType Authentication type
@@ -244,16 +341,30 @@ export class FirestoreAuthService {
 		// 기존 사용자 확인
 		const user = await this.getUser(userId);
 
-		if (user) {
-			await this.updateLastLogin(userId);
-			return { user, existUser: true };
+		if (!user) {
+			// 새 사용자 생성
+			const newUser = await this.createUser(userId, {
+				email: userCredential.user.email || '',
+				authType,
+			});
+			return { user: newUser, existUser: false };
 		}
 
-		// 새 사용자 생성
-		const newUser = await this.createUser(userId, {
-			email: userCredential.user.email || '',
-			authType,
-		});
-		return { user: newUser, existUser: false };
+		// 기존 사용자
+
+		console.log(user);
+
+		if (user.isDeleted) {
+			Alert.alert(
+				'계정 정보 확인 필요',
+				'계정이 삭제되었거나 존재하지 않아요. 고객센터에 문의해주세요.',
+				[{ text: '확인' }],
+			);
+			throw new Error(
+				'계정이 삭제되었거나 존재하지 않아요. 고객센터에 문의해주세요.',
+			);
+		}
+		await this.updateLastLogin(userId);
+		return { user, existUser: true, userCredential };
 	}
 }

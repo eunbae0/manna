@@ -9,6 +9,7 @@ import type {
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { arrayUnion } from 'firebase/firestore';
+import type { UserCredential } from 'firebase/auth';
 
 // Create a single instance of the auth service
 const authService = new FirestoreAuthService();
@@ -164,5 +165,20 @@ export const updateLastLogin = withApiLogging(
 		}
 	},
 	'updateLastLogin',
+	'auth',
+);
+
+/**
+ * 회원 탈퇴하기
+ */
+export const deleteAccount = withApiLogging(
+	async (): Promise<void> => {
+		try {
+			await authService.deleteAccount();
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'deleteAccount',
 	'auth',
 );

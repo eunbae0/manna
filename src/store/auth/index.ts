@@ -1,5 +1,6 @@
 import { auth } from '@/firebase/config';
 import {
+	deleteAccount,
 	getUser,
 	logout,
 	sendEmailLink,
@@ -22,6 +23,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { UserCredential } from 'firebase/auth';
 
 type AuthState = {
 	user: ClientUser | null;
@@ -44,6 +46,7 @@ type AuthActions = {
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
 	updateCurrentGroup: (group: AuthGroup | null) => void;
+	deleteAccount: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState & AuthActions>()(
@@ -177,6 +180,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					set(() => ({ isAuthenticated })),
 				updateUser: (user) => set(() => ({ user })),
 				updateCurrentGroup: (group) => set(() => ({ currentGroup: group })),
+				deleteAccount: async () => {
+					await deleteAccount();
+				},
 			}),
 			{
 				name: 'auth-storage',

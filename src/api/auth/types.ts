@@ -28,6 +28,8 @@ export interface FirestoreUser {
 	groups?: Array<AuthGroup> | null;
 	createdAt?: FieldValue;
 	lastLogin?: FieldValue;
+	isDeleted?: boolean;
+	deletedAt?: FieldValue;
 }
 
 /**
@@ -35,7 +37,7 @@ export interface FirestoreUser {
  * Used for application logic and UI rendering
  */
 export interface ClientUser
-	extends Omit<FirestoreUser, 'createdAt' | 'lastLogin'> {}
+	extends Omit<FirestoreUser, 'createdAt' | 'lastLogin' | 'deletedAt'> {}
 /**
  * Input data for email sign-in
  */

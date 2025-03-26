@@ -11,7 +11,7 @@ import { LogOutIcon, UserMinusIcon } from 'lucide-react-native';
 import { Box } from '#/components/ui/box';
 
 export default function AccountSettingScreen() {
-	const { user, logout } = useAuthStore();
+	const { user, logout, deleteAccount } = useAuthStore();
 
 	const handleDeleteAccount = () => {
 		Alert.alert(
@@ -25,9 +25,8 @@ export default function AccountSettingScreen() {
 				{
 					text: '탈퇴하기',
 					style: 'destructive',
-					onPress: () => {
-						// TODO: Implement account deletion logic
-						Alert.alert('알림', '계정 탈퇴 기능은 아직 구현 중입니다.');
+					onPress: async () => {
+						await deleteAccount();
 					},
 				},
 			],
