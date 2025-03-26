@@ -20,6 +20,7 @@ import type {
 	FellowshipMember,
 } from '@/features/fellowship/api/types';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { useAuthStore } from '@/store/auth';
 
 type SermonContentProps = {
 	index: number;
@@ -46,6 +47,10 @@ const SermonContent = ({
 		TextInput,
 		isOpen,
 	} = useBottomSheet();
+
+	const { user } = useAuthStore();
+
+	const isLeader = members.find((member) => member.isLeader) === user?.id;
 
 	const [content, setContent] = useState<FellowshipContentField>({
 		...sermonTopic,
