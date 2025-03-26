@@ -5,6 +5,7 @@ import {
 	sendEmailLink,
 	signInWithApple,
 	signInWithEmail,
+	signInWithGoogle,
 	updateLastLogin,
 	updateUser,
 } from '@/api/auth';
@@ -48,7 +49,7 @@ type AuthActions = {
 export const useAuthStore = create<AuthState & AuthActions>()(
 	immer(
 		persist(
-			(set) => ({
+			(set, get) => ({
 				user: null,
 				isAuthenticated: false,
 				loading: true,
@@ -70,6 +71,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							}
 							case 'APPLE': {
 								const { user, existUser } = await signInWithApple();
+								set({
+									user,
+									currentGroup: user?.groups?.[0] ?? null,
+									isAuthenticated: true,
+									loading: false,
+								});
+								if (existUser) {
+									router.push('/(app)');
+								} else {
+									router.push('/(auth)/onboarding');
+								}
+								break;
+							}
+							case 'GOOGLE': {
+								const { user, existUser } = await signInWithGoogle();
 								set({
 									user,
 									currentGroup: user?.groups?.[0] ?? null,
@@ -110,8 +126,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 				},
 
 				logout: async () => {
+					const authType = get().user?.authType ?? null;
 					try {
-						await logout();
+						await logout(authType);
 						set({
 							user: null,
 							isAuthenticated: false,

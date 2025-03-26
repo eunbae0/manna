@@ -54,6 +54,22 @@ export const signInWithApple = withApiLogging(
 );
 
 /**
+ * Google로 인증하기
+ */
+export const signInWithGoogle = withApiLogging(
+	async (): Promise<AppleSignInResponse> => {
+		try {
+			const userCredential = await authService.signInWithGoogle();
+			return await authService.handleUserProfile(userCredential, 'GOOGLE');
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'signInWithGoogle',
+	'auth',
+);
+
+/**
  * 이메일 링크로 로그인 링크 전송
  */
 export const sendEmailLink = withApiLogging(
@@ -72,9 +88,9 @@ export const sendEmailLink = withApiLogging(
  * 로그아웃
  */
 export const logout = withApiLogging(
-	async (): Promise<void> => {
+	async (authType: AuthType | null): Promise<void> => {
 		try {
-			await authService.signOut();
+			await authService.signOut(authType);
 		} catch (error) {
 			throw handleApiError(error);
 		}

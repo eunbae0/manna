@@ -5,11 +5,9 @@ import {
 	setDoc,
 	updateDoc,
 	serverTimestamp,
-	type DocumentData,
-	type FieldValue,
-	Timestamp,
 } from 'firebase/firestore';
 import {
+	GoogleAuthProvider,
 	isSignInWithEmailLink,
 	sendSignInLinkToEmail,
 	signInWithEmailLink,
@@ -17,6 +15,10 @@ import {
 	type UserCredential,
 } from 'firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import {
+	GoogleSignin,
+	isSuccessResponse,
+} from '@react-native-google-signin/google-signin';
 import { OAuthProvider, signInWithCredential } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUserWithServerTimestamp } from '@/shared/utils/auth';
@@ -181,9 +183,39 @@ export class FirestoreAuthService {
 	}
 
 	/**
+	 * Signs in with Google
+	 * @returns User credential
+	 */
+	async signInWithGoogle(): Promise<UserCredential> {
+		// Google Sign-In configuration
+		GoogleSignin.configure();
+
+		// Google 로그인 요청
+		await GoogleSignin.hasPlayServices();
+		const response = await GoogleSignin.signIn();
+		if (!isSuccessResponse(response)) {
+			throw new Error('Google 로그인 실패: 유저가 로그인을 취소했습니다.');
+		}
+
+		// Firebase 인증 정보 생성
+		const { idToken } = response.data;
+		if (!idToken) {
+			throw new Error('Google 로그인 실패: 인증 정보가 없습니다');
+		}
+
+		const credential = GoogleAuthProvider.credential(idToken);
+
+		// Firebase로 로그인
+		return await signInWithCredential(auth, credential);
+	}
+
+	/**
 	 * Signs out the current user
 	 */
-	async signOut(): Promise<void> {
+	async signOut(authType: AuthType | null): Promise<void> {
+		if (authType === 'GOOGLE') {
+			await GoogleSignin.revokeAccess();
+		}
 		await signOut(auth);
 	}
 

@@ -11,6 +11,7 @@ import { Mail } from 'lucide-react-native';
 
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuthStore } from '@/store/auth';
+import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
 function AuthStepScreen() {
 	const { signIn } = useAuthStore();
@@ -29,6 +30,11 @@ function AuthStepScreen() {
 
 	const onAppleButtonPress = async () => {
 		await signIn('APPLE', undefined);
+		setStep('NAME');
+	};
+
+	const onGoogleButtonPress = async () => {
+		await signIn('GOOGLE', undefined);
 		setStep('NAME');
 	};
 
@@ -55,6 +61,18 @@ function AuthStepScreen() {
 								className="rounded-full gap-4"
 							/>
 						)}
+						<Button
+							onPress={onGoogleButtonPress}
+							size="xl"
+							className="bg-white rounded-full gap-4"
+							action="secondary"
+						>
+							<ButtonIcon
+								as={Mail}
+								className="fill-white text-typography-black"
+							/>
+							<ButtonText size="lg">Google로 계속하기</ButtonText>
+						</Button>
 						<Button
 							onPress={() => {
 								setStep('EMAIL');
