@@ -66,7 +66,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 	 */
 	async getUserWorshipTypes(): Promise<ClientWorshipType[]> {
 		const ref = this.getWorshipTypesCollectionRef();
-		const q = query(ref, orderBy('createdAt', 'asc'));
+		const q = query(ref, orderBy('name', 'asc'));
 		const querySnapshot = await getDocs(q);
 		const worshipTypes: ClientWorshipType[] = [];
 
@@ -155,7 +155,6 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 	async createDefaultWorshipTypes(): Promise<string[]> {
 		const ref = this.getWorshipTypesCollectionRef();
 		const querySnapshot = await getDocs(ref);
-
 		// If user already has worship types, don't create defaults
 		if (!querySnapshot.empty) {
 			return [];
