@@ -51,7 +51,8 @@
 				{
 					"iosUrlScheme": "com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob"
 				}
-			]
+			],
+			["expo-image-picker"]
 		],
 		"experiments": {
 			"typedRoutes": true
