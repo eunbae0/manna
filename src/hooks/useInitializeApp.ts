@@ -16,37 +16,12 @@ export function useInitializeApp() {
 		PretendardLight: require('../../assets/fonts/Pretendard-Light.otf'),
 	});
 
-	const {
-		validateUserCredentials,
-		loading,
-		isAuthenticated,
-		updateUser,
-		updateAuthenticated,
-	} = useAuthStore();
-
-	// useEffect(() => {
-	// 	const unsubscribe = auth.onAuthStateChanged(async (user) => {
-	// 		// 1. 사용자가 직접 로그아웃
-	// 		// 2. Oauth의 세션 만료?
-	// 		if (!user) {
-	// 			updateAuthenticated(false);
-	// 			return;
-	// 		}
-	// 		try {
-	// 			const userFromFirestore = await getUser(user.uid);
-	// 			updateAuthenticated(true);
-	// 		} catch (error) {
-	// 			throw new Error('Firestore에서 유저 정보를 가져오지 못했습니다');
-	// 		}
-	// 	});
-	// 	return unsubscribe();
-	// }, [updateUser, updateAuthenticated]);
+	const { onAuthStateChanged, loading, isAuthenticated } = useAuthStore();
 
 	useEffect(() => {
-		(async () => {
-			await validateUserCredentials();
-		})();
-	}, [validateUserCredentials]);
+		const subscriber = auth.onAuthStateChanged(onAuthStateChanged);
+		return subscriber;
+	}, [onAuthStateChanged]);
 
 	useEffect(() => {
 		if (!fontLoaded || loading) return;

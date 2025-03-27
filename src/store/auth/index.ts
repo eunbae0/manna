@@ -23,6 +23,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 type AuthState = {
 	user: ClientUser | null;
@@ -40,7 +41,7 @@ type AuthActions = {
 	sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
 	updateProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
-	validateUserCredentials: () => Promise<void>;
+	onAuthStateChanged: FirebaseAuthTypes.AuthListenerCallback;
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
@@ -152,20 +153,24 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						throw handleApiError(error);
 					}
 				},
-				validateUserCredentials: async () => {
+				onAuthStateChanged: async (user) => {
 					set({ loading: true });
-					await auth.authStateReady();
-					if (!auth.currentUser) {
-						set({ loading: false });
+					if (!user) {
+						set({
+							loading: false,
+							isAuthenticated: false,
+							user: null,
+							currentGroup: null,
+						});
 						return;
 					}
 					try {
-						await updateLastLogin(auth.currentUser.uid);
-						const user = await getUser(auth.currentUser.uid);
+						await updateLastLogin(user.uid);
+						const firestoreUser = await getUser(user.uid);
 						set({
 							isAuthenticated: true,
-							user,
-							currentGroup: user?.groups?.[0] ?? null,
+							user: firestoreUser,
+							currentGroup: firestoreUser?.groups?.[0] ?? null,
 						});
 					} catch (err) {
 						// signOut
