@@ -3,17 +3,13 @@ import {
 	doc,
 	getDoc,
 	getDocs,
-	orderBy,
 	query,
-	addDoc,
 	updateDoc,
 	deleteDoc,
 	where,
-	type DocumentData,
 	writeBatch,
-	type CollectionReference,
-	Timestamp,
 	setDoc,
+	type FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
@@ -36,10 +32,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 	 * Gets the reference to the worship types collection for the current user
 	 * @returns Collection reference
 	 */
-	getWorshipTypesCollectionRef(): CollectionReference<
-		DocumentData,
-		DocumentData
-	> {
+	getWorshipTypesCollectionRef(): FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData> {
 		this.updateUserId();
 		return collection(database, 'users', this.userId, 'worshipTypes');
 	}
@@ -52,7 +45,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 	 */
 	private convertToClientWorshipType(
 		id: string,
-		data: DocumentData,
+		data: FirebaseFirestoreTypes.DocumentData,
 	): ClientWorshipType {
 		return {
 			id,
@@ -66,8 +59,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 	 */
 	async getUserWorshipTypes(): Promise<ClientWorshipType[]> {
 		const ref = this.getWorshipTypesCollectionRef();
-		const q = query(ref, orderBy('name', 'asc'));
-		const querySnapshot = await getDocs(q);
+		const querySnapshot = await getDocs(ref); // TODO: sort by createdAt
 		const worshipTypes: ClientWorshipType[] = [];
 
 		for (const docSnapshot of querySnapshot.docs) {
@@ -121,7 +113,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 		const ref = doc(this.getWorshipTypesCollectionRef(), worshipTypeId);
 		const docSnapshot = await getDoc(ref);
 
-		if (!docSnapshot.exists()) {
+		if (!docSnapshot.exists) {
 			return false;
 		}
 
@@ -141,7 +133,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 		const ref = doc(this.getWorshipTypesCollectionRef(), worshipTypeId);
 		const docSnapshot = await getDoc(ref);
 
-		if (!docSnapshot.exists()) {
+		if (!docSnapshot.exists) {
 			return false;
 		}
 

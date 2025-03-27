@@ -9,9 +9,7 @@ import {
 	updateDoc,
 	deleteDoc,
 	Timestamp,
-	type DocumentData,
-	type CollectionReference,
-	type DocumentReference,
+	type FirebaseFirestoreTypes,
 	setDoc,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
@@ -46,7 +44,7 @@ export class FirestoreFellowshipService extends FirestoreService {
 	 * Gets the fellowship collection reference for a specific group
 	 * @returns CollectionReference for the fellowship collection
 	 */
-	getFellowshipCollectionRef(): CollectionReference<DocumentData> {
+	getFellowshipCollectionRef(): FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData> {
 		if (!this.groupId) {
 			throw new Error('Group ID is not set');
 		}
@@ -57,7 +55,9 @@ export class FirestoreFellowshipService extends FirestoreService {
 	 * @param fellowshipId ID of the fellowship document
 	 * @returns DocumentReference for the fellowship document
 	 */
-	getFellowshipDocRef(fellowshipId: string): DocumentReference<DocumentData> {
+	getFellowshipDocRef(
+		fellowshipId: string,
+	): FirebaseFirestoreTypes.DocumentReference<FirebaseFirestoreTypes.DocumentData> {
 		if (!this.groupId) {
 			throw new Error('Group ID is not set');
 		}
@@ -77,7 +77,7 @@ export class FirestoreFellowshipService extends FirestoreService {
 
 		const fellowships: Fellowship[] = [];
 		for (const doc of querySnapshot.docs) {
-			const data = doc.data() as DocumentData;
+			const data = doc.data() as FirebaseFirestoreTypes.DocumentData;
 			fellowships.push({
 				id: doc.id,
 				groupId: this.groupId,
@@ -99,7 +99,7 @@ export class FirestoreFellowshipService extends FirestoreService {
 		const docRef = this.getFellowshipDocRef(fellowshipId);
 		const docSnap = await getDoc(docRef);
 
-		if (docSnap.exists()) {
+		if (docSnap.exists) {
 			const data = docSnap.data() as Fellowship;
 
 			return {

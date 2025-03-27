@@ -1,4 +1,6 @@
 import { database, auth } from '@/firebase/config';
+import authModule from '@react-native-firebase/auth';
+
 import {
 	doc,
 	getDoc,
@@ -182,10 +184,7 @@ export class FirestoreAuthService {
 			throw new Error('Apple 로그인 실패: 인증 정보가 없습니다');
 		}
 
-		const provider = new OAuthProvider('apple.com');
-		const credential = provider.credential({
-			idToken: identityToken,
-		});
+		const credential = authModule.AppleAuthProvider.credential(identityToken);
 
 		// Firebase로 로그인
 		return await signInWithCredential(auth, credential);
@@ -212,7 +211,7 @@ export class FirestoreAuthService {
 			throw new Error('Google 로그인 실패: 인증 정보가 없습니다');
 		}
 
-		const credential = GoogleAuthProvider.credential(idToken);
+		const credential = authModule.GoogleAuthProvider.credential(idToken);
 
 		// Firebase로 로그인
 		return await signInWithCredential(auth, credential);
