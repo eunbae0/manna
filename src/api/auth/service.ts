@@ -218,7 +218,7 @@ export class FirestoreAuthService {
 	 */
 	async signOut(authType: AuthType | null): Promise<void> {
 		if (authType === 'GOOGLE') {
-			await GoogleSignin.revokeAccess();
+			await GoogleSignin.signOut();
 		}
 		await signOut(auth);
 	}
