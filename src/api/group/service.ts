@@ -10,8 +10,7 @@ import {
 	query,
 	where,
 	orderBy,
-	type DocumentData,
-	type DocumentReference,
+	type FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
@@ -39,7 +38,10 @@ export class FirestoreGroupService {
 	 * @param data Firestore group data
 	 * @returns Client group
 	 */
-	private convertToClientGroup(id: string, data: DocumentData): ClientGroup {
+	private convertToClientGroup(
+		id: string,
+		data: FirebaseFirestoreTypes.DocumentData,
+	): ClientGroup {
 		return {
 			id,
 			groupName: data.groupName,
@@ -83,11 +85,11 @@ export class FirestoreGroupService {
 		const groupRef = doc(database, this.collectionPath, groupId);
 		const groupDoc = await getDoc(groupRef);
 
-		if (!groupDoc.exists()) {
+		if (!groupDoc.exists) {
 			return null;
 		}
 
-		const data = groupDoc.data();
+		const data = groupDoc.data() || {};
 		return this.convertToClientGroup(groupDoc.id, data);
 	}
 

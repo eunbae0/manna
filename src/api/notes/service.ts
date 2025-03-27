@@ -6,13 +6,11 @@ import {
 	orderBy,
 	query,
 	where,
-	type DocumentData,
-	type CollectionReference,
-	type DocumentReference,
 	addDoc,
 	updateDoc,
+	type FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
-import { auth, database } from '@/firebase/config';
+import { database } from '@/firebase/config';
 import type { Note, NotesByMonth } from './types';
 import { serverTimestamp } from '@/firebase/firestore';
 import { FirestoreWorshipTypesService } from '../worship-types/service';
@@ -22,7 +20,7 @@ import type { WorshipType } from '../worship-types/types';
  * Notes service class for handling Firestore operations related to sermon notes
  */
 export class FirestoreNotesService extends FirestoreWorshipTypesService {
-	getNotesCollectionRef(): CollectionReference<DocumentData> {
+	getNotesCollectionRef(): FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData> {
 		this.updateUserId();
 		return collection(database, 'users', this.userId, 'notes');
 	}
@@ -36,7 +34,7 @@ export class FirestoreNotesService extends FirestoreWorshipTypesService {
 
 		const notes: Note[] = [];
 		for (const doc of querySnapshot.docs) {
-			const data = doc.data() as DocumentData;
+			const data = doc.data() as FirebaseFirestoreTypes.DocumentData;
 			notes.push({
 				id: doc.id,
 				title: data.title || '',
@@ -85,11 +83,11 @@ export class FirestoreNotesService extends FirestoreWorshipTypesService {
 			const noteRef = doc(this.getNotesCollectionRef(), noteId);
 			const noteSnapshot = await getDoc(noteRef);
 
-			if (!noteSnapshot.exists()) {
+			if (!noteSnapshot.exists) {
 				return null;
 			}
 
-			const data = noteSnapshot.data();
+			const data = noteSnapshot.data() || {};
 			return {
 				id: noteSnapshot.id,
 				title: data.title || '',
@@ -122,7 +120,7 @@ export class FirestoreNotesService extends FirestoreWorshipTypesService {
 
 		const notes: Note[] = [];
 		for (const doc of querySnapshot.docs) {
-			const data = doc.data() as DocumentData;
+			const data = doc.data() as FirebaseFirestoreTypes.DocumentData;
 			notes.push({
 				id: doc.id,
 				title: data.title || '',

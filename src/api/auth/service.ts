@@ -335,7 +335,7 @@ export class FirestoreAuthService {
 	 * @param authType Authentication type
 	 */
 	async handleUserProfile(
-		userCredential: UserCredential,
+		userCredential: FirebaseAuthTypes.UserCredential,
 		authType: AuthType,
 	): Promise<AppleSignInResponse> {
 		const userId = userCredential.user.uid;

@@ -11,8 +11,8 @@ import {
 	where,
 	orderBy,
 	Timestamp,
-	type DocumentData,
 	setDoc,
+	type FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
@@ -48,7 +48,7 @@ export class FirestorePrayerRequestService {
 	 */
 	private convertToClientPrayerRequest(
 		id: string,
-		data: DocumentData,
+		data: FirebaseFirestoreTypes.DocumentData,
 	): ClientPrayerRequest {
 		return {
 			id,
@@ -95,11 +95,11 @@ export class FirestorePrayerRequestService {
 		);
 		const prayerRequestDoc = await getDoc(prayerRequestRef);
 
-		if (!prayerRequestDoc.exists()) {
+		if (!prayerRequestDoc.exists) {
 			return null;
 		}
 
-		const data = prayerRequestDoc.data();
+		const data = prayerRequestDoc.data() || {};
 		return this.convertToClientPrayerRequest(prayerRequestDoc.id, data);
 	}
 
