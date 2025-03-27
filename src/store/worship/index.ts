@@ -5,6 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 type WorshipState = {
 	worshipTypes: ClientWorshipType[];
 	selectedWorshipType: ClientWorshipType | null;
+	isLoading: boolean;
 };
 
 type WorshipActions = {
@@ -12,16 +13,19 @@ type WorshipActions = {
 	addWorshipType: (type: ClientWorshipType) => void;
 	removeWorshipType: (type: ClientWorshipType) => void;
 	setSelectedWorshipType: (type: ClientWorshipType | null) => void;
+	setIsLoading: (isLoading: boolean) => void;
 };
 
 export const useWorshipStore = create<WorshipState & WorshipActions>()(
 	immer((set) => ({
 		worshipTypes: [],
 		selectedWorshipType: null,
+		isLoading: true,
 
 		setWorshipTypes: (types) =>
 			set((state) => {
 				state.worshipTypes = types;
+				state.isLoading = false;
 			}),
 
 		addWorshipType: (type) =>
@@ -41,6 +45,11 @@ export const useWorshipStore = create<WorshipState & WorshipActions>()(
 		setSelectedWorshipType: (type) =>
 			set((state) => {
 				state.selectedWorshipType = type;
+			}),
+
+		setIsLoading: (isLoading) =>
+			set((state) => {
+				state.isLoading = isLoading;
 			}),
 	})),
 );

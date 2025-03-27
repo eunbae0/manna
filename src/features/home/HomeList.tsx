@@ -19,6 +19,7 @@ import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRe
 import { useAuthStore } from '@/store/auth';
 import NotificationBox from './components/NotificationBox';
 import ServiceGroups from './components/ServiceGroups';
+import { HomeSkeleton } from './components/HomeSkeleton';
 import { useRecentFellowships } from '@/features/fellowship/hooks/useRecentFellowships';
 import { LayoutAnimation, Platform, UIManager } from 'react-native';
 
@@ -100,63 +101,63 @@ function HomeList() {
 					/>
 				}
 			>
-				<VStack space="2xl" className="py-4">
-					<VStack space="lg">
-						<NotificationBox
-							title={'새 나눔이 등록되었어요'}
-							description={'클릭해서 나눔에 참여해보세요'}
-							visible={showNotification}
-							onPress={() => router.push('/(app)/(fellowship)/list')}
-							onDismiss={handleDismissNotification}
-						/>
-						<ServiceGroups />
-					</VStack>
-
-					<Divider className="h-2 bg-background-100" />
-
-					{/* 오늘의 기도 제목 */}
-					<VStack className="gap-12 px-4 py-1">
+				{isPrayerRequestsLoading ? (
+					<HomeSkeleton />
+				) : (
+					<VStack space="2xl" className="py-4">
 						<VStack space="lg">
-							<HStack className="justify-between items-center">
-								<Heading className="text-[20px]">오늘의 기도 제목</Heading>
-							</HStack>
-							{isPrayerRequestsLoading ? (
-								<Box className="items-center justify-center py-8">
-									<Spinner size="large" />
-								</Box>
-							) : isPrayerRequestsError ? (
-								<Text className="text-center py-8 text-danger-500">
-									기도 제목을 불러오는 중 오류가 발생했어요
-								</Text>
-							) : prayerRequests && prayerRequests.length > 0 ? (
-								<VStack>
-									{prayerRequests.map(
-										(prayerRequest: ClientPrayerRequest, index) => (
-											<VStack key={prayerRequest.id}>
-												{index > 0 && (
-													<Divider className="bg-background-100 h-[1px]" />
-												)}
-												<PrayerRequestCard
-													prayerRequest={prayerRequest}
-													member={{
-														id: user?.id || '',
-														displayName: user?.displayName || '',
-														photoUrl: user?.photoUrl || '',
-													}}
-													selectedDate={selectedDate}
-												/>
-											</VStack>
-										),
-									)}
-								</VStack>
-							) : (
-								<Text className="text-center py-8 text-gray-500">
-									기도 제목이 없어요
-								</Text>
-							)}
+							<NotificationBox
+								title={'새 나눔이 등록되었어요'}
+								description={'클릭해서 나눔에 참여해보세요'}
+								visible={showNotification}
+								onPress={() => router.push('/(app)/(fellowship)/list')}
+								onDismiss={handleDismissNotification}
+							/>
+							<ServiceGroups />
+						</VStack>
+
+						<Divider className="h-2 bg-background-100" />
+
+						{/* 오늘의 기도 제목 */}
+						<VStack className="gap-12 px-4 py-1">
+							<VStack space="lg">
+								<HStack className="justify-between items-center">
+									<Heading className="text-[20px]">오늘의 기도 제목</Heading>
+								</HStack>
+								{isPrayerRequestsError ? (
+									<Text className="text-center py-8 text-danger-500">
+										기도 제목을 불러오는 중 오류가 발생했어요
+									</Text>
+								) : prayerRequests && prayerRequests.length > 0 ? (
+									<VStack>
+										{prayerRequests.map(
+											(prayerRequest: ClientPrayerRequest, index) => (
+												<VStack key={prayerRequest.id}>
+													{index > 0 && (
+														<Divider className="bg-background-100 h-[1px]" />
+													)}
+													<PrayerRequestCard
+														prayerRequest={prayerRequest}
+														member={{
+															id: user?.id || '',
+															displayName: user?.displayName || '',
+															photoUrl: user?.photoUrl || '',
+														}}
+														selectedDate={selectedDate}
+													/>
+												</VStack>
+											),
+										)}
+									</VStack>
+								) : (
+									<Text className="text-center py-8 text-gray-500">
+										기도 제목이 없어요
+									</Text>
+								)}
+							</VStack>
 						</VStack>
 					</VStack>
-				</VStack>
+				)}
 				<Box className="h-32" />
 			</ScrollView>
 			<Button

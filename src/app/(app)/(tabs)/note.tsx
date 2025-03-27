@@ -9,6 +9,7 @@ import { Heading } from '#/components/ui/heading';
 import { Button, ButtonIcon } from '#/components/ui/button';
 import { Filter, PlusIcon } from 'lucide-react-native';
 import { NoteCard } from '@/features/notes/components/NoteCard';
+import { NoteSkeleton } from '@/features/notes/components/NoteSkeleton';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
@@ -65,7 +66,7 @@ export default function NoteScreen() {
 				>
 					<VStack space="lg" className="">
 						{loading ? (
-							<Text className="text-center py-4">로딩 중...</Text>
+							<NoteSkeleton />
 						) : notes.length === 0 ? (
 							<Text className="text-center py-4">노트가 없습니다.</Text>
 						) : (

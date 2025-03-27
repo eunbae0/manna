@@ -7,10 +7,15 @@ import { PlusIcon } from 'lucide-react-native';
 import { useWorshipStore } from '@/store/worship';
 import type { ClientWorshipType } from '@/api/worship-types/types';
 import { router } from 'expo-router';
+import { WorshipTypeSelectorSkeleton } from './WorshipTypeSelectorSkeleton';
 
 export function WorshipTypeSelector() {
-	const { worshipTypes, selectedWorshipType, setSelectedWorshipType } =
-		useWorshipStore();
+	const {
+		worshipTypes,
+		selectedWorshipType,
+		setSelectedWorshipType,
+		isLoading,
+	} = useWorshipStore();
 
 	const handlePressItem = (type: ClientWorshipType) => {
 		if (selectedWorshipType?.name === type.name) {
@@ -19,6 +24,10 @@ export function WorshipTypeSelector() {
 			setSelectedWorshipType(type);
 		}
 	};
+
+	if (isLoading) {
+		return <WorshipTypeSelectorSkeleton />;
+	}
 
 	return (
 		<ScrollView
