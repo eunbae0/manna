@@ -1,44 +1,8 @@
-import { initializeApp } from 'firebase/app';
 import { getFirestore } from '@react-native-firebase/firestore';
-import {
-	initializeAuth,
-	getReactNativePersistence,
-	getAuth,
-	type Auth,
-} from '@react-native-firebase/auth';
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { getAuth } from '@react-native-firebase/auth';
 
-// Optionally import the services that you want to use
-// import {...} from '@react-native-firebase/auth';
-// import {...} from 'firebase/database';
-// import {...} from 'firebase/functions';
-// import {...} from 'firebase/storage';
-// import { getAnalytics } from 'firebase/analytics';
+export const auth = getAuth();
 
-// Initialize Firebase
-const firebaseConfig = {
-	apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
-	authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
-	projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
-	storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
-	messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-	appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
-	measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
-};
+export const database = getFirestore();
 
-const app = initializeApp(firebaseConfig);
-
-let auth: Auth;
-if (Platform.OS !== 'web') {
-	// 네이티브 환경
-	auth = initializeAuth(app, {
-		persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-	});
-} else {
-	// 웹 환경
-	auth = getAuth(app);
-}
-export { auth };
-export const database = getFirestore(app);
 // export const analytics = getAnalytics(app);
