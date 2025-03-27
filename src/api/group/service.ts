@@ -23,6 +23,7 @@ import type {
 	AddGroupMemberInput,
 	JoinGroupInput,
 	GroupMemberRole,
+	GroupUser,
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -215,8 +216,16 @@ export class FirestoreGroupService {
 			throw new Error('User is already a member of this group');
 		}
 
+		const newUser = Object.assign(
+			{ id: memberData.user.id },
+			memberData.user.displayName
+				? { displayName: memberData.user.displayName }
+				: {},
+			memberData.user.photoUrl ? { photoUrl: memberData.user.photoUrl } : {},
+		) as GroupUser;
+
 		const newMember: GroupMember = {
-			user: memberData.user,
+			user: newUser,
 			role: memberData.role,
 		};
 
