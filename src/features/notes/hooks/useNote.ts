@@ -1,7 +1,7 @@
 import { getUserNote, updateUserNote } from '@/api/notes';
 import { Note } from '@/api/notes/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp } from '@react-native-firebase/firestore';
 
 interface UpdateNoteData {
 	title: string;

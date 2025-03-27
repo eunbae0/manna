@@ -28,7 +28,8 @@
 				"foregroundImage": "./assets/images/icons/play_store_icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.eunbae.sogroup"
+			"package": "com.eunbae.sogroup",
+			"googleServicesFile": "./assets/google/GoogleService-Info.plist"
 		},
 		"web": {
 			"bundler": "metro",
@@ -52,7 +53,18 @@
 					"iosUrlScheme": "com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob"
 				}
 			],
-			["expo-image-picker"]
+			["expo-image-picker"],
+			"@react-native-firebase/app",
+			"@react-native-firebase/auth",
+			"@react-native-firebase/crashlytics",
+			[
+				"expo-build-properties",
+				{
+					"ios": {
+						"useFrameworks": "static"
+					}
+				}
+			]
 		],
 		"experiments": {
 			"typedRoutes": true

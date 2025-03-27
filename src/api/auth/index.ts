@@ -8,8 +8,7 @@ import type {
 } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
-import { arrayUnion } from 'firebase/firestore';
-import type { UserCredential } from 'firebase/auth';
+import { arrayUnion } from '@react-native-firebase/firestore';
 
 // Create a single instance of the auth service
 const authService = new FirestoreAuthService();

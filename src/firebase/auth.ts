@@ -2,4 +2,4 @@ export {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	signOut,
-} from 'firebase/auth';
+} from '@react-native-firebase/auth';

@@ -11,7 +11,7 @@ import {
 	type DocumentReference,
 	addDoc,
 	updateDoc,
-} from 'firebase/firestore';
+} from '@react-native-firebase/firestore';
 import { auth, database } from '@/firebase/config';
 import type { Note, NotesByMonth } from './types';
 import { serverTimestamp } from '@/firebase/firestore';

@@ -1,5 +1,5 @@
 import type { ClientUser } from '@/shared/types/user';
-import type { FieldValue, Timestamp } from 'firebase/firestore';
+import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 
 /**
  * Base Fellowship interface with common properties

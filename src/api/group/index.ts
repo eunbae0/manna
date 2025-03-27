@@ -12,7 +12,7 @@ import { withApiLogging } from '../utils/logger';
 import { FirestoreGroupService } from './service';
 import { updateUser } from '../auth';
 import { database } from '@/firebase/config';
-import { arrayUnion, doc } from 'firebase/firestore';
+import { arrayUnion, doc } from '@react-native-firebase/firestore';
 
 /**
  * Creates a group service instance

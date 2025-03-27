@@ -4,4 +4,4 @@ export {
 	setDoc,
 	updateDoc,
 	serverTimestamp,
-} from 'firebase/firestore';
+} from '@react-native-firebase/firestore';

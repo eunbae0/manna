@@ -1,4 +1,4 @@
-import type { FieldValue, Timestamp } from 'firebase/firestore';
+import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 import type { FirestoreUser } from '../auth/types';
 
 /**

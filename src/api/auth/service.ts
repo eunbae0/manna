@@ -5,7 +5,7 @@ import {
 	setDoc,
 	updateDoc,
 	serverTimestamp,
-} from 'firebase/firestore';
+} from '@react-native-firebase/firestore';
 import {
 	deleteUser,
 	GoogleAuthProvider,
@@ -14,14 +14,17 @@ import {
 	sendSignInLinkToEmail,
 	signInWithEmailLink,
 	signOut,
-	type UserCredential,
-} from 'firebase/auth';
+	type FirebaseAuthTypes,
+} from '@react-native-firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import {
 	GoogleSignin,
 	isSuccessResponse,
 } from '@react-native-google-signin/google-signin';
-import { OAuthProvider, signInWithCredential } from 'firebase/auth';
+import {
+	OAuthProvider,
+	signInWithCredential,
+} from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createUserWithServerTimestamp } from '@/shared/utils/auth';
 import type {
@@ -66,7 +69,7 @@ export class FirestoreAuthService {
 		const userRef = doc(database, this.usersCollectionPath, userId);
 		const userDoc = await getDoc(userRef);
 
-		if (!userDoc.exists()) {
+		if (!userDoc.exists) {
 			return null;
 		}
 
@@ -123,7 +126,9 @@ export class FirestoreAuthService {
 	 * @param data Email sign-in data
 	 * @returns User credential
 	 */
-	async signInWithEmail(data: EmailSignInInput): Promise<UserCredential> {
+	async signInWithEmail(
+		data: EmailSignInInput,
+	): Promise<FirebaseAuthTypes.UserCredential> {
 		if (data.isIncomingLink) {
 			// Handle incoming email link
 			if (!isSignInWithEmailLink(auth, data.email)) {
@@ -155,14 +160,14 @@ export class FirestoreAuthService {
 		await AsyncStorage.setItem('emailForSignIn', data.email);
 
 		// This is not a real user credential, but we return a mock for consistency
-		return {} as UserCredential;
+		return {} as FirebaseAuthTypes.UserCredential;
 	}
 
 	/**
 	 * Signs in with Apple
 	 * @returns User credential
 	 */
-	async signInWithApple(): Promise<UserCredential> {
+	async signInWithApple(): Promise<FirebaseAuthTypes.UserCredential> {
 		// Apple 로그인 요청
 		const appleAuthCredential = await AppleAuthentication.signInAsync({
 			requestedScopes: [
@@ -190,7 +195,7 @@ export class FirestoreAuthService {
 	 * Signs in with Google
 	 * @returns User credential
 	 */
-	async signInWithGoogle(): Promise<UserCredential> {
+	async signInWithGoogle(): Promise<FirebaseAuthTypes.UserCredential> {
 		// Google Sign-In configuration
 		GoogleSignin.configure();
 

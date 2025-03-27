@@ -12,7 +12,7 @@ import {
 	orderBy,
 	type DocumentData,
 	type DocumentReference,
-} from 'firebase/firestore';
+} from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
 	Group,

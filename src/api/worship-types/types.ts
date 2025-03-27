@@ -1,4 +1,4 @@
-import type { FieldValue, Timestamp } from 'firebase/firestore';
+import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 
 /**
  * Server-side WorshipType with Timestamp objects

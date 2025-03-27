@@ -1,4 +1,4 @@
-import type { FieldValue } from 'firebase/firestore';
+import type { FieldValue } from '@react-native-firebase/firestore';
 import type { ClientGroup } from '../group/types';
 
 export type AuthType = 'EMAIL' | 'APPLE' | 'GOOGLE' | 'KAKAO';

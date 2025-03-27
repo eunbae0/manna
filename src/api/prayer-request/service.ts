@@ -13,7 +13,7 @@ import {
 	Timestamp,
 	type DocumentData,
 	setDoc,
-} from 'firebase/firestore';
+} from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
 	PrayerRequest,

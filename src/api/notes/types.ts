@@ -1,4 +1,4 @@
-import type { Timestamp } from 'firebase/firestore';
+import type { Timestamp } from '@react-native-firebase/firestore';
 export interface Note {
 	id: string;
 	title: string;
