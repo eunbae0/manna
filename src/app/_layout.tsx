@@ -2,6 +2,7 @@ import { Slot } from 'expo-router';
 import { GluestackUIProvider } from '#/components/ui/gluestack-ui-provider';
 import { StatusBar } from 'expo-status-bar';
 import { ToastContainer } from '@/components/common/toast/ToastContainer';
+import { ScreenTracker } from '@/components/analytics/ScreenTracker';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -37,6 +38,7 @@ export default function Root() {
 				<GestureHandlerRootView style={{ flex: 1 }}>
 					<GluestackUIProvider>
 						<PortalProvider>
+							<ScreenTracker />
 							<Slot />
 							<StatusBar style="auto" />
 							<ToastContainer />
