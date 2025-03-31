@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { Pressable } from 'react-native';
 
 import { Crown, Users } from 'lucide-react-native';
 import { Button, ButtonText } from '@/components/common/button';
@@ -11,6 +10,7 @@ import { Text } from '#/components/ui/text';
 import { Icon } from '#/components/ui/icon';
 import { useOnboardingStore } from '@/store/onboarding';
 import Header from '@/components/common/Header';
+import AnimatedPressable from '@/components/common/animated-pressable';
 
 export type GroupLandingOption = 'create' | 'join';
 
@@ -56,7 +56,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 
 				<VStack className="gap-8">
 					<HStack space="md" className="w-full">
-						<Pressable
+						<AnimatedPressable
 							className="flex-1 h-40"
 							onPress={() => setSelectedOption('create')}
 						>
@@ -89,9 +89,9 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 									</VStack>
 								</VStack>
 							</VStack>
-						</Pressable>
+						</AnimatedPressable>
 
-						<Pressable
+						<AnimatedPressable
 							className="flex-1 h-40"
 							onPress={() => setSelectedOption('join')}
 						>
@@ -121,14 +121,14 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 									</VStack>
 								</VStack>
 							</VStack>
-						</Pressable>
+						</AnimatedPressable>
 					</HStack>
 
 					<VStack space="lg" className="mb-4">
 						<Button
 							className="rounded-full"
 							size="lg"
-							isDisabled={!selectedOption}
+							disabled={!selectedOption}
 							onPress={() => handlePressOption(selectedOption)}
 						>
 							<ButtonText>{buttonText}</ButtonText>
