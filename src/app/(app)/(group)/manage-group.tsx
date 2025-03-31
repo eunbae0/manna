@@ -7,7 +7,7 @@ import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { Text } from '#/components/ui/text';
 import { HStack } from '#/components/ui/hstack';
-import { Button, ButtonText, ButtonIcon } from '#/components/ui/button';
+import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { useGroupMembers } from '@/hooks/useGroupMembers';
@@ -149,12 +149,7 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 				<VStack space="md">
 					<HStack className="items-center justify-between py-2">
 						<Heading className="text-[24px]">그룹원 관리</Heading>
-						<Button
-							variant="outline"
-							size="sm"
-							onPress={handleInvite}
-							className="rounded-full"
-						>
+						<Button variant="outline" size="sm" onPress={handleInvite} rounded>
 							<ButtonIcon as={UserPlus} />
 							<ButtonText>초대하기</ButtonText>
 						</Button>
@@ -209,17 +204,13 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 														className="stroke-gray-500"
 													/>
 												</Pressable> */}
-												<Pressable
+												<Button
 													onPress={() => handleRemoveMember(user.id)}
-													className="p-2"
 													disabled={isRemovingMember}
+													variant="icon"
 												>
-													<Icon
-														as={Trash2}
-														size="lg"
-														className="stroke-red-500"
-													/>
-												</Pressable>
+													<ButtonIcon as={Trash2} className="stroke-red-500" />
+												</Button>
 											</HStack>
 										</HStack>
 									</View>
@@ -249,9 +240,9 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 							<Text size="lg" className="font-pretendard-semi-bold">
 								{group?.inviteCode}
 							</Text>
-							<Pressable onPress={handleCopyInviteCode} className="p-2">
-								<Icon as={Copy} size="md" className="stroke-primary-500" />
-							</Pressable>
+							<Button variant="icon" onPress={handleCopyInviteCode}>
+								<ButtonIcon as={Copy} />
+							</Button>
 						</HStack>
 
 						<Button

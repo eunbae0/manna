@@ -33,7 +33,7 @@ import { Divider } from '#/components/ui/divider';
 import { Heading } from '#/components/ui/heading';
 import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
-import { Button, ButtonText, ButtonIcon } from '#/components/ui/button';
+import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import SermonContent from '@/features/fellowship/SermonContent';
 import PrayerRequestList from '@/features/fellowship/PrayerRequest';
 import type {

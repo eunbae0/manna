@@ -45,7 +45,7 @@ import {
 import { HStack } from '#/components/ui/hstack';
 import { useEffect, useState } from 'react';
 import { useToastStore } from '@/store/toast';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import type { Note } from '@/api/notes/types';
@@ -141,17 +141,14 @@ export default function NoteScreen() {
 					onPressBackButton={() => router.back()}
 					className="justify-between pr-6"
 				>
-					<Pressable
+					<Button
+						variant="icon"
 						onPress={() =>
 							isEditing ? handleUpdateNoteSubmit() : setIsEditing(true)
 						}
 					>
-						{isEditing ? (
-							<Icon as={Check} size="lg" className="text-typography-900" />
-						) : (
-							<Icon as={Edit} size="lg" className="text-typography-900" />
-						)}
-					</Pressable>
+						{isEditing ? <ButtonIcon as={Check} /> : <ButtonIcon as={Edit} />}
+					</Button>
 				</Header>
 				<KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
 					<VStack space="2xl" className="px-6 flex-1">
@@ -338,7 +335,7 @@ export default function NoteScreen() {
 				{isEditing && (
 					<Button
 						size="lg"
-						className="mx-6 mb-6 rounded-full"
+						className="mx-6 mb-6"
 						onPress={handleUpdateNoteSubmit}
 						disabled={isLoading}
 					>

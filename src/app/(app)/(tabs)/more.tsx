@@ -12,7 +12,7 @@ import Constants from 'expo-constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { type Href, router } from 'expo-router';
 
-import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Divider } from '#/components/ui/divider';
 import { Heading } from '#/components/ui/heading';
 import { HStack } from '#/components/ui/hstack';
@@ -125,12 +125,7 @@ export default function TabFourScreen() {
 									<Text>{user?.email}</Text>
 								</VStack>
 							</HStack>
-							<Button
-								size="xl"
-								variant="link"
-								className="p-2"
-								onPress={handleOpen}
-							>
+							<Button size="md" variant="icon" onPress={handleOpen}>
 								<ButtonIcon as={Edit3Icon} />
 							</Button>
 						</HStack>
@@ -220,7 +215,7 @@ export default function TabFourScreen() {
 						<Button
 							onPress={handleUpdateProfile}
 							action="primary"
-							isDisabled={
+							disabled={
 								isUpdating ||
 								(displayName === user?.displayName &&
 									photoUrl === user?.photoUrl)

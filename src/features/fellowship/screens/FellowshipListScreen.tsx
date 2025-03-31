@@ -9,7 +9,7 @@ import { Spinner } from '@/components/common/spinner';
 import { useToastStore } from '@/store/toast';
 
 import { Box } from '#/components/ui/box';
-import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '#/components/ui/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';

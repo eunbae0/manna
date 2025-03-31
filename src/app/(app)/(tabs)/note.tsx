@@ -6,7 +6,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heading } from '#/components/ui/heading';
-import { Button, ButtonIcon } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Filter, PlusIcon } from 'lucide-react-native';
 import { NoteCard } from '@/features/notes/components/NoteCard';
 import { NoteSkeleton } from '@/features/notes/components/NoteSkeleton';
@@ -44,7 +44,7 @@ export default function NoteScreen() {
 	}, [worshipTypes, setWorshipTypes]);
 
 	return (
-		<SafeAreaView className="bg-background-100">
+		<SafeAreaView className="relative bg-background-100">
 			<VStack space="xl" className="px-4 h-full">
 				<VStack space="sm">
 					<VStack space="xl">
@@ -93,11 +93,12 @@ export default function NoteScreen() {
 				</ScrollView>
 			</VStack>
 			<Button
-				size="xl"
-				variant="solid"
-				className="absolute bottom-5 right-4 rounded-full"
+				size="lg"
+				className="absolute bottom-0 right-4"
 				onPress={() => router.push('/(app)/(note)/create')}
+				rounded
 			>
+				<ButtonText>노트 추가하기</ButtonText>
 				<ButtonIcon as={PlusIcon} />
 			</Button>
 		</SafeAreaView>

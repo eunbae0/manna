@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import Header from '@/components/common/Header';
 import { Text } from '#/components/ui/text';
 

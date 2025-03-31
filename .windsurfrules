@@ -50,7 +50,7 @@ export default function ExampleScreens() {
 ## PRIMARY (Use by default):
 - gluestack/ui components from /components/ui.
 ```tsx
-import { Button } from '#/components/ui/button';
+import { Button } from '@/components/common/button';
 import { Text } from '#/components/ui/text';
 ```
 - `lucide-react-native` packages for icons.

@@ -5,7 +5,7 @@ import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { CheckIcon, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { Heading } from '#/components/ui/heading';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { useEffect, useRef, useState } from 'react';
@@ -50,11 +50,12 @@ export function CreatePrayerRequestScreen() {
 	const todayDate = getKSTDate(new Date());
 
 	// Use the custom hook for creating prayer requests
-	const { createPrayerRequest: submitPrayerRequest, isLoading: isCreating } = useCreatePrayerRequest({
-		onSuccess: () => {
-			router.back();
-		},
-	});
+	const { createPrayerRequest: submitPrayerRequest, isLoading: isCreating } =
+		useCreatePrayerRequest({
+			onSuccess: () => {
+				router.back();
+			},
+		});
 
 	const handlePressSubmitButton = () => {
 		if (isEditMode) {
@@ -159,9 +160,9 @@ export function CreatePrayerRequestScreen() {
 			>
 				<Button
 					size="lg"
-					isDisabled={!prayerRequestText.trim() || isCreating || isUpdating}
+					disabled={!prayerRequestText.trim() || isCreating || isUpdating}
 					onPress={handlePressSubmitButton}
-					className="rounded-full"
+					rounded
 				>
 					<ButtonText>{isEditMode ? '수정 완료' : '작성 완료'}</ButtonText>
 				</Button>

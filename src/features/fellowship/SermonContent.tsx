@@ -8,7 +8,7 @@ import { Text } from '#/components/ui/text';
 import { HStack } from '#/components/ui/hstack';
 import { Plus } from 'lucide-react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
 import { useEffect, useRef, useState } from 'react';

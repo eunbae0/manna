@@ -1,4 +1,4 @@
-import { Button, ButtonIcon } from '#/components/ui/button';
+import { Button, ButtonIcon } from '@/components/common/button';
 import { Heading } from '#/components/ui/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
@@ -37,7 +37,7 @@ export const BottomSheetListHeader = ({
 	return (
 		<HStack className="justify-between items-center mb-3">
 			<Heading size="xl">{label}</Heading>
-			<Button size="xl" variant="link" onPress={onPress}>
+			<Button size="xl" variant="icon" onPress={onPress}>
 				<ButtonIcon as={X} />
 			</Button>
 		</HStack>

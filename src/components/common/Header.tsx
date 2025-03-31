@@ -2,7 +2,7 @@ import type { ViewProps } from 'react-native';
 import { IconSymbol } from './ui/IconSymbol';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
-import { Button, ButtonIcon } from '#/components/ui/button';
+import { Button, ButtonIcon } from '@/components/common/button';
 import { ChevronLeftIcon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { VStack } from '#/components/ui/vstack';
@@ -51,15 +51,15 @@ function Header({
 				className={cn('w-full relative items-center', className)}
 				{...props}
 			>
-				<HStack space="sm" className="items-center">
+				<HStack className="items-center">
 					{!disableBackButton && (
 						<Button
 							size="xl"
-							variant="link"
+							variant="icon"
 							onPress={handlePressBackButton}
-							className="pl-3"
+							className="ml-2"
 						>
-							<ButtonIcon as={ChevronLeftIcon} className="w-8 h-8" />
+							<ButtonIcon as={ChevronLeftIcon} />
 						</Button>
 					)}
 					<Text

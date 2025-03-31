@@ -9,7 +9,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Box } from '#/components/ui/box';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import {
 	Checkbox,
 	CheckboxIndicator,

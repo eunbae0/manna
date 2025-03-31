@@ -2,7 +2,7 @@ import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 import { Heading } from '#/components/ui/heading';
 import { Text } from '#/components/ui/text';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { Box } from '#/components/ui/box';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { ClientGroup } from '@/api/group/types';

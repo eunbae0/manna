@@ -8,7 +8,7 @@ import { router } from 'expo-router';
 import { useWorshipStore } from '@/store/worship';
 import { Box } from '#/components/ui/box';
 import { Divider } from '#/components/ui/divider';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';

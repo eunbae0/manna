@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { router, useFocusEffect } from 'expo-router';
-import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '#/components/ui/heading';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
@@ -8,12 +8,10 @@ import { Text } from '#/components/ui/text';
 import { Pen } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import { Box } from '#/components/ui/box';
-import { Spinner } from '@/components/common/spinner';
 import type { YYYYMMDD } from '@/shared/types/date';
 import { getKSTDate } from '@/shared/utils/date';
 import { RefreshControl, ScrollView } from 'react-native';
 import { usePrayerRequestsByDate } from '@/features/home/hooks/usePrayerRequestsByDate';
-import { useFellowshipsByDate } from '@/features/home/hooks/useFellowshipsByDate';
 import type { ClientPrayerRequest } from '@/api/prayer-request/types';
 import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
 import { useAuthStore } from '@/store/auth';
@@ -21,9 +19,6 @@ import NotificationBox from './components/NotificationBox';
 import ServiceGroups from './components/ServiceGroups';
 import { HomeSkeleton } from './components/HomeSkeleton';
 import { useRecentFellowships } from '@/features/fellowship/hooks/useRecentFellowships';
-import { LayoutAnimation, Platform, UIManager } from 'react-native';
-
-// Animation removed as requested
 
 function HomeList() {
 	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
@@ -163,7 +158,8 @@ function HomeList() {
 			<Button
 				size="lg"
 				variant="solid"
-				className="absolute bottom-14 right-4 rounded-full"
+				className="absolute bottom-16 right-4"
+				rounded
 				onPress={handlePressAddButton}
 			>
 				<ButtonText>작성하기</ButtonText>

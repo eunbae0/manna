@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable } from 'react-native';
 
 import { Crown, Users } from 'lucide-react-native';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Heading } from '#/components/ui/heading';

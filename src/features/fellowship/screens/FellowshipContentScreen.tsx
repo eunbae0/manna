@@ -1,4 +1,4 @@
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { Divider } from '#/components/ui/divider';
 import { Heading } from '#/components/ui/heading';
 import { HStack } from '#/components/ui/hstack';

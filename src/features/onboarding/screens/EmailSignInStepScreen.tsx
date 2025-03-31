@@ -2,7 +2,7 @@ import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Text } from '#/components/ui/text';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import Header from '@/components/common/Header';
 import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '#/components/ui/heading';

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { TextInput } from 'react-native';
 
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import Header from '@/components/common/Header';
 
 import { useOnboardingStore } from '@/store/onboarding';

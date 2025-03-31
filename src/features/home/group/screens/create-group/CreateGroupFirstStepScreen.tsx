@@ -3,7 +3,7 @@ import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 import { Heading } from '#/components/ui/heading';
 import { Input, InputField } from '#/components/ui/input';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { useRef, useEffect } from 'react';
 import type { TextInput } from 'react-native';
 import { createGroup } from '@/api/group';

@@ -1,6 +1,6 @@
 import { Pressable, View } from 'react-native';
 import { useState } from 'react';
-import { Button, ButtonIcon, ButtonText } from '#/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
@@ -39,6 +39,8 @@ type Props = {
 
 function HomeHeader({ groups }: Props) {
 	const { currentGroup, updateCurrentGroup } = useAuthStore();
+	const [isExpanded, setIsExpanded] = useState(false);
+
 	const {
 		handleOpen: handleOpenMenu,
 		handleClose: handleCloseMenu,
@@ -48,7 +50,11 @@ function HomeHeader({ groups }: Props) {
 		handleOpen: handleOpenMember,
 		handleClose: handleCloseMember,
 		BottomSheetContainer: MemberBottomSheetContainer,
-	} = useBottomSheet();
+	} = useBottomSheet({
+		onClose: () => {
+			setIsExpanded(false);
+		},
+	});
 	const { showToast } = useToastStore();
 
 	const group = groups.find((group) => group.id === currentGroup?.groupId);
@@ -59,6 +65,7 @@ function HomeHeader({ groups }: Props) {
 	};
 
 	const handlePressMemberGroup = () => {
+		setIsExpanded((prev) => !prev);
 		handleOpenMember();
 	};
 
@@ -122,8 +129,8 @@ function HomeHeader({ groups }: Props) {
 					<MenuItemLabel size="lg">소그룹 관리하기</MenuItemLabel>
 				</MenuItem>
 			</Menu>
-			<HStack space="xl" className="px-1 items-center">
-				<AvatarGroup onPress={handlePressMemberGroup}>
+			<HStack space="sm" className="px-1 items-center">
+				<AvatarGroup onPress={handlePressMemberGroup} isExpanded={isExpanded}>
 					{group?.members
 						? group.members.map((member) => (
 								<Avatar
@@ -136,13 +143,8 @@ function HomeHeader({ groups }: Props) {
 						: []}
 				</AvatarGroup>
 
-				<Button size="xl" variant="link" onPress={() => handleOpenMenu()}>
-					<ButtonIcon
-						as={MenuIcon}
-						width={24}
-						height={24}
-						className="color-typography-900"
-					/>
+				<Button size="xl" variant="icon" onPress={() => handleOpenMenu()}>
+					<ButtonIcon as={MenuIcon} />
 				</Button>
 			</HStack>
 			<MenuBottomSheetContainer>

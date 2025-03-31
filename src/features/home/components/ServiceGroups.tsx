@@ -1,10 +1,10 @@
 import { Heading } from '#/components/ui/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
-import { Pressable } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { VStack } from '#/components/ui/vstack';
 import { router } from 'expo-router';
+import AnimatedPressable from '@/components/common/animated-pressable';
 
 export default function ServiceGroups() {
 	const handlePressCreateFellowship = () => {
@@ -21,7 +21,7 @@ export default function ServiceGroups() {
 
 	return (
 		<VStack space="md" className="px-4">
-			<Pressable className="flex-1" onPress={handlePressCreateFellowship}>
+			<AnimatedPressable className="flex-1" onPress={handlePressCreateFellowship}>
 				<HStack className="bg-primary-500 rounded-2xl justify-between px-6 py-5">
 					<VStack space="xs">
 						<Heading size="lg" className="text-white">
@@ -42,9 +42,9 @@ export default function ServiceGroups() {
 						}}
 					/>
 				</HStack>
-			</Pressable>
+			</AnimatedPressable>
 			<HStack space="md">
-				<Pressable className="flex-1" onPress={handlePressNotes}>
+				<AnimatedPressable className="flex-1" onPress={handlePressNotes}>
 					<HStack className="bg-gray-200 rounded-2xl justify-between pl-5 pt-4">
 						<VStack space="xs">
 							<Heading size="md">내 설교 노트</Heading>
@@ -59,8 +59,8 @@ export default function ServiceGroups() {
 							}}
 						/>
 					</HStack>
-				</Pressable>
-				<Pressable className="flex-1" onPress={handlePressFellowships}>
+				</AnimatedPressable>
+				<AnimatedPressable className="flex-1" onPress={handlePressFellowships}>
 					<HStack className="bg-gray-200 rounded-2xl justify-between pl-5 pt-4">
 						<VStack space="xs">
 							<Heading size="md">나눔 기록</Heading>
@@ -75,7 +75,7 @@ export default function ServiceGroups() {
 							}}
 						/>
 					</HStack>
-				</Pressable>
+				</AnimatedPressable>
 			</HStack>
 		</VStack>
 	);

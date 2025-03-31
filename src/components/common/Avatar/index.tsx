@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import { cn } from '@/shared/utils/cn';
@@ -66,10 +66,22 @@ export type AvatarGroupProps = {
 	spacing?: number;
 	max?: number;
 	onPress?: () => void;
+	isExpanded?: boolean;
 } & ViewProps;
 
 const AvatarGroup = forwardRef<View, AvatarGroupProps>(
-	({ children, className, spacing = -6, max = 3, onPress, ...props }, ref) => {
+	(
+		{
+			children,
+			className,
+			spacing = -6,
+			max = 3,
+			onPress,
+			isExpanded = false,
+			...props
+		},
+		ref,
+	) => {
 		// Ensure children is always an array
 		const childrenArray = React.Children.toArray(children);
 
@@ -79,17 +91,22 @@ const AvatarGroup = forwardRef<View, AvatarGroupProps>(
 		// Count of hidden avatars
 		const hiddenCount = Math.max(0, childrenArray.length - max);
 
-		const isExpanded = useSharedValue(false);
+		const _isExpanded = useSharedValue(isExpanded);
 
 		const handlePress = () => {
 			if (!onPress) return;
-			isExpanded.value = !isExpanded.value;
 			onPress();
+			if (isExpanded !== undefined) return;
+			_isExpanded.value = !_isExpanded.value;
 		};
+
+		useEffect(() => {
+			_isExpanded.value = isExpanded;
+		}, [isExpanded, _isExpanded]);
 
 		const animatedStyle = useAnimatedStyle(() => {
 			return {
-				gap: withSpring(isExpanded.value ? 8 : spacing, {
+				gap: withSpring(_isExpanded.value ? 8 : spacing, {
 					mass: 0.5,
 					damping: 15,
 					stiffness: 100,
@@ -104,7 +121,7 @@ const AvatarGroup = forwardRef<View, AvatarGroupProps>(
 			return {
 				transform: [
 					{
-						scale: withSpring(isExpanded.value ? 1.1 : 1, {
+						scale: withSpring(_isExpanded.value ? 1.1 : 1, {
 							mass: 0.5,
 							damping: 15,
 							stiffness: 100,

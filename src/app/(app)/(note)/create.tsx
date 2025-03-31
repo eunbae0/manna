@@ -23,7 +23,7 @@ import {
 import { HStack } from '#/components/ui/hstack';
 import { useState, useEffect, useRef } from 'react';
 import { useToastStore } from '@/store/toast';
-import { Button, ButtonText } from '#/components/ui/button';
+import { Button, ButtonText } from '@/components/common/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { WorshipTypeSelector } from '@/features/worship/WorshipTypeSelector';
