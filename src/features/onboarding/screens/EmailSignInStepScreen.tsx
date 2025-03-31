@@ -14,6 +14,7 @@ import { KeyboardAvoidingView } from '@/components/common/keyboard-view/Keyboard
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { Pressable, type TextInput } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
+import { sendPasswordResetEmail } from '@/api';
 
 function EmailSignInStepScreen() {
 	const { signIn } = useAuthStore();
@@ -101,7 +102,9 @@ function EmailSignInStepScreen() {
 						<VStack space="lg">
 							<HStack space="sm" className="w-full justify-center items-center">
 								<Text>비밀번호를 잊으셨나요?</Text>
-								<Pressable onPress={() => router.push('/(auth)/sign-up')}>
+								<Pressable
+									onPress={() => router.push('/(auth)/forget-password')}
+								>
 									<Text>비밀번호 찾기</Text>
 								</Pressable>
 							</HStack>

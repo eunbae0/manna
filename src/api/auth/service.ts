@@ -2,6 +2,7 @@ import { database, auth } from '@/firebase/config';
 import {
 	AppleAuthProvider,
 	createUserWithEmailAndPassword,
+	sendPasswordResetEmail,
 	signInWithEmailAndPassword,
 } from '@react-native-firebase/auth';
 
@@ -229,6 +230,10 @@ export class FirestoreAuthService {
 
 		// Firebase로 로그인
 		return await signInWithCredential(auth, credential);
+	}
+
+	async sendPasswordResetEmail(email: string): Promise<void> {
+		return await sendPasswordResetEmail(auth, email);
 	}
 
 	/**

@@ -74,6 +74,18 @@ export const signInWithGoogle = withApiLogging(
 	'auth',
 );
 
+export const sendPasswordResetEmail = withApiLogging(
+	async (email: string): Promise<void> => {
+		try {
+			await authService.sendPasswordResetEmail(email);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'sendPasswordResetEmail',
+	'auth',
+);
+
 /**
  * 이메일 링크로 로그인 링크 전송
  */
