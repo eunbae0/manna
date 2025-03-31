@@ -58,17 +58,17 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 		{
 			variant: 'outline',
 			action: 'secondary',
-			class: 'border-secondary-500 active:bg-secondary-50',
+			class: 'bg-transparent border-secondary-500 active:bg-secondary-50',
 		},
 		{
 			variant: 'outline',
 			action: 'positive',
-			class: 'border-success-500 active:bg-success-50',
+			class: 'bg-transparent border-success-500 active:bg-success-50',
 		},
 		{
 			variant: 'outline',
 			action: 'negative',
-			class: 'border-error-500 active:bg-error-50',
+			class: 'bg-transparent border-error-500 active:bg-error-50',
 		},
 		{
 			variant: 'icon',
