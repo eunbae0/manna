@@ -54,7 +54,9 @@ const WebContent = ({
 	</FocusScope>
 );
 
-export const useBottomSheet = () => {
+type Props = { onOpen?: () => void; onClose?: () => void } | undefined;
+
+export const useBottomSheet = ({ onOpen, onClose }: Props = {}) => {
 	const [visible, setVisible] = useState(false);
 	const bottomSheetRef = useRef<BottomSheet>(null);
 	const insets = useSafeAreaInsets();
@@ -63,14 +65,16 @@ export const useBottomSheet = () => {
 		setTimeout(() => {
 			bottomSheetRef.current?.expand();
 		}, ANIMATION_DELAY);
+		onOpen?.();
 		setVisible(true);
-	}, []);
+	}, [onOpen]);
 
 	const handleClose = useCallback(() => {
 		bottomSheetRef.current?.close();
+		onClose?.();
 		Keyboard.dismiss();
 		setVisible(false);
-	}, []);
+	}, [onClose]);
 
 	const handleSheetChanges = useCallback(
 		(index: number) => {
