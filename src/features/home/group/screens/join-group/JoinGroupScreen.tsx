@@ -72,9 +72,9 @@ export default function JoinGroupScreen() {
 	};
 
 	return (
-		<VStack>
+		<VStack className="h-full">
 			<Header onPressBackButton={onPressBackButton} />
-			<VStack space="4xl" className="px-4 mt-8">
+			<VStack space="4xl" className="px-4 mt-8 flex-1">
 				<VStack space="3xl">
 					<VStack space="sm">
 						<Heading size="2xl">소그룹 초대코드를 입력해주세요</Heading>
@@ -95,21 +95,21 @@ export default function JoinGroupScreen() {
 						/>
 					</Input>
 				</VStack>
-				<VStack space="lg" className={cn(isOnboarding ? 'mb-4' : 'mb-8')}>
-					<Button
-						className="rounded-full"
-						size="lg"
-						isDisabled={!code}
-						onPress={handlePressJoin}
-					>
-						<ButtonText>그룹 참여하기</ButtonText>
+			</VStack>
+			<VStack space="lg" className={cn('mx-4', isOnboarding ? 'mb-4' : 'mb-8')}>
+				<Button
+					className="rounded-full"
+					size="lg"
+					disabled={!code}
+					onPress={handlePressJoin}
+				>
+					<ButtonText>그룹 참여하기</ButtonText>
+				</Button>
+				{isOnboarding && (
+					<Button size="lg" variant="link" onPress={handlePressLater}>
+						<ButtonText>다음에 할래요</ButtonText>
 					</Button>
-					{isOnboarding && (
-						<Button size="lg" variant="link" onPress={handlePressLater}>
-							<ButtonText>다음에 할래요</ButtonText>
-						</Button>
-					)}
-				</VStack>
+				)}
 			</VStack>
 		</VStack>
 	);
