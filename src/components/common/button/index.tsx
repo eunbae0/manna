@@ -58,7 +58,7 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 		{
 			variant: 'outline',
 			action: 'secondary',
-			class: 'bg-transparent border-secondary-500 active:bg-secondary-50',
+			class: 'bg-transparent border-background-500 active:bg-background-50',
 		},
 		{
 			variant: 'outline',
@@ -119,9 +119,9 @@ const buttonTextStyles = cva('font-medium', {
 		size: {
 			xs: 'text-xs',
 			sm: 'text-sm',
-			md: 'text-base',
+			md: 'text-md',
 			lg: 'text-lg',
-			xl: 'text-xl',
+			xl: 'text-2xl',
 		},
 		variant: {
 			solid: 'text-white',
@@ -150,7 +150,7 @@ const buttonTextStyles = cva('font-medium', {
 		{
 			variant: 'outline',
 			action: 'secondary',
-			class: 'text-secondary-500',
+			class: 'text-background-500',
 		},
 		{
 			variant: 'outline',
