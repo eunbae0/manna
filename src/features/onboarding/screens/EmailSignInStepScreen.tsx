@@ -8,15 +8,21 @@ import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '#/components/ui/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Input, InputField } from '#/components/ui/input';
-import type { TextInput } from 'react-native';
+import { Icon } from '#/components/ui/icon';
+import { Eye, EyeOff } from 'lucide-react-native';
+import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
+import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
+import { Pressable, type TextInput } from 'react-native';
+import { HStack } from '#/components/ui/hstack';
 
 function EmailSignInStepScreen() {
-	const { signIn, sendEmailLink } = useAuthStore();
+	const { signIn } = useAuthStore();
 	const { setStep } = useOnboardingStore();
 	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const inputRef = useRef<TextInput>(null);
-
-	// deeplink handler
 
 	// auto focus on input when screen is mounted
 	useEffect(() => {
@@ -26,55 +32,106 @@ function EmailSignInStepScreen() {
 	}, []);
 
 	return (
-		<VStack className="h-full">
-			<Header
-				label="이메일로 계속하기"
-				onPressBackButton={() =>
-					router.canGoBack() ? router.back() : router.push('/(auth)')
-				}
-			/>
-			<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
-				<VStack space="4xl">
-					<VStack space="sm">
-						<Heading size="xl">계속하기 위해 이메일을 입력해주세요</Heading>
-						<Text size="lg">입력하신 메일로 확인 링크를 보내드릴게요</Text>
-					</VStack>
-					<VStack space="lg" reversed={false}>
-						<VStack space="sm">
-							<Input
-								variant="rounded"
+		<KeyboardDismissView>
+			<KeyboardAvoidingView>
+				<VStack className="h-full">
+					<Header
+						label="이메일로 로그인하기"
+						onPressBackButton={() =>
+							router.canGoBack() ? router.back() : router.push('/(auth)')
+						}
+					/>
+					<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
+						<VStack space="4xl">
+							<VStack space="sm">
+								<Heading size="xl">계속하기 위해 로그인해주세요</Heading>
+								<Text size="lg">이메일과 비밀번호를 입력해주세요</Text>
+							</VStack>
+							<VStack space="lg" reversed={false}>
+								<VStack space="sm">
+									<Input
+										variant="rounded"
+										size="xl"
+										isDisabled={isLoading}
+										isInvalid={false}
+										isReadOnly={false}
+										className="rounded-2xl"
+									>
+										<InputField
+											//@ts-ignore
+											ref={inputRef}
+											value={email}
+											onChangeText={(text) => {
+												setEmail(text);
+											}}
+											placeholder="example@gmail.com"
+											autoCapitalize="none"
+											keyboardType="email-address"
+										/>
+									</Input>
+								</VStack>
+								<VStack space="sm">
+									<Input
+										variant="rounded"
+										size="xl"
+										isDisabled={isLoading}
+										isInvalid={false}
+										isReadOnly={false}
+										className="rounded-2xl"
+									>
+										<InputField
+											value={password}
+											onChangeText={(text) => {
+												setPassword(text);
+											}}
+											placeholder="비밀번호"
+											secureTextEntry={!showPassword}
+											autoCapitalize="none"
+										/>
+										<Pressable
+											onPress={() => setShowPassword(!showPassword)}
+											style={{ padding: 10 }}
+										>
+											<Icon as={showPassword ? EyeOff : Eye} size="lg" />
+										</Pressable>
+									</Input>
+								</VStack>
+							</VStack>
+						</VStack>
+						<VStack space="lg">
+							<HStack space="sm" className="w-full justify-center items-center">
+								<Text>비밀번호를 잊으셨나요?</Text>
+								<Pressable onPress={() => router.push('/(auth)/sign-up')}>
+									<Text>비밀번호 찾기</Text>
+								</Pressable>
+							</HStack>
+							<Button
+								onPress={async () => {
+									if (email.length === 0 || password.length === 0) return;
+									setIsLoading(true);
+									try {
+										// 이메일/비밀번호로 로그인
+										await signIn('EMAIL', { email, password: password });
+										router.push('/(app)');
+									} catch (error) {
+										console.error('로그인 실패:', error);
+									} finally {
+										setIsLoading(false);
+									}
+								}}
+								disabled={
+									email.length === 0 || password.length === 0 || isLoading
+								}
 								size="xl"
-								isDisabled={false}
-								isInvalid={false}
-								isReadOnly={false}
-								className="rounded-2xl"
+								className="rounded-full mb-5"
 							>
-								<InputField
-									//@ts-ignore
-									ref={inputRef}
-									value={email}
-									onChangeText={(text) => {
-										setEmail(text);
-									}}
-									placeholder="example@gmail.com"
-								/>
-							</Input>
+								<ButtonText>{isLoading ? '로그인 중...' : '로그인'}</ButtonText>
+							</Button>
 						</VStack>
 					</VStack>
 				</VStack>
-				<Button
-					onPress={async () => {
-						if (email.length === 0) return;
-						await sendEmailLink(email);
-					}}
-					isDisabled={email.length === 0}
-					size="xl"
-					className="rounded-full mb-5"
-				>
-					<ButtonText>계속하기</ButtonText>
-				</Button>
-			</VStack>
-		</VStack>
+			</KeyboardAvoidingView>
+		</KeyboardDismissView>
 	);
 }
 export default EmailSignInStepScreen;

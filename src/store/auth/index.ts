@@ -1,12 +1,11 @@
-import { auth } from '@/firebase/config';
 import {
 	deleteAccount,
 	getUser,
 	logout,
-	sendEmailLink,
 	signInWithApple,
 	signInWithEmail,
 	signInWithGoogle,
+	signUpWithEmail,
 	updateLastLogin,
 	updateUser,
 } from '@/api/auth';
@@ -14,6 +13,7 @@ import type {
 	AuthGroup,
 	AuthType,
 	ClientUser,
+	EmailSignInInput,
 	UpdateUserInput,
 } from '@/api/auth/types';
 import type { ApiError } from '@/api/errors/types';
@@ -36,9 +36,10 @@ type AuthState = {
 type AuthActions = {
 	signIn: <T extends AuthType>(
 		type: T,
-		data: T extends 'EMAIL' ? { email: string } : undefined,
+		data: T extends 'EMAIL' ? EmailSignInInput : undefined,
 	) => Promise<{ id: string }>;
-	sendEmailLink: (email: string) => Promise<void>;
+	signUp: (data: EmailSignInInput) => Promise<{ id: string }>;
+	// sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
 	updateProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
 	onAuthStateChanged: FirebaseAuthTypes.AuthListenerCallback;
@@ -64,13 +65,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					try {
 						switch (type) {
 							case 'EMAIL': {
-								await signInWithEmail({ email: data?.email ?? '' });
-								// TODO: update user
+								if (!data) {
+									throw new Error('Invalid data');
+								}
+								const { user } = await signInWithEmail({
+									email: data.email,
+									password: data.password,
+								});
+
 								set({
+									user,
+									currentGroup: user?.groups?.[0] ?? null,
 									isAuthenticated: true,
 									loading: false,
 								});
-								return { id: '' };
+								return { id: user.id };
 							}
 							case 'APPLE': {
 								const { user, existUser } = await signInWithApple();
@@ -112,13 +121,17 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					}
 				},
 
-				sendEmailLink: async (email) => {
+				signUp: async (data: EmailSignInInput) => {
 					set({ loading: true, error: null });
 					try {
-						await sendEmailLink(email);
+						const { user } = await signUpWithEmail(data);
 						set({
+							user,
+							currentGroup: user?.groups?.[0] ?? null,
+							isAuthenticated: true,
 							loading: false,
 						});
+						return { id: user.id };
 					} catch (error) {
 						const apiError = handleApiError(error);
 						set({
@@ -127,6 +140,22 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						});
 					}
 				},
+
+				// sendEmailLink: async (email) => {
+				// 	set({ loading: true, error: null });
+				// 	try {
+				// 		await sendEmailLink(email);
+				// 		set({
+				// 			loading: false,
+				// 		});
+				// 	} catch (error) {
+				// 		const apiError = handleApiError(error);
+				// 		set({
+				// 			error: apiError,
+				// 			loading: false,
+				// 		});
+				// 	}
+				// },
 
 				logout: async () => {
 					const authType = get().user?.authType ?? null;

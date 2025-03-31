@@ -6,7 +6,8 @@ import { create } from 'zustand';
 const DEFAULT_STEP: OnboardingStep = 'NAME';
 
 export type OnboardingStep =
-	| 'EMAIL'
+	| 'EMAIL_SIGN_IN'
+	| 'EMAIL_SIGN_UP'
 	| 'NAME'
 	| 'GROUP_LANDING'
 	| 'GROUP_CREATE'

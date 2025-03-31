@@ -1,5 +1,9 @@
 import { database, auth } from '@/firebase/config';
-import { AppleAuthProvider } from '@react-native-firebase/auth';
+import {
+	AppleAuthProvider,
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+} from '@react-native-firebase/auth';
 
 import {
 	doc,
@@ -34,7 +38,7 @@ import type {
 	ClientUser,
 	FirestoreUser,
 	EmailSignInInput,
-	AppleSignInResponse,
+	SignInResponse,
 } from './types';
 import { Alert } from 'react-native';
 
@@ -123,46 +127,56 @@ export class FirestoreAuthService {
 		});
 	}
 
+	async signUpWithEmail(
+		data: EmailSignInInput,
+	): Promise<FirebaseAuthTypes.UserCredential> {
+		const { email, password } = data;
+		return await createUserWithEmailAndPassword(auth, email, password);
+	}
+
 	/**
-	 * Signs in with email link
+	 * Signs in with email and password or email link
 	 * @param data Email sign-in data
 	 * @returns User credential
 	 */
 	async signInWithEmail(
 		data: EmailSignInInput,
 	): Promise<FirebaseAuthTypes.UserCredential> {
-		if (data.isIncomingLink) {
-			// Handle incoming email link
-			if (!isSignInWithEmailLink(auth, data.email)) {
-				throw new Error('Invalid sign in link');
-			}
+		const { email, password } = data;
+		return await signInWithEmailAndPassword(auth, email, password);
 
-			const email = await this.retrieveEmailForSignIn();
-			const userCredential = await signInWithEmailLink(auth, email, data.email);
+		// if (data.isIncomingLink) {
+		// 	// Handle incoming email link
+		// 	if (!isSignInWithEmailLink(auth, data.email)) {
+		// 		throw new Error('Invalid sign in link');
+		// 	}
 
-			await AsyncStorage.removeItem('emailForSignIn');
-			return userCredential;
-		}
+		// 	const email = await this.retrieveEmailForSignIn();
+		// 	const userCredential = await signInWithEmailLink(auth, email, data.email);
 
-		// Send email link
-		const actionCodeSettings = {
-			url: 'https://so-group.web.app/login',
-			handleCodeInApp: true,
-			iOS: {
-				bundleId: 'com.eunbae.sogroup',
-			},
-			android: {
-				packageName: 'com.eunbae.sogroup',
-				installApp: true,
-				minimumVersion: '12',
-			},
-		};
+		// 	await AsyncStorage.removeItem('emailForSignIn');
+		// 	return userCredential;
+		// }
 
-		await sendSignInLinkToEmail(auth, data.email, actionCodeSettings);
-		await AsyncStorage.setItem('emailForSignIn', data.email);
+		// // Send email link
+		// const actionCodeSettings = {
+		// 	url: 'https://so-group.web.app/login',
+		// 	handleCodeInApp: true,
+		// 	iOS: {
+		// 		bundleId: 'com.eunbae.sogroup',
+		// 	},
+		// 	android: {
+		// 		packageName: 'com.eunbae.sogroup',
+		// 		installApp: true,
+		// 		minimumVersion: '12',
+		// 	},
+		// };
 
-		// This is not a real user credential, but we return a mock for consistency
-		return {} as FirebaseAuthTypes.UserCredential;
+		// await sendSignInLinkToEmail(auth, data.email, actionCodeSettings);
+		// await AsyncStorage.setItem('emailForSignIn', data.email);
+
+		// // This is not a real user credential, but we return a mock for consistency
+		// return {} as FirebaseAuthTypes.UserCredential;
 	}
 
 	/**
@@ -329,6 +343,38 @@ export class FirestoreAuthService {
 	}
 
 	/**
+	 * Creates a new user profile and returns the user data
+	 * @param userCredential User credential from authentication
+	 * @param authType Authentication type
+	 * @returns New user data and existUser flag set to false
+	 */
+	async handleNewUserCreation(
+		userCredential: FirebaseAuthTypes.UserCredential,
+		authType: AuthType,
+	): Promise<SignInResponse> {
+		const userId = userCredential.user.uid;
+		const newUser = await this.createUser(userId, {
+			email: userCredential.user.email || '',
+			authType,
+		});
+		return { user: newUser, existUser: false };
+	}
+
+	/**
+	 * Updates an existing user's last login time and returns the user data
+	 * @param userId User ID
+	 * @param user Existing user data
+	 * @returns Existing user data and existUser flag set to true
+	 */
+	async handleExistingUser(
+		userId: string,
+		user: ClientUser,
+	): Promise<SignInResponse> {
+		await this.updateLastLogin(userId);
+		return { user, existUser: true };
+	}
+
+	/**
 	 * Handles user profile after authentication
 	 * @param userCredential User credential
 	 * @param authType Authentication type
@@ -336,22 +382,15 @@ export class FirestoreAuthService {
 	async handleUserProfile(
 		userCredential: FirebaseAuthTypes.UserCredential,
 		authType: AuthType,
-	): Promise<AppleSignInResponse> {
+	): Promise<SignInResponse> {
 		const userId = userCredential.user.uid;
 
 		// 기존 사용자 확인
 		const user = await this.getUser(userId);
 
-		if (!user) {
-			// 새 사용자 생성
-			const newUser = await this.createUser(userId, {
-				email: userCredential.user.email || '',
-				authType,
-			});
-			return { user: newUser, existUser: false };
-		}
-
-		await this.updateLastLogin(userId);
-		return { user, existUser: true };
+		// 사용자 존재 여부에 따라 적절한 핸들러 호출
+		return user
+			? await this.handleExistingUser(userId, user)
+			: await this.handleNewUserCreation(userCredential, authType);
 	}
 }

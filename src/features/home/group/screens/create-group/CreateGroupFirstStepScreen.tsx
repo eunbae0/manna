@@ -102,7 +102,7 @@ export default function CreateGroupFirstStepScreen({
 				size="lg"
 				className="rounded-full mx-5 mb-6"
 				onPress={handlePressNext}
-				isDisabled={!groupName.trim()}
+				disabled={!groupName.trim()}
 			>
 				<ButtonText>다음</ButtonText>
 			</Button>

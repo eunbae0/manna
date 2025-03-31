@@ -1,6 +1,6 @@
 import { FirestoreAuthService } from './service';
 import type {
-	AppleSignInResponse,
+	SignInResponse,
 	AuthType,
 	ClientUser,
 	EmailSignInInput,
@@ -13,22 +13,27 @@ import { arrayUnion } from '@react-native-firebase/firestore';
 // Create a single instance of the auth service
 const authService = new FirestoreAuthService();
 
+export const signUpWithEmail = withApiLogging(
+	async (data: EmailSignInInput): Promise<SignInResponse> => {
+		try {
+			const userCredential = await authService.signUpWithEmail(data);
+			return await authService.handleUserProfile(userCredential, 'EMAIL');
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'signUpWithEmail',
+	'auth',
+);
+
 /**
  * 이메일로 인증하기
  */
 export const signInWithEmail = withApiLogging(
-	async (data: EmailSignInInput): Promise<void> => {
+	async (data: EmailSignInInput): Promise<SignInResponse> => {
 		try {
-			if (!data.email) {
-				throw new Error('이메일은 필수입니다.');
-			}
-
 			const userCredential = await authService.signInWithEmail(data);
-
-			// Only handle user profile if this is an actual sign-in (not just sending a link)
-			if (data.isIncomingLink && userCredential.user) {
-				await authService.handleUserProfile(userCredential, 'EMAIL');
-			}
+			return await authService.handleUserProfile(userCredential, 'EMAIL');
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -41,7 +46,7 @@ export const signInWithEmail = withApiLogging(
  * Apple로 인증하기
  */
 export const signInWithApple = withApiLogging(
-	async (): Promise<AppleSignInResponse> => {
+	async (): Promise<SignInResponse> => {
 		try {
 			const userCredential = await authService.signInWithApple();
 			return await authService.handleUserProfile(userCredential, 'APPLE');
@@ -57,7 +62,7 @@ export const signInWithApple = withApiLogging(
  * Google로 인증하기
  */
 export const signInWithGoogle = withApiLogging(
-	async (): Promise<AppleSignInResponse> => {
+	async (): Promise<SignInResponse> => {
 		try {
 			const userCredential = await authService.signInWithGoogle();
 			return await authService.handleUserProfile(userCredential, 'GOOGLE');
@@ -72,17 +77,17 @@ export const signInWithGoogle = withApiLogging(
 /**
  * 이메일 링크로 로그인 링크 전송
  */
-export const sendEmailLink = withApiLogging(
-	async (email: string): Promise<void> => {
-		try {
-			await authService.signInWithEmail({ email, isIncomingLink: false });
-		} catch (error) {
-			throw handleApiError(error);
-		}
-	},
-	'sendEmailLink',
-	'auth',
-);
+// export const sendEmailLink = withApiLogging(
+// 	async (email: string): Promise<void> => {
+// 		try {
+// 			await authService.signInWithEmail({ email, isIncomingLink: false });
+// 		} catch (error) {
+// 			throw handleApiError(error);
+// 		}
+// 	},
+// 	'sendEmailLink',
+// 	'auth',
+// );
 
 /**
  * 로그아웃

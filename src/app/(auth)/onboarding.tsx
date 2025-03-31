@@ -10,14 +10,17 @@ import NameStepScreen from '@/features/onboarding/screens/NameStepScreen';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import CreateGroupContainerScreen from '@/features/home/group/screens/create-group/CreateGroupContainerScreen';
 import JoinGroupScreen from '@/features/home/group/screens/join-group/JoinGroupScreen';
+import EmailSignUpScreen from '@/features/onboarding/screens/EmailSignUpScreen';
 
 function OnboardingScreen() {
 	const { currentStep } = useOnboardingStore();
 
 	const switchStep = (step: OnboardingStep) => {
 		switch (step) {
-			case 'EMAIL':
+			case 'EMAIL_SIGN_IN':
 				return <EmailSignInStepScreen />;
+			case 'EMAIL_SIGN_UP':
+				return <EmailSignUpScreen />;
 			case 'NAME':
 				return <NameStepScreen />;
 			case 'GROUP_LANDING':

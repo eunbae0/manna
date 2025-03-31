@@ -43,10 +43,11 @@ export interface ClientUser
  */
 export interface EmailSignInInput {
 	email: string;
-	isIncomingLink?: boolean;
+	password: string;
+	// isIncomingLink?: boolean;
 }
 
-export interface AppleSignInResponse {
+export interface SignInResponse {
 	user: ClientUser;
 	existUser: boolean;
 }
