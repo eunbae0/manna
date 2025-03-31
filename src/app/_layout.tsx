@@ -1,4 +1,4 @@
-import { Slot } from 'expo-router';
+import { Slot, Stack } from 'expo-router';
 import { GluestackUIProvider } from '#/components/ui/gluestack-ui-provider';
 import { StatusBar } from 'expo-status-bar';
 import { ToastContainer } from '@/components/common/toast/ToastContainer';
@@ -39,7 +39,14 @@ export default function Root() {
 					<GluestackUIProvider>
 						<PortalProvider>
 							<ScreenTracker />
-							<Slot />
+							<Stack
+								screenOptions={{
+									headerShown: false,
+								}}
+							>
+								<Slot />
+								<Stack.Screen name="policy" />
+							</Stack>
 							<StatusBar style="auto" />
 							<ToastContainer />
 						</PortalProvider>

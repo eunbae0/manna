@@ -156,7 +156,7 @@ export default function TabFourScreen() {
 							<ListItem
 								label="정책"
 								icon={ScrollText}
-								onPress={() => router.push('/(app)/(more)/policy')}
+								onPress={() => router.push('/policy')}
 							/>
 							{/* <ListItem
 								label="의견 남기기"

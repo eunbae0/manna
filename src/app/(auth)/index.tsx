@@ -15,6 +15,7 @@ import { Divider } from '#/components/ui/divider';
 import { HStack } from '#/components/ui/hstack';
 import { Icon, createIcon } from '#/components/ui/icon';
 import { Path, Svg } from 'react-native-svg';
+import { Pressable } from 'react-native';
 
 function AuthStepScreen() {
 	const { signIn } = useAuthStore();
@@ -108,9 +109,23 @@ function AuthStepScreen() {
 							<ButtonText size="lg">이메일로 회원가입하기</ButtonText>
 						</Button>
 					</VStack>
-					<Text size="sm" className="text-center">
-						로그인 시 개인정보취급방침과 이용약관에 동의하는 것으로 간주합니다.
-					</Text>
+
+					<HStack space="xs" className="items-center justify-center w-full">
+						<Text size="sm" className="text-center">
+							로그인 시
+						</Text>
+						<Pressable onPress={() => router.push('/policy')}>
+							<Text
+								size="sm"
+								className="text-center border-b border-typography-500"
+							>
+								개인정보취급방침과 이용약관
+							</Text>
+						</Pressable>
+						<Text size="sm" className="text-center">
+							에 동의하는 것으로 간주합니다.
+						</Text>
+					</HStack>
 				</VStack>
 			</VStack>
 		</SafeAreaView>
