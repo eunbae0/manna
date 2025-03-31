@@ -71,6 +71,11 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 			class: 'bg-transparent border-error-500 active:bg-error-50',
 		},
 		{
+			variant: 'link',
+			action: 'primary',
+			class: 'bg-transparent active:bg-background-200',
+		},
+		{
 			variant: 'icon',
 			action: 'primary',
 			size: 'xs',
@@ -156,6 +161,11 @@ const buttonTextStyles = cva('font-medium', {
 			variant: 'outline',
 			action: 'negative',
 			class: 'text-error-500',
+		},
+		{
+			variant: 'link',
+			action: 'primary',
+			class: 'text-primary-500',
 		},
 		{
 			variant: 'icon',

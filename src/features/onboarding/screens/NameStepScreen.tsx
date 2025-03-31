@@ -54,7 +54,7 @@ export default function NameStepScreen() {
 				size="lg"
 				className="mx-5 mb-6 rounded-full"
 				onPress={handlePressNext}
-				isDisabled={name.trim().length === 0}
+				disabled={name.trim().length === 0}
 			>
 				<ButtonText>다음</ButtonText>
 			</Button>
