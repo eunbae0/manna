@@ -141,6 +141,16 @@ export class FirestoreAuthService {
 		});
 	}
 
+	/**
+	 * Updates multiple user data fields in a single operation
+	 * @param userId ID of the user
+	 * @param userData User data fields to update
+	 */
+	async updateUserData(userId: string, userData: Partial<FirestoreUser>): Promise<void> {
+		const userRef = doc(database, this.usersCollectionPath, userId);
+		await updateDoc(userRef, userData);
+	}
+
 	async signUpWithEmail(
 		data: EmailSignInInput,
 	): Promise<FirebaseAuthTypes.UserCredential> {
@@ -364,31 +374,51 @@ export class FirestoreAuthService {
 	 * Creates a new user profile and returns the user data
 	 * @param userCredential User credential from authentication
 	 * @param authType Authentication type
+	 * @param fcmToken Optional FCM token for push notifications
 	 * @returns New user data and existUser flag set to false
 	 */
 	async handleNewUserCreation(
 		userCredential: FirebaseAuthTypes.UserCredential,
 		authType: AuthType,
+		fcmToken?: string | null,
 	): Promise<SignInResponse> {
 		const userId = userCredential.user.uid;
-		const newUser = await this.createUser(userId, {
+		// 타입 오류를 피하기 위해 authType을 먼저 정의
+		const userData = {
 			email: userCredential.user.email || '',
 			authType,
-		});
+		} as Partial<FirestoreUser> & { authType: AuthType };
+		
+		// FCM 토큰이 있으면 추가
+		if (fcmToken) {
+			userData.fcmToken = fcmToken;
+		}
+		
+		const newUser = await this.createUser(userId, userData);
 		return { user: newUser, existUser: false };
 	}
 
 	/**
-	 * Updates an existing user's last login time and returns the user data
+	 * Updates an existing user's last login time and FCM token if provided, then returns the user data
 	 * @param userId User ID
 	 * @param user Existing user data
+	 * @param fcmToken Optional FCM token for push notifications
 	 * @returns Existing user data and existUser flag set to true
 	 */
 	async handleExistingUser(
 		userId: string,
 		user: ClientUser,
+		fcmToken?: string | null,
 	): Promise<SignInResponse> {
-		await this.updateLastLogin(userId);
+		// FCM 토큰이 있으면 마지막 로그인 시간과 함께 업데이트
+		if (fcmToken) {
+			await this.updateUserData(userId, {
+				lastLogin: serverTimestamp(),
+				fcmToken,
+			});
+		} else {
+			await this.updateLastLogin(userId);
+		}
 		return { user, existUser: true };
 	}
 
@@ -396,10 +426,12 @@ export class FirestoreAuthService {
 	 * Handles user profile after authentication
 	 * @param userCredential User credential
 	 * @param authType Authentication type
+	 * @param fcmToken Optional FCM token for push notifications
 	 */
 	async handleUserProfile(
 		userCredential: FirebaseAuthTypes.UserCredential,
 		authType: AuthType,
+		fcmToken?: string | null,
 	): Promise<SignInResponse> {
 		const userId = userCredential.user.uid;
 
@@ -408,8 +440,8 @@ export class FirestoreAuthService {
 
 		// 사용자 존재 여부에 따라 적절한 핸들러 호출
 		return user
-			? await this.handleExistingUser(userId, user)
-			: await this.handleNewUserCreation(userCredential, authType);
+			? await this.handleExistingUser(userId, user, fcmToken)
+			: await this.handleNewUserCreation(userCredential, authType, fcmToken);
 	}
 }
 

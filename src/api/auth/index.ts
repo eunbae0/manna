@@ -9,13 +9,18 @@ import type {
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { arrayUnion } from '@react-native-firebase/firestore';
+import { requestNotificationPermission } from '../messaging';
 
 export const signUpWithEmail = withApiLogging(
 	async (data: EmailSignInInput): Promise<SignInResponse> => {
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signUpWithEmail(data);
-			return await authService.handleUserProfile(userCredential, 'EMAIL');
+			
+			// 가입 성공 후 알림 권한 요청 및 토큰 가져오기
+			const fcmToken = await requestNotificationPermission();
+			
+			return await authService.handleUserProfile(userCredential, 'EMAIL', fcmToken);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -32,7 +37,11 @@ export const signInWithEmail = withApiLogging(
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signInWithEmail(data);
-			return await authService.handleUserProfile(userCredential, 'EMAIL');
+			
+			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
+			const fcmToken = await requestNotificationPermission();
+			
+			return await authService.handleUserProfile(userCredential, 'EMAIL', fcmToken);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -49,7 +58,11 @@ export const signInWithApple = withApiLogging(
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signInWithApple();
-			return await authService.handleUserProfile(userCredential, 'APPLE');
+			
+			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
+			const fcmToken = await requestNotificationPermission();
+			
+			return await authService.handleUserProfile(userCredential, 'APPLE', fcmToken);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -66,7 +79,11 @@ export const signInWithGoogle = withApiLogging(
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signInWithGoogle();
-			return await authService.handleUserProfile(userCredential, 'GOOGLE');
+			
+			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
+			const fcmToken = await requestNotificationPermission();
+			
+			return await authService.handleUserProfile(userCredential, 'GOOGLE', fcmToken);
 		} catch (error) {
 			throw handleApiError(error);
 		}

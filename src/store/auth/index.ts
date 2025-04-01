@@ -42,7 +42,10 @@ type AuthActions = {
 	// sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
 	updateProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
-	onAuthStateChanged: FirebaseAuthTypes.AuthListenerCallback;
+	onAuthStateChanged: (
+		user: FirebaseAuthTypes.User | null,
+		fcmToken: string,
+	) => void;
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
@@ -182,7 +185,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						throw handleApiError(error);
 					}
 				},
-				onAuthStateChanged: async (user) => {
+				onAuthStateChanged: async (user, fcmToken) => {
 					set({ loading: true });
 					if (!user) {
 						set({
@@ -194,7 +197,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						return;
 					}
 					try {
-						await updateLastLogin(user.uid);
+						await updateUser(user.uid, { fcmToken });
 						const firestoreUser = await getUser(user.uid);
 						set({
 							isAuthenticated: true,

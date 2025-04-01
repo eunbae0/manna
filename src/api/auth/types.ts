@@ -30,6 +30,7 @@ export interface FirestoreUser {
 	lastLogin?: FieldValue;
 	isDeleted?: boolean;
 	deletedAt?: FieldValue;
+	fcmToken?: string | null;
 }
 
 /**

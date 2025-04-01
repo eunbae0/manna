@@ -1,10 +1,10 @@
 import { auth } from '@/firebase/config';
-import { getUser } from '@/api/auth';
 import { useAuthStore } from '@/store/auth';
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
-import analytics from '@react-native-firebase/analytics';
+import { getAnalytics } from '@react-native-firebase/analytics';
 import { setUserId, logEvent, AnalyticsEvents } from '@/utils/analytics';
+import { getToken } from '@/api/messaging';
 
 export function useInitializeApp() {
 	const [loaded, setIsLoaded] = useState(false);
@@ -22,9 +22,10 @@ export function useInitializeApp() {
 
 	useEffect(() => {
 		const subscriber = auth.onAuthStateChanged(async (user) => {
+			const token = await getToken();
 			// Handle auth state in the store
-			onAuthStateChanged(user);
-			
+			onAuthStateChanged(user, token);
+
 			// Set user ID for analytics
 			if (user) {
 				await setUserId(user.uid);
@@ -37,25 +38,25 @@ export function useInitializeApp() {
 
 	useEffect(() => {
 		if (!fontLoaded || loading) return;
-		
+
 		// Initialize analytics when app is loaded
-		const initAnalytics = async () => {
-			try {
-				// Enable analytics collection
-				await analytics().setAnalyticsCollectionEnabled(true);
-				
-				// Log app_open event
-				await logEvent(AnalyticsEvents.APP_OPEN);
-				
-				console.log('[Analytics] Firebase Analytics initialized');
-			} catch (error) {
-				console.error('[Analytics] Error initializing Firebase Analytics:', error);
-			}
-		};
-		
 		initAnalytics();
 		setIsLoaded(true);
 	}, [fontLoaded, loading]);
 
 	return [loaded, isAuthenticated];
+}
+
+async function initAnalytics() {
+	try {
+		// Enable analytics collection
+		await getAnalytics().setAnalyticsCollectionEnabled(true);
+
+		// Log app_open event
+		await logEvent(AnalyticsEvents.APP_OPEN);
+
+		console.log('[Analytics] Firebase Analytics initialized');
+	} catch (error) {
+		console.error('[Analytics] Error initializing Firebase Analytics:', error);
+	}
 }
