@@ -59,7 +59,7 @@ exports.prayerRequestNotification = onDocumentCreated(
 						body: value,
 					},
 					data: {
-						screen: '/(app)/(tabs)/index',
+						screen: '/(app)/(tabs)',
 					},
 				};
 
