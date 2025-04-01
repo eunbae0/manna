@@ -328,14 +328,13 @@ const Button = React.forwardRef<View, ButtonProps>(
 		return (
 			<Animated.View
 				style={animation ? animatedStyle : undefined}
-				className={fullWidth ? 'w-full' : 'w-auto'}
+				className={cn(fullWidth ? 'w-full' : 'w-auto', className)}
 			>
 				<Pressable
 					ref={ref}
 					className={cn(
 						buttonStyles({ rounded, fullWidth, size, variant, action }),
 						disabled && 'opacity-50',
-						className,
 					)}
 					disabled={disabled}
 					onPressIn={handlePressIn}

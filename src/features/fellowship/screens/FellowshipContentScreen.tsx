@@ -97,7 +97,8 @@ export default function FellowshipContentScreen() {
 					<Button
 						size="lg"
 						variant="outline"
-						className="rounded-xl flex-1"
+						rounded
+						className="flex-1"
 						onPress={() => {
 							setStep('INFO');
 						}}
@@ -107,7 +108,8 @@ export default function FellowshipContentScreen() {
 					<Button
 						size="lg"
 						variant="solid"
-						className="rounded-xl flex-1"
+						rounded
+						className="flex-1"
 						onPress={async () => {
 							await completeFellowship({
 								type,
