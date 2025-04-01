@@ -14,10 +14,12 @@
 			"bundleIdentifier": "com.eunbae.sogroup",
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false,
-				"CADisableMinimumFrameDurationOnPhone": true
+				"CADisableMinimumFrameDurationOnPhone": true,
+				"UIBackgroundModes": ["remote-notification"]
 			},
 			"entitlements": {
-				"com.apple.developer.applesignin": ["Default"]
+				"com.apple.developer.applesignin": ["Default"],
+				"aps-environment": "production"
 			},
 			"usesAppleSignIn": true,
 			"googleServicesFile": "./assets/google/GoogleService-Info.plist",
@@ -26,7 +28,7 @@
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/images/icons/play_store_icon.png",
-				"backgroundColor": "#ffffff"
+				"backgroundColor": "#FEF8EF"
 			},
 			"package": "com.eunbae.sogroup",
 			"googleServicesFile": "./assets/google/GoogleService-Info.plist"
@@ -41,10 +43,10 @@
 			[
 				"expo-splash-screen",
 				{
-					"image": "./assets/images/splash-icon.png",
+					"image": "./assets/images/icons/play_store_icon.png",
 					"imageWidth": 200,
 					"resizeMode": "contain",
-					"backgroundColor": "#ffffff"
+					"backgroundColor": "#FEF8EF"
 				}
 			],
 			[
