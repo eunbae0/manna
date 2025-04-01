@@ -23,11 +23,9 @@ function setupNotificationHandler(): void {
 function handleNotificationClick(
 	response: Notifications.NotificationResponse,
 ): void {
-	console.log(response);
-	const screen = response?.notification?.request?.content?.data?.screen;
+	const screen = response?.notification?.request?.content?.data?.screen as Href;
 	if (screen) {
-		console.log('Notification clicked with screen:', screen);
-		router.replace(screen as Href);
+		navigateToScreen(screen);
 	}
 }
 
@@ -37,7 +35,7 @@ function handleNotificationClick(
 function setupBackgroundOpenHandler(): void {
 	getMessaging().onNotificationOpenedApp((remoteMessage) => {
 		if (remoteMessage?.data?.screen) {
-			router.replace(remoteMessage.data.screen as Href);
+			navigateToScreen(remoteMessage.data.screen as Href);
 		}
 	});
 }
@@ -50,7 +48,7 @@ function checkAppOpenedFromNotification(): void {
 		.getInitialNotification()
 		.then((remoteMessage) => {
 			if (remoteMessage?.data?.screen) {
-				router.replace(remoteMessage.data.screen as Href);
+				navigateToScreen(remoteMessage.data.screen as Href);
 			}
 		});
 }
@@ -84,6 +82,21 @@ function setupBackgroundMessageHandler(): void {
 	getMessaging().setBackgroundMessageHandler(async (remoteMessage) => {
 		await createLocalNotification(remoteMessage);
 	});
+}
+
+/**
+ * 알림 관련 이벤트 구독을 설정하는 훅
+ */
+/**
+ * 알림에서 전달받은 화면 경로로 이동하는 함수
+ * @param screen 이동할 화면 경로
+ */
+function navigateToScreen(screen: Href): void {
+	if ((screen as string).includes('(tabs)')) {
+		router.replace(screen);
+	} else {
+		router.push(screen);
+	}
 }
 
 /**
