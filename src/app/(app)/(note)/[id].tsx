@@ -139,7 +139,7 @@ export default function NoteScreen() {
 				<Header
 					label="설교 노트"
 					onPressBackButton={() => router.back()}
-					className="justify-between pr-6"
+					className="justify-between pr-3"
 				>
 					<Button
 						variant="icon"

@@ -94,7 +94,7 @@ export default function NoteScreen() {
 			</VStack>
 			<Button
 				size="lg"
-				className="absolute bottom-0 right-4"
+				className="absolute bottom-5 right-4"
 				onPress={() => router.push('/(app)/(note)/create')}
 				rounded
 			>

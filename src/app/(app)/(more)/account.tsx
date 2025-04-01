@@ -87,7 +87,8 @@ export default function AccountSettingScreen() {
 							variant="outline"
 							onPress={handleLogout}
 							size="lg"
-							className="justify-start border-primary-500 rounded-full"
+							className="justify-start border-primary-500"
+							rounded
 						>
 							<LogOutIcon className="mr-2" size={18} />
 							<ButtonText>로그아웃</ButtonText>
@@ -97,7 +98,8 @@ export default function AccountSettingScreen() {
 							action="negative"
 							onPress={handleDeleteAccount}
 							size="lg"
-							className="justify-start rounded-full"
+							className="justify-start"
+							rounded
 						>
 							<UserMinusIcon className="mr-2" size={18} />
 							<ButtonText>계정 탈퇴하기</ButtonText>

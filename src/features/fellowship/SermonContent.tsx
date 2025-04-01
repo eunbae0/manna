@@ -182,11 +182,7 @@ const SermonContent = ({
 								placeholder="나눔을 입력해주세요..."
 							/>
 						</VStack>
-						<Button
-							size="lg"
-							className="rounded-full"
-							onPress={handlePressSaveButton}
-						>
+						<Button size="lg" rounded onPress={handlePressSaveButton}>
 							<ButtonText>저장하기</ButtonText>
 						</Button>
 					</VStack>

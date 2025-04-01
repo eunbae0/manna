@@ -57,7 +57,7 @@ function Header({
 							size="xl"
 							variant="icon"
 							onPress={handlePressBackButton}
-							className="ml-2"
+							className="ml-1"
 						>
 							<ButtonIcon as={ChevronLeftIcon} />
 						</Button>

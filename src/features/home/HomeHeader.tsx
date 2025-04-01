@@ -64,6 +64,11 @@ function HomeHeader({ groups }: Props) {
 		handleCloseMenu();
 	};
 
+	const handlePressFellowshipList = () => {
+		router.push('/(app)/(fellowship)/list');
+		handleCloseMenu();
+	};
+
 	const handlePressMemberGroup = () => {
 		setIsExpanded((prev) => !prev);
 		handleOpenMember();
@@ -95,7 +100,7 @@ function HomeHeader({ groups }: Props) {
 	};
 
 	return (
-		<HStack className="items-center justify-between pt-2 px-4">
+		<HStack className="items-center justify-between pt-2 pl-4 pr-3">
 			<Menu
 				placement="bottom left"
 				offset={5}
@@ -129,7 +134,7 @@ function HomeHeader({ groups }: Props) {
 					<MenuItemLabel size="lg">소그룹 관리하기</MenuItemLabel>
 				</MenuItem>
 			</Menu>
-			<HStack space="sm" className="px-1 items-center">
+			<HStack space="xs" className="items-center">
 				<AvatarGroup onPress={handlePressMemberGroup} isExpanded={isExpanded}>
 					{group?.members
 						? group.members.map((member) => (
@@ -162,7 +167,7 @@ function HomeHeader({ groups }: Props) {
 					<BottomSheetListItem
 						label="나눔 기록"
 						icon={Library}
-						onPress={handleCloseMenu}
+						onPress={handlePressFellowshipList}
 					/>
 					<Divider />
 					<BottomSheetListItem
@@ -236,7 +241,8 @@ function HomeHeader({ groups }: Props) {
 						<Button
 							size="lg"
 							variant="solid"
-							className="rounded-full flex-1"
+							className="flex-1"
+							rounded
 							onPress={handleCopyInviteCode}
 						>
 							<ButtonText>초대링크 복사하기</ButtonText>

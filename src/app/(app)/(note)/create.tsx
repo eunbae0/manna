@@ -209,7 +209,8 @@ export default function CreateScreen() {
 					</KeyboardAwareScrollView>
 					<Button
 						size="lg"
-						className="mx-6 mb-6 rounded-full"
+						className="mx-6 mb-6"
+						rounded
 						onPress={handleCreateNote}
 						disabled={isLoading}
 					>

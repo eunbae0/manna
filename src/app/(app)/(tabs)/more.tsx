@@ -220,7 +220,7 @@ export default function TabFourScreen() {
 								(displayName === user?.displayName &&
 									photoUrl === user?.photoUrl)
 							}
-							className="rounded-full"
+							rounded
 							size="lg"
 						>
 							<ButtonText>

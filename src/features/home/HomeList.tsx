@@ -99,7 +99,7 @@ function HomeList() {
 				{isPrayerRequestsLoading ? (
 					<HomeSkeleton />
 				) : (
-					<VStack space="2xl" className="py-4">
+					<VStack space="2xl" className="pt-2 pb-4">
 						<VStack space="lg">
 							<NotificationBox
 								title={'새 나눔이 등록되었어요'}

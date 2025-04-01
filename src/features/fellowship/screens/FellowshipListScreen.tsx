@@ -143,7 +143,8 @@ export default function FellowshipListScreen() {
 				<Button
 					size="lg"
 					variant="solid"
-					className="absolute bottom-6 right-4 rounded-full"
+					className="absolute bottom-6 right-4"
+					rounded
 					onPress={handlePressCreateFellowship}
 				>
 					<ButtonText>나눔 만들기</ButtonText>

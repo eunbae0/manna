@@ -170,11 +170,7 @@ const PrayerRequestList = ({
 								/>
 							</Textarea>
 						</VStack>
-						<Button
-							size="lg"
-							className="rounded-full"
-							onPress={handlePressSaveButton}
-						>
+						<Button size="lg" rounded onPress={handlePressSaveButton}>
 							<ButtonText>저장하기</ButtonText>
 						</Button>
 					</VStack>
