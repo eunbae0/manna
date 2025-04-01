@@ -4,7 +4,15 @@ import { withApiLogging } from '../utils/logger';
 import { FirestoreNotesService } from './service';
 import type { WorshipType } from '../worship-types/types';
 
-const notesService = new FirestoreNotesService();
+/**
+ * Returns the singleton instance of the notes service
+ * @returns Notes service instance
+ */
+export function getNotesService(): FirestoreNotesService {
+	return FirestoreNotesService.getInstance();
+}
+
+const notesService = getNotesService();
 
 /**
  * Fetches sermon notes for the currently logged-in user

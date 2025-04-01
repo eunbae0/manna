@@ -1,4 +1,4 @@
-import { FirestoreAuthService } from './service';
+import { FirestoreAuthService, getAuthService } from './service';
 import type {
 	SignInResponse,
 	AuthType,
@@ -10,12 +10,10 @@ import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { arrayUnion } from '@react-native-firebase/firestore';
 
-// Create a single instance of the auth service
-const authService = new FirestoreAuthService();
-
 export const signUpWithEmail = withApiLogging(
 	async (data: EmailSignInInput): Promise<SignInResponse> => {
 		try {
+			const authService = getAuthService();
 			const userCredential = await authService.signUpWithEmail(data);
 			return await authService.handleUserProfile(userCredential, 'EMAIL');
 		} catch (error) {
@@ -32,6 +30,7 @@ export const signUpWithEmail = withApiLogging(
 export const signInWithEmail = withApiLogging(
 	async (data: EmailSignInInput): Promise<SignInResponse> => {
 		try {
+			const authService = getAuthService();
 			const userCredential = await authService.signInWithEmail(data);
 			return await authService.handleUserProfile(userCredential, 'EMAIL');
 		} catch (error) {
@@ -48,6 +47,7 @@ export const signInWithEmail = withApiLogging(
 export const signInWithApple = withApiLogging(
 	async (): Promise<SignInResponse> => {
 		try {
+			const authService = getAuthService();
 			const userCredential = await authService.signInWithApple();
 			return await authService.handleUserProfile(userCredential, 'APPLE');
 		} catch (error) {
@@ -64,6 +64,7 @@ export const signInWithApple = withApiLogging(
 export const signInWithGoogle = withApiLogging(
 	async (): Promise<SignInResponse> => {
 		try {
+			const authService = getAuthService();
 			const userCredential = await authService.signInWithGoogle();
 			return await authService.handleUserProfile(userCredential, 'GOOGLE');
 		} catch (error) {
@@ -77,6 +78,7 @@ export const signInWithGoogle = withApiLogging(
 export const sendPasswordResetEmail = withApiLogging(
 	async (email: string): Promise<void> => {
 		try {
+			const authService = getAuthService();
 			await authService.sendPasswordResetEmail(email);
 		} catch (error) {
 			throw handleApiError(error);
@@ -107,6 +109,7 @@ export const sendPasswordResetEmail = withApiLogging(
 export const logout = withApiLogging(
 	async (authType: AuthType | null): Promise<void> => {
 		try {
+			const authService = getAuthService();
 			await authService.signOut(authType);
 		} catch (error) {
 			throw handleApiError(error);
@@ -122,6 +125,7 @@ export const logout = withApiLogging(
 export const getUser = withApiLogging(
 	async (userId: string): Promise<ClientUser | null> => {
 		try {
+			const authService = getAuthService();
 			return await authService.getUser(userId);
 		} catch (error) {
 			throw handleApiError(error);
@@ -140,6 +144,7 @@ export const createUser = withApiLogging(
 		userData: Partial<ClientUser> & { authType: AuthType },
 	): Promise<void> => {
 		try {
+			const authService = getAuthService();
 			await authService.createUser(userId, userData);
 		} catch (error) {
 			throw handleApiError(error);
@@ -155,10 +160,12 @@ export const createUser = withApiLogging(
 export const updateUser = withApiLogging(
 	async (userId: string, data: UpdateUserInput): Promise<void> => {
 		try {
+			const authService = getAuthService();
 			const { groups, ...firestoreUserData } = data;
 
 			await authService.updateUser(userId, {
 				...firestoreUserData,
+				//@ts-expect-error: groups can be FieldValue
 				groups: arrayUnion(...(data.groups || [])),
 			});
 		} catch (error) {
@@ -175,6 +182,7 @@ export const updateUser = withApiLogging(
 export const updateLastLogin = withApiLogging(
 	async (userId: string): Promise<void> => {
 		try {
+			const authService = getAuthService();
 			await authService.updateLastLogin(userId);
 		} catch (error) {
 			throw handleApiError(error);
@@ -190,6 +198,7 @@ export const updateLastLogin = withApiLogging(
 export const deleteAccount = withApiLogging(
 	async (): Promise<void> => {
 		try {
+			const authService = getAuthService();
 			await authService.deleteAccount();
 		} catch (error) {
 			throw handleApiError(error);

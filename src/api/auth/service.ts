@@ -47,6 +47,19 @@ import { Alert } from 'react-native';
  * Firestore service for user authentication and profile operations
  */
 export class FirestoreAuthService {
+	// 싱글톤 인스턴스를 저장할 정적 변수
+	private static instance: FirestoreAuthService | null = null;
+
+	// 싱글톤 인스턴스를 반환하는 정적 메서드
+	public static getInstance(): FirestoreAuthService {
+		if (!FirestoreAuthService.instance) {
+			FirestoreAuthService.instance = new FirestoreAuthService();
+		}
+		return FirestoreAuthService.instance;
+	}
+
+	// 생성자를 private으로 설정하여 외부에서 인스턴스 생성을 방지
+	private constructor() {}
 	private readonly usersCollectionPath: string = 'users';
 
 	/**
@@ -399,3 +412,7 @@ export class FirestoreAuthService {
 			: await this.handleNewUserCreation(userCredential, authType);
 	}
 }
+
+export const getAuthService = (): FirestoreAuthService => {
+	return FirestoreAuthService.getInstance();
+};

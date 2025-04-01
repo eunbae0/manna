@@ -9,18 +9,7 @@ import type {
 } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
-import { FirestoreGroupService } from './service';
-import { updateUser } from '../auth';
-import { database } from '@/firebase/config';
-import { arrayUnion, doc } from '@react-native-firebase/firestore';
-
-/**
- * Creates a group service instance
- * @returns Group service instance
- */
-function createGroupService() {
-	return new FirestoreGroupService();
-}
+import { getGroupService } from './service';
 
 /**
  * Fetches all groups
@@ -29,7 +18,7 @@ function createGroupService() {
 export const fetchGroupsByGroupIds = withApiLogging(
 	async (groupIds: string[]): Promise<ClientGroup[]> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			const result = await groupService.getGroupsByGroupIds(groupIds);
 
 			// Pass metadata to the withApiLogging wrapper via context
@@ -55,7 +44,7 @@ export const fetchGroupsByGroupIds = withApiLogging(
 export const fetchGroupById = withApiLogging(
 	async (groupId: string): Promise<ClientGroup | null> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			return await groupService.getGroupById(groupId);
 		} catch (error) {
 			throw handleApiError(error, 'fetchGroupById', 'group');
@@ -73,7 +62,7 @@ export const fetchGroupById = withApiLogging(
 export const fetchGroupsByUserId = withApiLogging(
 	async (userId: string): Promise<ClientGroup[]> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			const result = await groupService.getGroupsByUserId(userId);
 
 			// Pass metadata to the withApiLogging wrapper via context
@@ -100,7 +89,7 @@ export const fetchGroupsByUserId = withApiLogging(
 export const fetchGroupByInviteCode = withApiLogging(
 	async (inviteCode: string): Promise<ClientGroup | null> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			return await groupService.getGroupByInviteCode(inviteCode);
 		} catch (error) {
 			throw handleApiError(error, 'fetchGroupByInviteCode', 'group');
@@ -118,7 +107,7 @@ export const fetchGroupByInviteCode = withApiLogging(
 export const createGroup = withApiLogging(
 	async (groupData: CreateGroupInput): Promise<Group> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			return await groupService.createGroup(groupData);
 		} catch (error) {
 			throw handleApiError(error, 'createGroup', 'group');
@@ -136,7 +125,7 @@ export const createGroup = withApiLogging(
 export const updateGroup = withApiLogging(
 	async (groupId: string, groupData: UpdateGroupInput): Promise<void> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			await groupService.updateGroup(groupId, groupData);
 		} catch (error) {
 			throw handleApiError(error, 'updateGroup', 'group');
@@ -153,7 +142,7 @@ export const updateGroup = withApiLogging(
 export const deleteGroup = withApiLogging(
 	async (groupId: string): Promise<void> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			await groupService.deleteGroup(groupId);
 		} catch (error) {
 			throw handleApiError(error, 'deleteGroup', 'group');
@@ -171,7 +160,7 @@ export const deleteGroup = withApiLogging(
 export const addGroupMember = withApiLogging(
 	async (groupId: string, memberData: AddGroupMemberInput): Promise<void> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			await groupService.addGroupMember(groupId, memberData);
 		} catch (error) {
 			throw handleApiError(error, 'addGroupMember', 'group');
@@ -189,7 +178,7 @@ export const addGroupMember = withApiLogging(
 export const removeGroupMember = withApiLogging(
 	async (groupId: string, userId: string): Promise<void> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			await groupService.removeGroupMember(groupId, userId);
 		} catch (error) {
 			throw handleApiError(error, 'removeGroupMember', 'group');
@@ -212,7 +201,7 @@ export const updateMemberRole = withApiLogging(
 		role: GroupMemberRole,
 	): Promise<void> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			await groupService.updateMemberRole(groupId, userId, role);
 		} catch (error) {
 			throw handleApiError(error, 'updateMemberRole', 'group');
@@ -230,7 +219,7 @@ export const updateMemberRole = withApiLogging(
 export const joinGroup = withApiLogging(
 	async (joinData: JoinGroupInput): Promise<string> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			return await groupService.joinGroup(joinData);
 		} catch (error) {
 			throw handleApiError(error, 'joinGroup', 'group');
@@ -248,7 +237,7 @@ export const joinGroup = withApiLogging(
 export const regenerateInviteCode = withApiLogging(
 	async (groupId: string): Promise<string> => {
 		try {
-			const groupService = createGroupService();
+			const groupService = getGroupService();
 			return await groupService.regenerateInviteCode(groupId);
 		} catch (error) {
 			throw handleApiError(error, 'regenerateInviteCode', 'group');

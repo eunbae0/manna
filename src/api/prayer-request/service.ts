@@ -32,11 +32,21 @@ export class FirestorePrayerRequestService {
 	private readonly groupId: string;
 	private readonly collectionPath: string;
 
+	private static instance: FirestorePrayerRequestService | null = null;
+
+	public static getInstance(groupId: string): FirestorePrayerRequestService {
+		if (!FirestorePrayerRequestService.instance) {
+			FirestorePrayerRequestService.instance =
+				new FirestorePrayerRequestService(groupId);
+		}
+		return FirestorePrayerRequestService.instance;
+	}
+
 	/**
 	 * Creates a new prayer request service for a specific group
 	 * @param groupId ID of the group
 	 */
-	constructor(groupId: string) {
+	private constructor(groupId: string) {
 		this.groupId = groupId;
 		this.collectionPath = `groups/${groupId}/prayer-requests`;
 	}
@@ -244,3 +254,9 @@ export class FirestorePrayerRequestService {
 		});
 	}
 }
+
+export const getPrayerRequestService = (
+	groupId: string,
+): FirestorePrayerRequestService => {
+	return FirestorePrayerRequestService.getInstance(groupId);
+};

@@ -8,11 +8,11 @@ import { withApiLogging } from '../utils/logger';
 import { FirestoreWorshipTypesService } from './service';
 
 /**
- * Creates a worship types service instance
+ * Returns the singleton instance of the worship types service
  * @returns Worship types service instance
  */
-function createWorshipTypesService() {
-	return new FirestoreWorshipTypesService();
+export function getWorshipTypesService(): FirestoreWorshipTypesService {
+	return FirestoreWorshipTypesService.getInstance();
 }
 
 /**
@@ -22,7 +22,7 @@ function createWorshipTypesService() {
 export const fetchUserWorshipTypes = withApiLogging(
 	async (): Promise<ClientWorshipType[]> => {
 		try {
-			const worshipTypesService = createWorshipTypesService();
+			const worshipTypesService = getWorshipTypesService();
 			// Create default worship types if none exist
 			await worshipTypesService.createDefaultWorshipTypes();
 			const result = await worshipTypesService.getUserWorshipTypes();
@@ -50,7 +50,7 @@ export const fetchUserWorshipTypes = withApiLogging(
 export const createUserWorshipType = withApiLogging(
 	async (input: CreateWorshipTypeInput): Promise<string> => {
 		try {
-			const worshipTypesService = createWorshipTypesService();
+			const worshipTypesService = getWorshipTypesService();
 			const worshipTypeId = await worshipTypesService.createWorshipType(input);
 
 			// Pass metadata to the withApiLogging wrapper via context
@@ -81,7 +81,7 @@ export const updateUserWorshipType = withApiLogging(
 		input: UpdateWorshipTypeInput,
 	): Promise<boolean> => {
 		try {
-			const worshipTypesService = createWorshipTypesService();
+			const worshipTypesService = getWorshipTypesService();
 			const result = await worshipTypesService.updateWorshipType(
 				worshipTypeId,
 				input,
@@ -112,7 +112,7 @@ export const updateUserWorshipType = withApiLogging(
 export const deleteUserWorshipType = withApiLogging(
 	async (worshipTypeId: string): Promise<boolean> => {
 		try {
-			const worshipTypesService = createWorshipTypesService();
+			const worshipTypesService = getWorshipTypesService();
 			const result = await worshipTypesService.deleteWorshipType(worshipTypeId);
 
 			// Pass metadata to the withApiLogging wrapper via context

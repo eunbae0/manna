@@ -20,6 +20,21 @@ import type { WorshipType } from '../worship-types/types';
  * Notes service class for handling Firestore operations related to sermon notes
  */
 export class FirestoreNotesService extends FirestoreWorshipTypesService {
+	// 싱글톤 인스턴스를 저장할 정적 변수 - 부모 클래스와 충돌하지 않는 이름 사용
+	private static notesInstance: FirestoreNotesService | null = null;
+
+	// 싱글톤 인스턴스를 반환하는 정적 메서드
+	public static getInstance(): FirestoreNotesService {
+		if (!FirestoreNotesService.notesInstance) {
+			FirestoreNotesService.notesInstance = new FirestoreNotesService();
+		}
+		return FirestoreNotesService.notesInstance;
+	}
+
+	// 생성자를 protected로 설정하여 상속 클래스에서만 생성할 수 있도록 함
+	protected constructor() {
+		super();
+	}
 	getNotesCollectionRef(): FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData> {
 		this.updateUserId();
 		return collection(database, 'users', this.userId, 'notes');

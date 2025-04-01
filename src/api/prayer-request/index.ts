@@ -6,16 +6,7 @@ import type {
 } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
-import { FirestorePrayerRequestService } from './service';
-
-/**
- * Creates a prayer request service instance for a specific group
- * @param groupId ID of the group
- * @returns Prayer request service instance
- */
-function createPrayerRequestService(groupId: string) {
-	return new FirestorePrayerRequestService(groupId);
-}
+import { getPrayerRequestService } from './service';
 
 /**
  * Fetches all prayer requests for a specific group
@@ -25,7 +16,7 @@ function createPrayerRequestService(groupId: string) {
 export const fetchGroupPrayerRequests = withApiLogging(
 	async (groupId: string): Promise<ClientPrayerRequest[]> => {
 		try {
-			const prayerRequestService = createPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService(groupId);
 			const result = await prayerRequestService.getGroupPrayerRequests();
 
 			// Pass metadata to the withApiLogging wrapper via context
@@ -56,7 +47,7 @@ export const fetchPrayerRequestById = withApiLogging(
 		prayerRequestId: string,
 	): Promise<ClientPrayerRequest | null> => {
 		try {
-			const prayerRequestService = createPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService(groupId);
 			return await prayerRequestService.getPrayerRequestById(prayerRequestId);
 		} catch (error) {
 			throw handleApiError(error, 'fetchPrayerRequestById', 'prayer-request');
@@ -78,7 +69,7 @@ export const createPrayerRequest = withApiLogging(
 		prayerRequestData: CreatePrayerRequestInput,
 	): Promise<string> => {
 		try {
-			const prayerRequestService = createPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService(groupId);
 			return await prayerRequestService.createPrayerRequest(prayerRequestData);
 		} catch (error) {
 			throw handleApiError(error, 'createPrayerRequest', 'prayer-request');
@@ -101,7 +92,7 @@ export const updatePrayerRequest = withApiLogging(
 		prayerRequestData: UpdatePrayerRequestInput,
 	): Promise<void> => {
 		try {
-			const prayerRequestService = createPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService(groupId);
 			await prayerRequestService.updatePrayerRequest(
 				prayerRequestId,
 				prayerRequestData,
@@ -122,7 +113,7 @@ export const updatePrayerRequest = withApiLogging(
 export const deletePrayerRequest = withApiLogging(
 	async (groupId: string, prayerRequestId: string): Promise<void> => {
 		try {
-			const prayerRequestService = createPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService(groupId);
 			await prayerRequestService.deletePrayerRequest(prayerRequestId);
 		} catch (error) {
 			throw handleApiError(error, 'deletePrayerRequest', 'prayer-request');
@@ -146,7 +137,7 @@ export const fetchPrayerRequestsByDateRange = withApiLogging(
 		endDate: Date,
 	): Promise<ClientPrayerRequest[]> => {
 		try {
-			const prayerRequestService = createPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService(groupId);
 			const result = await prayerRequestService.getPrayerRequestsByDateRange(
 				startDate,
 				endDate,
@@ -189,7 +180,7 @@ export const togglePrayerRequestReaction = withApiLogging(
 		},
 	): Promise<void> => {
 		try {
-			const prayerRequestService = createPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService(groupId);
 			await prayerRequestService.addReaction(prayerRequestId, reaction);
 		} catch (error) {
 			throw handleApiError(

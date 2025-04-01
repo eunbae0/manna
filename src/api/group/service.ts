@@ -30,6 +30,19 @@ import { v4 as uuidv4 } from 'uuid';
  * Firestore service for group operations
  */
 export class FirestoreGroupService {
+	// 싱글톤 인스턴스를 저장할 정적 변수
+	private static instance: FirestoreGroupService | null = null;
+
+	// 싱글톤 인스턴스를 반환하는 정적 메서드
+	public static getInstance(): FirestoreGroupService {
+		if (!FirestoreGroupService.instance) {
+			FirestoreGroupService.instance = new FirestoreGroupService();
+		}
+		return FirestoreGroupService.instance;
+	}
+
+	// 생성자를 private으로 설정하여 외부에서 인스턴스 생성을 방지
+	private constructor() {}
 	private readonly collectionPath: string = 'groups';
 
 	/**
@@ -361,3 +374,7 @@ export class FirestoreGroupService {
 		return newInviteCode;
 	}
 }
+
+export const getGroupService = (): FirestoreGroupService => {
+	return FirestoreGroupService.getInstance();
+};
