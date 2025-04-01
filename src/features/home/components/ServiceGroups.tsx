@@ -21,7 +21,10 @@ export default function ServiceGroups() {
 
 	return (
 		<VStack space="md" className="px-4">
-			<AnimatedPressable className="flex-1" onPress={handlePressCreateFellowship}>
+			<AnimatedPressable
+				className="flex-1"
+				onPress={handlePressCreateFellowship}
+			>
 				<HStack className="bg-primary-500 rounded-2xl justify-between px-6 py-5">
 					<VStack space="xs">
 						<Heading size="lg" className="text-white">
