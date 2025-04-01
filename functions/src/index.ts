@@ -100,7 +100,7 @@ exports.prayerRequestNotification = onDocumentCreated(
 );
 
 exports.fellowshipNotification = onDocumentCreated(
-	'/groups/{documentId}/fellowships/{documentId}',
+	'/groups/{documentId}/fellowship/{documentId}',
 	async (event) => {
 		const {
 			id: fellowshipId,
