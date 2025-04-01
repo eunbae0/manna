@@ -20,6 +20,7 @@ import 'react-native-reanimated';
 import 'react-native-get-random-values';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import * as SystemUI from 'expo-system-ui';
+import { useNotification } from '@/hooks/useNotification';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -31,6 +32,8 @@ export default function Root() {
 	const queryClient = new QueryClient();
 
 	useReactQueryDevTools(queryClient);
+
+	useNotification();
 
 	return (
 		<QueryClientProvider client={queryClient}>
