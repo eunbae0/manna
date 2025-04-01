@@ -104,11 +104,20 @@ exports.fellowshipNotification = onDocumentCreated(
 	async (event) => {
 		const {
 			id: fellowshipId,
-			member: { id: senderId, displayName },
+			info: { members: fellowshipMembers },
 		} = event.data?.data() as {
 			id: string;
-			member: { id: string; displayName: string };
+			info: {
+				members: { id: string; displayName: string; isLeader: boolean }[];
+			};
 		};
+
+		const { id: senderId, displayName: senderDisplayName } =
+			fellowshipMembers.find((member) => member.isLeader) || {
+				id: '',
+				displayName: '',
+			};
+
 		const group = await event.data?.ref.parent.parent?.get();
 		const { id: groupId, members } = group?.data() as {
 			id: string;
@@ -144,7 +153,7 @@ exports.fellowshipNotification = onDocumentCreated(
 
 				const payload = {
 					notification: {
-						title: `${displayName} 님이 새 나눔을 등록했어요`,
+						title: `${senderDisplayName} 님이 새 나눔을 등록했어요`,
 						body: '클릭해서 나눔에 참여해보세요',
 					},
 					data: {
