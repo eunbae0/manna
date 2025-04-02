@@ -1,9 +1,5 @@
-import { View, Text } from 'react-native';
+import { NotificationScreen } from '@/features/notification/screens/NotificationScreen';
 
-export default function TabTwoScreen() {
-	return (
-		<View>
-			<Text>알림</Text>
-		</View>
-	);
+export default function NotificationTab() {
+	return <NotificationScreen />;
 }

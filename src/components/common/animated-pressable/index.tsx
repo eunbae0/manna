@@ -58,6 +58,7 @@ function AnimatedPressable({
 	stiffness = 100,
 	containerStyle,
 	className,
+	style,
 	...props
 }: AnimatedPressableProps) {
 	// useScaleAnimation 훅을 사용하여 애니메이션 로직 구현
