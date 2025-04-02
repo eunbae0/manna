@@ -66,6 +66,13 @@
 						"useFrameworks": "static"
 					}
 				}
+			],
+			[
+				"@sentry/react-native/expo",
+				{
+					"organization": "so-group",
+					"project": "react-native"
+				}
 			]
 		],
 		"experiments": {

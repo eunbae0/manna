@@ -21,19 +21,37 @@ import 'react-native-get-random-values';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import * as SystemUI from 'expo-system-ui';
 import { useNotification } from '@/hooks/useNotification';
+import * as Sentry from '@sentry/react-native';
+import { isRunningInExpoGo } from 'expo';
+import { useSentry } from '@/hooks/useSentry';
+import { SENTRY_DSN } from '@/shared/constants/keys';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
 	strict: false,
 });
 
-export default function Root() {
+const navigationIntegration = Sentry.reactNavigationIntegration({
+	enableTimeToInitialDisplay: !isRunningInExpoGo(),
+});
+
+Sentry.init({
+	dsn: SENTRY_DSN,
+	debug: true,
+	tracesSampleRate: 1.0,
+	integrations: [navigationIntegration],
+	enableNativeFramesTracking: !isRunningInExpoGo(),
+});
+
+function RootLayout() {
 	const colorScheme = useColorScheme();
 	const queryClient = new QueryClient();
 
 	useReactQueryDevTools(queryClient);
 
 	useNotification();
+
+	useSentry(navigationIntegration);
 
 	return (
 		<QueryClientProvider client={queryClient}>
@@ -59,3 +77,5 @@ export default function Root() {
 		</QueryClientProvider>
 	);
 }
+
+export default Sentry.wrap(RootLayout);
