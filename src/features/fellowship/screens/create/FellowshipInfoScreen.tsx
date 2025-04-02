@@ -301,7 +301,8 @@ export default function FellowshipInfoScreen() {
 					<Button
 						size="lg"
 						variant="solid"
-						className="mb-6 mx-5 rounded-xl"
+						className="mb-6 mx-5"
+						rounded
 						onPress={() => {
 							if (
 								!preachTitle ||
@@ -390,6 +391,7 @@ export default function FellowshipInfoScreen() {
 						<VStack space="3xl">
 							<Heading size="xl">나눔 인원 추가하기</Heading>
 							<BottomSheetTextInput
+								// @ts-ignore
 								ref={addMemberInputRef}
 								placeholder="이름을 입력해주세요"
 								value={memberNameInput}

@@ -13,7 +13,6 @@ import {
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { PortalProvider } from '@gorhom/portal';
 
 import '#/global.css';
 import 'react-native-reanimated';
@@ -25,6 +24,7 @@ import * as Sentry from '@sentry/react-native';
 import { isRunningInExpoGo } from 'expo';
 import { useSentry } from '@/hooks/useSentry';
 import { SENTRY_DSN } from '@/shared/constants/keys';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -32,15 +32,16 @@ configureReanimatedLogger({
 });
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
-	enableTimeToInitialDisplay: !isRunningInExpoGo(),
+	enableTimeToInitialDisplay: !__DEV__,
 });
 
 Sentry.init({
 	dsn: SENTRY_DSN,
-	debug: true,
+	debug: false,
 	tracesSampleRate: 1.0,
 	integrations: [navigationIntegration],
-	enableNativeFramesTracking: !isRunningInExpoGo(),
+	enableNativeFramesTracking: !__DEV__,
+	enabled: !__DEV__,
 });
 
 function RootLayout() {
@@ -58,7 +59,7 @@ function RootLayout() {
 			<KeyboardProvider>
 				<GestureHandlerRootView style={{ flex: 1 }}>
 					<GluestackUIProvider>
-						<PortalProvider>
+						<BottomSheetModalProvider>
 							<ScreenTracker />
 							<Stack
 								screenOptions={{
@@ -70,7 +71,7 @@ function RootLayout() {
 							</Stack>
 							<StatusBar style="auto" />
 							<ToastContainer />
-						</PortalProvider>
+						</BottomSheetModalProvider>
 					</GluestackUIProvider>
 				</GestureHandlerRootView>
 			</KeyboardProvider>

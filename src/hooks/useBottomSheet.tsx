@@ -6,29 +6,16 @@ import {
 	type TextInputFocusEventData,
 } from 'react-native';
 import { FocusScope } from '@react-native-aria/focus';
+import { useRef, useState, useCallback, useMemo, forwardRef } from 'react';
+import type BottomSheet from '@gorhom/bottom-sheet';
 import {
-	useRef,
-	useState,
-	useCallback,
-	useMemo,
-	useEffect,
-	forwardRef,
-} from 'react';
-import BottomSheet, {
 	BottomSheetBackdrop,
-	BottomSheetTextInput,
+	BottomSheetModal,
 	BottomSheetView,
 	useBottomSheetInternal,
 } from '@gorhom/bottom-sheet';
-import { Portal } from '@gorhom/portal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-	KeyboardAvoidingView,
-	KeyboardStickyView,
-	useKeyboardAnimation,
-	useKeyboardHandler,
-} from 'react-native-keyboard-controller';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import type { BottomSheetTextInputProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetTextInput';
 
@@ -58,30 +45,41 @@ type Props = { onOpen?: () => void; onClose?: () => void } | undefined;
 
 export const useBottomSheet = ({ onOpen, onClose }: Props = {}) => {
 	const [visible, setVisible] = useState(false);
-	const bottomSheetRef = useRef<BottomSheet>(null);
+	// const bottomSheetRef = useRef<BottomSheet>(null);
 	const insets = useSafeAreaInsets();
+
+	// ref
+	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+	// callbacks
+	const handlePresentModalPress = useCallback(() => {
+		bottomSheetModalRef.current?.present();
+	}, []);
+	// const handleSheetChanges = useCallback((index: number) => {
+	// 	console.log('handleSheetChanges', index);
+	// }, []);
 
 	const handleOpen = useCallback(() => {
 		setTimeout(() => {
-			bottomSheetRef.current?.expand();
+			bottomSheetModalRef.current?.present();
 		}, ANIMATION_DELAY);
 		onOpen?.();
 		setVisible(true);
 	}, [onOpen]);
 
 	const handleClose = useCallback(() => {
-		bottomSheetRef.current?.close();
+		bottomSheetModalRef.current?.close();
 		onClose?.();
 		Keyboard.dismiss();
 		setVisible(false);
 	}, [onClose]);
 
-	const handleSheetChanges = useCallback(
-		(index: number) => {
-			if (index === -1) handleClose();
-		},
-		[handleClose],
-	);
+	// const handleSheetChanges = useCallback(
+	// 	(index: number) => {
+	// 		if (index === -1) handleClose();
+	// 	},
+	// 	[handleClose],
+	// );
 
 	const keyDownHandlers = useMemo(
 		() =>
@@ -102,32 +100,31 @@ export const useBottomSheet = ({ onOpen, onClose }: Props = {}) => {
 
 	const BottomSheetContainer = useCallback(
 		({ children, ...props }: IBottomSheet) => (
-			<Portal>
-				<BottomSheet
-					ref={bottomSheetRef}
-					index={-1}
-					backdropComponent={BottomSheetBackdropComponent}
-					onChange={handleSheetChanges}
-					overDragResistanceFactor={0}
-					enablePanDownToClose={true}
-					handleIndicatorStyle={{ backgroundColor: 'lightgray', width: 36 }}
-					keyboardBehavior="interactive"
-					{...props}
-				>
-					<KeyboardDismissView>
-						<BottomSheetView
-							style={{ paddingBottom: insets.bottom }}
-							{...keyDownHandlers}
-						>
-							{Platform.OS === 'web'
-								? visible && <WebContent visible={visible} content={children} />
-								: children}
-						</BottomSheetView>
-					</KeyboardDismissView>
-				</BottomSheet>
-			</Portal>
+			<BottomSheetModal
+				// index={-1}
+				// onChange={handleSheetChanges}
+				// overDragResistanceFactor={0}
+				ref={bottomSheetModalRef}
+				backdropComponent={BottomSheetBackdropComponent}
+				enablePanDownToClose={true}
+				enableBlurKeyboardOnGesture={true}
+				handleIndicatorStyle={{ backgroundColor: 'lightgray', width: 36 }}
+				keyboardBehavior="interactive"
+				{...props}
+			>
+				<KeyboardDismissView>
+					<BottomSheetView
+						style={{ paddingBottom: insets.bottom }}
+						{...keyDownHandlers}
+					>
+						{Platform.OS === 'web'
+							? visible && <WebContent visible={visible} content={children} />
+							: children}
+					</BottomSheetView>
+				</KeyboardDismissView>
+			</BottomSheetModal>
 		),
-		[visible, insets, keyDownHandlers, handleSheetChanges],
+		[],
 	);
 
 	const TextInput = forwardRef<RNTextInput, BottomSheetTextInputProps>(

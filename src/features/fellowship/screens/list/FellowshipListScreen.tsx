@@ -16,8 +16,8 @@ import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import { VStack } from '#/components/ui/vstack';
 
-import { FellowshipSkeleton } from '../components/FellowshipSkeleton';
-import { useFellowships } from '../hooks/useFellowships';
+import { FellowshipSkeleton } from '../../components/FellowshipSkeleton';
+import { useFellowships } from '../../hooks/useFellowships';
 
 export default function FellowshipListScreen() {
 	const [refreshing, setRefreshing] = useState(false);
