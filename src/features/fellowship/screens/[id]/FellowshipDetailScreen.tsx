@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Alert, Pressable, ScrollView } from 'react-native';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import {
@@ -14,6 +14,9 @@ import {
 	RefreshCw,
 	Users,
 	ChevronDown,
+	MoreHorizontal,
+	Edit2,
+	Trash,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
 import { useCallback, useMemo, useRef } from 'react';
@@ -30,6 +33,13 @@ import FellowshipPrayerRequestList, {
 	type FellowshipPrayerRequestListHandle,
 } from '../../components/FellowshipPrayerRequestList';
 import FellowshipContentLayout from '../../components/FellowshipContentLayout';
+import {
+	BottomSheetListHeader,
+	BottomSheetListItem,
+	BottomSheetListLayout,
+} from '@/components/common/bottom-sheet';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
+import { Divider } from '#/components/ui/divider';
 
 interface FellowshipDetailScreenProps {
 	id: string;
@@ -49,8 +59,14 @@ export default function FellowshipDetailScreen({
 	} = useFellowshipStore();
 
 	// React Query를 사용한 데이터 페칭
-	const { fellowship, isLoading, isError, refetch, updateFellowship } =
-		useFellowship(id);
+	const {
+		fellowship,
+		isLoading,
+		isError,
+		refetch,
+		updateFellowship,
+		deleteFellowship,
+	} = useFellowship(id);
 
 	// 수정 후 네비게이션 시 데이터 갱신
 	useFocusEffect(
@@ -63,7 +79,7 @@ export default function FellowshipDetailScreen({
 		}, [id, refetch, getLastUpdatedIdAndReset]),
 	);
 
-	const handlePressSettingButton = () => {
+	const handlePressEditButton = () => {
 		setType('EDIT');
 		setFellowshipId(fellowship?.id || '');
 		updateFellowshipInfo({
@@ -72,7 +88,25 @@ export default function FellowshipDetailScreen({
 		updateFellowshipContent({
 			...fellowship?.content,
 		});
+		handleClose();
 		router.push('/(app)/(fellowship)/create');
+	};
+
+	const handlePressDeleteButton = () => {
+		Alert.alert('나눔을 삭제하시겠습니까?', '', [
+			{
+				text: '삭제',
+				style: 'destructive',
+				onPress: () => {
+					deleteFellowship();
+					handleClose();
+				},
+			},
+			{
+				text: '취소',
+				onPress: handleClose,
+			},
+		]);
 	};
 
 	const isLeader = useMemo(
@@ -87,6 +121,8 @@ export default function FellowshipDetailScreen({
 	);
 
 	const prayerRequestListRef = useRef<FellowshipPrayerRequestListHandle>(null);
+
+	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
 	if (isLoading) {
 		return <FellowshipSkeleton />;
@@ -120,9 +156,9 @@ export default function FellowshipDetailScreen({
 			<VStack space="xl" className="h-full">
 				<Header className="justify-between pr-6">
 					{isLeader && (
-						<Pressable onPress={handlePressSettingButton}>
-							<Icon as={Edit} size="lg" className="text-typography-900" />
-						</Pressable>
+						<Button variant="icon" onPress={() => handleOpen()}>
+							<ButtonIcon as={MoreHorizontal} />
+						</Button>
 					)}
 				</Header>
 
@@ -225,10 +261,7 @@ export default function FellowshipDetailScreen({
 									)}
 								</HStack>
 							</VStack>
-							<Pressable
-								onPress={handlePressSettingButton}
-								className="absolute top-5 right-4"
-							>
+							<Pressable onPress={() => {}} className="absolute top-5 right-4">
 								<HStack space="xs" className="items-center">
 									<Text size="md" className="text-typography-600">
 										접기
@@ -289,6 +322,22 @@ export default function FellowshipDetailScreen({
 					</VStack>
 				</ScrollView>
 			</VStack>
+			<BottomSheetContainer>
+				<BottomSheetListLayout>
+					<BottomSheetListHeader label={'나눔 관리'} onPress={handleClose} />
+					<BottomSheetListItem
+						label={'나눔 수정하기'}
+						icon={Edit2}
+						onPress={handlePressEditButton}
+					/>
+					<Divider />
+					<BottomSheetListItem
+						label={'나눔 삭제하기'}
+						icon={Trash}
+						onPress={handlePressDeleteButton}
+					/>
+				</BottomSheetListLayout>
+			</BottomSheetContainer>
 		</SafeAreaView>
 	);
 }

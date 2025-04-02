@@ -4,9 +4,14 @@ import type {
 	FellowshipMember,
 	UpdateFellowshipInput,
 } from '../api/types';
-import { fetchFellowshipById, updateFellowship } from '../api';
+import {
+	deleteFellowship,
+	fetchFellowshipById,
+	updateFellowship,
+} from '../api';
 import { useToastStore } from '@/store/toast';
 import { useAuthStore } from '@/store/auth';
+import { router } from 'expo-router';
 
 const FELLOWSHIP_QUERY_KEY = 'fellowship';
 
@@ -66,6 +71,24 @@ export function useFellowship(id: string | undefined) {
 		},
 	});
 
+	const deleteFellowshipMutation = useMutation({
+		mutationFn: async () => {
+			if (!id) throw new Error('ID가 없습니다.');
+			await deleteFellowship(currentGroup?.groupId || '', id);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [FELLOWSHIP_QUERY_KEY, id],
+			});
+			showSuccess('나눔 노트가 삭제되었어요.');
+			if (router.canGoBack()) router.back();
+		},
+		onError: (error) => {
+			console.error('Error deleting fellowship:', error);
+			showError('나눔 노트 삭제 중 오류가 발생했어요.');
+		},
+	});
+
 	const updateFellowshipState = (updatedFellowship: UpdateFellowshipInput) => {
 		if (!fellowship) return;
 
@@ -81,5 +104,6 @@ export function useFellowship(id: string | undefined) {
 		isFetching,
 		updateFellowship: updateFellowshipState,
 		isUpdating: updateFellowshipMutation.isPending,
+		deleteFellowship: deleteFellowshipMutation.mutate,
 	};
 }
