@@ -17,6 +17,11 @@ function setupNotificationHandler(): void {
 	});
 }
 
+async function addBadgeCountAsync(): Promise<void> {
+	const badgeCount = await Notifications.getBadgeCountAsync();
+	await Notifications.setBadgeCountAsync(badgeCount + 1);
+}
+
 /**
  * 알림 클릭 이벤트를 처리하는 함수
  */
@@ -73,6 +78,8 @@ async function createLocalNotification(
 		content: notification,
 		trigger: null,
 	});
+
+	await addBadgeCountAsync();
 }
 
 /**
