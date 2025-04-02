@@ -18,10 +18,12 @@ import { VStack } from '#/components/ui/vstack';
 
 import { FellowshipSkeleton } from '../../components/FellowshipSkeleton';
 import { useFellowships } from '../../hooks/useFellowships';
+import { useFellowshipStore } from '@/store/createFellowship';
 
 export default function FellowshipListScreen() {
 	const [refreshing, setRefreshing] = useState(false);
 	const { showError } = useToastStore();
+	const { setType } = useFellowshipStore();
 
 	const {
 		data: fellowships = [],
@@ -53,6 +55,7 @@ export default function FellowshipListScreen() {
 	};
 
 	const handlePressCreateFellowship = () => {
+		setType('CREATE');
 		router.push('/(app)/(fellowship)/create');
 	};
 

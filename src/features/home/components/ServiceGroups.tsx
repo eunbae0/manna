@@ -5,9 +5,13 @@ import LottieView from 'lottie-react-native';
 import { VStack } from '#/components/ui/vstack';
 import { router } from 'expo-router';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { useFellowshipStore } from '@/store/createFellowship';
 
 export default function ServiceGroups() {
+	const { setType } = useFellowshipStore();
+
 	const handlePressCreateFellowship = () => {
+		setType('CREATE');
 		router.push('/(app)/(fellowship)/create');
 	};
 
