@@ -1,4 +1,5 @@
 import type { ClientUser } from '@/shared/types/user';
+import type { DeepPartial } from '@/shared/utils/deepPartial';
 import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 
 /**
@@ -71,3 +72,7 @@ export type FellowshipAnswerField = {
 	member: FellowshipMember;
 	value: string;
 };
+
+export type UpdateFellowshipInput = DeepPartial<
+	Omit<ClientFellowship, 'id' | 'groupId' | 'createdAt'>
+>;

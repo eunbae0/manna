@@ -1,7 +1,11 @@
 import { handleApiError } from '@/api/errors';
 import { withApiLogging } from '@/api/utils/logger';
 import { FirestoreFellowshipService } from './service';
-import type { Fellowship, ClientFellowship } from './types';
+import type {
+	Fellowship,
+	ClientFellowship,
+	UpdateFellowshipInput,
+} from './types';
 
 /**
  * Creates a fellowship service instance for a specific group
@@ -96,9 +100,7 @@ export const updateFellowship = withApiLogging(
 	async (
 		groupId: string,
 		fellowshipId: string,
-		fellowshipData: Partial<
-			Omit<ClientFellowship, 'id' | 'groupId' | 'createdAt'>
-		>,
+		fellowshipData: UpdateFellowshipInput,
 	): Promise<void> => {
 		try {
 			const fellowshipService = createFellowshipService(groupId);

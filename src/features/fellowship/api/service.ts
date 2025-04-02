@@ -11,14 +11,17 @@ import {
 	Timestamp,
 	type FirebaseFirestoreTypes,
 	setDoc,
+	type FieldValue,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
 	Fellowship,
 	ClientFellowship,
+	UpdateFellowshipInput,
 } from '@/features/fellowship/api/types';
 import { serverTimestamp } from '@/firebase/firestore';
 import { FirestoreService } from '@/api/services';
+import { flattenObject } from '@/shared/utils/flattenObject';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -149,25 +152,35 @@ export class FirestoreFellowshipService extends FirestoreService {
 	 */
 	async updateFellowship(
 		fellowshipId: string,
-		fellowshipData: Partial<
-			Omit<ClientFellowship, 'id' | 'groupId' | 'createdAt'>
-		>,
+		fellowshipData: UpdateFellowshipInput,
 	): Promise<void> {
 		const docRef = this.getFellowshipDocRef(fellowshipId);
 
-		const processedData = {
-			...fellowshipData,
-			info: {
-				...fellowshipData.info,
-				date: Timestamp.fromDate(fellowshipData.info?.date ?? new Date()),
-			},
-			updatedAt: serverTimestamp(),
-		} satisfies { info: Partial<Fellowship['info']> } & Omit<
-			Partial<Fellowship>,
-			'info'
-		>;
+		// 중첩된 객체를 Firestore의 dot notation으로 변환
+		const flattenedData = flattenObject(fellowshipData);
 
-		await updateDoc(docRef, processedData);
+		// updatedAt 필드 추가
+		flattenedData.updatedAt = serverTimestamp();
+
+		// info.date가 Date 객체인 경우 Timestamp로 변환
+		if (flattenedData['info.date'] instanceof Date) {
+			flattenedData['info.date'] = Timestamp.fromDate(
+				flattenedData['info.date'] as Date,
+			);
+		}
+
+		// Firestore에 맞는 타입으로 변환
+		type FirestoreUpdateData = {
+			[key: string]: FieldValue | Partial<unknown> | undefined;
+		};
+		const updateData: FirestoreUpdateData = {};
+
+		for (const [key, value] of Object.entries(flattenedData)) {
+			updateData[key] = value as FieldValue | Partial<unknown> | undefined;
+		}
+
+		console.log('Updating fellowship with data:', updateData);
+		await updateDoc(docRef, updateData);
 	}
 
 	/**
