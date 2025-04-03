@@ -118,6 +118,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 				id: prayerRequest.id,
 				date: date,
 				value: prayerRequest.value,
+				isAnonymous: prayerRequest.isAnonymous ? 'true' : 'false',
 			},
 		});
 	};
@@ -160,17 +161,26 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 			},
 		]);
 	};
-
 	return (
 		<>
 			<GestureDetector gesture={doubleTap}>
 				<HStack space="md" className="py-5 pl-4">
-					<Avatar size="md" className="mt-1" />
+					<Avatar
+						size="md"
+						className="mt-1"
+						photoUrl={
+							prayerRequest.isAnonymous
+								? ''
+								: prayerRequest.member?.photoUrl || ''
+						}
+					/>
 					<VStack space="xs" className="flex-1">
 						<HStack className="items-center justify-between mr-1">
 							<HStack space="sm" className="items-center">
 								<Text size="lg" className="font-pretendard-bold">
-									{prayerRequest.member.displayName || '익명'}
+									{prayerRequest.isAnonymous
+										? '익명'
+										: prayerRequest.member.displayName || '이름없음'}
 								</Text>
 								<Text className="text-typography-500" size="sm">
 									{formatRelativeTime(prayerRequest.date)}

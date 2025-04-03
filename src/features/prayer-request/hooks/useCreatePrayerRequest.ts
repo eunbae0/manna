@@ -2,23 +2,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPrayerRequest } from '@/api/prayer-request';
 import { useAuthStore } from '@/store/auth';
 import type { Member } from '@/api/prayer-request/types';
-import type { YYYYMMDD } from '@/shared/types/date';
 import { getKSTDate } from '@/shared/utils/date';
-
-interface CreatePrayerRequestParams {
-	onSuccess?: () => void;
-	onError?: (error: Error) => void;
-}
+import { router } from 'expo-router';
 
 /**
  * Custom hook for creating a prayer request
  * @param params Optional callbacks for success and error handling
  * @returns Object containing mutation function and state
  */
-export function useCreatePrayerRequest({
-	onSuccess,
-	onError,
-}: CreatePrayerRequestParams = {}) {
+export function useCreatePrayerRequest() {
 	const { currentGroup, user } = useAuthStore();
 	const queryClient = useQueryClient();
 	const groupId = currentGroup?.groupId || '';
@@ -27,11 +19,11 @@ export function useCreatePrayerRequest({
 		mutationFn: async ({
 			value,
 			date,
-			isAnonymous = false,
+			isAnonymous,
 		}: {
 			value: string;
 			date: Date;
-			isAnonymous?: boolean;
+			isAnonymous: boolean;
 		}) => {
 			if (!value.trim()) {
 				throw new Error('Prayer request text is required');
@@ -39,21 +31,20 @@ export function useCreatePrayerRequest({
 
 			const member: Member = {
 				id: user?.id || '',
-				displayName: isAnonymous ? '익명' : user?.displayName || '',
-				photoUrl: isAnonymous ? '' : user?.photoUrl || '',
+				displayName: user?.displayName || '',
+				photoUrl: user?.photoUrl || '',
 			};
 
 			return createPrayerRequest(groupId, {
 				value: value.trim(),
 				date,
 				member,
+				isAnonymous,
 			});
 		},
 		onSuccess: () => {
-			// Get today's date in YYYYMMDD format for the query key
 			const todayDate = getKSTDate(new Date());
 
-			// Invalidate both the daily prayer requests and all prayer requests
 			Promise.all([
 				queryClient.invalidateQueries({
 					queryKey: ['prayer-requests', groupId, todayDate],
@@ -62,12 +53,10 @@ export function useCreatePrayerRequest({
 					queryKey: ['all-prayer-requests', groupId],
 				}),
 			]);
-
-			onSuccess?.();
+			router.back();
 		},
 		onError: (error: Error) => {
 			console.error('Failed to create prayer request:', error);
-			onError?.(error);
 		},
 	});
 

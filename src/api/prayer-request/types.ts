@@ -41,6 +41,7 @@ export interface ClientPrayerRequest {
 	date: Date;
 	member: Member;
 	value: string;
+	isAnonymous: boolean;
 	reactions: PrayerRequestReaction[];
 }
 

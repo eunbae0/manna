@@ -69,6 +69,7 @@ export class FirestorePrayerRequestService {
 			member: data.member,
 			value: data.value,
 			reactions: data.reactions || [],
+			isAnonymous: data.isAnonymous,
 		};
 	}
 

@@ -27,15 +27,20 @@ import { useCreatePrayerRequest } from '@/features/prayer-request/hooks/useCreat
 export function CreatePrayerRequestScreen() {
 	const { user, currentGroup } = useAuthStore();
 
-	const { id: editId, value: editValue } = useLocalSearchParams<{
+	const {
+		id: editId,
+		value: editValue,
+		isAnonymous: editIsAnonymous,
+	} = useLocalSearchParams<{
 		id?: string;
 		date?: YYYYMMDD;
 		value?: string;
+		isAnonymous?: 'true' | 'false';
 	}>();
 	const isEditMode = !!editId;
 
 	const [prayerRequestText, setPrayerRequestText] = useState(editValue || '');
-	const [isAnonymous, setIsAnonymous] = useState(false);
+	const [isAnonymous, setIsAnonymous] = useState(editIsAnonymous === 'true');
 
 	const ref = useRef<TextInput>(null);
 
@@ -47,11 +52,7 @@ export function CreatePrayerRequestScreen() {
 
 	// Use the custom hook for creating prayer requests
 	const { createPrayerRequest: submitPrayerRequest, isLoading: isCreating } =
-		useCreatePrayerRequest({
-			onSuccess: () => {
-				router.back();
-			},
-		});
+		useCreatePrayerRequest();
 
 	const handlePressSubmitButton = () => {
 		if (isEditMode) {
@@ -61,9 +62,10 @@ export function CreatePrayerRequestScreen() {
 					value: prayerRequestText.trim(),
 					member: {
 						id: user?.id || '',
-						displayName: isAnonymous ? '익명' : user?.displayName || '',
-						photoUrl: isAnonymous ? '' : user?.photoUrl || '',
+						displayName: user?.displayName || '',
+						photoUrl: user?.photoUrl || '',
 					},
+					isAnonymous,
 				},
 			});
 
