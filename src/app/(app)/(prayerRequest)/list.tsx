@@ -66,7 +66,7 @@ export default function PrayerRequestListScreen() {
 									displayName: user.displayName || '',
 									photoUrl: user.photoUrl || '',
 								}}
-								selectedDate={todayDate}
+								date={todayDate}
 							/>
 						)}
 						ItemSeparatorComponent={() => (
