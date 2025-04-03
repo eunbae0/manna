@@ -22,6 +22,9 @@ import { Alert, Pressable } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { usePrayerRequestMutations } from '@/features/home/hooks/usePrayerRequestMutations';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
+import { runOnJS } from 'react-native-reanimated';
+
+import * as Haptics from 'expo-haptics';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
@@ -48,6 +51,8 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 			);
 		},
 		onSuccess: () => {
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
 			Promise.all([
 				queryClient.invalidateQueries({
 					queryKey: [
@@ -68,8 +73,7 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 		.maxDuration(250)
 		.numberOfTaps(2)
 		.onEnd(() => {
-			// TODO: Fix crash when executed
-			// toggleLike();
+			runOnJS(toggleLike)();
 		});
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
