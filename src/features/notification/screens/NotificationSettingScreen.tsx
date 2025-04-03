@@ -11,11 +11,12 @@ import { useAuthStore } from '@/store/auth';
 import { useGroups } from '@/features/home/group/hooks/useGroups';
 import type { ClientGroup } from '@/api/group/types';
 import { cn } from '@/shared/utils/cn';
+import type { UserGroup } from '@/shared/types';
 
 type TabType = Pick<ClientGroup, 'id' | 'groupName'>;
 
 export default function NotificationSettingScreen() {
-	const { user, currentGroup, updateCurrentGroup } = useAuthStore();
+	const { user, currentGroup, updateUserGroupProfile } = useAuthStore();
 
 	const { groups, isLoading, error } = useGroups(
 		user?.groups?.map((g) => g.groupId) ?? [],
@@ -27,13 +28,7 @@ export default function NotificationSettingScreen() {
 
 	// 그룹별 알림 설정 상태 관리
 	const [notificationSettings, setNotificationSettings] = useState<
-		Record<
-			string,
-			{
-				prayerRequest: boolean;
-				fellowship: boolean;
-			}
-		>
+		Record<string, UserGroup & { displayName: string }>
 	>({});
 
 	// 초기 탭 선택
@@ -44,29 +39,22 @@ export default function NotificationSettingScreen() {
 	}, [groups, selectedTab]);
 
 	useEffect(() => {
-		if (groups.length > 0) {
-			const initialSettings: Record<
-				string,
-				{ prayerRequest: boolean; fellowship: boolean }
-			> = {};
+		if (groups.length === 0 || !user?.groups) return;
+		const _notificationSettings = user?.groups?.map((g) => ({
+			...g,
+			displayName: groups.find((g2) => g2.id === g.groupId)?.groupName || '',
+		}));
 
-			for (const group of groups) {
-				// 해당 그룹에 대한 사용자 설정 찾기
-				const userGroupSettings = user?.groups?.find(
-					(g) => g.groupId === group.id,
-				);
-
-				initialSettings[group.groupName] = {
-					prayerRequest:
-						userGroupSettings?.notificationPreferences?.prayerRequest ?? true,
-					fellowship:
-						userGroupSettings?.notificationPreferences?.fellowship ?? true,
-				};
-			}
-
-			setNotificationSettings(initialSettings);
-		}
-	}, [groups, user?.groups]);
+		setNotificationSettings(
+			_notificationSettings.reduce(
+				(acc, g) => {
+					acc[g.groupId] = g;
+					return acc;
+				},
+				{} as Record<string, UserGroup & { displayName: string }>,
+			),
+		);
+	}, [groups, user]);
 
 	// 알림 설정 변경 함수
 	const handleNotificationChange = (
@@ -87,7 +75,7 @@ export default function NotificationSettingScreen() {
 		const group = groups.find((g) => g.groupName === groupName);
 		if (group && currentGroup?.groupId === group.id) {
 			// 현재 그룹이면 업데이트
-			updateCurrentGroup({
+			updateUserGroupProfile(user?.id ?? '', {
 				...currentGroup,
 				notificationPreferences: {
 					fellowship:
@@ -101,8 +89,6 @@ export default function NotificationSettingScreen() {
 				},
 			});
 		}
-
-		// TODO: 서버에 알림 설정 업데이트 저장 로직 추가 필요
 	};
 
 	const renderSettingItems = () => {
@@ -126,43 +112,42 @@ export default function NotificationSettingScreen() {
 
 		// 특정 그룹 탭일 경우 해당 그룹의 설정만 표시
 		const selectedGroup = groups.find((g) => g.id === selectedTab.id);
-		if (selectedGroup) {
-			return (
-				<VStack space="4xl" className="px-6">
-					<NotificationSettingItem
-						title="기도 제목 알림"
-						description="기도 제목이 등록된 경우 알림"
-						enabled={
-							notificationSettings[selectedGroup.groupName]?.prayerRequest ??
-							true
-						}
-						onValueChange={(value) =>
-							handleNotificationChange(
-								selectedGroup.groupName,
-								'prayerRequest',
-								value,
-							)
-						}
-					/>
-					<NotificationSettingItem
-						title="나눔 알림"
-						description="나눔이 등록된 경우 알림"
-						enabled={
-							notificationSettings[selectedGroup.groupName]?.fellowship ?? true
-						}
-						onValueChange={(value) =>
-							handleNotificationChange(
-								selectedGroup.groupName,
-								'fellowship',
-								value,
-							)
-						}
-					/>
-				</VStack>
-			);
-		}
+		if (!selectedGroup) return null;
 
-		return null;
+		return (
+			<VStack space="4xl" className="px-6">
+				<NotificationSettingItem
+					title="기도 제목 알림"
+					description="기도 제목이 등록된 경우 알림"
+					enabled={
+						notificationSettings[selectedGroup.groupName]
+							?.notificationPreferences?.prayerRequest ?? true
+					}
+					onValueChange={(value) =>
+						handleNotificationChange(
+							selectedGroup.groupName,
+							'prayerRequest',
+							value,
+						)
+					}
+				/>
+				<NotificationSettingItem
+					title="나눔 알림"
+					description="나눔이 등록된 경우 알림"
+					enabled={
+						notificationSettings[selectedGroup.groupName]
+							?.notificationPreferences?.fellowship ?? true
+					}
+					onValueChange={(value) =>
+						handleNotificationChange(
+							selectedGroup.groupName,
+							'fellowship',
+							value,
+						)
+					}
+				/>
+			</VStack>
+		);
 	};
 
 	return (
