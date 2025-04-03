@@ -3,8 +3,8 @@ import {
 	getNotifications,
 	markNotificationAsRead,
 	deleteNotification,
-} from '../notification';
-import type { ClientNotification } from '../notification/types';
+} from '../api';
+import type { ClientNotification } from '../api/types';
 
 const NOTIFICATIONS_QUERY_KEY = ['notifications'];
 
