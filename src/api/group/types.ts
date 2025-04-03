@@ -1,4 +1,4 @@
-import type { FirestoreUser } from '@/shared/types/user';
+import type { FirestoreUser } from '@/shared/types';
 import type { FieldValue } from '@react-native-firebase/firestore';
 
 export type GroupUser = Pick<FirestoreUser, 'id' | 'displayName' | 'photoUrl'>;

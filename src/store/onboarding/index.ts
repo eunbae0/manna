@@ -1,5 +1,5 @@
-import { updateUser } from '@/api/auth';
-import type { AuthGroup } from '@/api/auth/types';
+import { updateUser } from '@/api/user';
+import type { UserGroup } from '@/shared/types';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 
@@ -18,7 +18,7 @@ type OnboardingState = {
 	userData: {
 		id: string;
 		name: string;
-		group: AuthGroup | null;
+		group: UserGroup | null;
 	};
 	setStep: (step: OnboardingStep) => void;
 	setOnboarding: (id: string) => void;

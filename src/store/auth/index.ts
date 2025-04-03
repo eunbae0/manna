@@ -1,21 +1,12 @@
 import {
 	deleteAccount,
-	getUser,
 	logout,
 	signInWithApple,
 	signInWithEmail,
 	signInWithGoogle,
 	signUpWithEmail,
-	updateLastLogin,
-	updateUser,
 } from '@/api/auth';
-import type {
-	AuthGroup,
-	AuthType,
-	ClientUser,
-	EmailSignInInput,
-	UpdateUserInput,
-} from '@/api/auth/types';
+import type { AuthType, EmailSignInInput } from '@/api/auth/types';
 import type { ApiError } from '@/api/errors/types';
 import { handleApiError } from '@/api/errors';
 import { router } from 'expo-router';
@@ -24,13 +15,15 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import type { ClientUser, UpdateUserInput, UserGroup } from '@/shared/types';
+import { getUser, updateUser } from '@/api/user';
 
 type AuthState = {
 	user: ClientUser | null;
 	isAuthenticated: boolean;
 	loading: boolean;
 	error: ApiError | null;
-	currentGroup: AuthGroup | null;
+	currentGroup: UserGroup | null;
 };
 
 type AuthActions = {
@@ -49,7 +42,7 @@ type AuthActions = {
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
-	updateCurrentGroup: (group: AuthGroup | null) => void;
+	updateCurrentGroup: (group: UserGroup | null) => void;
 	deleteAccount: () => Promise<void>;
 };
 

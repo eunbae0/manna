@@ -1,14 +1,7 @@
-import { FirestoreAuthService, getAuthService } from './service';
-import type {
-	SignInResponse,
-	AuthType,
-	ClientUser,
-	EmailSignInInput,
-	UpdateUserInput,
-} from './types';
+import { getAuthService } from './service';
+import type { SignInResponse, AuthType, EmailSignInInput } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
-import { arrayUnion } from '@react-native-firebase/firestore';
 import { requestNotificationPermission } from '../messaging';
 
 export const signUpWithEmail = withApiLogging(
@@ -16,11 +9,15 @@ export const signUpWithEmail = withApiLogging(
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signUpWithEmail(data);
-			
+
 			// 가입 성공 후 알림 권한 요청 및 토큰 가져오기
 			const fcmToken = await requestNotificationPermission();
-			
-			return await authService.handleUserProfile(userCredential, 'EMAIL', fcmToken);
+
+			return await authService.handleUserProfile(
+				userCredential,
+				'EMAIL',
+				fcmToken,
+			);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -37,11 +34,15 @@ export const signInWithEmail = withApiLogging(
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signInWithEmail(data);
-			
+
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
 			const fcmToken = await requestNotificationPermission();
-			
-			return await authService.handleUserProfile(userCredential, 'EMAIL', fcmToken);
+
+			return await authService.handleUserProfile(
+				userCredential,
+				'EMAIL',
+				fcmToken,
+			);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -58,11 +59,15 @@ export const signInWithApple = withApiLogging(
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signInWithApple();
-			
+
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
 			const fcmToken = await requestNotificationPermission();
-			
-			return await authService.handleUserProfile(userCredential, 'APPLE', fcmToken);
+
+			return await authService.handleUserProfile(
+				userCredential,
+				'APPLE',
+				fcmToken,
+			);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -79,11 +84,15 @@ export const signInWithGoogle = withApiLogging(
 		try {
 			const authService = getAuthService();
 			const userCredential = await authService.signInWithGoogle();
-			
+
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
 			const fcmToken = await requestNotificationPermission();
-			
-			return await authService.handleUserProfile(userCredential, 'GOOGLE', fcmToken);
+
+			return await authService.handleUserProfile(
+				userCredential,
+				'GOOGLE',
+				fcmToken,
+			);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -133,79 +142,6 @@ export const logout = withApiLogging(
 		}
 	},
 	'logout',
-	'auth',
-);
-
-/**
- * 사용자 프로필 조회
- */
-export const getUser = withApiLogging(
-	async (userId: string): Promise<ClientUser | null> => {
-		try {
-			const authService = getAuthService();
-			return await authService.getUser(userId);
-		} catch (error) {
-			throw handleApiError(error);
-		}
-	},
-	'getUser',
-	'auth',
-);
-
-/**
- * 사용자 프로필 생성
- */
-export const createUser = withApiLogging(
-	async (
-		userId: string,
-		userData: Partial<ClientUser> & { authType: AuthType },
-	): Promise<void> => {
-		try {
-			const authService = getAuthService();
-			await authService.createUser(userId, userData);
-		} catch (error) {
-			throw handleApiError(error);
-		}
-	},
-	'createUser',
-	'auth',
-);
-
-/**
- * 사용자 프로필 업데이트
- */
-export const updateUser = withApiLogging(
-	async (userId: string, data: UpdateUserInput): Promise<void> => {
-		try {
-			const authService = getAuthService();
-			const { groups, ...firestoreUserData } = data;
-
-			await authService.updateUser(userId, {
-				...firestoreUserData,
-				//@ts-expect-error: groups can be FieldValue
-				groups: arrayUnion(...(data.groups || [])),
-			});
-		} catch (error) {
-			throw handleApiError(error);
-		}
-	},
-	'updateUser',
-	'auth',
-);
-
-/**
- * 사용자 마지막 로그인 시간 업데이트
- */
-export const updateLastLogin = withApiLogging(
-	async (userId: string): Promise<void> => {
-		try {
-			const authService = getAuthService();
-			await authService.updateLastLogin(userId);
-		} catch (error) {
-			throw handleApiError(error);
-		}
-	},
-	'updateLastLogin',
 	'auth',
 );
 

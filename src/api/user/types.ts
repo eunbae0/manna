@@ -1,18 +1,14 @@
 import type { FieldValue } from '@react-native-firebase/firestore';
 import type { ClientGroup } from '../group/types';
+import type { AuthType } from '../auth/types';
 
-export type AuthType = 'EMAIL' | 'APPLE' | 'GOOGLE' | 'KAKAO';
-
-/**
- * Authentication types
- */
-export enum AuthTypeEnum {
-	EMAIL = 'EMAIL',
-	APPLE = 'APPLE',
-	GOOGLE = 'GOOGLE',
-	KAKAO = 'KAKAO',
-}
-export type UserGroup = { groupId: ClientGroup['id'] };
+export type UserGroup = {
+	groupId: ClientGroup['id'];
+	notificationPreferences?: {
+		fellowship: boolean;
+		prayerRequest: boolean;
+	};
+};
 
 /**
  * Server-side User with Firestore specific fields
@@ -30,6 +26,7 @@ export interface FirestoreUser {
 	lastLogin?: FieldValue;
 	isDeleted?: boolean;
 	deletedAt?: FieldValue;
+	fcmToken?: string | null;
 }
 
 /**
@@ -38,19 +35,6 @@ export interface FirestoreUser {
  */
 export interface ClientUser
 	extends Omit<FirestoreUser, 'createdAt' | 'lastLogin' | 'deletedAt'> {}
-/**
- * Input data for email sign-in
- */
-export interface EmailSignInInput {
-	email: string;
-	password: string;
-	// isIncomingLink?: boolean;
-}
-
-export interface SignInResponse {
-	user: ClientUser;
-	existUser: boolean;
-}
 
 /**
  * Input data for updating user profile

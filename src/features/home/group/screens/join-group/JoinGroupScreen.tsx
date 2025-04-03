@@ -12,7 +12,7 @@ import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
 import { joinGroup } from '@/api/group';
 import { useAuthStore } from '@/store/auth';
-import { getUser, updateUser } from '@/api';
+import { getUser, updateUser } from '@/api/user';
 
 export default function JoinGroupScreen() {
 	const { user, updateProfile, updateCurrentGroup } = useAuthStore();

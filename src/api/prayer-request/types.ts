@@ -1,5 +1,5 @@
+import type { FirestoreUser } from '@/shared/types';
 import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
-import type { FirestoreUser } from '../auth/types';
 
 /**
  * Member type for prayer requests

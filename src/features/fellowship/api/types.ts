@@ -1,4 +1,4 @@
-import type { ClientUser } from '@/shared/types/user';
+import type { ClientUser } from '@/shared/types';
 import type { DeepPartial } from '@/shared/utils/deepPartial';
 import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 

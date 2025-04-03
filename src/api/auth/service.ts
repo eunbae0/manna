@@ -8,18 +8,13 @@ import {
 
 import {
 	doc,
-	getDoc,
-	setDoc,
 	updateDoc,
 	serverTimestamp,
 } from '@react-native-firebase/firestore';
 import {
 	deleteUser,
 	GoogleAuthProvider,
-	isSignInWithEmailLink,
 	reauthenticateWithCredential,
-	sendSignInLinkToEmail,
-	signInWithEmailLink,
 	signOut,
 	type FirebaseAuthTypes,
 } from '@react-native-firebase/auth';
@@ -33,15 +28,10 @@ import {
 	signInWithCredential,
 } from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createUserWithServerTimestamp } from '@/shared/utils/auth';
-import type {
-	AuthType,
-	ClientUser,
-	FirestoreUser,
-	EmailSignInInput,
-	SignInResponse,
-} from './types';
+import type { AuthType, EmailSignInInput, SignInResponse } from './types';
 import { Alert } from 'react-native';
+import { getUserService } from '../user/service';
+import type { ClientUser, FirestoreUser } from '@/shared/types';
 
 /**
  * Firestore service for user authentication and profile operations
@@ -61,95 +51,6 @@ export class FirestoreAuthService {
 	// 생성자를 private으로 설정하여 외부에서 인스턴스 생성을 방지
 	private constructor() {}
 	private readonly usersCollectionPath: string = 'users';
-
-	/**
-	 * Converts a Firestore user to a client user
-	 * @param data Firestore user data
-	 * @returns Client user
-	 */
-	private convertToClientUser(data: FirestoreUser): ClientUser {
-		return {
-			id: data.id,
-			email: data.email,
-			displayName: data.displayName,
-			photoUrl: data.photoUrl,
-			authType: data.authType,
-			authId: data.authId,
-			groups: data.groups,
-			isDeleted: data.isDeleted,
-		};
-	}
-
-	/**
-	 * Gets a user from Firestore by ID
-	 * @param userId ID of the user
-	 * @returns User data or null if not found
-	 */
-	async getUser(userId: string): Promise<ClientUser | null> {
-		const userRef = doc(database, this.usersCollectionPath, userId);
-		const userDoc = await getDoc(userRef);
-
-		if (!userDoc.exists) {
-			return null;
-		}
-
-		const data = userDoc.data() as FirestoreUser;
-		return this.convertToClientUser(data);
-	}
-
-	/**
-	 * Creates a new user profile
-	 * @param userId ID of the user
-	 * @param userData User data to be saved
-	 */
-	async createUser(
-		userId: string,
-		userData: Partial<FirestoreUser> & { authType: AuthType },
-	): Promise<ClientUser> {
-		const userRef = doc(database, this.usersCollectionPath, userId);
-
-		const userWithTimestamp = createUserWithServerTimestamp(
-			Object.assign({ id: userId, authType: userData.authType }, userData),
-		);
-
-		await setDoc(userRef, userWithTimestamp);
-		return { id: userId, ...userData };
-	}
-
-	/**
-	 * Updates an existing user profile
-	 * @param userId ID of the user to update
-	 * @param userData Updated user data
-	 */
-	async updateUser(
-		userId: string,
-		userData: Partial<FirestoreUser>,
-	): Promise<void> {
-		const userRef = doc(database, this.usersCollectionPath, userId);
-
-		await updateDoc(userRef, userData);
-	}
-
-	/**
-	 * Updates a user's last login timestamp
-	 * @param userId ID of the user
-	 */
-	async updateLastLogin(userId: string): Promise<void> {
-		const userRef = doc(database, this.usersCollectionPath, userId);
-		await updateDoc(userRef, {
-			lastLogin: serverTimestamp(),
-		});
-	}
-
-	/**
-	 * Updates multiple user data fields in a single operation
-	 * @param userId ID of the user
-	 * @param userData User data fields to update
-	 */
-	async updateUserData(userId: string, userData: Partial<FirestoreUser>): Promise<void> {
-		const userRef = doc(database, this.usersCollectionPath, userId);
-		await updateDoc(userRef, userData);
-	}
 
 	async signUpWithEmail(
 		data: EmailSignInInput,
@@ -388,13 +289,13 @@ export class FirestoreAuthService {
 			email: userCredential.user.email || '',
 			authType,
 		} as Partial<FirestoreUser> & { authType: AuthType };
-		
+
 		// FCM 토큰이 있으면 추가
 		if (fcmToken) {
 			userData.fcmToken = fcmToken;
 		}
-		
-		const newUser = await this.createUser(userId, userData);
+
+		const newUser = await getUserService().createUser(userId, userData);
 		return { user: newUser, existUser: false };
 	}
 
@@ -412,12 +313,12 @@ export class FirestoreAuthService {
 	): Promise<SignInResponse> {
 		// FCM 토큰이 있으면 마지막 로그인 시간과 함께 업데이트
 		if (fcmToken) {
-			await this.updateUserData(userId, {
+			await getUserService().updateUser(userId, {
 				lastLogin: serverTimestamp(),
 				fcmToken,
 			});
 		} else {
-			await this.updateLastLogin(userId);
+			await getUserService().updateLastLogin(userId);
 		}
 		return { user, existUser: true };
 	}
@@ -436,7 +337,7 @@ export class FirestoreAuthService {
 		const userId = userCredential.user.uid;
 
 		// 기존 사용자 확인
-		const user = await this.getUser(userId);
+		const user = await getUserService().getUser(userId);
 
 		// 사용자 존재 여부에 따라 적절한 핸들러 호출
 		return user
