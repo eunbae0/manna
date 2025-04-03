@@ -12,10 +12,9 @@ import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
 import { joinGroup } from '@/api/group';
 import { useAuthStore } from '@/store/auth';
-import { getUser, updateUser } from '@/api/user';
 
 export default function JoinGroupScreen() {
-	const { user, updateProfile, updateCurrentGroup } = useAuthStore();
+	const { user, updateUserGroupProfile, updateCurrentGroup } = useAuthStore();
 	const { setStep, currentStep, updateUserData, completeOnboarding } =
 		useOnboardingStore();
 	const [code, setCode] = useState('');
@@ -37,16 +36,17 @@ export default function JoinGroupScreen() {
 		});
 		if (!isOnboarding) {
 			// update firestore user groups
-			await updateUser(user.id, {
-				groups: [{ groupId }],
+			await updateUserGroupProfile(user.id, {
+				groupId,
+				notificationPreferences: { fellowship: true, prayerRequest: true },
 			});
-			// get user from firestore
-			const updatedUser = await getUser(user.id);
-			if (!updatedUser) return;
-			// local user store update
-			updateProfile(user.id, {
-				groups: updatedUser.groups,
-			});
+			// // get user from firestore
+			// const updatedUser = await getUser(user.id);
+			// if (!updatedUser) return;
+			// // local user store update
+			// updateUserGroupProfile(user.id, {
+			// 	groupId,
+			// });
 			updateCurrentGroup({
 				groupId,
 			});

@@ -48,7 +48,7 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function TabFourScreen() {
-	const { user, updateProfile } = useAuthStore();
+	const { user, updateUserProfile } = useAuthStore();
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 	const { showToast } = useToastStore();
 
@@ -83,12 +83,12 @@ export default function TabFourScreen() {
 		}
 	};
 
-	const handleUpdateProfile = async () => {
+	const handleupdateUserProfile = async () => {
 		if (!user?.id) return;
 
 		setIsUpdating(true);
 		try {
-			await updateProfile(user.id, {
+			await updateUserProfile(user.id, {
 				displayName,
 				photoUrl,
 			});
@@ -213,7 +213,7 @@ export default function TabFourScreen() {
 						</VStack>
 
 						<Button
-							onPress={handleUpdateProfile}
+							onPress={handleupdateUserProfile}
 							action="primary"
 							disabled={
 								isUpdating ||

@@ -16,7 +16,12 @@ import { immer } from 'zustand/middleware/immer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import type { ClientUser, UpdateUserInput, UserGroup } from '@/shared/types';
-import { getUser, updateUser } from '@/api/user';
+import {
+	createUserGroup,
+	getUser,
+	updateUser,
+	updateUserGroup,
+} from '@/api/user';
 
 type AuthState = {
 	user: ClientUser | null;
@@ -34,11 +39,12 @@ type AuthActions = {
 	signUp: (data: EmailSignInInput) => Promise<{ id: string }>;
 	// sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
-	updateProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
+	updateUserProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
+	updateUserGroupProfile: (userId: string, group: UserGroup) => Promise<void>;
 	onAuthStateChanged: (
 		user: FirebaseAuthTypes.User | null,
 		fcmToken: string,
-	) => void;
+	) => Promise<void>;
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
@@ -167,12 +173,31 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						set({ error: apiError });
 					}
 				},
-				updateProfile: async (userId, user) => {
+				updateUserProfile: async (userId, user) => {
 					if (!get().user) return;
 					try {
 						await updateUser(userId, user);
 						set((state) => ({
 							user: state.user ? { ...state.user, ...user } : null,
+						}));
+					} catch (error) {
+						throw handleApiError(error);
+					}
+				},
+				updateUserGroupProfile: async (userId, group) => {
+					const user = get().user;
+					if (!user) return;
+					try {
+						if (!user.groups || user.groups.length === 0) {
+							await createUserGroup(userId, group);
+						} else {
+							await updateUserGroup(userId, group);
+						}
+						const newGroups = user.groups?.map((g) =>
+							g.groupId === group.groupId ? group : g,
+						) || [group];
+						set((state) => ({
+							user: state.user ? { ...state.user, groups: newGroups } : null,
 						}));
 					} catch (error) {
 						throw handleApiError(error);

@@ -2,10 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { TextInput } from 'react-native';
 
 import { Button, ButtonText } from '@/components/common/button';
-import Header from '@/components/common/Header';
 
 import { useOnboardingStore } from '@/store/onboarding';
-import { router } from 'expo-router';
 import { Heading } from '#/components/ui/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';

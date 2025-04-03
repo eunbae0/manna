@@ -21,7 +21,6 @@ export interface FirestoreUser {
 	photoUrl?: string | null;
 	authType: AuthType;
 	authId?: string | null;
-	groups?: Array<UserGroup> | null;
 	createdAt?: FieldValue;
 	lastLogin?: FieldValue;
 	isDeleted?: boolean;
@@ -34,9 +33,11 @@ export interface FirestoreUser {
  * Used for application logic and UI rendering
  */
 export interface ClientUser
-	extends Omit<FirestoreUser, 'createdAt' | 'lastLogin' | 'deletedAt'> {}
+	extends Omit<FirestoreUser, 'createdAt' | 'lastLogin' | 'deletedAt'> {
+	groups?: UserGroup[];
+}
 
 /**
  * Input data for updating user profile
  */
-export type UpdateUserInput = Partial<Omit<ClientUser, 'id'>>;
+export type UpdateUserInput = Partial<Omit<ClientUser, 'id' | 'groups'>>;

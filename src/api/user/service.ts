@@ -5,10 +5,14 @@ import {
 	setDoc,
 	updateDoc,
 	serverTimestamp,
+	collection,
+	getDocs,
+	deleteDoc,
+	addDoc,
 } from '@react-native-firebase/firestore';
 
 import { createUserWithServerTimestamp } from '@/shared/utils/auth';
-import type { ClientUser, FirestoreUser } from './types';
+import type { ClientUser, FirestoreUser, UserGroup } from './types';
 import type { AuthType } from '@/shared/types';
 
 /**
@@ -35,7 +39,10 @@ export class FirestoreUserService {
 	 * @param data Firestore user data
 	 * @returns Client user
 	 */
-	private convertToClientUser(data: FirestoreUser): ClientUser {
+	convertToClientUser(
+		data: FirestoreUser,
+		groups: UserGroup[] | null,
+	): ClientUser {
 		return {
 			id: data.id,
 			email: data.email,
@@ -43,7 +50,7 @@ export class FirestoreUserService {
 			photoUrl: data.photoUrl,
 			authType: data.authType,
 			authId: data.authId,
-			groups: data.groups,
+			groups: groups || undefined,
 			isDeleted: data.isDeleted,
 		};
 	}
@@ -53,7 +60,7 @@ export class FirestoreUserService {
 	 * @param userId ID of the user
 	 * @returns User data or null if not found
 	 */
-	async getUser(userId: string): Promise<ClientUser | null> {
+	async getUser(userId: string): Promise<FirestoreUser | null> {
 		const userRef = doc(database, this.usersCollectionPath, userId);
 		const userDoc = await getDoc(userRef);
 
@@ -61,8 +68,7 @@ export class FirestoreUserService {
 			return null;
 		}
 
-		const data = userDoc.data() as FirestoreUser;
-		return this.convertToClientUser(data);
+		return userDoc.data() as FirestoreUser;
 	}
 
 	/**
@@ -107,6 +113,35 @@ export class FirestoreUserService {
 		await updateDoc(userRef, {
 			lastLogin: serverTimestamp(),
 		});
+	}
+
+	// userGroup
+
+	async getUserGroups(userId: string): Promise<UserGroup[] | null> {
+		const userGroupsRef = collection(database, 'users', userId, 'groups');
+		const userGroupsDoc = await getDocs(userGroupsRef);
+
+		if (userGroupsDoc.empty) {
+			return null;
+		}
+
+		const data = userGroupsDoc.docs.map((doc) => doc.data() as UserGroup);
+		return data;
+	}
+
+	async createUserGroup(userId: string, group: UserGroup): Promise<void> {
+		const userGroupsRef = collection(database, 'users', userId, 'groups');
+		await addDoc(userGroupsRef, group);
+	}
+
+	async updateUserGroup(userId: string, group: UserGroup): Promise<void> {
+		const userGroupsRef = collection(database, 'users', userId, 'groups');
+		await updateDoc(doc(userGroupsRef), group);
+	}
+
+	async removeUserGroup(userId: string, groupId: string): Promise<void> {
+		const userGroupsRef = collection(database, 'users', userId, 'groups');
+		await deleteDoc(doc(userGroupsRef, groupId));
 	}
 }
 

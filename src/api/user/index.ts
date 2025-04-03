@@ -1,9 +1,7 @@
 import { getUserService } from './service';
-import type { ClientUser, UpdateUserInput } from './types';
+import type { ClientUser, UpdateUserInput, UserGroup } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
-import { arrayUnion } from '@react-native-firebase/firestore';
-import { getAuthService } from '../auth/service';
 import type { AuthType } from '@/shared/types';
 
 /**
@@ -12,8 +10,14 @@ import type { AuthType } from '@/shared/types';
 export const getUser = withApiLogging(
 	async (userId: string): Promise<ClientUser | null> => {
 		try {
-			const authService = getUserService();
-			return await authService.getUser(userId);
+			const userService = getUserService();
+
+			const user = await userService.getUser(userId);
+			if (!user) return null;
+
+			const groups = await userService.getUserGroups(userId);
+
+			return userService.convertToClientUser(user, groups);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -31,8 +35,8 @@ export const createUser = withApiLogging(
 		userData: Partial<ClientUser> & { authType: AuthType },
 	): Promise<void> => {
 		try {
-			const authService = getUserService();
-			await authService.createUser(userId, userData);
+			const userService = getUserService();
+			await userService.createUser(userId, userData);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -47,14 +51,8 @@ export const createUser = withApiLogging(
 export const updateUser = withApiLogging(
 	async (userId: string, data: UpdateUserInput): Promise<void> => {
 		try {
-			const authService = getUserService();
-			const { groups, ...firestoreUserData } = data;
-
-			await authService.updateUser(userId, {
-				...firestoreUserData,
-				//@ts-expect-error: groups can be FieldValue
-				groups: arrayUnion(...(data.groups || [])),
-			});
+			const userService = getUserService();
+			await userService.updateUser(userId, data);
 		} catch (error) {
 			throw handleApiError(error);
 		}
@@ -69,12 +67,66 @@ export const updateUser = withApiLogging(
 export const updateLastLogin = withApiLogging(
 	async (userId: string): Promise<void> => {
 		try {
-			const authService = getUserService();
-			await authService.updateLastLogin(userId);
+			const userService = getUserService();
+			await userService.updateLastLogin(userId);
 		} catch (error) {
 			throw handleApiError(error);
 		}
 	},
 	'updateLastLogin',
+	'auth',
+);
+
+// userGroups
+
+export const getUserGroups = withApiLogging(
+	async (userId: string): Promise<UserGroup[] | null> => {
+		try {
+			const userService = getUserService();
+			return await userService.getUserGroups(userId);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'getUserGroups',
+	'auth',
+);
+
+export const createUserGroup = withApiLogging(
+	async (userId: string, data: UserGroup): Promise<void> => {
+		try {
+			const userService = getUserService();
+			await userService.createUserGroup(userId, data);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'createUserGroup',
+	'auth',
+);
+
+export const updateUserGroup = withApiLogging(
+	async (userId: string, data: UserGroup): Promise<void> => {
+		try {
+			const userService = getUserService();
+			await userService.updateUserGroup(userId, data);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'updateUserGroup',
+	'auth',
+);
+
+export const removeUserGroup = withApiLogging(
+	async (userId: string, groupId: string): Promise<void> => {
+		try {
+			const userService = getUserService();
+			await userService.removeUserGroup(userId, groupId);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'removeUserGroup',
 	'auth',
 );
