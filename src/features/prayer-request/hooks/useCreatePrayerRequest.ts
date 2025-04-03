@@ -3,6 +3,7 @@ import { createPrayerRequest } from '@/api/prayer-request';
 import { useAuthStore } from '@/store/auth';
 import type { Member } from '@/api/prayer-request/types';
 import type { YYYYMMDD } from '@/shared/types/date';
+import { getKSTDate } from '@/shared/utils/date';
 
 interface CreatePrayerRequestParams {
 	onSuccess?: () => void;
@@ -50,7 +51,7 @@ export function useCreatePrayerRequest({
 		},
 		onSuccess: () => {
 			// Get today's date in YYYYMMDD format for the query key
-			const todayDate = new Date().toISOString().split('T')[0] as YYYYMMDD;
+			const todayDate = getKSTDate(new Date());
 
 			// Invalidate both the daily prayer requests and all prayer requests
 			Promise.all([
