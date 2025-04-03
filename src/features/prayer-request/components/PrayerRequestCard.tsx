@@ -22,7 +22,13 @@ import { Alert, Pressable } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { usePrayerRequestMutations } from '@/features/home/hooks/usePrayerRequestMutations';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
-import { runOnJS } from 'react-native-reanimated';
+import Animated, {
+	useSharedValue,
+	useAnimatedStyle,
+	withSpring,
+	withTiming,
+	runOnJS,
+} from 'react-native-reanimated';
 
 import * as Haptics from 'expo-haptics';
 import { Button, ButtonIcon } from '@/components/common/button';
@@ -34,6 +40,9 @@ type Props = {
 };
 
 const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
+	// Animation value for heart icon
+	const heartScale = useSharedValue(1);
+	const heartTranslateY = useSharedValue(0);
 	const { currentGroup } = useAuthStore();
 	const queryClient = useQueryClient();
 	const hasLiked = prayerRequest.reactions.some(
@@ -55,6 +64,24 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 		},
 		onSuccess: () => {
 			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+			const isNowLiked = !hasLiked;
+			if (isNowLiked) {
+				heartScale.value = withSpring(
+					1.2,
+					{ damping: 50, stiffness: 200 },
+					() => {
+						heartScale.value = withSpring(1, { stiffness: 200 });
+					},
+				);
+				heartTranslateY.value = withSpring(
+					-5,
+					{ damping: 50, stiffness: 200 },
+					() => {
+						heartTranslateY.value = withSpring(0, { stiffness: 200 });
+					},
+				);
+			}
 
 			Promise.all([
 				queryClient.invalidateQueries({
@@ -160,15 +187,24 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 						</Text>
 						<Pressable onPress={() => toggleLike()} className="ml-auto mr-4">
 							<HStack space="xs" className="items-center">
-								<Icon
-									size="lg"
-									as={Heart}
-									className={
-										hasLiked
-											? 'stroke-primary-500 fill-primary-500'
-											: 'color-black'
-									}
-								/>
+								<Animated.View
+									style={useAnimatedStyle(() => ({
+										transform: [
+											{ scale: heartScale.value },
+											{ translateY: heartTranslateY.value },
+										],
+									}))}
+								>
+									<Icon
+										size="lg"
+										as={Heart}
+										className={
+											hasLiked
+												? 'stroke-primary-500 fill-primary-500'
+												: 'color-black'
+										}
+									/>
+								</Animated.View>
 								<Text size="md" className={hasLiked ? 'text-primary-500' : ''}>
 									{prayerRequest.reactions.length}
 								</Text>
