@@ -9,7 +9,7 @@ import { Button } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { EmptyState } from '@/components/common/empty-state';
 import { NotificationItem } from './NotificationItem';
-import type { ClientNotification } from '../notification/types';
+import type { ClientNotification } from '../api/types';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,

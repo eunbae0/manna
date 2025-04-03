@@ -4,7 +4,7 @@ import { Text } from '#/components/ui/text';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Trash2Icon } from 'lucide-react-native';
-import type { ClientNotification } from '../notification/types';
+import type { ClientNotification } from '../api/types';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import { Dimensions, StyleSheet, View, Pressable } from 'react-native';
 import Animated, {
