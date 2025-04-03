@@ -18,13 +18,15 @@ export function useInitializeApp() {
 		PretendardLight: require('../../assets/fonts/Pretendard-Light.otf'),
 	});
 
-	const { onAuthStateChanged, loading, isAuthenticated } = useAuthStore();
+	const { onAuthStateChanged, isAuthenticated } = useAuthStore();
+	const [authLoading, setAuthLoading] = useState(true);
 
 	useEffect(() => {
 		const subscriber = auth.onAuthStateChanged(async (user) => {
+			setAuthLoading(true);
 			const token = await getToken();
 			// Handle auth state in the store
-			onAuthStateChanged(user, token);
+			await onAuthStateChanged(user, token);
 
 			// Set user ID for analytics
 			if (user) {
@@ -32,17 +34,18 @@ export function useInitializeApp() {
 			} else {
 				await setUserId(null);
 			}
+			setAuthLoading(false);
 		});
 		return subscriber;
 	}, [onAuthStateChanged]);
 
 	useEffect(() => {
-		if (!fontLoaded || loading) return;
+		if (!fontLoaded || authLoading) return;
 
 		// Initialize analytics when app is loaded
 		initAnalytics();
 		setIsLoaded(true);
-	}, [fontLoaded, loading]);
+	}, [fontLoaded, authLoading]);
 
 	return [loaded, isAuthenticated];
 }
