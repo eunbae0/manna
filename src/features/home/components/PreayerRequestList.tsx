@@ -8,12 +8,12 @@ import type { YYYYMMDD } from '@/shared/types/date';
 export default function PreayerRequestList({
 	prayerRequests,
 	member,
-	selectedDate,
+	date,
 	isError,
 }: {
 	prayerRequests: ClientPrayerRequest[] | undefined;
 	member: Member;
-	selectedDate: YYYYMMDD;
+	date: YYYYMMDD;
 	isError: boolean;
 }) {
 	if (isError) {
@@ -36,7 +36,7 @@ export default function PreayerRequestList({
 					<PrayerRequestCard
 						prayerRequest={prayerRequest}
 						member={member}
-						selectedDate={selectedDate}
+						date={date}
 					/>
 				</VStack>
 			))}

@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '#/components/ui/heading';
@@ -22,9 +22,7 @@ import { useRecentFellowships } from '@/features/fellowship/hooks/useRecentFello
 import PreayerRequestList from './components/PreayerRequestList';
 
 function HomeList() {
-	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
-		getKSTDate(new Date()),
-	);
+	const [date, setDate] = useState<YYYYMMDD>(getKSTDate(new Date()));
 	const [refreshing, setRefreshing] = useState(false);
 	const [showNotification, setShowNotification] = useState(false);
 
@@ -43,14 +41,15 @@ function HomeList() {
 		isLoading: isPrayerRequestsLoading,
 		isError: isPrayerRequestsError,
 		refetch: refetchPrayerRequests,
-	} = usePrayerRequestsByDate(currentGroup?.groupId || '', selectedDate);
+	} = usePrayerRequestsByDate(currentGroup?.groupId || '', date);
 
-	useFocusEffect(
-		useCallback(() => {
-			setSelectedDate(getKSTDate(new Date()));
-			refetchRecentFellowships();
-		}, [refetchRecentFellowships]),
-	);
+	useFocusEffect(() => {
+		const newDate = getKSTDate(new Date());
+		if (date !== newDate) {
+			setDate(newDate);
+		}
+		refetchRecentFellowships();
+	});
 
 	// Handle pull-to-refresh
 	const onRefresh = useCallback(async () => {
@@ -81,7 +80,7 @@ function HomeList() {
 	return (
 		<VStack className="relative h-full">
 			{/* <CalendarTab
-				selectedDate={selectedDate}
+				date={date}
 				onDateChange={handleDateChange}
 			/> */}
 			<ScrollView
@@ -127,7 +126,7 @@ function HomeList() {
 										displayName: user?.displayName || '',
 										photoUrl: user?.photoUrl || '',
 									}}
-									selectedDate={selectedDate}
+									date={date}
 									isError={isPrayerRequestsError}
 								/>
 							</VStack>
@@ -146,33 +145,6 @@ function HomeList() {
 				<ButtonText>작성하기</ButtonText>
 				<ButtonIcon as={Pen} />
 			</Button>
-
-			{/* BOTTOM SHEET */}
-			{/* <BottomSheetContainer>
-				<BottomSheetListLayout>
-					<BottomSheetListHeader
-						label="무엇을 추가할까요?"
-						onPress={handleClose}
-					/>
-					<BottomSheetListItem
-						label="기도 제목 작성하기"
-						icon={HandHelping}
-						onPress={() => {
-							router.navigate('/(app)/createPrayerRequestModal');
-							handleClose();
-						}}
-					/>
-					<Divider />
-					<BottomSheetListItem
-						label="소그룹 나눔 작성하기"
-						icon={Library}
-						onPress={() => {
-							router.push('/(app)/(fellowship)/create');
-							handleClose();
-						}}
-					/>
-				</BottomSheetListLayout>
-			</BottomSheetContainer> */}
 		</VStack>
 	);
 }

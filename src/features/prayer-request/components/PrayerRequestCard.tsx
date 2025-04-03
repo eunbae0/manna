@@ -30,10 +30,10 @@ import { Button, ButtonIcon } from '@/components/common/button';
 type Props = {
 	prayerRequest: ClientPrayerRequest;
 	member: Member;
-	selectedDate: YYYYMMDD;
+	date: YYYYMMDD;
 };
 
-const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
+const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 	const { currentGroup } = useAuthStore();
 	const queryClient = useQueryClient();
 	const hasLiked = prayerRequest.reactions.some(
@@ -58,11 +58,7 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 
 			Promise.all([
 				queryClient.invalidateQueries({
-					queryKey: [
-						'prayer-requests',
-						currentGroup?.groupId || '',
-						selectedDate,
-					],
+					queryKey: ['prayer-requests', currentGroup?.groupId || '', date],
 				}),
 				queryClient.invalidateQueries({
 					queryKey: ['all-prayer-requests', currentGroup?.groupId || ''],
@@ -93,7 +89,7 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 			pathname: '/(app)/createPrayerRequestModal',
 			params: {
 				id: prayerRequest.id,
-				date: selectedDate,
+				date: date,
 				value: prayerRequest.value,
 			},
 		});
@@ -117,7 +113,7 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 									queryKey: [
 										'prayer-requests',
 										currentGroup?.groupId || '',
-										selectedDate,
+										date,
 									],
 								}),
 								queryClient.invalidateQueries({
