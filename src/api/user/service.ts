@@ -130,18 +130,30 @@ export class FirestoreUserService {
 	}
 
 	async createUserGroup(userId: string, group: UserGroup): Promise<void> {
-		const userGroupsRef = collection(database, 'users', userId, 'groups');
-		await addDoc(userGroupsRef, group);
+		const userGroupsRef = doc(
+			database,
+			'users',
+			userId,
+			'groups',
+			group.groupId,
+		);
+		await setDoc(userGroupsRef, group);
 	}
 
 	async updateUserGroup(userId: string, group: UserGroup): Promise<void> {
-		const userGroupsRef = collection(database, 'users', userId, 'groups');
-		await updateDoc(doc(userGroupsRef), group);
+		const userGroupsRef = doc(
+			database,
+			'users',
+			userId,
+			'groups',
+			group.groupId,
+		);
+		await updateDoc(userGroupsRef, group);
 	}
 
 	async removeUserGroup(userId: string, groupId: string): Promise<void> {
-		const userGroupsRef = collection(database, 'users', userId, 'groups');
-		await deleteDoc(doc(userGroupsRef, groupId));
+		const userGroupsRef = doc(database, 'users', userId, 'groups', groupId);
+		await deleteDoc(userGroupsRef);
 	}
 }
 
