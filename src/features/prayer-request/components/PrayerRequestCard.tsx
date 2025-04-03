@@ -25,6 +25,7 @@ import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import { runOnJS } from 'react-native-reanimated';
 
 import * as Haptics from 'expo-haptics';
+import { Button, ButtonIcon } from '@/components/common/button';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
@@ -38,6 +39,8 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 	const hasLiked = prayerRequest.reactions.some(
 		(reaction) => reaction.type === 'LIKE' && reaction.member.id === member.id,
 	);
+
+	const isOwner = prayerRequest.member.id === member.id;
 
 	const { mutate: toggleLike } = useMutation({
 		mutationFn: async () => {
@@ -138,10 +141,10 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 	return (
 		<>
 			<GestureDetector gesture={doubleTap}>
-				<HStack space="md" className="py-5">
+				<HStack space="md" className="py-5 pl-4">
 					<Avatar size="md" className="mt-1" />
 					<VStack space="xs" className="flex-1">
-						<HStack className="items-center justify-between">
+						<HStack className="items-center justify-between mr-1">
 							<HStack space="sm" className="items-center">
 								<Text size="lg" className="font-pretendard-bold">
 									{prayerRequest.member.displayName || '익명'}
@@ -150,14 +153,16 @@ const PrayerRequestCard = ({ prayerRequest, member, selectedDate }: Props) => {
 									{formatRelativeTime(prayerRequest.date)}
 								</Text>
 							</HStack>
-							<Pressable onPress={handlePressMoreButton}>
-								<Icon size="lg" as={MoreHorizontal} />
-							</Pressable>
+							{isOwner && (
+								<Button onPress={handlePressMoreButton} variant="icon">
+									<ButtonIcon as={MoreHorizontal} />
+								</Button>
+							)}
 						</HStack>
 						<Text size="lg" className="">
 							{prayerRequest.value}
 						</Text>
-						<Pressable onPress={() => toggleLike()} className="ml-auto">
+						<Pressable onPress={() => toggleLike()} className="ml-auto mr-4">
 							<HStack space="xs" className="items-center">
 								<Icon
 									size="lg"

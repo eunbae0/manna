@@ -19,6 +19,7 @@ import NotificationBox from './components/NotificationBox';
 import ServiceGroups from './components/ServiceGroups';
 import { HomeSkeleton } from './components/HomeSkeleton';
 import { useRecentFellowships } from '@/features/fellowship/hooks/useRecentFellowships';
+import PreayerRequestList from './components/PreayerRequestList';
 
 function HomeList() {
 	const [selectedDate, setSelectedDate] = useState<YYYYMMDD>(
@@ -114,41 +115,21 @@ function HomeList() {
 						<Divider className="h-2 bg-background-100" />
 
 						{/* 오늘의 기도 제목 */}
-						<VStack className="gap-12 px-4 py-1">
+						<VStack className="gap-12 py-1">
 							<VStack space="lg">
-								<HStack className="justify-between items-center">
+								<HStack className="justify-between px-4 items-center">
 									<Heading className="text-[20px]">오늘의 기도 제목</Heading>
 								</HStack>
-								{isPrayerRequestsError ? (
-									<Text className="text-center py-8 text-danger-500">
-										기도 제목을 불러오는 중 오류가 발생했어요
-									</Text>
-								) : prayerRequests && prayerRequests.length > 0 ? (
-									<VStack>
-										{prayerRequests.map(
-											(prayerRequest: ClientPrayerRequest, index) => (
-												<VStack key={prayerRequest.id}>
-													{index > 0 && (
-														<Divider className="bg-background-100 h-[1px]" />
-													)}
-													<PrayerRequestCard
-														prayerRequest={prayerRequest}
-														member={{
-															id: user?.id || '',
-															displayName: user?.displayName || '',
-															photoUrl: user?.photoUrl || '',
-														}}
-														selectedDate={selectedDate}
-													/>
-												</VStack>
-											),
-										)}
-									</VStack>
-								) : (
-									<Text className="text-center py-8 text-gray-500">
-										기도 제목이 없어요
-									</Text>
-								)}
+								<PreayerRequestList
+									prayerRequests={prayerRequests}
+									member={{
+										id: user?.id || '',
+										displayName: user?.displayName || '',
+										photoUrl: user?.photoUrl || '',
+									}}
+									selectedDate={selectedDate}
+									isError={isPrayerRequestsError}
+								/>
 							</VStack>
 						</VStack>
 					</VStack>

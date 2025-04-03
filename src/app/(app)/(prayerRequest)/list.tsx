@@ -43,9 +43,9 @@ export default function PrayerRequestListScreen() {
 					<FlatList
 						data={prayerRequests}
 						keyExtractor={(item) => item.id}
-						contentContainerStyle={{ padding: 16 }}
+						contentContainerStyle={{ paddingVertical: 16 }}
 						ListHeaderComponent={
-							<VStack space="md" className="mb-4">
+							<VStack space="md" className="px-4 mb-4">
 								<Heading size="xl">기도 제목 모아보기</Heading>
 								<Text className="text-typography-500">
 									소그룹원들의 기도제목을 확인해보세요
@@ -70,7 +70,7 @@ export default function PrayerRequestListScreen() {
 							/>
 						)}
 						ItemSeparatorComponent={() => (
-							<Divider className="bg-background-100" />
+							<Divider className="mx-4 bg-background-100" />
 						)}
 						refreshControl={
 							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
