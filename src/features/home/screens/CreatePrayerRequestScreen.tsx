@@ -27,11 +27,7 @@ import { useCreatePrayerRequest } from '@/features/prayer-request/hooks/useCreat
 export function CreatePrayerRequestScreen() {
 	const { user, currentGroup } = useAuthStore();
 
-	const {
-		id: editId,
-		date: editDate,
-		value: editValue,
-	} = useLocalSearchParams<{
+	const { id: editId, value: editValue } = useLocalSearchParams<{
 		id?: string;
 		date?: YYYYMMDD;
 		value?: string;
@@ -78,7 +74,7 @@ export function CreatePrayerRequestScreen() {
 						queryKey: [
 							'prayer-requests',
 							currentGroup?.groupId || '',
-							editDate,
+							todayDate,
 						],
 					}),
 					queryClient.invalidateQueries({
