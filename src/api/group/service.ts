@@ -23,6 +23,7 @@ import type {
 	JoinGroupInput,
 	GroupMemberRole,
 	GroupUser,
+	UpdateGroupMemberInput,
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -44,6 +45,7 @@ export class FirestoreGroupService {
 	// 생성자를 private으로 설정하여 외부에서 인스턴스 생성을 방지
 	private constructor() {}
 	private readonly collectionPath: string = 'groups';
+	private readonly subCollectionPath: string = 'members';
 
 	/**
 	 * Converts a Firestore group to a client group
@@ -51,15 +53,16 @@ export class FirestoreGroupService {
 	 * @param data Firestore group data
 	 * @returns Client group
 	 */
-	private convertToClientGroup(
+	public convertToClientGroup(
 		id: string,
-		data: FirebaseFirestoreTypes.DocumentData,
+		group: Group,
+		groupMembers: GroupMember[],
 	): ClientGroup {
 		return {
 			id,
-			groupName: data.groupName,
-			inviteCode: data.inviteCode,
-			members: data.members || [],
+			groupName: group.groupName,
+			inviteCode: group.inviteCode,
+			members: groupMembers,
 		};
 	}
 
@@ -82,8 +85,10 @@ export class FirestoreGroupService {
 
 		const groups: ClientGroup[] = [];
 		for (const doc of querySnapshot.docs) {
-			const data = doc.data();
-			groups.push(this.convertToClientGroup(doc.id, data));
+			const group = doc.data() as Group;
+			const groupMembers = await this.getGroupMembers(doc.id);
+
+			groups.push(this.convertToClientGroup(doc.id, group, groupMembers));
 		}
 
 		return groups;
@@ -94,7 +99,7 @@ export class FirestoreGroupService {
 	 * @param groupId ID of the group
 	 * @returns Group data or null if not found
 	 */
-	async getGroupById(groupId: string): Promise<ClientGroup | null> {
+	async getGroupById(groupId: string): Promise<Group | null> {
 		const groupRef = doc(database, this.collectionPath, groupId);
 		const groupDoc = await getDoc(groupRef);
 
@@ -102,8 +107,7 @@ export class FirestoreGroupService {
 			return null;
 		}
 
-		const data = groupDoc.data() || {};
-		return this.convertToClientGroup(groupDoc.id, data);
+		return groupDoc.data() as Group;
 	}
 
 	/**
@@ -128,8 +132,10 @@ export class FirestoreGroupService {
 
 		const groups: ClientGroup[] = [];
 		for (const doc of querySnapshot.docs) {
-			const data = doc.data();
-			groups.push(this.convertToClientGroup(doc.id, data));
+			const group = doc.data() as Group;
+			const groupMembers = await this.getGroupMembers(doc.id);
+
+			groups.push(this.convertToClientGroup(doc.id, group, groupMembers));
 		}
 
 		return groups;
@@ -150,8 +156,11 @@ export class FirestoreGroupService {
 		}
 
 		const doc = querySnapshot.docs[0];
-		const data = doc.data();
-		return this.convertToClientGroup(doc.id, data);
+
+		const group = doc.data() as Group;
+		const groupMembers = await this.getGroupMembers(doc.id);
+
+		return this.convertToClientGroup(doc.id, group, groupMembers);
 	}
 
 	/**
@@ -159,7 +168,9 @@ export class FirestoreGroupService {
 	 * @param groupData Group data to be saved
 	 * @returns ID and invite code of the created group
 	 */
-	async createGroup({ groupName, user }: CreateGroupInput): Promise<Group> {
+	async createGroup({
+		groupName,
+	}: Pick<CreateGroupInput, 'groupName'>): Promise<Group> {
 		const id = uuidv4();
 		const groupRef = doc(database, this.collectionPath, id);
 
@@ -170,7 +181,6 @@ export class FirestoreGroupService {
 			groupName,
 			id,
 			inviteCode,
-			members: [{ role: 'leader', user }],
 			createdAt: serverTimestamp(),
 			updatedAt: serverTimestamp(),
 		};
@@ -207,6 +217,46 @@ export class FirestoreGroupService {
 		await deleteDoc(groupRef);
 	}
 
+	// Group Member
+
+	async getGroupMembers(groupId: string): Promise<GroupMember[]> {
+		const groupMembersRef = collection(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+		);
+		const querySnapshot = await getDocs(groupMembersRef);
+
+		const members: GroupMember[] = [];
+		for (const doc of querySnapshot.docs) {
+			const data = doc.data();
+			members.push(data as GroupMember);
+		}
+
+		return members;
+	}
+
+	async getGroupMember(
+		groupId: string,
+		userId: string,
+	): Promise<GroupMember | null> {
+		const groupMemberRef = doc(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+			userId,
+		);
+		const groupMemberDoc = await getDoc(groupMemberRef);
+
+		if (!groupMemberDoc.exists) {
+			return null;
+		}
+
+		return groupMemberDoc.data() as GroupMember;
+	}
+
 	/**
 	 * Adds a member to a group
 	 * @param groupId ID of the group
@@ -215,40 +265,23 @@ export class FirestoreGroupService {
 	async addGroupMember(
 		groupId: string,
 		memberData: AddGroupMemberInput,
-	): Promise<void> {
-		const group = await this.getGroupById(groupId);
-
-		if (!group) {
-			throw new Error(`Group with ID ${groupId} not found`);
-		}
-
-		// Check if the user is already a member
-		const existingMemberIndex = group.members.findIndex(
-			(member) => member.user.id === memberData.user.id,
+	): Promise<GroupMember> {
+		const grouopMemberRef = doc(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+			memberData.id,
 		);
-
-		if (existingMemberIndex >= 0) {
-			throw new Error('User is already a member of this group');
-		}
-
 		const newUser = Object.assign(
-			{ id: memberData.user.id },
-			memberData.user.displayName
-				? { displayName: memberData.user.displayName }
-				: {},
-			memberData.user.photoUrl ? { photoUrl: memberData.user.photoUrl } : {},
-		) as GroupUser;
+			{ id: memberData.id },
+			memberData.displayName ? { displayName: memberData.displayName } : {},
+			memberData.photoUrl ? { photoUrl: memberData.photoUrl } : {},
+			{ role: memberData.role },
+		) as GroupMember;
 
-		const newMember: GroupMember = {
-			user: newUser,
-			role: memberData.role,
-		};
-
-		const updatedMembers = [...group.members, newMember];
-
-		await this.updateGroup(groupId, {
-			members: updatedMembers,
-		});
+		await setDoc(grouopMemberRef, newUser);
+		return newUser;
 	}
 
 	/**
@@ -257,34 +290,14 @@ export class FirestoreGroupService {
 	 * @param userId ID of the user to remove
 	 */
 	async removeGroupMember(groupId: string, userId: string): Promise<void> {
-		const group = await this.getGroupById(groupId);
-
-		if (!group) {
-			throw new Error(`Group with ID ${groupId} not found`);
-		}
-
-		if (group.members.length <= 1) {
-			throw new Error('Cannot remove last member from group');
-		}
-
-		// Find the member to remove
-		const memberIndex = group.members.findIndex(
-			(member) => member.user.id === userId,
+		const groupMemberRef = doc(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+			userId,
 		);
-
-		if (memberIndex < 0) {
-			throw new Error('User is not a member of this group');
-		}
-
-		// Remove the member
-		const updatedMembers = [
-			...group.members.slice(0, memberIndex),
-			...group.members.slice(memberIndex + 1),
-		];
-
-		await this.updateGroup(groupId, {
-			members: updatedMembers,
-		});
+		await deleteDoc(groupMemberRef);
 	}
 
 	/**
@@ -293,38 +306,19 @@ export class FirestoreGroupService {
 	 * @param userId ID of the user
 	 * @param role Role of the user
 	 */
-	async updateMemberRole(
+	async updateGroupMember(
 		groupId: string,
-		userId: string,
-		role: GroupMemberRole,
+		memberData: UpdateGroupMemberInput,
 	): Promise<void> {
-		const group = await this.getGroupById(groupId);
-
-		if (!group) {
-			throw new Error('Group with ID ${groupId} not found');
-		}
-
-		const userRef = doc(database, `users/${userId}`);
-
-		// Find the member to update
-		const memberIndex = group.members.findIndex(
-			(member) => (member.user as any).path === userRef.path,
+		const groupMemberRef = doc(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+			memberData.id,
 		);
 
-		if (memberIndex < 0) {
-			throw new Error('User is not a member of this group');
-		}
-
-		// Update the member's role
-		const updatedMembers = [...group.members];
-		updatedMembers[memberIndex] = {
-			...updatedMembers[memberIndex],
-			role,
-		};
-
-		await this.updateGroup(groupId, {
-			members: updatedMembers,
-		});
+		await updateDoc(groupMemberRef, memberData);
 	}
 
 	/**
@@ -333,7 +327,7 @@ export class FirestoreGroupService {
 	 * @returns ID of the joined group
 	 */
 	async joinGroup(joinData: JoinGroupInput): Promise<string> {
-		const { inviteCode, user } = joinData;
+		const { inviteCode, member } = joinData;
 
 		const group = await this.getGroupByInviteCode(inviteCode);
 
@@ -341,10 +335,12 @@ export class FirestoreGroupService {
 			throw new Error(`Group with invite code ${inviteCode} not found`);
 		}
 
-		await this.addGroupMember(group.id, {
-			user,
-			role: 'member',
-		});
+		// TODO: 유저가 이미 그룹에 있는 경우 안내 처리
+		if (group.members.find((m) => m.id === member.id)) {
+			throw new Error('User is already a member of this group');
+		}
+
+		await this.addGroupMember(group.id, member);
 
 		return group.id;
 	}

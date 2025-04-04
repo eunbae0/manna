@@ -33,10 +33,11 @@ export default function CreateGroupFirstStepScreen({
 			}
 
 			return createGroup({
-				user: {
+				member: {
 					id: user?.id ?? '',
 					displayName: user?.displayName ?? '',
 					photoUrl: user?.photoUrl ?? '',
+					role: 'leader',
 				},
 				groupName: groupName.trim(),
 			});

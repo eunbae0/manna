@@ -40,6 +40,10 @@ type AuthActions = {
 	// sendEmailLink: (email: string) => Promise<void>;
 	logout: () => Promise<void>;
 	updateUserProfile: (userId: string, user: UpdateUserInput) => Promise<void>;
+	addUserGroupProfile: (
+		userId: string,
+		group: Required<UserGroup>,
+	) => Promise<void>;
 	updateUserGroupProfile: (userId: string, group: UserGroup) => Promise<void>;
 	onAuthStateChanged: (
 		user: FirebaseAuthTypes.User | null,
@@ -48,7 +52,7 @@ type AuthActions = {
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
-	updateCurrentGroup: (group: UserGroup | null) => void;
+	updateCurrentGroup: (group: Required<UserGroup> | null) => void;
 	deleteAccount: () => Promise<void>;
 };
 
@@ -179,6 +183,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						await updateUser(userId, user);
 						set((state) => ({
 							user: state.user ? { ...state.user, ...user } : null,
+						}));
+					} catch (error) {
+						throw handleApiError(error);
+					}
+				},
+				addUserGroupProfile: async (userId, group) => {
+					const user = get().user;
+					if (!user) return;
+					try {
+						await createUserGroup(userId, group);
+						const newGroups = user.groups?.map((g) =>
+							g.groupId === group.groupId ? group : g,
+						) || [group];
+						set((state) => ({
+							user: state.user ? { ...state.user, groups: newGroups } : null,
 						}));
 					} catch (error) {
 						throw handleApiError(error);

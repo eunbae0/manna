@@ -14,8 +14,8 @@ import { joinGroup } from '@/api/group';
 import { useAuthStore } from '@/store/auth';
 
 export default function JoinGroupScreen() {
-	const { user, updateUserGroupProfile, updateCurrentGroup } = useAuthStore();
-	const { setStep, currentStep, updateUserData, completeOnboarding } =
+	const { user, addUserGroupProfile, updateCurrentGroup } = useAuthStore();
+	const { setStep, currentStep, userData, completeOnboarding } =
 		useOnboardingStore();
 	const [code, setCode] = useState('');
 
@@ -27,36 +27,29 @@ export default function JoinGroupScreen() {
 
 		// update firestore group member
 		const groupId = await joinGroup({
-			user: {
-				id: user.id,
-				displayName: user.displayName,
+			member: {
+				id: isOnboarding ? userData.id : user.id,
+				displayName: isOnboarding ? userData.name : user.displayName,
 				photoUrl: user.photoUrl,
+				role: 'member',
 			},
 			inviteCode: code,
 		});
-		if (!isOnboarding) {
-			// update firestore user groups
-			await updateUserGroupProfile(user.id, {
-				groupId,
-				notificationPreferences: { fellowship: true, prayerRequest: true },
-			});
-			// // get user from firestore
-			// const updatedUser = await getUser(user.id);
-			// if (!updatedUser) return;
-			// // local user store update
-			// updateUserGroupProfile(user.id, {
-			// 	groupId,
-			// });
-			updateCurrentGroup({
-				groupId,
-			});
-			router.back();
-			return;
-		}
-		updateUserData({
-			group: { groupId },
+
+		// update firestore user groups
+		await addUserGroupProfile(isOnboarding ? userData.id : user.id, {
+			groupId,
+			notificationPreferences: { fellowship: true, prayerRequest: true },
 		});
-		await completeOnboarding();
+		updateCurrentGroup({
+			groupId,
+			notificationPreferences: { fellowship: true, prayerRequest: true },
+		});
+
+		// if onboarding, complete onboarding
+		if (isOnboarding) await completeOnboarding();
+
+		router.canGoBack() && router.back();
 	};
 
 	const handlePressLater = async () => {

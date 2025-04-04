@@ -11,8 +11,7 @@ export type GroupMemberRole = 'leader' | 'member';
 /**
  * Group member type
  */
-export type GroupMember = {
-	user: GroupUser;
+export type GroupMember = GroupUser & {
 	role: GroupMemberRole;
 };
 
@@ -24,7 +23,6 @@ export interface Group {
 	id: string;
 	groupName: string;
 	inviteCode: string;
-	members: GroupMember[];
 	createdAt: FieldValue;
 	updatedAt: FieldValue;
 }
@@ -44,26 +42,27 @@ export interface ClientGroup {
  * Input data for creating a new group
  */
 export type CreateGroupInput = Pick<ClientGroup, 'groupName'> & {
-	user: GroupUser;
+	member: GroupMember;
 };
 
 /**
  * Input data for updating an existing group
  */
-export type UpdateGroupInput = Partial<Omit<ClientGroup, 'id' | 'inviteCode'>>;
+export type UpdateGroupInput = Partial<Omit<ClientGroup, 'id' | 'members'>>;
 
 /**
  * Input data for adding a member to a group
  */
-export type AddGroupMemberInput = {
-	user: GroupUser;
-	role: GroupMemberRole;
-};
+export type AddGroupMemberInput = GroupMember;
+
+export type UpdateGroupMemberInput = Partial<
+	Omit<AddGroupMemberInput, 'id'>
+> & { id: string };
 
 /**
  * Input data for joining a group via invite code
  */
 export type JoinGroupInput = {
 	inviteCode: string;
-	user: GroupUser;
+	member: GroupMember;
 };

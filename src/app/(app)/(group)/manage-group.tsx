@@ -51,9 +51,9 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 		isLoading,
 		addMember,
 		removeMember,
-		updateRole,
+		updateGroupMember,
 		isRemovingMember,
-		isUpdatingRole,
+		isUpdatingGroupMember,
 	} = useGroupMembers(groupId);
 
 	const { showToast } = useToastStore();
@@ -157,65 +157,39 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 					<Divider />
 					{members.length > 0 ? (
 						<VStack space="md">
-							{members.map(
-								({
-									user,
-									role,
-								}: { user: GroupUser; role: GroupMemberRole }) => (
-									<View key={user.id} className="bg-white rounded-xl py-4">
-										<HStack className="items-center justify-between">
-											<HStack space="md" className="items-center">
-												<Avatar
-													size="sm"
-													photoUrl={user.photoUrl || undefined}
-												/>
-												<VStack>
-													<Text size="lg" className="font-pretendard-semi-bold">
-														{user.displayName || '이름없음'}
-													</Text>
-												</VStack>
-												<Box
-													className={cn(
-														'px-2 rounded-full py-1',
-														role === 'leader'
-															? 'bg-primary-400'
-															: 'bg-gray-500',
-													)}
-												>
-													<Text size="xs" className="text-typography-50">
-														{role === 'leader' ? '리더' : '그룹원'}
-													</Text>
-												</Box>
-											</HStack>
-											<HStack space="md">
-												{/* <Pressable
-													onPress={() =>
-														handleEditRole(
-															user.id,
-															user.displayName || '이름없음',
-															role,
-														)
-													}
-													className="p-2"
-												>
-													<Icon
-														as={Edit2}
-														size="sm"
-														className="stroke-gray-500"
-													/>
-												</Pressable> */}
-												<Button
-													onPress={() => handleRemoveMember(user.id)}
-													disabled={isRemovingMember}
-													variant="icon"
-												>
-													<ButtonIcon as={Trash2} className="stroke-red-500" />
-												</Button>
-											</HStack>
+							{members.map(({ id, photoUrl, displayName, role }) => (
+								<View key={id} className="bg-white rounded-xl py-4">
+									<HStack className="items-center justify-between">
+										<HStack space="md" className="items-center">
+											<Avatar size="sm" photoUrl={photoUrl || undefined} />
+											<VStack>
+												<Text size="lg" className="font-pretendard-semi-bold">
+													{displayName || '이름없음'}
+												</Text>
+											</VStack>
+											<Box
+												className={cn(
+													'px-2 rounded-full py-1',
+													role === 'leader' ? 'bg-primary-400' : 'bg-gray-500',
+												)}
+											>
+												<Text size="xs" className="text-typography-50">
+													{role === 'leader' ? '리더' : '그룹원'}
+												</Text>
+											</Box>
 										</HStack>
-									</View>
-								),
-							)}
+										<HStack space="md">
+											<Button
+												onPress={() => handleRemoveMember(id)}
+												disabled={isRemovingMember}
+												variant="icon"
+											>
+												<ButtonIcon as={Trash2} className="stroke-red-500" />
+											</Button>
+										</HStack>
+									</HStack>
+								</View>
+							))}
 						</VStack>
 					) : (
 						<VStack space="md" className="items-center justify-center py-10">

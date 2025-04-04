@@ -6,6 +6,7 @@ import type {
 	JoinGroupInput,
 	GroupMemberRole,
 	Group,
+	UpdateGroupMemberInput,
 } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
@@ -45,7 +46,12 @@ export const fetchGroupById = withApiLogging(
 	async (groupId: string): Promise<ClientGroup | null> => {
 		try {
 			const groupService = getGroupService();
-			return await groupService.getGroupById(groupId);
+			const group = await groupService.getGroupById(groupId);
+			if (!group) {
+				return null;
+			}
+			const groupMembers = await groupService.getGroupMembers(groupId);
+			return groupService.convertToClientGroup(groupId, group, groupMembers);
 		} catch (error) {
 			throw handleApiError(error, 'fetchGroupById', 'group');
 		}
@@ -105,10 +111,16 @@ export const fetchGroupByInviteCode = withApiLogging(
  * @returns ID and invite code of the created group
  */
 export const createGroup = withApiLogging(
-	async (groupData: CreateGroupInput): Promise<Group> => {
+	async (groupData: CreateGroupInput): Promise<ClientGroup> => {
 		try {
 			const groupService = getGroupService();
-			return await groupService.createGroup(groupData);
+
+			const group = await groupService.createGroup(groupData);
+			const groupMember = await groupService.addGroupMember(
+				group.id,
+				groupData.member,
+			);
+			return groupService.convertToClientGroup(group.id, group, [groupMember]);
 		} catch (error) {
 			throw handleApiError(error, 'createGroup', 'group');
 		}
@@ -194,20 +206,19 @@ export const removeGroupMember = withApiLogging(
  * @param userId ID of the user
  * @param isLeader Whether the user should be a leader
  */
-export const updateMemberRole = withApiLogging(
+export const updateGroupMember = withApiLogging(
 	async (
 		groupId: string,
-		userId: string,
-		role: GroupMemberRole,
+		memberData: UpdateGroupMemberInput,
 	): Promise<void> => {
 		try {
 			const groupService = getGroupService();
-			await groupService.updateMemberRole(groupId, userId, role);
+			await groupService.updateGroupMember(groupId, memberData);
 		} catch (error) {
-			throw handleApiError(error, 'updateMemberRole', 'group');
+			throw handleApiError(error, 'updateGroupMember', 'group');
 		}
 	},
-	'updateMemberRole',
+	'updateGroupMember',
 	'group',
 );
 
