@@ -1,8 +1,13 @@
 import { getUserService } from './service';
-import type { ClientUser, UpdateUserInput, UserGroup } from './types';
+import type {
+	ClientUser,
+	AuthType,
+	UpdateUserInput,
+	UserGroup,
+} from '@/shared/types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
-import type { AuthType } from '@/shared/types';
+import { generateRandomDisplayName } from '@/shared/utils/nameGenerator';
 
 /**
  * 사용자 프로필 조회
@@ -36,7 +41,12 @@ export const createUser = withApiLogging(
 	): Promise<void> => {
 		try {
 			const userService = getUserService();
-			await userService.createUser(userId, userData);
+			const randomDisplayName = generateRandomDisplayName();
+
+			await userService.createUser(userId, {
+				...userData,
+				displayName: randomDisplayName,
+			});
 		} catch (error) {
 			throw handleApiError(error);
 		}
