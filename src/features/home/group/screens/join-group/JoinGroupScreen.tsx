@@ -12,24 +12,26 @@ import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
 import { joinGroup } from '@/api/group';
 import { useAuthStore } from '@/store/auth';
+import { useQueryClient } from '@tanstack/react-query';
+import { GROUPS_QUERY_KEY } from '../../hooks/useGroups';
 
 export default function JoinGroupScreen() {
-	const { user, addUserGroupProfile, updateCurrentGroup } = useAuthStore();
+	const { user, addUserGroupProfile } = useAuthStore();
 	const { setStep, currentStep, userData, completeOnboarding } =
 		useOnboardingStore();
 	const [code, setCode] = useState('');
+	const queryClient = useQueryClient();
 
 	const isOnboarding = currentStep === 'GROUP_JOIN';
 
-	// TODO: add join group feature
 	const handlePressJoin = async () => {
 		if (!user) return;
 
 		// update firestore group member
 		const groupId = await joinGroup({
 			member: {
-				id: isOnboarding ? userData.id : user.id,
-				displayName: isOnboarding ? userData.name : user.displayName,
+				id: user.id,
+				displayName: isOnboarding ? userData.displayName : user.displayName,
 				photoUrl: user.photoUrl,
 				role: 'member',
 			},
@@ -37,28 +39,26 @@ export default function JoinGroupScreen() {
 		});
 
 		// update firestore user groups
-		await addUserGroupProfile(isOnboarding ? userData.id : user.id, {
-			groupId,
-			notificationPreferences: { fellowship: true, prayerRequest: true },
-		});
-		updateCurrentGroup({
+		await addUserGroupProfile(user.id, {
 			groupId,
 			notificationPreferences: { fellowship: true, prayerRequest: true },
 		});
 
 		// if onboarding, complete onboarding
-		if (isOnboarding) await completeOnboarding();
+		if (isOnboarding) await completeOnboarding(user.id);
+		else queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
 
-		router.canGoBack() && router.back();
+		if (router.canGoBack()) router.back();
 	};
 
 	const handlePressLater = async () => {
-		await completeOnboarding();
+		if (!user) return;
+		await completeOnboarding(user.id);
 	};
 
 	const onPressBackButton = () => {
 		if (!isOnboarding) {
-			router.back();
+			if (router.canGoBack()) router.back();
 			return;
 		}
 		setStep('GROUP_LANDING');

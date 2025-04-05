@@ -139,8 +139,8 @@ function HomeHeader({ groups }: Props) {
 					{group?.members
 						? group.members.map((member) => (
 								<Avatar
-									key={member.user.id}
-									photoUrl={member.user.photoUrl ?? undefined}
+									key={member.id}
+									photoUrl={member.photoUrl ?? undefined}
 									size="sm"
 									className="bg-primary-400"
 								/>
@@ -190,16 +190,16 @@ function HomeHeader({ groups }: Props) {
 					<VStack space="md" className="pb-5">
 						{group?.members && group.members.length > 0 ? (
 							group.members.map((member) => (
-								<View key={member.user.id} className="bg-white rounded-xl py-4">
+								<View key={member.id} className="bg-white rounded-xl py-4">
 									<HStack className="items-center justify-between">
 										<HStack space="md" className="items-center">
 											<Avatar
 												size="sm"
-												photoUrl={member.user.photoUrl || undefined}
+												photoUrl={member.photoUrl || undefined}
 											/>
 											<VStack>
 												<Text size="lg" className="font-pretendard-semi-bold">
-													{member.user.displayName || '이름없음'}
+													{member.displayName || '이름없음'}
 												</Text>
 											</VStack>
 											<Box

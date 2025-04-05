@@ -15,7 +15,12 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import type { ClientUser, UpdateUserInput, UserGroup } from '@/shared/types';
+import type {
+	ClientUser,
+	ManagedUserGroup,
+	UpdateUserInput,
+	UserGroup,
+} from '@/shared/types';
 import {
 	createUserGroup,
 	getUser,
@@ -28,7 +33,7 @@ type AuthState = {
 	isAuthenticated: boolean;
 	loading: boolean;
 	error: ApiError | null;
-	currentGroup: UserGroup | null;
+	currentGroup: ManagedUserGroup | null;
 };
 
 type AuthActions = {
@@ -52,7 +57,7 @@ type AuthActions = {
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
 	updateUser: (user: AuthState['user']) => void;
-	updateCurrentGroup: (group: Required<UserGroup> | null) => void;
+	updateCurrentGroup: (group: ManagedUserGroup | null) => void;
 	deleteAccount: () => Promise<void>;
 };
 
@@ -198,6 +203,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						) || [group];
 						set((state) => ({
 							user: state.user ? { ...state.user, groups: newGroups } : null,
+							currentGroup: group,
 						}));
 					} catch (error) {
 						throw handleApiError(error);
@@ -212,11 +218,14 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						} else {
 							await updateUserGroup(userId, group);
 						}
+
 						const newGroups = user.groups?.map((g) =>
 							g.groupId === group.groupId ? group : g,
 						) || [group];
+
 						set((state) => ({
 							user: state.user ? { ...state.user, groups: newGroups } : null,
+							currentGroup: group,
 						}));
 					} catch (error) {
 						throw handleApiError(error);
@@ -244,7 +253,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					} catch (err) {
 						// signOut
 						const apiError = handleApiError(err);
-						set({ error: apiError });
+						set({
+							loading: false,
+							isAuthenticated: false,
+							user: null,
+							currentGroup: null,
+							error: apiError,
+						});
 					} finally {
 						set({ loading: false });
 					}

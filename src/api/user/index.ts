@@ -38,12 +38,11 @@ export const createUser = withApiLogging(
 	async (
 		userId: string,
 		userData: Partial<ClientUser> & { authType: AuthType },
-	): Promise<void> => {
+	): Promise<ClientUser> => {
 		try {
 			const userService = getUserService();
 			const randomDisplayName = generateRandomDisplayName();
-
-			await userService.createUser(userId, {
+			return await userService.createUser(userId, {
 				...userData,
 				displayName: randomDisplayName,
 			});

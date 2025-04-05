@@ -7,6 +7,8 @@ import { Box } from '#/components/ui/box';
 import { useOnboardingStore } from '@/store/onboarding';
 import type { ClientGroup } from '@/api/group/types';
 import { router } from 'expo-router';
+import { useAuthStore } from '@/store/auth';
+import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 
 type Props = {
 	group: ClientGroup | null;
@@ -15,14 +17,18 @@ type Props = {
 export default function CreateGroupSecondStepScreen({ group }: Props) {
 	const { currentStep, completeOnboarding } = useOnboardingStore();
 	const isOnboarding = currentStep === 'GROUP_CREATE';
+	const { user } = useAuthStore();
 
 	const handlePressNext = () => {
 		if (!isOnboarding) {
-			router.back();
+			if (router.canGoBack()) router.back();
 			return;
 		}
-		completeOnboarding();
+		if (!user) return;
+		completeOnboarding(user.id);
 	};
+
+	const { copyInviteCode } = useCopyInviteCode(group?.inviteCode || '');
 
 	return (
 		<>
@@ -44,18 +50,14 @@ export default function CreateGroupSecondStepScreen({ group }: Props) {
 									{group?.inviteCode ?? ''}
 								</Text>
 							</Box>
-							<Button variant="link">
+							<Button variant="link" onPress={copyInviteCode}>
 								<ButtonText>코드 복사하기</ButtonText>
 							</Button>
 						</VStack>
 					</VStack>
 				</VStack>
 			</VStack>
-			<Button
-				size="lg"
-				className="rounded-full mx-5 mb-6"
-				onPress={handlePressNext}
-			>
+			<Button size="lg" className="mx-5 mb-6" rounded onPress={handlePressNext}>
 				<ButtonText>완료</ButtonText>
 			</Button>
 		</>

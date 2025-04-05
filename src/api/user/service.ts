@@ -81,7 +81,6 @@ export class FirestoreUserService {
 		userData: Partial<FirestoreUser> & { authType: AuthType },
 	): Promise<ClientUser> {
 		const userRef = doc(database, this.usersCollectionPath, userId);
-
 		const userWithTimestamp = createUserWithServerTimestamp(
 			Object.assign({ id: userId, authType: userData.authType }, userData),
 		);

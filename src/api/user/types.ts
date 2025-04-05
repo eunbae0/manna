@@ -10,6 +10,8 @@ export type UserGroup = {
 	};
 };
 
+export type ManagedUserGroup = Pick<UserGroup, 'groupId'>;
+
 /**
  * Server-side User with Firestore specific fields
  * Used for Firestore storage and retrieval

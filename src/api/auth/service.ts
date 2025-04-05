@@ -32,6 +32,7 @@ import type { AuthType, EmailSignInInput, SignInResponse } from './types';
 import { Alert } from 'react-native';
 import { getUserService } from '../user/service';
 import type { ClientUser, FirestoreUser } from '@/shared/types';
+import { createUser } from '../user';
 
 /**
  * Firestore service for user authentication and profile operations
@@ -295,7 +296,7 @@ export class FirestoreAuthService {
 			userData.fcmToken = fcmToken;
 		}
 
-		const newUser = await getUserService().createUser(userId, userData);
+		const newUser = await createUser(userId, userData);
 		return { user: newUser, existUser: false };
 	}
 

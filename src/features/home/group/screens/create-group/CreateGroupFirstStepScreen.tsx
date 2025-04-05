@@ -7,11 +7,12 @@ import { Button, ButtonText } from '@/components/common/button';
 import { useRef, useEffect } from 'react';
 import type { TextInput } from 'react-native';
 import { createGroup } from '@/api/group';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
 import type { CreateGroupStep } from './CreateGroupContainerScreen';
 import type { ClientGroup } from '@/api/group/types';
 import { useOnboardingStore } from '@/store/onboarding';
+import { GROUPS_QUERY_KEY } from '../../hooks/useGroups';
 
 type Props = {
 	setStep: Dispatch<SetStateAction<CreateGroupStep>>;
@@ -25,6 +26,15 @@ export default function CreateGroupFirstStepScreen({
 	const [groupName, setGroupName] = useState('');
 	const ref = useRef<TextInput>(null);
 	const { user, updateUserGroupProfile } = useAuthStore();
+	const queryClient = useQueryClient();
+
+	// Onboarding
+	const {
+		currentStep,
+		userData,
+		setStep: setOnboardingStep,
+	} = useOnboardingStore();
+	const isOnboarding = currentStep === 'GROUP_CREATE';
 
 	const { mutate: submitPrayerRequest } = useMutation({
 		mutationFn: async () => {
@@ -32,10 +42,12 @@ export default function CreateGroupFirstStepScreen({
 				return;
 			}
 
-			return createGroup({
+			return await createGroup({
 				member: {
 					id: user?.id ?? '',
-					displayName: user?.displayName ?? '',
+					displayName: isOnboarding
+						? userData.displayName
+						: (user?.displayName ?? ''),
 					photoUrl: user?.photoUrl ?? '',
 					role: 'leader',
 				},
@@ -52,6 +64,7 @@ export default function CreateGroupFirstStepScreen({
 				groupId: res.id,
 				notificationPreferences: { fellowship: true, prayerRequest: true },
 			});
+			queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
 			setStep('CODE');
 		},
 	});
@@ -65,10 +78,6 @@ export default function CreateGroupFirstStepScreen({
 			ref.current?.focus();
 		}, 100);
 	}, []);
-
-	// Onboarding
-	const { currentStep, setStep: setOnboardingStep } = useOnboardingStore();
-	const isOnboarding = currentStep === 'GROUP_CREATE';
 
 	return (
 		<>

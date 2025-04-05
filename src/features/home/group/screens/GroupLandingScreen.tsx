@@ -11,6 +11,7 @@ import { Icon } from '#/components/ui/icon';
 import { useOnboardingStore } from '@/store/onboarding';
 import Header from '@/components/common/Header';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { useAuthStore } from '@/store/auth';
 
 export type GroupLandingOption = 'create' | 'join';
 
@@ -23,11 +24,13 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 		useState<GroupLandingOption>('create');
 
 	const { currentStep, setStep, completeOnboarding } = useOnboardingStore();
+	const { user } = useAuthStore();
 
 	const isOnboarding = currentStep === 'GROUP_LANDING';
 
 	const handlePressLater = () => {
-		completeOnboarding();
+		if (!user) return;
+		completeOnboarding(user.id);
 	};
 
 	const buttonText = useMemo(() => {

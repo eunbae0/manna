@@ -10,7 +10,7 @@ import { VStack } from '#/components/ui/vstack';
 
 export default function NameStepScreen() {
 	const { setStep, updateUserData, userData } = useOnboardingStore();
-	const [name, setName] = useState(userData.name || '');
+	const [name, setName] = useState(userData.displayName || '');
 
 	const ref = useRef<TextInput>();
 
@@ -21,7 +21,7 @@ export default function NameStepScreen() {
 	}, []);
 
 	const handlePressNext = () => {
-		updateUserData({ name: name.trim() });
+		updateUserData({ displayName: name.trim() });
 		setStep('GROUP_LANDING');
 	};
 
