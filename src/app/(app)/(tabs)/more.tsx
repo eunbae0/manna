@@ -46,6 +46,7 @@ import { APP_STORE_URL, PLAY_STORE_URL } from '@/shared/constants/app';
 import { useToastStore } from '@/store/toast';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
+import { ListItem } from '@/shared/components/ListItem';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();
@@ -231,24 +232,6 @@ export default function TabFourScreen() {
 				</BottomSheetListLayout>
 			</BottomSheetContainer>
 		</SafeAreaView>
-	);
-}
-
-function ListItem({
-	icon,
-	label,
-	onPress,
-}: { icon: LucideIcon; label: string; onPress?: PressableProps['onPress'] }) {
-	return (
-		<Pressable onPress={onPress}>
-			<HStack className="items-center justify-between py-4">
-				<HStack space="md" className="items-center">
-					<Icon as={icon} size="md" />
-					<Text size="lg">{label}</Text>
-				</HStack>
-				<Icon as={ChevronRight} size="lg" />
-			</HStack>
-		</Pressable>
 	);
 }
 
