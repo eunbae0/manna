@@ -48,6 +48,10 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { ListItem } from '@/shared/components/ListItem';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { updateUser } from '@/api/user';
+import { RefreshCw } from 'lucide-react-native';
+import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();
@@ -56,7 +60,7 @@ export default function TabFourScreen() {
 
 	const [displayName, setDisplayName] = useState(user?.displayName || '');
 	const [photoUrl, setPhotoUrl] = useState(user?.photoUrl || '');
-	const [isUpdating, setIsUpdating] = useState(false);
+	// isUpdating 상태는 React Query의 isPending으로 대체
 
 	const pickImage = async () => {
 		// Request permission
@@ -85,30 +89,51 @@ export default function TabFourScreen() {
 		}
 	};
 
-	const handleupdateUserProfile = async () => {
-		if (!user?.id) return;
-
-		setIsUpdating(true);
-		try {
-			await updateUserProfile(user.id, {
+	// React Query를 사용한 프로필 업데이트 mutation 설정
+	const queryClient = useQueryClient();
+	const updateProfileMutation = useMutation({
+		mutationFn: async () => {
+			if (!user?.id) throw new Error('사용자 정보가 없습니다.');
+			return await updateUser(user.id, {
 				displayName,
 				photoUrl,
 			});
+		},
+		onSuccess: () => {
+			if (!user?.id) return;
+			// 캐시 무효화 및 사용자 정보 업데이트
+			queryClient.invalidateQueries({ queryKey: ['user', user.id] });
+			queryClient.invalidateQueries({
+				queryKey: [GROUPS_QUERY_KEY],
+				refetchType: 'all',
+			});
+
+			// Zustand 스토어 업데이트
+			updateUserProfile(user.id, {
+				displayName,
+				photoUrl,
+			});
+
 			handleClose();
 			showToast({
 				title: '프로필 업데이트',
 				message: '프로필이 업데이트되었습니다.',
 				type: 'success',
 			});
-		} catch (error) {
+		},
+		onError: (error) => {
+			console.error('프로필 업데이트 오류:', error);
 			showToast({
 				title: '프로필 업데이트',
 				message: '프로필 업데이트에 실패했습니다. 다시 시도해주세요.',
 				type: 'error',
 			});
-		} finally {
-			setIsUpdating(false);
-		}
+		},
+	});
+
+	const handleupdateUserProfile = () => {
+		if (!user?.id) return;
+		updateProfileMutation.mutate();
 	};
 
 	return (
@@ -215,18 +240,18 @@ export default function TabFourScreen() {
 						</VStack>
 
 						<Button
-							onPress={handleupdateUserProfile}
-							action="primary"
-							disabled={
-								isUpdating ||
-								(displayName === user?.displayName &&
-									photoUrl === user?.photoUrl)
-							}
-							rounded
 							size="lg"
+							rounded
+							action="primary"
+							onPress={handleupdateUserProfile}
+							disabled={updateProfileMutation.isPending}
+							animation={true}
 						>
+							{updateProfileMutation.isPending && (
+								<ButtonIcon as={RefreshCw} className="animate-spin mr-1" />
+							)}
 							<ButtonText>
-								{isUpdating ? '업데이트 중...' : '저장하기'}
+								{updateProfileMutation.isPending ? '업데이트 중...' : '완료'}
 							</ButtonText>
 						</Button>
 					</VStack>

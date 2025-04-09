@@ -8,6 +8,9 @@ import type {
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { generateRandomDisplayName } from '@/shared/utils/nameGenerator';
+import { getGroupService } from '../group/service';
+import type { UpdateGroupMemberInput } from '../group/types';
+import { fetchGroupsByUserId, updateGroupMember } from '../group';
 
 /**
  * 사용자 프로필 조회
@@ -61,7 +64,20 @@ export const updateUser = withApiLogging(
 	async (userId: string, data: UpdateUserInput): Promise<void> => {
 		try {
 			const userService = getUserService();
+
 			await userService.updateUser(userId, data);
+
+			if (!data.displayName && !data.photoUrl) return;
+			const processedData = Object.assign(
+				{ id: userId },
+				data.displayName ? { displayName: data.displayName } : {},
+				data.photoUrl ? { photoUrl: data.photoUrl } : {},
+			) satisfies UpdateGroupMemberInput;
+
+			const groups = await fetchGroupsByUserId(userId);
+			for (const group of groups) {
+				await updateGroupMember(group.id, processedData);
+			}
 		} catch (error) {
 			throw handleApiError(error);
 		}

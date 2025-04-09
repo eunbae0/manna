@@ -26,6 +26,7 @@ import type {
 	UpdateGroupMemberInput,
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
+import { getUserGroups } from '../user';
 
 /**
  * Firestore service for group operations
@@ -116,26 +117,22 @@ export class FirestoreGroupService {
 	 * @returns Array of groups that the user is a member of
 	 */
 	async getGroupsByUserId(userId: string): Promise<ClientGroup[]> {
-		const userRef = doc(database, `users/${userId}`);
-		const groupsRef = collection(database, this.collectionPath);
+		const userGroups = await getUserGroups(userId);
 
-		// Query for groups where the user is a member
-		const q = query(
-			groupsRef,
-			where('members', 'array-contains', {
-				user: userRef,
-				isLeader: false,
-			}),
-		);
-
-		const querySnapshot = await getDocs(q);
+		if (!userGroups) {
+			return [];
+		}
 
 		const groups: ClientGroup[] = [];
-		for (const doc of querySnapshot.docs) {
-			const group = doc.data() as Group;
-			const groupMembers = await this.getGroupMembers(doc.id);
-
-			groups.push(this.convertToClientGroup(doc.id, group, groupMembers));
+		for (const userGroup of userGroups) {
+			const group = await this.getGroupById(userGroup.groupId);
+			if (!group) {
+				continue;
+			}
+			const groupMembers = await this.getGroupMembers(userGroup.groupId);
+			groups.push(
+				this.convertToClientGroup(userGroup.groupId, group, groupMembers),
+			);
 		}
 
 		return groups;
