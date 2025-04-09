@@ -25,13 +25,16 @@ import {
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
 import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
-import { Avatar, AvatarGroup } from '../../components/common/avatar';
+import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import type { ClientGroup } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
 import { router } from 'expo-router';
 import { Box } from '#/components/ui/box';
 import { cn } from '@/shared/utils/cn';
+import { ScrollView } from 'react-native-gesture-handler';
+
+const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
 type Props = {
 	groups: ClientGroup[];
@@ -204,41 +207,48 @@ function HomeHeader({ groups }: Props) {
 					/>
 
 					{/* Group Members List */}
-					<VStack space="md" className="pb-5">
+					<View className="pb-5">
 						{group?.members && group.members.length > 0 ? (
-							group.members.map((member) => (
-								<View key={member.id} className="bg-white rounded-xl py-4">
-									<HStack className="items-center justify-between">
-										<HStack space="md" className="items-center">
-											<Avatar
-												size="sm"
-												photoUrl={member.photoUrl || undefined}
-											/>
-											<VStack>
-												<Text size="lg" className="font-pretendard-semi-bold">
-													{member.displayName || '이름없음'}
-												</Text>
-											</VStack>
-											<Box
-												className={cn(
-													'px-2 rounded-full py-1',
-													member.role === 'leader'
-														? 'bg-primary-400'
-														: 'bg-gray-500',
-												)}
-											>
-												<Text size="xs" className="text-typography-50">
-													{member.role === 'leader' ? '리더' : '그룹원'}
-												</Text>
-											</Box>
-										</HStack>
-									</HStack>
-								</View>
-							))
+							<ScrollView style={{ maxHeight: MAX_INNER_MEMBER_LIST_HEIGHT }}>
+								<VStack space="md">
+									{group.members.map((member) => (
+										<View key={member.id} className="bg-white rounded-xl py-4">
+											<HStack className="items-center justify-between">
+												<HStack space="md" className="items-center">
+													<Avatar
+														size="sm"
+														photoUrl={member.photoUrl || undefined}
+													/>
+													<VStack>
+														<Text
+															size="lg"
+															className="font-pretendard-semi-bold"
+														>
+															{member.displayName || '이름없음'}
+														</Text>
+													</VStack>
+													<Box
+														className={cn(
+															'px-2 rounded-full py-1',
+															member.role === 'leader'
+																? 'bg-primary-400'
+																: 'bg-gray-500',
+														)}
+													>
+														<Text size="xs" className="text-typography-50">
+															{member.role === 'leader' ? '리더' : '그룹원'}
+														</Text>
+													</Box>
+												</HStack>
+											</HStack>
+										</View>
+									))}
+								</VStack>
+							</ScrollView>
 						) : (
-							<Text className="text-center py-4">그룹원이 없습니다.</Text>
+							<Text className="text-center py-4">그룹원이 없어요.</Text>
 						)}
-					</VStack>
+					</View>
 					<VStack space="md" className="py-2">
 						<Text size="sm">
 							아래 코드를 공유하여 새로운 그룹원을 초대해보세요
