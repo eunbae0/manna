@@ -10,7 +10,7 @@ import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { useGroupMembers } from '@/hooks/useGroupMembers';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { UserPlus, Trash2, Copy } from 'lucide-react-native';
 import { useToast } from '#/components/ui/toast';
 import type { GroupMemberRole, GroupUser } from '@/api/group/types';
@@ -25,6 +25,7 @@ import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 
 export default function ManageGroupScreen() {
 	const router = useRouter();
+	const { groupId } = useLocalSearchParams<{ groupId: string }>();
 	const { currentGroup } = useAuthStore();
 
 	if (!currentGroup) {
@@ -35,7 +36,7 @@ export default function ManageGroupScreen() {
 	return (
 		<SafeAreaView className="h-full">
 			<Header />
-			<GroupMemberList groupId={currentGroup.groupId} />
+			<GroupMemberList groupId={groupId || currentGroup.groupId} />
 		</SafeAreaView>
 	);
 }
@@ -166,15 +167,17 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 												</Text>
 											</Box>
 										</HStack>
-										<HStack space="md">
-											<Button
-												onPress={() => handleRemoveMember(id)}
-												disabled={isRemovingMember}
-												variant="icon"
-											>
-												<ButtonIcon as={Trash2} className="stroke-red-500" />
-											</Button>
-										</HStack>
+										{role !== 'leader' && (
+											<HStack space="md">
+												<Button
+													onPress={() => handleRemoveMember(id)}
+													disabled={isRemovingMember}
+													variant="icon"
+												>
+													<ButtonIcon as={Trash2} className="stroke-red-500" />
+												</Button>
+											</HStack>
+										)}
 									</HStack>
 								</View>
 							))}

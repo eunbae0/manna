@@ -21,7 +21,7 @@ export default function CreateGroupSecondStepScreen({ group }: Props) {
 
 	const handlePressNext = () => {
 		if (!isOnboarding) {
-			if (router.canGoBack()) router.back();
+			router.push('/(app)/(tabs)');
 			return;
 		}
 		if (!user) return;

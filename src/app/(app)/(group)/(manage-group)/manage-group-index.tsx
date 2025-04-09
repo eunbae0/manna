@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Settings, Users } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
@@ -7,6 +7,7 @@ import { VStack } from '#/components/ui/vstack';
 
 export default function ManageGroupIndexScreen() {
 	const router = useRouter();
+	const { groupId } = useLocalSearchParams<{ groupId: string }>();
 
 	return (
 		<SafeAreaView className="h-full">
@@ -16,14 +17,20 @@ export default function ManageGroupIndexScreen() {
 					icon={Users}
 					label="그룹원 관리"
 					onPress={() => {
-						router.push('/(app)/(group)/(manage-group)/manage-member');
+						router.push({
+							pathname: '/(app)/(group)/(manage-group)/manage-member',
+							params: { groupId },
+						});
 					}}
 				/>
 				<ListItem
 					icon={Settings}
 					label="그룹 설정"
 					onPress={() => {
-						router.push('/(app)/(group)/(manage-group)/setting-group');
+						router.push({
+							pathname: '/(app)/(group)/(manage-group)/setting-group',
+							params: { groupId },
+						});
 					}}
 				/>
 			</VStack>

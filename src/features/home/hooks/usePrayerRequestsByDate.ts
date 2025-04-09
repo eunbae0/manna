@@ -23,5 +23,6 @@ export function usePrayerRequestsByDate(groupId: string, date: YYYYMMDD) {
 
 			return fetchPrayerRequestsByDateRange(groupId, startDate, endDate);
 		},
+		enabled: !!groupId,
 	});
 }

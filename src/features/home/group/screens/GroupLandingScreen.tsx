@@ -137,7 +137,12 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 							<ButtonText>{buttonText}</ButtonText>
 						</Button>
 						{isOnboarding && (
-							<Button size="lg" variant="link" onPress={handlePressLater}>
+							<Button
+								size="lg"
+								variant="link"
+								rounded
+								onPress={handlePressLater}
+							>
 								<ButtonText>다음에 할래요</ButtonText>
 							</Button>
 						)}

@@ -102,6 +102,11 @@ function HomeHeader({ groups }: Props) {
 	const isLeader =
 		group?.members?.find((m) => m.id === user?.id)?.role === 'leader';
 
+	const handlePressManageMyGroup = () => {
+		router.push('/(app)/(group)/manage-my-group');
+		handleCloseMenu();
+	};
+
 	return (
 		<HStack className="items-center justify-between pt-2 pl-4 pr-3">
 			<Menu
@@ -132,9 +137,13 @@ function HomeHeader({ groups }: Props) {
 							<MenuItemLabel size="lg">{group.groupName}</MenuItemLabel>
 						</MenuItem>
 					))}
-				<MenuItem key="Plugins" textValue="Plugins">
+				<MenuItem
+					key="Plugins"
+					textValue="Plugins"
+					onPress={handlePressManageMyGroup}
+				>
 					<Icon as={SettingsIcon} size="lg" className="mr-2" />
-					<MenuItemLabel size="lg">소그룹 관리하기</MenuItemLabel>
+					<MenuItemLabel size="lg">내 그룹 관리하기</MenuItemLabel>
 				</MenuItem>
 			</Menu>
 			<HStack space="xs" className="items-center">

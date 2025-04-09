@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Alert, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuthStore } from '@/store/auth';
 import { useGroup } from '@/features/home/group/hooks/useGroup';
 import type { UpdateGroupInput } from '@/api/group/types';
@@ -20,10 +20,10 @@ import {
 } from '@/components/common/bottom-sheet';
 
 export default function SettingGroupScreen() {
-	const router = useRouter();
+	const { groupId } = useLocalSearchParams<{ groupId: string }>();
 	const { currentGroup } = useAuthStore();
 	const { group, isLoading, updateGroup, isUpdating, deleteGroup, isDeleting } =
-		useGroup(currentGroup?.groupId);
+		useGroup(groupId || currentGroup?.groupId);
 
 	// Bottom sheet for editing group name
 	const {

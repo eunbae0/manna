@@ -109,6 +109,7 @@ export default function CreateGroupFirstStepScreen({
 				className="rounded-full mx-5 mb-6"
 				onPress={handlePressNext}
 				disabled={!groupName.trim()}
+				rounded
 			>
 				<ButtonText>다음</ButtonText>
 			</Button>

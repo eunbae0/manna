@@ -198,9 +198,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					if (!user) return;
 					try {
 						await createUserGroup(userId, group);
-						const newGroups = user.groups?.map((g) =>
-							g.groupId === group.groupId ? group : g,
-						) || [group];
+						const newGroups = [...(user.groups ?? []), group];
 						set((state) => ({
 							user: state.user ? { ...state.user, groups: newGroups } : null,
 							currentGroup: group,
@@ -213,15 +211,21 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					const user = get().user;
 					if (!user) return;
 					try {
-						if (!user.groups || user.groups.length === 0) {
-							await createUserGroup(userId, group);
-						} else {
+						const existingGroup = user.groups?.find(
+							(g) => g.groupId === group.groupId,
+						);
+						if (existingGroup) {
 							await updateUserGroup(userId, group);
+						} else {
+							await createUserGroup(userId, group);
 						}
 
-						const newGroups = user.groups?.map((g) =>
-							g.groupId === group.groupId ? group : g,
-						) || [group];
+						const newGroups = [...(user.groups ?? [])];
+						if (existingGroup) {
+							newGroups.splice(newGroups.indexOf(existingGroup), 1, group);
+						} else {
+							newGroups.push(group);
+						}
 
 						set((state) => ({
 							user: state.user ? { ...state.user, groups: newGroups } : null,

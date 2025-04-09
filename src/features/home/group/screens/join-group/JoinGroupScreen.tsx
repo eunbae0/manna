@@ -46,9 +46,14 @@ export default function JoinGroupScreen() {
 
 		// if onboarding, complete onboarding
 		if (isOnboarding) await completeOnboarding(user.id);
-		else queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
+		else {
+			queryClient.invalidateQueries({
+				queryKey: [GROUPS_QUERY_KEY],
+				refetchType: 'all',
+			});
+		}
 
-		if (router.canGoBack()) router.back();
+		router.push('/(app)/(tabs)');
 	};
 
 	const handlePressLater = async () => {
@@ -71,7 +76,9 @@ export default function JoinGroupScreen() {
 				<VStack space="3xl">
 					<VStack space="sm">
 						<Heading size="2xl">소그룹 초대코드를 입력해주세요</Heading>
-						<Text>초대된 그룹이 없다면 넘어갈 수 있어요.</Text>
+						{isOnboarding && (
+							<Text>초대된 그룹이 없다면 넘어갈 수 있어요.</Text>
+						)}
 					</VStack>
 					<Input
 						variant="outline"
@@ -95,6 +102,7 @@ export default function JoinGroupScreen() {
 					size="lg"
 					disabled={!code}
 					onPress={handlePressJoin}
+					rounded
 				>
 					<ButtonText>그룹 참여하기</ButtonText>
 				</Button>
