@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchGroupById, updateGroup } from '@/api/group';
+import { fetchGroupById, updateGroup, deleteGroup } from '@/api/group';
 import type { ClientGroup, UpdateGroupInput } from '@/api/group/types';
 import { useToastStore } from '@/store/toast';
+import { router, useRouter } from 'expo-router';
+import { useAuthStore } from '@/store/auth';
 import { GROUPS_QUERY_KEY } from './useGroups';
 
 export const GROUP_QUERY_KEY = 'group';
@@ -13,6 +15,7 @@ export const GROUP_QUERY_KEY = 'group';
 export function useGroup(groupId: string | undefined) {
 	const { showToast } = useToastStore();
 	const queryClient = useQueryClient();
+	const { user, updateUser, updateCurrentGroup } = useAuthStore();
 
 	const {
 		data: group,
@@ -51,6 +54,39 @@ export function useGroup(groupId: string | undefined) {
 		},
 	});
 
+	const deleteGroupMutation = useMutation({
+		mutationFn: async (group: ClientGroup) => {
+			const memberIds = group.members.map((m) => m.id);
+			return await deleteGroup(memberIds, group.id);
+		},
+		onSuccess: () => {
+			showToast({
+				type: 'success',
+				message: '그룹이 삭제되었어요',
+			});
+
+			if (!user || !group) return;
+			updateUser({
+				...user,
+				groups: user?.groups?.filter((g) => g.groupId !== group.id) ?? [],
+			});
+			updateCurrentGroup(
+				user?.groups?.find((g) => g.groupId !== group.id) ?? null,
+			);
+
+			queryClient.invalidateQueries({ queryKey: [GROUP_QUERY_KEY] });
+			queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
+
+			router.replace('/(app)/(tabs)');
+		},
+		onError: () => {
+			showToast({
+				type: 'error',
+				message: '그룹 삭제에 실패했어요',
+			});
+		},
+	});
+
 	return {
 		group,
 		isLoading,
@@ -66,6 +102,17 @@ export function useGroup(groupId: string | undefined) {
 			}
 			return updateGroupMutation.mutate({ groupId, data });
 		},
+		deleteGroup: () => {
+			if (!group) {
+				showToast({
+					type: 'error',
+					message: '그룹이 없어요',
+				});
+				return;
+			}
+			return deleteGroupMutation.mutate(group);
+		},
 		isUpdating: updateGroupMutation.isPending,
+		isDeleting: deleteGroupMutation.isPending,
 	};
 }

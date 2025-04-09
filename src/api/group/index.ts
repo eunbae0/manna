@@ -11,6 +11,7 @@ import type {
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { getGroupService } from './service';
+import { getUserService } from '../user/service';
 
 /**
  * Fetches all groups
@@ -149,13 +150,18 @@ export const updateGroup = withApiLogging(
 
 /**
  * Deletes a group
+ * @param memberIds IDs of the members of the group
  * @param groupId ID of the group to delete
  */
 export const deleteGroup = withApiLogging(
-	async (groupId: string): Promise<void> => {
+	async (memberIds: string[], groupId: string): Promise<void> => {
 		try {
 			const groupService = getGroupService();
+			const userService = getUserService();
 			await groupService.deleteGroup(groupId);
+			for (const memberId of memberIds) {
+				await userService.removeUserGroup(memberId, groupId);
+			}
 		} catch (error) {
 			throw handleApiError(error, 'deleteGroup', 'group');
 		}
