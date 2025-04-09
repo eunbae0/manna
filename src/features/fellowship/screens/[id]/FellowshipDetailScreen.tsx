@@ -13,7 +13,6 @@ import {
 	Megaphone,
 	RefreshCw,
 	Users,
-	ChevronDown,
 	ChevronUp,
 	MoreHorizontal,
 	Edit2,
@@ -56,18 +55,14 @@ interface FellowshipDetailScreenProps {
 	id: string;
 }
 
-// 접기/펼치기 가능한 콘텐츠 컴포넌트
 function AdditionalInfo({
 	fellowship,
 }: { fellowship: ClientFellowship | undefined }) {
-	// 접기/펼치기 상태
 	const [isFolded, setIsFolded] = useState(false);
 
-	// 애니메이션 값
 	const foldAnimation = useSharedValue(1); // 1: 펼쳐짐, 0: 접힘
 	const rotateAnimation = useSharedValue(0); // 0: 아래 화살표, 1: 위 화살표
 
-	// 접기/펼치기 토글 함수
 	const toggleFold = () => {
 		setIsFolded(!isFolded);
 		foldAnimation.value = withTiming(isFolded ? 1 : 0, {
@@ -80,15 +75,10 @@ function AdditionalInfo({
 		});
 	};
 
-	// 콘텐츠 애니메이션 스타일
 	const contentStyle = useAnimatedStyle(() => {
 		return {
 			opacity: foldAnimation.value,
-			maxHeight: interpolate(
-				foldAnimation.value,
-				[0, 1],
-				[0, 500], // 최소 높이 0, 최대 높이 300
-			),
+			maxHeight: interpolate(foldAnimation.value, [0, 1], [0, 500]),
 			height: 'auto',
 			gap: 16,
 			marginTop: interpolate(foldAnimation.value, [0, 1], [0, 16]),
@@ -96,7 +86,6 @@ function AdditionalInfo({
 		};
 	});
 
-	// 아이콘 회전 애니메이션 스타일
 	const iconStyle = useAnimatedStyle(() => {
 		return {
 			transform: [
@@ -119,11 +108,7 @@ function AdditionalInfo({
 						{isFolded ? '펼치기' : '접기'}
 					</Text>
 					<Animated.View style={iconStyle}>
-						<Icon
-							as={ChevronDown}
-							size="md"
-							className="stroke-typography-600"
-						/>
+						<Icon as={ChevronUp} size="md" className="stroke-typography-600" />
 					</Animated.View>
 				</HStack>
 			</Pressable>
