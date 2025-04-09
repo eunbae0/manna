@@ -197,7 +197,9 @@ export const removeGroupMember = withApiLogging(
 	async (groupId: string, userId: string): Promise<void> => {
 		try {
 			const groupService = getGroupService();
+			const userService = getUserService();
 			await groupService.removeGroupMember(groupId, userId);
+			await userService.removeUserGroup(userId, groupId);
 		} catch (error) {
 			throw handleApiError(error, 'removeGroupMember', 'group');
 		}

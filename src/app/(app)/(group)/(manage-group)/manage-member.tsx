@@ -7,11 +7,22 @@ import { Divider } from '#/components/ui/divider';
 import { Text } from '#/components/ui/text';
 import { HStack } from '#/components/ui/hstack';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
-import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
+import {
+	BottomSheetListHeader,
+	BottomSheetListLayout,
+	BottomSheetListItem,
+} from '@/components/common/bottom-sheet';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import { useGroupMembers } from '@/hooks/useGroupMembers';
+import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { UserPlus, Trash2, Copy } from 'lucide-react-native';
+import {
+	UserPlus,
+	Trash2,
+	Copy,
+	MoreHorizontal,
+	UserCog,
+	LogOut,
+} from 'lucide-react-native';
 import { useToast } from '#/components/ui/toast';
 import type { GroupMemberRole, GroupUser } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
@@ -58,6 +69,7 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 	} = useGroupMembers(groupId);
 
 	const { showToast } = useToastStore();
+	const { user } = useAuthStore();
 
 	// Bottom sheet for inviting new members
 	const {
@@ -66,12 +78,12 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 		BottomSheetContainer: BottomSheetInviteContainer,
 	} = useBottomSheet();
 
-	// Bottom sheet for editing member role
-	// const {
-	// 	handleOpen: handleOpenEditRole,
-	// 	handleClose: handleCloseEditRole,
-	// 	BottomSheetContainer: BottomSheetEditRoleContainer,
-	// } = useBottomSheet();
+	// Bottom sheet for member management
+	const {
+		handleOpen: handleOpenMemberManage,
+		handleClose: handleCloseMemberManage,
+		BottomSheetContainer: BottomSheetMemberManageContainer,
+	} = useBottomSheet();
 
 	const [selectedMember, setSelectedMember] = useState<{
 		userId: string;
@@ -93,33 +105,48 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 		}
 	};
 
-	// const handleEditRole = (
-	// 	userId: string,
-	// 	displayName: string,
-	// 	currentRole: GroupMemberRole,
-	// ) => {
-	// 	setSelectedMember({ userId, displayName, role: currentRole });
-	// 	setNewRole(currentRole);
-	// 	handleOpenEditRole();
-	// };
+	const handleOpenMemberOptions = (
+		userId: string,
+		displayName: string,
+		currentRole: GroupMemberRole,
+	) => {
+		setSelectedMember({ userId, displayName, role: currentRole });
+		handleOpenMemberManage();
+	};
 
-	// const handleUpdateRole = () => {
-	// 	if (selectedMember && newRole) {
-	// 		updateRole({ userId: selectedMember.userId, role: newRole });
-	// 		handleCloseEditRole();
-	// 	}
-	// };
+	const handleChangeRole = () => {
+		if (selectedMember) {
+			const newRole = selectedMember.role === 'leader' ? 'member' : 'leader';
+			updateGroupMember({ userId: selectedMember.userId, role: newRole });
+			handleCloseMemberManage();
+			showToast({
+				title: '역할이 변경되었어요',
+				message: `${selectedMember.displayName}님이 ${newRole === 'leader' ? '리더' : '그룹원'}로 변경되었어요.`,
+				type: 'success',
+			});
+		}
+	};
 
-	const handleRemoveMember = (userId: string) => {
-		Alert.alert('그룹원을 삭제할까요?', '', [
+	const handleRemoveMember = () => {
+		if (!selectedMember) return;
+
+		Alert.alert('그룹원을 내보낼까요?', '', [
 			{
 				text: '취소',
 				style: 'cancel',
 			},
 			{
-				text: '삭제',
+				text: '내보내기',
 				style: 'destructive',
-				onPress: () => removeMember(userId),
+				onPress: () => {
+					removeMember(selectedMember.userId);
+					handleCloseMemberManage();
+					showToast({
+						title: '그룹원이 내보내졌어요',
+						message: `${selectedMember.displayName}님이 그룹에서 내보내졌어요.`,
+						type: 'success',
+					});
+				},
 			},
 		]);
 	};
@@ -167,17 +194,21 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 												</Text>
 											</Box>
 										</HStack>
-										{role !== 'leader' && (
-											<HStack space="md">
-												<Button
-													onPress={() => handleRemoveMember(id)}
-													disabled={isRemovingMember}
-													variant="icon"
-												>
-													<ButtonIcon as={Trash2} className="stroke-red-500" />
-												</Button>
-											</HStack>
-										)}
+										<HStack space="md">
+											<Button
+												onPress={() =>
+													handleOpenMemberOptions(
+														id,
+														displayName || '이름없음',
+														role,
+													)
+												}
+												disabled={isRemovingMember || isUpdatingGroupMember}
+												variant="icon"
+											>
+												<ButtonIcon as={MoreHorizontal} />
+											</Button>
+										</HStack>
 									</HStack>
 								</View>
 							))}
@@ -221,32 +252,46 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 				</VStack>
 			</BottomSheetInviteContainer>
 
-			{/* Edit role bottom sheet */}
-			{/* <BottomSheetEditRoleContainer>
-				<VStack space="sm" className="px-6 py-2">
+			{/* Member management bottom sheet */}
+			<BottomSheetMemberManageContainer>
+				<BottomSheetListLayout>
 					<BottomSheetListHeader
-						label="역할 수정"
-						onPress={handleCloseEditRole}
+						label={selectedMember?.displayName || ''}
+						onPress={handleCloseMemberManage}
 					/>
-					<VStack space="xl" className="py-4">
-						{selectedMember && (
-							<>
-								<Text size="md">
-									{selectedMember.displayName}님의 역할을 수정합니다.
-								</Text>
-								<Button
-									size="lg"
-									className="rounded-full mt-4"
-									onPress={handleUpdateRole}
-									disabled={isUpdatingRole}
-								>
-									<ButtonText>저장하기</ButtonText>
-								</Button>
-							</>
-						)}
-					</VStack>
-				</VStack>
-			</BottomSheetEditRoleContainer> */}
+					{selectedMember && (
+						<VStack space="md" className="py-2">
+							{selectedMember.role === 'leader' ? (
+								<BottomSheetListItem
+									label="그룹원으로 변경하기"
+									icon={UserCog}
+									onPress={handleChangeRole}
+									disabled={isUpdatingGroupMember}
+								/>
+							) : (
+								<BottomSheetListItem
+									label="리더로 변경하기"
+									icon={UserCog}
+									onPress={handleChangeRole}
+									disabled={isUpdatingGroupMember}
+								/>
+							)}
+							{selectedMember.userId !== user?.id && (
+								<>
+									<Divider />
+									<BottomSheetListItem
+										label="그룹원 내보내기"
+										icon={LogOut}
+										onPress={handleRemoveMember}
+										disabled={isRemovingMember}
+										variant="destructive"
+									/>
+								</>
+							)}
+						</VStack>
+					)}
+				</BottomSheetListLayout>
+			</BottomSheetMemberManageContainer>
 		</>
 	);
 }

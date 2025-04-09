@@ -17,6 +17,11 @@ export function useGroup(groupId: string | undefined) {
 	const queryClient = useQueryClient();
 	const { user, updateUser, updateCurrentGroup } = useAuthStore();
 
+	const invalidateGroupData = () => {
+		queryClient.invalidateQueries({ queryKey: [GROUP_QUERY_KEY, groupId] });
+		queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
+	};
+
 	const {
 		data: group,
 		isLoading,
@@ -43,8 +48,7 @@ export function useGroup(groupId: string | undefined) {
 				type: 'success',
 				message: '그룹명이 변경되었어요',
 			});
-			queryClient.invalidateQueries({ queryKey: [GROUP_QUERY_KEY, groupId] });
-			queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
+			invalidateGroupData();
 		},
 		onError: () => {
 			showToast({
@@ -74,8 +78,7 @@ export function useGroup(groupId: string | undefined) {
 				user?.groups?.find((g) => g.groupId !== group.id) ?? null,
 			);
 
-			queryClient.invalidateQueries({ queryKey: [GROUP_QUERY_KEY] });
-			queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
+			invalidateGroupData();
 
 			router.replace('/(app)/(tabs)');
 		},
