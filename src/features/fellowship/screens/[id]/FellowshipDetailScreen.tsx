@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Alert, Pressable, ScrollView } from 'react-native';
+import { Alert, Pressable, ScrollView, View } from 'react-native';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import {
@@ -14,18 +14,29 @@ import {
 	RefreshCw,
 	Users,
 	ChevronDown,
+	ChevronUp,
 	MoreHorizontal,
 	Edit2,
 	Trash,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+	interpolate,
+	Easing,
+} from 'react-native-reanimated';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { Heading } from '#/components/ui/heading';
 import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
-import type { FellowshipMember } from '@/features/fellowship/api/types';
+import type {
+	FellowshipMember,
+	ClientFellowship,
+} from '@/features/fellowship/api/types';
 import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
 import { FellowshipSkeleton } from './FellowshipSkeleton';
 import FellowshipContentList from '../../components/FellowshipContentList';
@@ -43,6 +54,144 @@ import { Divider } from '#/components/ui/divider';
 
 interface FellowshipDetailScreenProps {
 	id: string;
+}
+
+// 접기/펼치기 가능한 콘텐츠 컴포넌트
+function AdditionalInfo({
+	fellowship,
+}: { fellowship: ClientFellowship | undefined }) {
+	// 접기/펼치기 상태
+	const [isFolded, setIsFolded] = useState(false);
+
+	// 애니메이션 값
+	const foldAnimation = useSharedValue(1); // 1: 펼쳐짐, 0: 접힘
+	const rotateAnimation = useSharedValue(0); // 0: 아래 화살표, 1: 위 화살표
+
+	// 접기/펼치기 토글 함수
+	const toggleFold = () => {
+		setIsFolded(!isFolded);
+		foldAnimation.value = withTiming(isFolded ? 1 : 0, {
+			duration: 300,
+			easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+		});
+		rotateAnimation.value = withTiming(isFolded ? 0 : 1, {
+			duration: 300,
+			easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+		});
+	};
+
+	// 콘텐츠 애니메이션 스타일
+	const contentStyle = useAnimatedStyle(() => {
+		return {
+			opacity: foldAnimation.value,
+			maxHeight: interpolate(
+				foldAnimation.value,
+				[0, 1],
+				[0, 500], // 최소 높이 0, 최대 높이 300
+			),
+			height: 'auto',
+			gap: 16,
+			marginTop: interpolate(foldAnimation.value, [0, 1], [0, 16]),
+			flexDirection: 'column',
+		};
+	});
+
+	// 아이콘 회전 애니메이션 스타일
+	const iconStyle = useAnimatedStyle(() => {
+		return {
+			transform: [
+				{
+					rotate: `${interpolate(rotateAnimation.value, [0, 1], [0, 180])}deg`,
+				},
+			],
+		};
+	});
+
+	return (
+		<VStack
+			// space="xl"
+			className="relative bg-zinc-50 border border-background-200 rounded-2xl px-4 py-5"
+		>
+			{/* 접기/펼치기 버튼 */}
+			<Pressable onPress={toggleFold} className="absolute top-5 right-4">
+				<HStack space="xs" className="items-center">
+					<Text size="md" className="text-typography-600">
+						{isFolded ? '펼치기' : '접기'}
+					</Text>
+					<Animated.View style={iconStyle}>
+						<Icon
+							as={ChevronDown}
+							size="md"
+							className="stroke-typography-600"
+						/>
+					</Animated.View>
+				</HStack>
+			</Pressable>
+
+			<VStack space="xs">
+				<HStack space="sm" className="items-center">
+					<Icon as={TextIcon} size="sm" className="stroke-typography-600" />
+					<Text size="md" className="text-typography-600">
+						설교 제목
+					</Text>
+				</HStack>
+				<Text size="xl" className="ml-6">
+					{fellowship?.info.preachTitle}
+				</Text>
+			</VStack>
+			{/* 접기/펼치기 가능한 콘텐츠 */}
+			<Animated.View style={contentStyle}>
+				<VStack space="xs">
+					<HStack space="sm" className="items-center">
+						<Icon as={BookText} size="sm" className="stroke-typography-600" />
+						<Text size="md" className="text-typography-600">
+							설교 본문
+						</Text>
+					</HStack>
+					<Text size="xl" className="ml-6">
+						{fellowship?.info.preachText?.value}
+					</Text>
+				</VStack>
+				<VStack space="xs">
+					<HStack space="sm" className="items-center">
+						<Icon as={Megaphone} size="sm" className="stroke-typography-600" />
+						<Text size="md" className="text-typography-600">
+							설교자
+						</Text>
+					</HStack>
+					<Text size="xl" className="ml-6">
+						{fellowship?.info.preacher?.value}
+					</Text>
+				</VStack>
+				<VStack space="xs">
+					<HStack space="sm" className="items-center">
+						<Icon as={Users} size="sm" className="stroke-typography-600" />
+						<Text size="md" className="text-typography-600">
+							참여자
+						</Text>
+					</HStack>
+					<HStack space="sm" className="flex-wrap ml-6">
+						{fellowship?.info.members && fellowship.info.members.length > 0 ? (
+							<AvatarGroup>
+								{fellowship.info.members.map((member) => (
+									<Avatar
+										key={member.id || Math.random().toString(36).substring(7)}
+										label={member.displayName || ''}
+										photoUrl={member.photoUrl || ''}
+										size="sm"
+									/>
+								))}
+							</AvatarGroup>
+						) : (
+							<Text className="text-typography-500 italic">
+								참여자가 없어요.
+							</Text>
+						)}
+					</HStack>
+				</VStack>
+			</Animated.View>
+		</VStack>
+	);
 }
 
 export default function FellowshipDetailScreen({
@@ -179,101 +328,7 @@ export default function FellowshipDetailScreen({
 						</VStack>
 
 						{/* 추가 정보 */}
-						<VStack
-							space="xl"
-							className="relative bg-zinc-50 border border-background-200 rounded-2xl px-4 py-5"
-						>
-							<VStack space="xs">
-								<HStack space="sm" className="items-center">
-									<Icon
-										as={TextIcon}
-										size="sm"
-										className="stroke-typography-600"
-									/>
-									<Text size="md" className="text-typography-600">
-										설교 제목
-									</Text>
-								</HStack>
-								<Text size="xl" className="ml-6">
-									{fellowship?.info.preachTitle}
-								</Text>
-							</VStack>
-							<VStack space="xs">
-								<HStack space="sm" className="items-center">
-									<Icon
-										as={BookText}
-										size="sm"
-										className="stroke-typography-600"
-									/>
-									<Text size="md" className="text-typography-600">
-										설교 본문
-									</Text>
-								</HStack>
-								<Text size="xl" className="ml-6">
-									{fellowship?.info.preachText?.value}
-								</Text>
-							</VStack>
-							<VStack space="xs">
-								<HStack space="sm" className="items-center">
-									<Icon
-										as={Megaphone}
-										size="sm"
-										className="stroke-typography-600"
-									/>
-									<Text size="md" className="text-typography-600">
-										설교자
-									</Text>
-								</HStack>
-								<Text size="xl" className="ml-6">
-									{fellowship?.info.preacher?.value}
-								</Text>
-							</VStack>
-							<VStack space="xs">
-								<HStack space="sm" className="items-center">
-									<Icon
-										as={Users}
-										size="sm"
-										className="stroke-typography-600"
-									/>
-									<Text size="md" className="text-typography-600">
-										참여자
-									</Text>
-								</HStack>
-								<HStack space="sm" className="flex-wrap ml-6">
-									{fellowship?.info.members &&
-									fellowship.info.members.length > 0 ? (
-										<AvatarGroup>
-											{fellowship.info.members.map((member) => (
-												<Avatar
-													key={
-														member.id || Math.random().toString(36).substring(7)
-													}
-													label={member.displayName || ''}
-													photoUrl={member.photoUrl || ''}
-													size="sm"
-												/>
-											))}
-										</AvatarGroup>
-									) : (
-										<Text className="text-typography-500 italic">
-											참여자가 없어요.
-										</Text>
-									)}
-								</HStack>
-							</VStack>
-							<Pressable onPress={() => {}} className="absolute top-5 right-4">
-								<HStack space="xs" className="items-center">
-									<Text size="md" className="text-typography-600">
-										접기
-									</Text>
-									<Icon
-										as={ChevronDown}
-										size="md"
-										className="stroke-typography-600"
-									/>
-								</HStack>
-							</Pressable>
-						</VStack>
+						<AdditionalInfo fellowship={fellowship} />
 
 						{/* 말씀 내용 */}
 						<VStack className="gap-8 pb-10">
