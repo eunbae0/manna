@@ -38,7 +38,7 @@ type Props = {
 };
 
 function HomeHeader({ groups }: Props) {
-	const { currentGroup, updateCurrentGroup } = useAuthStore();
+	const { user, currentGroup, updateCurrentGroup } = useAuthStore();
 	const [isExpanded, setIsExpanded] = useState(false);
 
 	const {
@@ -98,6 +98,9 @@ function HomeHeader({ groups }: Props) {
 		router.push('/(app)/(group)/(manage-group)');
 		handleCloseMenu();
 	};
+
+	const isLeader =
+		group?.members?.find((m) => m.id === user?.id)?.role === 'leader';
 
 	return (
 		<HStack className="items-center justify-between pt-2 pl-4 pr-3">
@@ -169,12 +172,17 @@ function HomeHeader({ groups }: Props) {
 						icon={Library}
 						onPress={handlePressFellowshipList}
 					/>
-					<Divider />
-					<BottomSheetListItem
-						label="소그룹 관리하기"
-						icon={Settings}
-						onPress={handlePressManageMember}
-					/>
+
+					{isLeader && (
+						<>
+							<Divider />
+							<BottomSheetListItem
+								label="소그룹 관리하기"
+								icon={Settings}
+								onPress={handlePressManageMember}
+							/>
+						</>
+					)}
 				</BottomSheetListLayout>
 			</MenuBottomSheetContainer>
 
