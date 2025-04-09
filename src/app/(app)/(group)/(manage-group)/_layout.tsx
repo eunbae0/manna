@@ -7,10 +7,10 @@ export default function GroupLayout() {
 				headerShown: false,
 				contentStyle: { backgroundColor: 'white' },
 			}}
+			initialRouteName="manage-group-index"
 		>
-			<Stack.Screen name="create-group" />
-			<Stack.Screen name="join-group" />
-			<Stack.Screen name="(manage-group)" />
+			<Stack.Screen name="manage-group-index" />
+			<Stack.Screen name="manage-member" />
 		</Stack>
 	);
 }

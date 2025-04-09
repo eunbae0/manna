@@ -12,7 +12,7 @@ import {
 	MenuIcon,
 	HandHelping,
 	Library,
-	UserRoundPen,
+	Settings,
 	SettingsIcon,
 	Copy,
 } from 'lucide-react-native';
@@ -95,7 +95,7 @@ function HomeHeader({ groups }: Props) {
 	};
 
 	const handlePressManageMember = () => {
-		router.push('/(app)/(group)/manage-group');
+		router.push('/(app)/(group)/(manage-group)');
 		handleCloseMenu();
 	};
 
@@ -171,8 +171,8 @@ function HomeHeader({ groups }: Props) {
 					/>
 					<Divider />
 					<BottomSheetListItem
-						label="소그룹원 관리하기"
-						icon={UserRoundPen}
+						label="소그룹 관리하기"
+						icon={Settings}
 						onPress={handlePressManageMember}
 					/>
 				</BottomSheetListLayout>
