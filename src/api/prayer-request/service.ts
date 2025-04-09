@@ -29,27 +29,18 @@ import { v4 as uuidv4 } from 'uuid';
  * Firestore service for prayer request operations
  */
 export class FirestorePrayerRequestService {
-	private readonly groupId: string;
-	private readonly collectionPath: string;
-
 	private static instance: FirestorePrayerRequestService | null = null;
 
-	public static getInstance(groupId: string): FirestorePrayerRequestService {
+	public static getInstance(): FirestorePrayerRequestService {
 		if (!FirestorePrayerRequestService.instance) {
 			FirestorePrayerRequestService.instance =
-				new FirestorePrayerRequestService(groupId);
+				new FirestorePrayerRequestService();
 		}
 		return FirestorePrayerRequestService.instance;
 	}
 
-	/**
-	 * Creates a new prayer request service for a specific group
-	 * @param groupId ID of the group
-	 */
-	private constructor(groupId: string) {
-		this.groupId = groupId;
-		this.collectionPath = `groups/${groupId}/prayer-requests`;
-	}
+	private readonly collectionPath: string = 'groups';
+	private readonly subCollectionPath: string = 'prayer-requests';
 
 	/**
 	 * Converts a Firestore prayer request to a client prayer request
@@ -62,7 +53,7 @@ export class FirestorePrayerRequestService {
 	): ClientPrayerRequest {
 		return {
 			id,
-			groupId: this.groupId,
+			groupId: data.groupId,
 			createdAt: data.createdAt?.toDate() || new Date(),
 			updatedAt: data.updatedAt?.toDate() || new Date(),
 			date: data.date?.toDate() || new Date(),
@@ -77,8 +68,15 @@ export class FirestorePrayerRequestService {
 	 * Gets all prayer requests for the group
 	 * @returns Array of prayer requests
 	 */
-	async getGroupPrayerRequests(): Promise<ClientPrayerRequest[]> {
-		const prayerRequestsRef = collection(database, this.collectionPath);
+	async getGroupPrayerRequests(
+		groupId: string,
+	): Promise<ClientPrayerRequest[]> {
+		const prayerRequestsRef = collection(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+		);
 		const q = query(prayerRequestsRef, orderBy('date', 'desc'));
 		const querySnapshot = await getDocs(q);
 
@@ -97,11 +95,14 @@ export class FirestorePrayerRequestService {
 	 * @returns Prayer request data or null if not found
 	 */
 	async getPrayerRequestById(
+		groupId: string,
 		prayerRequestId: string,
 	): Promise<ClientPrayerRequest | null> {
 		const prayerRequestRef = doc(
 			database,
 			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
 			prayerRequestId,
 		);
 		const prayerRequestDoc = await getDoc(prayerRequestRef);
@@ -121,13 +122,19 @@ export class FirestorePrayerRequestService {
 	 * @returns Array of prayer requests within the date range
 	 */
 	async getPrayerRequestsByDateRange(
+		groupId: string,
 		startDate: Date,
 		endDate: Date,
 	): Promise<ClientPrayerRequest[]> {
 		const startTimestamp = Timestamp.fromDate(startDate);
 		const endTimestamp = Timestamp.fromDate(endDate);
 
-		const prayerRequestsRef = collection(database, this.collectionPath);
+		const prayerRequestsRef = collection(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+		);
 		const q = query(
 			prayerRequestsRef,
 			where('date', '>=', startTimestamp),
@@ -152,17 +159,24 @@ export class FirestorePrayerRequestService {
 	 * @returns ID of the created prayer request
 	 */
 	async createPrayerRequest(
+		groupId: string,
 		prayerRequestData: CreatePrayerRequestInput,
 	): Promise<string> {
 		const id = uuidv4();
-		const prayerRequestsRef = doc(database, this.collectionPath, id);
+		const prayerRequestsRef = doc(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+			id,
+		);
 
 		const { date, ...restData } = prayerRequestData;
 
 		const data: PrayerRequest = {
 			...restData,
 			id,
-			groupId: this.groupId,
+			groupId,
 			date: Timestamp.fromDate(date),
 			createdAt: serverTimestamp(),
 			updatedAt: serverTimestamp(),
@@ -179,12 +193,15 @@ export class FirestorePrayerRequestService {
 	 * @param prayerRequestData Updated prayer request data
 	 */
 	async updatePrayerRequest(
+		groupId: string,
 		prayerRequestId: string,
 		prayerRequestData: UpdatePrayerRequestInput,
 	): Promise<void> {
 		const prayerRequestRef = doc(
 			database,
 			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
 			prayerRequestId,
 		);
 
@@ -205,10 +222,15 @@ export class FirestorePrayerRequestService {
 	 * Deletes a prayer request
 	 * @param prayerRequestId ID of the prayer request to delete
 	 */
-	async deletePrayerRequest(prayerRequestId: string): Promise<void> {
+	async deletePrayerRequest(
+		groupId: string,
+		prayerRequestId: string,
+	): Promise<void> {
 		const prayerRequestRef = doc(
 			database,
 			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
 			prayerRequestId,
 		);
 		await deleteDoc(prayerRequestRef);
@@ -220,13 +242,17 @@ export class FirestorePrayerRequestService {
 	 * @param reaction Reaction data to add
 	 */
 	async addReaction(
+		groupId: string,
 		prayerRequestId: string,
 		reaction: {
 			type: 'LIKE';
 			member: Member;
 		},
 	): Promise<void> {
-		const prayerRequest = await this.getPrayerRequestById(prayerRequestId);
+		const prayerRequest = await this.getPrayerRequestById(
+			groupId,
+			prayerRequestId,
+		);
 
 		if (!prayerRequest) {
 			throw new Error(`Prayer request with ID ${prayerRequestId} not found`);
@@ -250,14 +276,12 @@ export class FirestorePrayerRequestService {
 			updatedReactions = [...prayerRequest.reactions, reaction];
 		}
 
-		await this.updatePrayerRequest(prayerRequestId, {
+		await this.updatePrayerRequest(groupId, prayerRequestId, {
 			reactions: updatedReactions,
 		});
 	}
 }
 
-export const getPrayerRequestService = (
-	groupId: string,
-): FirestorePrayerRequestService => {
-	return FirestorePrayerRequestService.getInstance(groupId);
+export const getPrayerRequestService = (): FirestorePrayerRequestService => {
+	return FirestorePrayerRequestService.getInstance();
 };

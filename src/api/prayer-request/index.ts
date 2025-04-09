@@ -16,8 +16,8 @@ import { getPrayerRequestService } from './service';
 export const fetchGroupPrayerRequests = withApiLogging(
 	async (groupId: string): Promise<ClientPrayerRequest[]> => {
 		try {
-			const prayerRequestService = getPrayerRequestService(groupId);
-			const result = await prayerRequestService.getGroupPrayerRequests();
+			const prayerRequestService = getPrayerRequestService();
+			const result = await prayerRequestService.getGroupPrayerRequests(groupId);
 
 			// Pass metadata to the withApiLogging wrapper via context
 			const context = {
@@ -47,8 +47,11 @@ export const fetchPrayerRequestById = withApiLogging(
 		prayerRequestId: string,
 	): Promise<ClientPrayerRequest | null> => {
 		try {
-			const prayerRequestService = getPrayerRequestService(groupId);
-			return await prayerRequestService.getPrayerRequestById(prayerRequestId);
+			const prayerRequestService = getPrayerRequestService();
+			return await prayerRequestService.getPrayerRequestById(
+				groupId,
+				prayerRequestId,
+			);
 		} catch (error) {
 			throw handleApiError(error, 'fetchPrayerRequestById', 'prayer-request');
 		}
@@ -69,8 +72,11 @@ export const createPrayerRequest = withApiLogging(
 		prayerRequestData: CreatePrayerRequestInput,
 	): Promise<string> => {
 		try {
-			const prayerRequestService = getPrayerRequestService(groupId);
-			return await prayerRequestService.createPrayerRequest(prayerRequestData);
+			const prayerRequestService = getPrayerRequestService();
+			return await prayerRequestService.createPrayerRequest(
+				groupId,
+				prayerRequestData,
+			);
 		} catch (error) {
 			throw handleApiError(error, 'createPrayerRequest', 'prayer-request');
 		}
@@ -92,8 +98,9 @@ export const updatePrayerRequest = withApiLogging(
 		prayerRequestData: UpdatePrayerRequestInput,
 	): Promise<void> => {
 		try {
-			const prayerRequestService = getPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService();
 			await prayerRequestService.updatePrayerRequest(
+				groupId,
 				prayerRequestId,
 				prayerRequestData,
 			);
@@ -113,8 +120,8 @@ export const updatePrayerRequest = withApiLogging(
 export const deletePrayerRequest = withApiLogging(
 	async (groupId: string, prayerRequestId: string): Promise<void> => {
 		try {
-			const prayerRequestService = getPrayerRequestService(groupId);
-			await prayerRequestService.deletePrayerRequest(prayerRequestId);
+			const prayerRequestService = getPrayerRequestService();
+			await prayerRequestService.deletePrayerRequest(groupId, prayerRequestId);
 		} catch (error) {
 			throw handleApiError(error, 'deletePrayerRequest', 'prayer-request');
 		}
@@ -137,8 +144,9 @@ export const fetchPrayerRequestsByDateRange = withApiLogging(
 		endDate: Date,
 	): Promise<ClientPrayerRequest[]> => {
 		try {
-			const prayerRequestService = getPrayerRequestService(groupId);
+			const prayerRequestService = getPrayerRequestService();
 			const result = await prayerRequestService.getPrayerRequestsByDateRange(
+				groupId,
 				startDate,
 				endDate,
 			);
@@ -180,8 +188,12 @@ export const togglePrayerRequestReaction = withApiLogging(
 		},
 	): Promise<void> => {
 		try {
-			const prayerRequestService = getPrayerRequestService(groupId);
-			await prayerRequestService.addReaction(prayerRequestId, reaction);
+			const prayerRequestService = getPrayerRequestService();
+			await prayerRequestService.addReaction(
+				groupId,
+				prayerRequestId,
+				reaction,
+			);
 		} catch (error) {
 			throw handleApiError(
 				error,
