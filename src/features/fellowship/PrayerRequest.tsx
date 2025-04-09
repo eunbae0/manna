@@ -20,6 +20,7 @@ import type {
 	FellowshipMember,
 } from '@/features/fellowship/api/types';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 type PrayerRequestProps = {
 	members: FellowshipMember[];
@@ -158,7 +159,7 @@ const PrayerRequestList = ({
 							</VStack>
 							<Textarea size="lg">
 								<BottomSheetTextInput
-									value={content[memberIndex].value}
+									defaultValue={content[memberIndex].value}
 									onChangeText={(value) =>
 										setContent([
 											...content.slice(0, memberIndex),
@@ -167,6 +168,7 @@ const PrayerRequestList = ({
 										])
 									}
 									placeholder="나눔을 입력해주세요..."
+									className={TEXT_INPUT_STYLE}
 								/>
 							</Textarea>
 						</VStack>

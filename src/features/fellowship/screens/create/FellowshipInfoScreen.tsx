@@ -44,6 +44,7 @@ import { Avatar } from '@/components/common/avatar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 export default function FellowshipInfoScreen() {
 	const { user } = useAuthStore();
@@ -394,8 +395,9 @@ export default function FellowshipInfoScreen() {
 								// @ts-ignore
 								ref={addMemberInputRef}
 								placeholder="이름을 입력해주세요"
-								value={memberNameInput}
+								defaultValue={memberNameInput}
 								onChangeText={setMemberNameInput}
+								className={TEXT_INPUT_STYLE}
 							/>
 						</VStack>
 						<Button

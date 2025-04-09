@@ -18,6 +18,7 @@ import type {
 	FellowshipMember,
 } from '@/features/fellowship/api/types';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 type SermonContentItemProps = {
 	index?: number;
@@ -187,6 +188,7 @@ export default function FellowshipContent({
 									)
 								}
 								placeholder="나눔을 입력해주세요..."
+								className={TEXT_INPUT_STYLE}
 							/>
 						</VStack>
 						<Button size="lg" rounded onPress={handlePressSaveButton}>

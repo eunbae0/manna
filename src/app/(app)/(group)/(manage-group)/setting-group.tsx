@@ -18,6 +18,7 @@ import {
 	BottomSheetListLayout,
 	BottomSheetListHeader,
 } from '@/components/common/bottom-sheet';
+import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 export default function SettingGroupScreen() {
 	const { groupId } = useLocalSearchParams<{ groupId: string }>();
@@ -129,11 +130,11 @@ export default function SettingGroupScreen() {
 								그룹명
 							</Text>
 							<BottomSheetTextInput
-								value={editGroupName}
+								defaultValue={editGroupName}
 								onChangeText={handleGroupNameChange}
 								placeholder="그룹명을 입력해주세요"
 								editable={!isLoading && !isUpdating}
-								className="py-3 px-4 border border-gray-300 rounded-xl"
+								className={TEXT_INPUT_STYLE}
 							/>
 						</VStack>
 

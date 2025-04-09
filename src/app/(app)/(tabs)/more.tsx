@@ -47,6 +47,7 @@ import { useToastStore } from '@/store/toast';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { ListItem } from '@/shared/components/ListItem';
+import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();
@@ -205,10 +206,10 @@ export default function TabFourScreen() {
 									이름
 								</Text>
 								<BottomSheetTextInput
-									value={displayName}
+									defaultValue={displayName}
 									onChangeText={setDisplayName}
 									placeholder="이름을 입력하세요"
-									className="py-3 px-4 border border-gray-300 rounded-xl"
+									className={TEXT_INPUT_STYLE}
 								/>
 							</VStack>
 						</VStack>
