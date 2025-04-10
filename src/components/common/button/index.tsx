@@ -276,13 +276,41 @@ export interface ButtonProps
 	extends Omit<ComponentPropsWithoutRef<typeof Pressable>, 'style'>,
 		VariantProps<typeof buttonStyles> {
 	children?: ReactNode;
+	/**
+	 * 버튼의 모서리를 둥근 모양으로 사용할지 여부
+	 * @default false
+	 */
 	rounded?: boolean;
+	/**
+	 * 버튼의 전체 너비를 사용할지 여부
+	 * @default false
+	 */
 	fullWidth?: boolean;
+	/**
+	 * 버튼의 크기를 결정
+	 * @default 'md'
+	 */
 	size?: ButtonSize;
+	/**
+	 * 버튼의 스타일을 결정
+	 * @default 'solid'
+	 */
 	variant?: 'solid' | 'outline' | 'link' | 'icon';
+	/**
+	 * 버튼의 액션을 결정
+	 * @default 'primary'
+	 */
 	action?: 'primary' | 'secondary' | 'positive' | 'negative';
 	className?: string;
+	/**
+	 * 버튼이 비활성화 상태인지 여부
+	 * @default false
+	 */
 	disabled?: boolean;
+	/**
+	 * 애니메이션을 사용할지 여부
+	 * @default true
+	 */
 	animation?: boolean;
 }
 
