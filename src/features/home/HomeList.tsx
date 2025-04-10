@@ -36,12 +36,12 @@ function HomeList() {
 		refetch: refetchRecentFellowships,
 	} = useRecentFellowships();
 
-	const {
-		data: prayerRequests,
-		isLoading: isPrayerRequestsLoading,
-		isError: isPrayerRequestsError,
-		refetch: refetchPrayerRequests,
-	} = usePrayerRequestsByDate(currentGroup?.groupId || '', date);
+	// const {
+	// 	data: prayerRequests,
+	// 	isLoading: isPrayerRequestsLoading,
+	// 	isError: isPrayerRequestsError,
+	// 	refetch: refetchPrayerRequests,
+	// } = usePrayerRequestsByDate(currentGroup?.groupId || '', date);
 
 	useFocusEffect(() => {
 		const newDate = getKSTDate(new Date());
@@ -55,11 +55,17 @@ function HomeList() {
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		try {
-			await Promise.all([refetchPrayerRequests(), refetchRecentFellowships()]);
+			await Promise.all([
+				// refetchPrayerRequests(),
+				refetchRecentFellowships(),
+			]);
 		} finally {
 			setRefreshing(false);
 		}
-	}, [refetchPrayerRequests, refetchRecentFellowships]);
+	}, [
+		// refetchPrayerRequests,
+		refetchRecentFellowships,
+	]);
 
 	const handlePressAddButton = () => {
 		router.navigate('/(app)/createPrayerRequestModal');
@@ -96,43 +102,6 @@ function HomeList() {
 					/>
 				}
 			>
-				{isPrayerRequestsLoading ? (
-					<HomeSkeleton />
-				) : (
-					<VStack space="2xl" className="pt-2 pb-4">
-						<VStack space="lg">
-							<NotificationBox
-								title={'새 나눔이 등록되었어요'}
-								description={'클릭해서 나눔에 참여해보세요'}
-								visible={showNotification}
-								onPress={() => router.push('/(app)/(fellowship)/list')}
-								onDismiss={handleDismissNotification}
-							/>
-							<ServiceGroups />
-						</VStack>
-
-						<Divider className="h-2 bg-background-100" />
-
-						{/* 오늘의 기도 제목 */}
-						<VStack className="gap-12 py-1">
-							<VStack space="lg">
-								<HStack className="justify-between px-4 items-center">
-									<Heading className="text-[20px]">오늘의 기도 제목</Heading>
-								</HStack>
-								<PreayerRequestList
-									prayerRequests={prayerRequests}
-									member={{
-										id: user?.id || '',
-										displayName: user?.displayName || '',
-										photoUrl: user?.photoUrl || '',
-									}}
-									date={date}
-									isError={isPrayerRequestsError}
-								/>
-							</VStack>
-						</VStack>
-					</VStack>
-				)}
 				<Box className="h-32" />
 			</ScrollView>
 			<Button
@@ -150,3 +119,41 @@ function HomeList() {
 }
 
 export default HomeList;
+
+// {isPrayerRequestsLoading ? (
+// 	<HomeSkeleton />
+// ) : (
+// 	<VStack space="2xl" className="pt-2 pb-4">
+// 		<VStack space="lg">
+// 			<NotificationBox
+// 				title={'새 나눔이 등록되었어요'}
+// 				description={'클릭해서 나눔에 참여해보세요'}
+// 				visible={showNotification}
+// 				onPress={() => router.push('/(app)/(fellowship)/list')}
+// 				onDismiss={handleDismissNotification}
+// 			/>
+// 			<ServiceGroups />
+// 		</VStack>
+
+// 		<Divider className="h-2 bg-background-100" />
+
+// 		{/* 오늘의 기도 제목 */}
+// 		<VStack className="gap-12 py-1">
+// 			<VStack space="lg">
+// 				<HStack className="justify-between px-4 items-center">
+// 					<Heading className="text-[20px]">오늘의 기도 제목</Heading>
+// 				</HStack>
+// 				<PreayerRequestList
+// 					prayerRequests={prayerRequests}
+// 					member={{
+// 						id: user?.id || '',
+// 						displayName: user?.displayName || '',
+// 						photoUrl: user?.photoUrl || '',
+// 					}}
+// 					date={date}
+// 					isError={isPrayerRequestsError}
+// 				/>
+// 			</VStack>
+// 		</VStack>
+// 	</VStack>
+// )}
