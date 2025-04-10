@@ -30,13 +30,14 @@ export default function FellowshipContentScreen() {
 				<VStack className="px-5 py-6 gap-12 flex-1">
 					<HStack className="items-center justify-between">
 						<Heading className="text-[24px]">나눔은 어떻게 진행할까요?</Heading>
-						<Pressable>
+						{/* TODO: 도움말 모달 추가하기 */}
+						{/* <Pressable>
 							<Icon
 								as={CircleHelp}
 								size="lg"
 								className="color-typography-600"
 							/>
-						</Pressable>
+						</Pressable> */}
 					</HStack>
 					<VStack className="gap-8">
 						<Pressable onPress={() => setStep('CONTENT_ICEBREAKING')}>

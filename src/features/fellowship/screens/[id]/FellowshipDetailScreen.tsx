@@ -29,7 +29,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { Heading } from '#/components/ui/heading';
-import { Avatar, AvatarGroup } from '@/components/common/avatar';
+import { Avatar } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import type {
@@ -126,28 +126,36 @@ function AdditionalInfo({
 			</VStack>
 			{/* 접기/펼치기 가능한 콘텐츠 */}
 			<Animated.View style={contentStyle}>
-				<VStack space="xs">
-					<HStack space="sm" className="items-center">
-						<Icon as={BookText} size="sm" className="stroke-typography-600" />
-						<Text size="md" className="text-typography-600">
-							설교 본문
+				{fellowship?.info.preachText?.isActive && (
+					<VStack space="xs">
+						<HStack space="sm" className="items-center">
+							<Icon as={BookText} size="sm" className="stroke-typography-600" />
+							<Text size="md" className="text-typography-600">
+								설교 본문
+							</Text>
+						</HStack>
+						<Text size="xl" className="ml-6">
+							{fellowship?.info.preachText?.value}
 						</Text>
-					</HStack>
-					<Text size="xl" className="ml-6">
-						{fellowship?.info.preachText?.value}
-					</Text>
-				</VStack>
-				<VStack space="xs">
-					<HStack space="sm" className="items-center">
-						<Icon as={Megaphone} size="sm" className="stroke-typography-600" />
-						<Text size="md" className="text-typography-600">
-							설교자
+					</VStack>
+				)}
+				{fellowship?.info.preacher?.isActive && (
+					<VStack space="xs">
+						<HStack space="sm" className="items-center">
+							<Icon
+								as={Megaphone}
+								size="sm"
+								className="stroke-typography-600"
+							/>
+							<Text size="md" className="text-typography-600">
+								설교자
+							</Text>
+						</HStack>
+						<Text size="xl" className="ml-6">
+							{fellowship?.info.preacher?.value}
 						</Text>
-					</HStack>
-					<Text size="xl" className="ml-6">
-						{fellowship?.info.preacher?.value}
-					</Text>
-				</VStack>
+					</VStack>
+				)}
 				<VStack space="xs">
 					<HStack space="sm" className="items-center">
 						<Icon as={Users} size="sm" className="stroke-typography-600" />
@@ -157,16 +165,18 @@ function AdditionalInfo({
 					</HStack>
 					<HStack space="sm" className="flex-wrap ml-6">
 						{fellowship?.info.members && fellowship.info.members.length > 0 ? (
-							<AvatarGroup>
-								{fellowship.info.members.map((member) => (
-									<Avatar
-										key={member.id || Math.random().toString(36).substring(7)}
-										label={member.displayName || ''}
-										photoUrl={member.photoUrl || ''}
-										size="sm"
-									/>
-								))}
-							</AvatarGroup>
+							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+								<HStack space="md" className="itmes-center">
+									{fellowship.info.members.map((member) => (
+										<Avatar
+											key={member.id || Math.random().toString(36).substring(7)}
+											label={member.displayName || ''}
+											photoUrl={member.photoUrl || ''}
+											size="sm"
+										/>
+									))}
+								</HStack>
+							</ScrollView>
 						) : (
 							<Text className="text-typography-500 italic">
 								참여자가 없어요.
@@ -288,7 +298,7 @@ export default function FellowshipDetailScreen({
 	return (
 		<SafeAreaView className="h-full">
 			<VStack space="xl" className="h-full">
-				<Header className="justify-between pr-6">
+				<Header className="justify-between pr-4">
 					{isLeader && (
 						<Button variant="icon" onPress={() => handleOpen()}>
 							<ButtonIcon as={MoreHorizontal} />

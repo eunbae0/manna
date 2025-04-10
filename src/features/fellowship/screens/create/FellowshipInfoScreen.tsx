@@ -78,13 +78,17 @@ export default function FellowshipInfoScreen() {
 	const [preachTitle, setPreachTitle] = useState(info.preachTitle || '');
 	const [preachText, setPreachText] = useState<FellowshipInfoField>({
 		value: info.preachText?.value || '',
-		isActive: info.preachText?.isActive || true,
+		isActive:
+			info.preachText?.isActive === undefined
+				? true
+				: info.preachText?.isActive,
 	});
 	const [preacher, setPreacher] = useState<FellowshipInfoField>({
 		value: info.preacher?.value || '',
-		isActive: info.preacher?.isActive || true,
+		isActive:
+			info.preacher?.isActive === undefined ? true : info.preacher?.isActive,
 	});
-
+	console.log(info.preachText?.isActive, info.preacher?.isActive, preacher);
 	const [selectedMember, setSelectedMember] = useState<FellowshipMember | null>(
 		null,
 	);
@@ -212,13 +216,13 @@ export default function FellowshipInfoScreen() {
 								<Heading className="text-[24px]">
 									나눔 정보를 입력해주세요
 								</Heading>
-								<Pressable>
+								{/* <Pressable>
 									<Icon
 										as={CircleHelp}
 										size="lg"
 										className="color-typography-600"
 									/>
-								</Pressable>
+								</Pressable> */}
 							</HStack>
 							<VStack space="4xl" className="">
 								<VStack space="sm">
