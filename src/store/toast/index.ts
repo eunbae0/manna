@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import type { ApiError } from '@/api/errors/types';
 
-type ToastType = 'success' | 'error' | 'info';
+export type ToastType = 'success' | 'error' | 'info';
 
 type Toast = {
 	id: string;
@@ -33,13 +33,13 @@ export const useToastStore = create<ToastState & ToastActions>()(
 				const id = Date.now().toString();
 				state.toasts.push({ ...toast, id });
 
-				// 자동으로 토스트 제거 (타이머 대신 스토어 외부에서 처리)
-				setTimeout(() => {
-					set((state) => {
-						state.toasts = state.toasts.filter((t) => t.id !== id);
-						return state;
-					});
-				}, 3000);
+				// // 자동으로 토스트 제거 (타이머 대신 스토어 외부에서 처리)
+				// setTimeout(() => {
+				// 	set((state) => {
+				// 		state.toasts = state.toasts.filter((t) => t.id !== id);
+				// 		return state;
+				// 	});
+				// }, 3000);
 			}),
 
 		showError: (error) => {
