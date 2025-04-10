@@ -119,14 +119,14 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 			info: {
 				date: new Date(),
 				preachTitle: '',
-				preacher: { isActive: false, value: '' },
-				preachText: { isActive: false, value: '' },
+				preacher: { isActive: true, value: '' },
+				preachText: { isActive: true, value: '' },
 				members: [],
 			},
 			content: {
 				iceBreaking: [],
 				sermonTopic: [],
-				prayerRequest: { isActive: false, answers: [] },
+				prayerRequest: { isActive: true, answers: [] },
 			},
 		});
 	},
