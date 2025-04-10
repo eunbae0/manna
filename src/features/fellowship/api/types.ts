@@ -52,8 +52,9 @@ export interface ClientFellowship extends BaseFellowship {
 }
 
 export type FellowshipMember = Partial<
-	Pick<ClientUser, 'id' | 'displayName' | 'photoUrl'>
+	Pick<ClientUser, 'displayName' | 'photoUrl'>
 > & {
+	id: string;
 	isLeader: boolean;
 };
 
