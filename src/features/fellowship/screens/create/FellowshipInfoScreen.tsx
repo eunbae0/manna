@@ -1,6 +1,5 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
-	Keyboard,
 	Pressable,
 	SafeAreaView,
 	ScrollView,
@@ -9,7 +8,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Box } from '#/components/ui/box';
-import { Button, ButtonText } from '@/components/common/button';
+import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import {
 	Checkbox,
 	CheckboxIndicator,
@@ -34,6 +33,8 @@ import {
 	Star,
 	Trash,
 	UserRound,
+	Search,
+	Users,
 } from 'lucide-react-native';
 import { useToastStore } from '@/store/toast';
 import type {
@@ -45,9 +46,13 @@ import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardD
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
+import { useGroup } from '@/features/home/group/hooks/useGroup';
+import type { GroupMember } from '@/api/group/types';
 
 export default function FellowshipInfoScreen() {
-	const { user } = useAuthStore();
+	const { user, currentGroup } = useAuthStore();
+	// useGroup 훅을 사용하여 그룹 정보를 가져옵니다
+	const { group, isLoading: isGroupsLoading } = useGroup(currentGroup?.groupId);
 
 	const {
 		BottomSheetContainer: CreateBottomSheetContainer,
@@ -96,34 +101,103 @@ export default function FellowshipInfoScreen() {
 			: info.members,
 	);
 	const [memberNameInput, setMemberNameInput] = useState('');
-
+	// 선택된 그룹 멤버를 저장하는 상태
+	const [selectedGroupMembers, setSelectedGroupMembers] = useState<
+		FellowshipMember[]
+	>([]);
 	const handleCloseMemberSheet = () => {
 		setSelectedMember(null);
 		handleCloseMember();
 	};
 
 	const handleOpenCreateMemberButton = () => {
-		// if (Keyboard.isVisible()) {
-		// 	Keyboard.dismiss();
-		// }
+		// 그룹 멤버 선택 바텀시트를 엽니다
 		handleOpenCreate();
-		// setTimeout(() => {
-		// 	addMemberInputRef.current?.focus();
-		// }, 200);
 	};
 
-	const handlePressAddMember = () => {
-		setMembers((prev) => [
-			...prev,
-			{
-				id: Math.random().toString(),
-				displayName: memberNameInput,
-				isLeader: false,
-			},
-		]);
-		setMemberNameInput('');
-		handleCloseCreate();
+	// 그룹 멤버를 선택하거나 선택 해제하는 함수
+	const toggleSelectGroupMember = (member: FellowshipMember) => {
+		setSelectedGroupMembers((prev) => {
+			// 이미 선택된 멤버인지 확인
+			const isAlreadySelected = prev.some((m) => m.id === member.id);
+
+			if (isAlreadySelected) {
+				// 이미 선택된 멤버라면 제거
+				return prev.filter((m) => m.id !== member.id);
+			}
+
+			// 선택되지 않은 멤버라면 추가
+			return [...prev, member];
+		});
 	};
+
+	// 선택된 그룹 멤버를 나눔 인원으로 추가하는 함수
+	const handlePressAddMember = () => {
+		// 선택된 그룹 멤버들을 나눔 인원으로 추가
+		const newMembers = selectedGroupMembers;
+
+		setMembers((prev) => {
+			// 중복 멤버 제거를 위해 ID 기준으로 필터링
+			const existingMemberIds = prev.map((m) => m.id);
+			const filteredNewMembers = newMembers.filter(
+				(m) => !existingMemberIds.includes(m.id),
+			);
+
+			return [...prev, ...filteredNewMembers];
+		});
+
+		// 선택된 멤버 초기화 및 모달 닫기
+		handleCloseCreate();
+		setSelectedGroupMembers([]);
+	};
+
+	// 직접 입력한 이름으로 멤버 추가
+	const handleAddMemberByName = () => {
+		if (!memberNameInput.trim()) return;
+
+		// 새로운 멤버 생성
+		const newMember: FellowshipMember = {
+			id: `custom-${Date.now()}`,
+			displayName: memberNameInput.trim(),
+			isLeader: false,
+		};
+
+		// 선택된 멤버로 추가 (리스트에 표시되도록)
+		setSelectedGroupMembers((prev) => [...prev, newMember]);
+
+		setMemberNameInput('');
+	};
+
+	// 그룹 멤버 리스트
+	const allFellowshipMembers = useMemo<FellowshipMember[]>(() => {
+		if (!group || !group.members) return [];
+
+		// 이미 추가된 멤버 ID 목록
+		const existingMemberIds = members.map((m) => m.id);
+
+		// 이미 추가된 멤버를 제외한 그룹 멤버 목록
+		const groupMembers = group.members
+			.filter((member) => !existingMemberIds.includes(member.id))
+			.map((member) =>
+				Object.assign(
+					{
+						id: member.id,
+						isLeader: false,
+					},
+					member.displayName ? { displayName: member.displayName } : {},
+					member.photoUrl ? { photoUrl: member.photoUrl } : {},
+				),
+			);
+
+		// 사용자가 직접 추가한 커스텀 멤버들은 selectedGroupMembers에 있지만 아직 members에는 없음
+		const customMembers = selectedGroupMembers.filter(
+			(member) =>
+				member.id.startsWith('custom-') &&
+				!existingMemberIds.includes(member.id),
+		);
+
+		return [...groupMembers, ...customMembers];
+	}, [group, members, selectedGroupMembers]);
 
 	const addMemberInputRef = useRef<TextInput>(null);
 
@@ -265,7 +339,7 @@ export default function FellowshipInfoScreen() {
 										</Text>
 									</HStack>
 									<ScrollView horizontal className="pl-2">
-										<HStack space="xl" className="items-start">
+										<HStack space="md" className="items-start">
 											{members.map((member) => (
 												<Pressable
 													key={member.id}
@@ -274,13 +348,11 @@ export default function FellowshipInfoScreen() {
 														handleOpenMember();
 													}}
 												>
-													<VStack space="xs" className="items-center">
-														<Avatar
-															size="lg"
-															type={member.isLeader ? 'leader' : 'member'}
-															label={member.displayName || ''}
-														/>
-													</VStack>
+													<Avatar
+														size="lg"
+														type={member.isLeader ? 'leader' : 'member'}
+														label={member.displayName || ''}
+													/>
 												</Pressable>
 											))}
 											<Pressable
@@ -388,26 +460,98 @@ export default function FellowshipInfoScreen() {
 					</VStack>
 				</MemberBottomSheetContainer>
 				<CreateBottomSheetContainer>
-					<VStack className="px-5 py-6 gap-10">
-						<VStack space="3xl">
+					<VStack className="px-5 py-6 gap-6">
+						<VStack space="lg">
 							<Heading size="xl">나눔 인원 추가하기</Heading>
-							<BottomSheetTextInput
-								// @ts-ignore
-								ref={addMemberInputRef}
-								placeholder="이름을 입력해주세요"
-								defaultValue={memberNameInput}
-								onChangeText={setMemberNameInput}
-								className={TEXT_INPUT_STYLE}
-							/>
+							{/* 그룹 멤버 목록 */}
+							<VStack className="px-2">
+								{isGroupsLoading ? (
+									<VStack className="items-center justify-center py-10">
+										<Text>그룹 멤버를 불러오는 중...</Text>
+									</VStack>
+								) : allFellowshipMembers.length === 0 ? (
+									<VStack className="items-center justify-center py-10">
+										<Icon
+											as={Users}
+											size="xl"
+											className="mb-2 text-typography-400"
+										/>
+										<Text className="text-typography-500">
+											추가할 수 있는 멤버가 없어요
+										</Text>
+									</VStack>
+								) : (
+									<ScrollView className="py-3 max-h-60">
+										{allFellowshipMembers.map((item) => (
+											<Pressable
+												onPress={() => toggleSelectGroupMember(item)}
+												className="py-3"
+												key={item.id}
+											>
+												<HStack className="items-center justify-between">
+													<HStack space="sm" className="items-center">
+														<Avatar
+															size="sm"
+															photoUrl={item.photoUrl || undefined}
+														/>
+														<Text size="md">{item.displayName}</Text>
+													</HStack>
+													{selectedGroupMembers.some(
+														(m) => m.id === item.id,
+													) && (
+														<Box className="bg-primary-500 rounded-full p-1 mr-2">
+															<Icon as={CheckIcon} size="sm" color="white" />
+														</Box>
+													)}
+												</HStack>
+											</Pressable>
+										))}
+									</ScrollView>
+								)}
+							</VStack>
+
+							{/* 직접 이름 입력 필드 */}
+							<VStack space="sm">
+								<Text size="sm" className="text-typography-600">
+									이름으로 추가
+								</Text>
+								<HStack className="items-center space-x-2">
+									<BottomSheetTextInput
+										placeholder="이름을 입력해주세요"
+										defaultValue={memberNameInput}
+										onChangeText={setMemberNameInput}
+										className={`flex-1 mr-2 ${TEXT_INPUT_STYLE}`}
+										// @ts-ignore
+										ref={addMemberInputRef}
+									/>
+									<Button
+										size="lg"
+										variant="icon"
+										onPress={handleAddMemberByName}
+										disabled={!memberNameInput.trim()}
+										animation={true}
+									>
+										<ButtonIcon as={Plus} size="sm" />
+									</Button>
+								</HStack>
+							</VStack>
+
+							{/* 추가 버튼 */}
+							<Button
+								size="lg"
+								rounded
+								action="primary"
+								onPress={handlePressAddMember}
+								disabled={selectedGroupMembers.length === 0}
+								animation={true}
+							>
+								<ButtonText>
+									{selectedGroupMembers.length > 0
+										? `${selectedGroupMembers.length}명 추가하기`
+										: '확인'}
+								</ButtonText>
+							</Button>
 						</VStack>
-						<Button
-							size="lg"
-							variant="solid"
-							className="rounded-xl"
-							onPress={handlePressAddMember}
-						>
-							<ButtonText>추가하기</ButtonText>
-						</Button>
 					</VStack>
 				</CreateBottomSheetContainer>
 				<DateBottomSheetContainer>
