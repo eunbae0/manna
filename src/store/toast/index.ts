@@ -55,7 +55,7 @@ export const useToastStore = create<ToastState & ToastActions>()(
 			});
 		},
 
-		showSuccess: (message, title = '성공') => {
+		showSuccess: (message, title) => {
 			set((state) => {
 				state.toasts.push({
 					id: Date.now().toString(),
@@ -66,7 +66,7 @@ export const useToastStore = create<ToastState & ToastActions>()(
 			});
 		},
 
-		showInfo: (message, title = '알림') => {
+		showInfo: (message, title) => {
 			set((state) => {
 				state.toasts.push({
 					id: Date.now().toString(),

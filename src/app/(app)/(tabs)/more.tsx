@@ -68,9 +68,8 @@ export default function TabFourScreen() {
 
 		if (status !== 'granted') {
 			showToast({
-				title: '권한 필요',
-				message: '사진 선택을 위해 갤러리 접근 권한이 필요합니다.',
-				type: 'error',
+				message: '사진 선택을 위해 갤러리 접근 권한이 필요해요.',
+				type: 'info',
 			});
 			return;
 		}
@@ -116,7 +115,6 @@ export default function TabFourScreen() {
 
 			handleClose();
 			showToast({
-				title: '프로필 업데이트',
 				message: '프로필이 업데이트되었습니다.',
 				type: 'success',
 			});
@@ -124,7 +122,6 @@ export default function TabFourScreen() {
 		onError: (error) => {
 			console.error('프로필 업데이트 오류:', error);
 			showToast({
-				title: '프로필 업데이트',
 				message: '프로필 업데이트에 실패했습니다. 다시 시도해주세요.',
 				type: 'error',
 			});

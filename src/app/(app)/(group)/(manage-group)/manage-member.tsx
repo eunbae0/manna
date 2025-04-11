@@ -120,7 +120,6 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 			updateGroupMember({ userId: selectedMember.userId, role: newRole });
 			handleCloseMemberManage();
 			showToast({
-				title: '역할이 변경되었어요',
 				message: `${selectedMember.displayName}님이 ${newRole === 'leader' ? '리더' : '그룹원'}로 변경되었어요.`,
 				type: 'success',
 			});
@@ -142,7 +141,6 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 					removeMember(selectedMember.userId);
 					handleCloseMemberManage();
 					showToast({
-						title: '그룹원이 내보내졌어요',
 						message: `${selectedMember.displayName}님이 그룹에서 내보내졌어요.`,
 						type: 'success',
 					});

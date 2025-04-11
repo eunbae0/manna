@@ -98,7 +98,7 @@ export default function FellowshipContent({
 		<>
 			<VStack space="lg" className="">
 				<HStack className="ml-2 items-center justify-between">
-					<Text size="xl" className="font-pretendard-semi-bold">
+					<Text size="xl" className="font-pretendard-semi-bold flex-1 mr-2">
 						{index !== undefined && `${index + 1}. `}
 						{question}
 					</Text>

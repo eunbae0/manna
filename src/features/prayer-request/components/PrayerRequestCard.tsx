@@ -174,7 +174,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 								: prayerRequest.member?.photoUrl || ''
 						}
 					/>
-					<VStack space="xs" className="flex-1">
+					<VStack className="flex-1">
 						<HStack className="items-center justify-between mr-1">
 							<HStack space="sm" className="items-center">
 								<Text size="lg" className="font-pretendard-bold">
@@ -192,7 +192,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 								</Button>
 							)}
 						</HStack>
-						<Text size="lg" className="">
+						<Text size="lg" className="pr-12">
 							{prayerRequest.value}
 						</Text>
 						<Pressable onPress={() => toggleLike()} className="ml-auto mr-4">
