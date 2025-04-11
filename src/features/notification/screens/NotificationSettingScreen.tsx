@@ -58,6 +58,7 @@ export default function NotificationSettingScreen() {
 
 	// 알림 설정 변경 함수
 	const handleNotificationChange = (
+		groupId: string,
 		groupName: string,
 		type: 'prayerRequest' | 'fellowship',
 		value: boolean,
@@ -71,24 +72,22 @@ export default function NotificationSettingScreen() {
 			},
 		}));
 
-		// 해당 그룹 ID 찾기
-		const group = groups.find((g) => g.groupName === groupName);
-		if (group && currentGroup?.groupId === group.id) {
-			// 현재 그룹이면 업데이트
-			updateUserGroupProfile(user?.id ?? '', {
-				...currentGroup,
-				notificationPreferences: {
-					fellowship:
-						type === 'fellowship'
-							? value
-							: (currentGroup.notificationPreferences?.fellowship ?? true),
-					prayerRequest:
-						type === 'prayerRequest'
-							? value
-							: (currentGroup.notificationPreferences?.prayerRequest ?? true),
-				},
-			});
-		}
+		const userGroup = user?.groups?.find((g) => g.groupId === groupId);
+		if (!userGroup) return;
+		// 현재 그룹이면 업데이트
+		updateUserGroupProfile(user?.id ?? '', {
+			...userGroup,
+			notificationPreferences: {
+				fellowship:
+					type === 'fellowship'
+						? value
+						: (userGroup.notificationPreferences?.fellowship ?? true),
+				prayerRequest:
+					type === 'prayerRequest'
+						? value
+						: (userGroup.notificationPreferences?.prayerRequest ?? true),
+			},
+		});
 	};
 
 	const renderSettingItems = () => {
@@ -125,6 +124,7 @@ export default function NotificationSettingScreen() {
 					}
 					onValueChange={(value) =>
 						handleNotificationChange(
+							selectedGroup.id,
 							selectedGroup.groupName,
 							'prayerRequest',
 							value,
@@ -140,6 +140,7 @@ export default function NotificationSettingScreen() {
 					}
 					onValueChange={(value) =>
 						handleNotificationChange(
+							selectedGroup.id,
 							selectedGroup.groupName,
 							'fellowship',
 							value,
