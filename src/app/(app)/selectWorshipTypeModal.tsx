@@ -280,14 +280,16 @@ export default function selectedWorshipTypeModal() {
 					)}
 				</VStack>
 
-				<Button
-					size="lg"
-					style={{ marginBottom: top + bottom + 12 }}
-					className="mx-6 mb-6 rounded-full"
-					onPress={() => router.back()}
-				>
-					<ButtonText>완료</ButtonText>
-				</Button>
+				<Box style={{ marginBottom: bottom + 12 }}>
+					<Button
+						size="lg"
+						className="mx-6 mb-6"
+						rounded
+						onPress={() => router.back()}
+					>
+						<ButtonText>완료</ButtonText>
+					</Button>
+				</Box>
 			</VStack>
 		</KeyboardAvoidingView>
 	);

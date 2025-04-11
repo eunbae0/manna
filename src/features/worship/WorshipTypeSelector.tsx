@@ -45,7 +45,7 @@ export function WorshipTypeSelector() {
 					>
 						<Text
 							size="md"
-							className={`px-2 py-1 rounded-full ${
+							className={`px-3 py-1 rounded-full ${
 								selectedWorshipType?.name === type.name
 									? 'bg-primary-100 text-primary-700'
 									: 'bg-background-0 text-typography-700'

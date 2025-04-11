@@ -96,7 +96,7 @@ export default function FellowshipContent({
 
 	return (
 		<>
-			<VStack space="lg" className="">
+			<VStack space="2xl" className="">
 				<HStack className="ml-2 items-center justify-between">
 					<Text size="xl" className="font-pretendard-semi-bold flex-1 mr-2">
 						{index !== undefined && `${index + 1}. `}
@@ -108,11 +108,11 @@ export default function FellowshipContent({
 						</Button>
 					)}
 				</HStack>
-				<VStack space="sm" className="pl-4">
+				<VStack space="md" className="pl-4">
 					{existedAnswers.map((answer) => (
 						<VStack key={answer.member.id}>
-							<HStack space="md" className="">
-								<HStack space="sm" className="items-center">
+							<HStack space="lg" className="items-start">
+								<HStack space="sm" className="items-center pt-2">
 									<Avatar size="xs" />
 									<Text
 										size="lg"
@@ -121,7 +121,9 @@ export default function FellowshipContent({
 										{answer.member.displayName}
 									</Text>
 								</HStack>
-								<Text size="lg">{answer.value}</Text>
+								<Text size="lg" className="flex-1 mr-4">
+									{answer.value}
+								</Text>
 							</HStack>
 						</VStack>
 					))}

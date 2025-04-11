@@ -152,10 +152,7 @@ export function CreatePrayerRequestScreen() {
 					</VStack>
 				</VStack>
 			</VStack>
-			<VStack
-				className="w-full px-6"
-				style={{ paddingBottom: top + bottom + 12 }}
-			>
+			<VStack className="w-full px-6" style={{ paddingBottom: top + bottom }}>
 				<Button
 					size="lg"
 					disabled={!prayerRequestText.trim() || isCreating || isUpdating}
