@@ -17,6 +17,8 @@ import { AlertCircle, CheckCircle, Info } from 'lucide-react-native';
 import { Text } from '#/components/ui/text';
 import { cn } from '@/shared/utils/cn';
 
+const TOAST_DURATION = 2 * 1000;
+
 // 토스트 타입에 따른 아이콘 및 색상 설정
 const getToastIconAndColor = (type: ToastType) => {
 	switch (type) {
@@ -122,7 +124,7 @@ const AnimatedToast = ({ toast, onRemove }: AnimatedToastProps) => {
 		// 3초 후 위로 사라지는 애니메이션
 		timerRef.current = setTimeout(() => {
 			dismissToast();
-		}, 3000);
+		}, TOAST_DURATION);
 
 		return () => {
 			if (timerRef.current) {

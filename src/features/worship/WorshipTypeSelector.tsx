@@ -57,13 +57,9 @@ export function WorshipTypeSelector() {
 				))}
 				<TouchableOpacity
 					onPress={() => router.push('/(app)/selectWorshipTypeModal')}
-					className="mr-1"
+					className="mr-1 px-2 py-1 rounded-full bg-background-0 text-typography-700"
 				>
-					<Icon
-						as={PlusIcon}
-						size="md"
-						className="px-4 py-3 rounded-full bg-background-0 text-typography-700"
-					/>
+					<Icon as={PlusIcon} size="md" />
 				</TouchableOpacity>
 			</HStack>
 		</ScrollView>

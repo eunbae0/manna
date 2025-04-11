@@ -56,11 +56,11 @@ export default function CreateScreen() {
 
 	const { createNote, isLoading } = useCreateNote({
 		onSuccess: (noteId) => {
-			showSuccess('노트가 생성되었어요.', '성공');
+			showSuccess('노트가 생성되었어요');
 			router.replace(`/(app)/(note)/${noteId}`);
 		},
 		onError: () => {
-			showSuccess('노트 생성에 실패했어요. 다시 시도해주세요.', '오류');
+			showSuccess('노트 생성에 실패했어요. 다시 시도해주세요');
 		},
 	});
 
@@ -73,7 +73,7 @@ export default function CreateScreen() {
 
 	const handleCreateNote = () => {
 		if (!title) {
-			showSuccess('설교 제목을 입력해주세요.', '알림');
+			showSuccess('설교 제목을 입력해주세요');
 			return;
 		}
 

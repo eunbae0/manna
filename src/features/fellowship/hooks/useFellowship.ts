@@ -63,29 +63,29 @@ export function useFellowship(id: string | undefined) {
 			queryClient.invalidateQueries({
 				queryKey: [FELLOWSHIP_QUERY_KEY, id],
 			});
-			showSuccess('나눔 노트가 업데이트되었어요.');
+			showSuccess('나눔 노트가 업데이트되었어요');
 		},
 		onError: (error) => {
 			console.error('Error updating fellowship:', error);
-			showError('나눔 노트 업데이트 중 오류가 발생했어요.');
+			showError('나눔 노트 업데이트 중 오류가 발생했어요');
 		},
 	});
 
 	const deleteFellowshipMutation = useMutation({
 		mutationFn: async () => {
-			if (!id) throw new Error('ID가 없습니다.');
+			if (!id) throw new Error('ID가 없습니다');
 			await deleteFellowship(currentGroup?.groupId || '', id);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: [FELLOWSHIP_QUERY_KEY, id],
 			});
-			showSuccess('나눔 노트가 삭제되었어요.');
+			showSuccess('나눔 노트가 삭제되었어요');
 			if (router.canGoBack()) router.back();
 		},
 		onError: (error) => {
 			console.error('Error deleting fellowship:', error);
-			showError('나눔 노트 삭제 중 오류가 발생했어요.');
+			showError('나눔 노트 삭제 중 오류가 발생했어요');
 		},
 	});
 

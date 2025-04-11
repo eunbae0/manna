@@ -51,7 +51,7 @@ export default function NoteScreen() {
 						<Heading size="2xl" className="pt-5">
 							설교 노트
 						</Heading>
-						<HStack space="md" className="pl-2 items-center">
+						<HStack space="lg" className="pl-2 items-center">
 							<Icon as={Filter} size="lg" className="text-typography-600" />
 							<WorshipTypeSelector />
 						</HStack>
