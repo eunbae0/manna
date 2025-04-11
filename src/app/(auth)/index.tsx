@@ -47,7 +47,7 @@ function AuthStepScreen() {
 			<VStack className="mx-4 items-center justify-between h-full gap-28 py-20">
 				<VStack space="sm" className="w-full">
 					<Heading size="2xl">소그룹</Heading>
-					<Text size="xl">우리 공동체 소그룹 나눔 도우미</Text>
+					<Text size="xl">크리스천을 위한 소그룹 나눔 플랫폼</Text>
 				</VStack>
 				<VStack space="xl" className="w-full">
 					<VStack space="3xl" className="w-full">
