@@ -179,7 +179,6 @@ export class FirestoreFellowshipService extends FirestoreService {
 			updateData[key] = value as FieldValue | Partial<unknown> | undefined;
 		}
 
-		console.log('Updating fellowship with data:', updateData);
 		await updateDoc(docRef, updateData);
 	}
 
