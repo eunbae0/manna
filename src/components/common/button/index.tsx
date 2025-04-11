@@ -312,6 +312,7 @@ export interface ButtonProps
 	 * @default true
 	 */
 	animation?: boolean;
+	innerClassName?: string;
 }
 
 const Button = React.forwardRef<View, ButtonProps>(
@@ -324,6 +325,7 @@ const Button = React.forwardRef<View, ButtonProps>(
 			variant = 'solid',
 			action = 'primary',
 			className = '',
+			innerClassName,
 			disabled = false,
 			animation = true,
 			...props
@@ -356,13 +358,18 @@ const Button = React.forwardRef<View, ButtonProps>(
 		return (
 			<Animated.View
 				style={animation ? animatedStyle : undefined}
-				className={cn(fullWidth ? 'w-full' : 'w-auto', className)}
+				className={cn(
+					fullWidth ? 'w-full' : 'w-auto',
+					rounded ? 'rounded-full' : '',
+					className,
+				)}
 			>
 				<Pressable
 					ref={ref}
 					className={cn(
 						buttonStyles({ rounded, fullWidth, size, variant, action }),
 						disabled && 'opacity-50',
+						innerClassName,
 					)}
 					disabled={disabled}
 					onPressIn={handlePressIn}
