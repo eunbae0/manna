@@ -8,6 +8,8 @@ import { router } from 'expo-router';
 import {
 	ActivityIndicator,
 	Keyboard,
+	Pressable,
+	ScrollView,
 	TextInput,
 	TouchableOpacity,
 	View,
@@ -18,12 +20,16 @@ import {
 	AlignJustify,
 	BookText,
 	Calendar,
+	CalendarCog,
+	Check,
+	ChevronUp,
 	Megaphone,
+	Plus,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
 import { useState, useEffect, useRef } from 'react';
 import { useToastStore } from '@/store/toast';
-import { Button, ButtonText } from '@/components/common/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { WorshipTypeSelector } from '@/features/worship/WorshipTypeSelector';
@@ -32,6 +38,16 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { useWorshipTypes } from '@/features/notes/hooks/useWorshipTypes';
 import { useCreateNote } from '@/features/notes/hooks/useCreateNote';
+import { useWorshipStore } from '@/store/worship';
+import { cn } from '@/shared/utils/cn';
+import type { ClientWorshipType } from '@/api/worship-types/types';
+import Animated, {
+	useSharedValue,
+	withTiming,
+	useAnimatedStyle,
+	interpolate,
+	Easing,
+} from 'react-native-reanimated';
 
 export default function CreateScreen() {
 	const insets = useSafeAreaInsets();
@@ -43,16 +59,12 @@ export default function CreateScreen() {
 	const [selectedDate, setSelectedDate] = useState(new Date());
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
-	const { showSuccess } = useToastStore();
+	const { showSuccess, showInfo } = useToastStore();
 	const titleRef = useRef<TextInput>(null);
 
-	// Use custom hooks for API operations
-	const {
-		worshipTypeNames,
-		defaultWorshipType,
-		isLoading: isLoadingWorshipTypes,
-	} = useWorshipTypes();
-	const [selectedWorshipType, setSelectedWorshipType] = useState('');
+	const { worshipTypes } = useWorshipStore();
+	const [selectedWorshipType, setSelectedWorshipType] =
+		useState<ClientWorshipType | null>(null);
 
 	const { createNote, isLoading } = useCreateNote({
 		onSuccess: (noteId) => {
@@ -64,16 +76,14 @@ export default function CreateScreen() {
 		},
 	});
 
-	// Set the selected worship type when data is loaded
-	useEffect(() => {
-		if (defaultWorshipType) {
-			setSelectedWorshipType(defaultWorshipType);
-		}
-	}, [defaultWorshipType]);
-
 	const handleCreateNote = () => {
 		if (!title) {
-			showSuccess('설교 제목을 입력해주세요');
+			showInfo('설교 제목을 입력해주세요');
+			return;
+		}
+
+		if (!selectedWorshipType) {
+			showInfo('예배 종류를 선택해주세요');
 			return;
 		}
 
@@ -100,106 +110,191 @@ export default function CreateScreen() {
 		}, 100);
 	}, []);
 
+	// 펼쳐짐/접힘 애니메이션
+	const [isFolded, setIsFolded] = useState(false);
+
+	const foldAnimation = useSharedValue(1); // 1: 펼쳐짐, 0: 접힘
+	const rotateAnimation = useSharedValue(0); // 0: 아래 화살표, 1: 위 화살표
+
+	const toggleFold = () => {
+		setIsFolded((prev) => !prev);
+		foldAnimation.value = withTiming(isFolded ? 1 : 0, {
+			duration: 300,
+			easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+		});
+		rotateAnimation.value = withTiming(isFolded ? 0 : 1, {
+			duration: 300,
+			easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+		});
+	};
+
+	const contentStyle = useAnimatedStyle(() => {
+		return {
+			opacity: foldAnimation.value,
+			maxHeight: interpolate(foldAnimation.value, [0, 1], [0, 500]),
+			height: 'auto',
+			gap: 16,
+			marginTop: interpolate(foldAnimation.value, [0, 1], [0, 16]),
+			flexDirection: 'column',
+		};
+	});
+
+	const iconStyle = useAnimatedStyle(() => {
+		return {
+			transform: [
+				{
+					rotate: `${interpolate(rotateAnimation.value, [0, 1], [0, 180])}deg`,
+				},
+			],
+		};
+	});
+
 	return (
 		<SafeAreaView className="h-full">
 			<KeyboardAvoidingView>
 				<VStack space="xl" className="h-full">
-					<Header
-						label="설교 노트 쓰기"
-						onPressBackButton={() => router.back()}
-					/>
+					<Header />
 					<KeyboardAwareScrollView keyboardShouldPersistTaps="always">
 						<VStack space="2xl" className="px-6 flex-1">
-							<TextInput
-								ref={titleRef}
-								placeholder="설교 제목"
-								className="text-3xl font-pretendard-bold"
-								value={title}
-								onChangeText={setTitle}
-							/>
-							<VStack space="lg">
-								<HStack space="sm" className="items-center w-full">
-									<HStack space="sm" className="w-1/4 items-center">
-										<Icon
-											as={Calendar}
-											size="lg"
-											className="text-typography-600"
-										/>
-										<Text size="lg" className="text-typography-600">
-											날짜
-										</Text>
-									</HStack>
-									<TouchableOpacity
-										className="w-full flex-row items-center"
-										onPress={handleOpenDate}
-									>
-										<Text size="lg" className="text-[16px] py-2 flex-1">
-											{selectedDate.toLocaleDateString('ko-KR', {
-												year: 'numeric',
-												month: 'long',
-												day: 'numeric',
-												weekday: 'long',
-											})}
-										</Text>
-									</TouchableOpacity>
+							<VStack space="md" className="w-full">
+								<TextInput
+									ref={titleRef}
+									placeholder="설교 제목"
+									className="text-3xl font-pretendard-bold"
+									value={title}
+									onChangeText={setTitle}
+								/>
+								<HStack className="items-center justify-between">
+									<Text size="lg" className="text-typography-500">
+										{selectedDate.toLocaleDateString('ko-KR', {
+											year: 'numeric',
+											month: 'long',
+											day: 'numeric',
+											weekday: 'long',
+										})}
+									</Text>
+									<Button size="sm" variant="icon" onPress={handleOpenDate}>
+										<ButtonIcon as={CalendarCog} />
+									</Button>
 								</HStack>
-								<HStack space="sm" className="items-center w-full">
-									<HStack space="sm" className="w-1/4 items-center">
+							</VStack>
+							<VStack
+								space="sm"
+								className="relative bg-gray-50 border border-gray-200 rounded-2xl px-4 py-5"
+							>
+								<Pressable
+									onPress={() => toggleFold()}
+									className="absolute top-5 right-4 z-10"
+								>
+									<HStack space="xs" className="items-center">
+										<Text size="md" className="text-typography-600">
+											{isFolded ? '펼치기' : '접기'}
+										</Text>
+										<Animated.View style={iconStyle}>
+											<Icon
+												as={ChevronUp}
+												size="md"
+												className="stroke-typography-600"
+											/>
+										</Animated.View>
+									</HStack>
+								</Pressable>
+								<VStack space="xs">
+									<HStack space="sm" className="items-center">
 										<Icon
 											as={BookText}
-											size="lg"
-											className="text-typography-600"
+											size="sm"
+											className="stroke-typography-600"
 										/>
-										<Text size="lg" className="text-typography-600">
+										<Text size="md" className="text-typography-600">
 											설교 본문
 										</Text>
 									</HStack>
 									<TextInput
 										placeholder="ex. 창세기 1장 1절"
-										className="w-full text-[16px]"
+										className="w-full text-xl ml-6"
 										value={scripture}
 										onChangeText={setScripture}
 									/>
-								</HStack>
-								<HStack space="sm" className="items-center w-full">
-									<HStack space="sm" className="w-1/4 items-center">
-										<Icon
-											as={AlignJustify}
-											size="lg"
-											className="text-typography-600"
+								</VStack>
+								<Animated.View style={contentStyle}>
+									<VStack space="xs">
+										<HStack space="sm" className="items-center">
+											<Icon
+												as={AlignJustify}
+												size="sm"
+												className="stroke-typography-600"
+											/>
+											<Text size="md" className="text-typography-600">
+												예배 종류
+											</Text>
+										</HStack>
+
+										<ScrollView
+											horizontal
+											showsHorizontalScrollIndicator={false}
+											contentContainerStyle={{ paddingRight: 20 }}
+											className="flex-grow ml-4"
+										>
+											<HStack space="sm" className="py-1 items-center">
+												{worshipTypes.map((type) => (
+													<TouchableOpacity
+														key={type.id.toString()}
+														onPress={() => setSelectedWorshipType(type)}
+														className={cn(
+															'mr-1 px-3 py-1 rounded-full',
+															selectedWorshipType?.id === type.id
+																? 'border border-primary-200 bg-primary-100 text-primary-700'
+																: 'border border-primary-200 text-typography-700',
+														)}
+													>
+														<HStack space="xs" className="items-center">
+															<Text size="md">{type.name}</Text>
+															{selectedWorshipType?.id === type.id && (
+																<Icon
+																	as={Check}
+																	size="xs"
+																	className="stroke-typography-700"
+																/>
+															)}
+														</HStack>
+													</TouchableOpacity>
+												))}
+												<TouchableOpacity
+													onPress={() =>
+														router.push('/(app)/selectWorshipTypeModal')
+													}
+													className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"
+												>
+													<Icon as={Plus} size="sm" className="" />
+												</TouchableOpacity>
+											</HStack>
+										</ScrollView>
+									</VStack>
+									<VStack space="xs">
+										<HStack space="sm" className="items-center">
+											<Icon
+												as={Megaphone}
+												size="sm"
+												className="stroke-typography-600"
+											/>
+											<Text size="md" className="text-typography-600">
+												설교자
+											</Text>
+										</HStack>
+
+										<TextInput
+											placeholder="비어 있음"
+											className="w-full text-xl ml-6"
+											value={preacher}
+											onChangeText={setPreacher}
 										/>
-										<Text size="lg" className="w-full text-typography-600">
-											예배 종류
-										</Text>
-									</HStack>
-									{isLoadingWorshipTypes ? (
-										<ActivityIndicator size="small" />
-									) : (
-										<WorshipTypeSelector />
-									)}
-								</HStack>
-								<HStack space="sm" className="items-center w-full">
-									<HStack space="sm" className="w-1/4 items-center">
-										<Icon
-											as={Megaphone}
-											size="lg"
-											className="text-typography-600"
-										/>
-										<Text size="lg" className="text-typography-600">
-											설교자
-										</Text>
-									</HStack>
-									<TextInput
-										placeholder="비어 있음"
-										className="w-full text-[16px]"
-										value={preacher}
-										onChangeText={setPreacher}
-									/>
-								</HStack>
+									</VStack>
+								</Animated.View>
 							</VStack>
 							<TextInput
 								placeholder="설교 노트를 적어보세요 ..."
-								className="text-xl flex-1"
+								className="text-xl flex-1 min-h-80"
 								multiline={true}
 								textAlignVertical="top"
 								value={content}
@@ -219,7 +314,7 @@ export default function CreateScreen() {
 				</VStack>
 
 				{/* Bottom Sheet for Date Picker */}
-				<BottomSheetContainer>
+				<BottomSheetContainer snapPoints={['50%']}>
 					<View className="items-center justify-center pt-5 pb-10">
 						<DateTimePicker
 							value={selectedDate}

@@ -127,7 +127,7 @@ export class FirestoreNotesService extends FirestoreWorshipTypesService {
 		const ref = this.getNotesCollectionRef();
 		const q = query(
 			ref,
-			where('worshipType', '==', worshipTypeName),
+			where('worshipType.name', '==', worshipTypeName),
 			orderBy('date', 'desc'),
 		);
 

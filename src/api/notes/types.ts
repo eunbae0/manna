@@ -1,4 +1,5 @@
 import type { Timestamp } from '@react-native-firebase/firestore';
+import type { ClientWorshipType } from '../worship-types/types';
 export interface Note {
 	id: string;
 	title: string;
@@ -6,7 +7,7 @@ export interface Note {
 	content: string;
 	sermon: string;
 	preacher: string;
-	worshipType: string;
+	worshipType: ClientWorshipType;
 }
 
 export interface NotesByMonth {

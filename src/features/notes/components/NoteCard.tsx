@@ -6,6 +6,7 @@ import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
 import type { Note } from '@/api/notes/types';
+import AnimatedPressable from '@/components/common/animated-pressable';
 
 export const NoteCard = ({
 	id,
@@ -14,7 +15,7 @@ export const NoteCard = ({
 	content,
 }: Omit<Note, 'worshipType' | 'sermon' | 'preacher'>) => {
 	return (
-		<Pressable onPress={() => router.push(`/(app)/(note)/${id}`)}>
+		<AnimatedPressable onPress={() => router.push(`/(app)/(note)/${id}`)}>
 			<Card className="bg-white rounded-2xl">
 				<VStack space="xs">
 					<Text size="xl" className="font-pretendard-semi-bold">
@@ -48,6 +49,6 @@ export const NoteCard = ({
 					</HStack>
 				</VStack>
 			</Card>
-		</Pressable>
+		</AnimatedPressable>
 	);
 };

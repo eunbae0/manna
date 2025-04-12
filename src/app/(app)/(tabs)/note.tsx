@@ -15,7 +15,6 @@ import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { useWorshipStore } from '@/store/worship';
 import { WorshipTypeSelector } from '@/features/worship/WorshipTypeSelector';
-import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
 import { useNotes } from '@/features/notes/hooks/useNotes';
 import { useWorshipTypes } from '@/features/notes/hooks/useWorshipTypes';
 

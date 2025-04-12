@@ -1,6 +1,7 @@
 import { createUserNote } from '@/api/notes';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { Timestamp } from '@react-native-firebase/firestore';
+import type { ClientWorshipType } from '@/api/worship-types/types';
 
 interface NoteData {
 	title: string;
@@ -8,7 +9,7 @@ interface NoteData {
 	content?: string;
 	sermon?: string;
 	preacher?: string;
-	worshipType: string;
+	worshipType: ClientWorshipType;
 }
 
 interface CreateNoteParams {

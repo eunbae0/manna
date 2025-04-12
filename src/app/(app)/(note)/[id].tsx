@@ -158,7 +158,7 @@ export default function NoteScreen() {
 			if (note.worshipType) {
 				// Find the matching worship type from the global store
 				const matchingType = worshipTypes.find(
-					(type) => type.name === note.worshipType,
+					(type) => type.name === note.worshipType.name,
 				);
 				if (matchingType) {
 					setSelectedWorshipType(matchingType);
@@ -296,8 +296,14 @@ export default function NoteScreen() {
 											}
 										/>
 									) : (
-										<Text size="xl" className="ml-6">
-											{note.sermon}
+										<Text
+											size="xl"
+											className={cn(
+												'ml-6',
+												!note.sermon && 'text-typography-500',
+											)}
+										>
+											{note.sermon || '비어 있음'}
 										</Text>
 									)}
 								</VStack>
@@ -389,8 +395,14 @@ export default function NoteScreen() {
 												}
 											/>
 										) : (
-											<Text size="xl" className="ml-6">
-												{note.preacher}
+											<Text
+												size="xl"
+												className={cn(
+													'ml-6',
+													!note.preacher && 'text-typography-500',
+												)}
+											>
+												{note.preacher || '비어 있음'}
 											</Text>
 										)}
 									</VStack>
@@ -399,7 +411,7 @@ export default function NoteScreen() {
 							{isEditing ? (
 								<TextInput
 									placeholder="설교 노트를 적어보세요..."
-									className="text-xl flex-1 h-full pb-6"
+									className="text-xl flex-1 h-full pb-6 min-h-80"
 									multiline={true}
 									textAlignVertical="top"
 									scrollEnabled={false}
