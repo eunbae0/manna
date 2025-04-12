@@ -108,6 +108,7 @@ export const useBottomSheet = ({ onOpen, onClose }: Props = {}) => {
 				backdropComponent={BottomSheetBackdropComponent}
 				enablePanDownToClose={true}
 				enableBlurKeyboardOnGesture={true}
+				onDismiss={onClose}
 				handleIndicatorStyle={{ backgroundColor: 'lightgray', width: 36 }}
 				keyboardBehavior="interactive"
 				{...props}
