@@ -47,8 +47,8 @@ export function WorshipTypeSelector() {
 							size="md"
 							className={`px-3 py-1 rounded-full ${
 								selectedWorshipType?.name === type.name
-									? 'bg-primary-100 text-primary-700'
-									: 'bg-background-0 text-typography-700'
+									? 'border border-primary-200 bg-primary-100 text-primary-700'
+									: 'border border-background-0 bg-background-0 text-typography-700'
 							}`}
 						>
 							{type.name}
