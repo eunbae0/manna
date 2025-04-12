@@ -3,16 +3,17 @@ import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import { cn } from '@/shared/utils/cn';
 import { UserRound } from 'lucide-react-native';
-import { Image, Pressable, View, type ViewProps } from 'react-native';
+import { Pressable, View, type ViewProps } from 'react-native';
+import { Image } from 'expo-image';
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
 	withSpring,
 } from 'react-native-reanimated';
 import { VStack } from '#/components/ui/vstack';
+import { IMAGE_BLUR_HASH } from '@/shared/constants';
 
 export type AvatarProps = {
-	variant?: 'default' | 'image';
 	type?: 'leader' | 'member';
 	size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 	photoUrl?: string;
@@ -22,7 +23,6 @@ export type AvatarProps = {
 const Avatar = forwardRef<View, AvatarProps>(
 	(
 		{
-			variant = 'default',
 			type = 'member',
 			size = 'md',
 			photoUrl,
@@ -45,11 +45,21 @@ const Avatar = forwardRef<View, AvatarProps>(
 					)}
 					{...props}
 				>
-					{variant === 'default' && (
-						<Icon as={UserRound} size={size} className="stroke-white" />
-					)}
-					{variant === 'image' && photoUrl && (
-						<Image source={{ uri: photoUrl }} style={{ width, height }} />
+					{photoUrl ? (
+						<Image
+							source={{ uri: photoUrl }}
+							style={{ width, height, borderRadius: 100 }}
+							contentFit="cover"
+							placeholder={{ blurhash: IMAGE_BLUR_HASH }}
+							transition={200}
+						/>
+					) : (
+						<Icon
+							as={UserRound}
+							// TODO: Change to Custom Icon Component
+							size={size === '3xl' || size === '2xl' ? 'xl' : size}
+							className="stroke-white"
+						/>
 					)}
 					{type === 'leader' && (
 						<View className="absolute bottom-0 right-0 bg-yellow-400 w-3 h-3 border-2 border-white rounded-full" />

@@ -185,9 +185,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 				updateUserProfile: async (userId, user) => {
 					if (!get().user) return;
 					try {
-						await updateUser(userId, user);
+						const updatedUser = await updateUser(userId, user);
 						set((state) => ({
-							user: state.user ? { ...state.user, ...user } : null,
+							user: state.user ? { ...state.user, ...updatedUser } : null,
 						}));
 					} catch (error) {
 						throw handleApiError(error);

@@ -215,7 +215,7 @@ function HomeHeader({ groups }: Props) {
 												<HStack space="md" className="items-center">
 													<Avatar
 														size="sm"
-														photoUrl={member.photoUrl || undefined}
+														photoUrl={member.photoUrl ?? undefined}
 													/>
 													<VStack>
 														<Text

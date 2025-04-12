@@ -8,12 +8,13 @@ import {
 	collection,
 	getDocs,
 	deleteDoc,
-	addDoc,
 } from '@react-native-firebase/firestore';
 
 import { createUserWithServerTimestamp } from '@/shared/utils/auth';
 import type { ClientUser, FirestoreUser, UserGroup } from './types';
 import type { AuthType } from '@/shared/types';
+import { FIREBASE_STORAGE_IMAGE_BASE_URL } from '@/shared/constants/firebase';
+import { uploadImageAsync } from '@/shared/utils/firebase';
 
 /**
  * Firestore service for user profile operations
@@ -97,10 +98,19 @@ export class FirestoreUserService {
 	async updateUser(
 		userId: string,
 		userData: Partial<FirestoreUser>,
-	): Promise<void> {
+	): Promise<Partial<FirestoreUser>> {
 		const userRef = doc(database, this.usersCollectionPath, userId);
 
+		if (userData.photoUrl) {
+			const path = `${FIREBASE_STORAGE_IMAGE_BASE_URL}/user/${userId}/profileImage`;
+
+			const photoUrl = await uploadImageAsync(userData.photoUrl, path);
+			userData.photoUrl = photoUrl;
+		}
+
 		await updateDoc(userRef, userData);
+
+		return userData;
 	}
 
 	/**

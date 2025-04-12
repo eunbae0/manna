@@ -4,13 +4,15 @@ import type {
 	AuthType,
 	UpdateUserInput,
 	UserGroup,
+	FirestoreUser,
 } from '@/shared/types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { generateRandomDisplayName } from '@/shared/utils/nameGenerator';
-import { getGroupService } from '../group/service';
 import type { UpdateGroupMemberInput } from '../group/types';
-import { fetchGroupsByUserId, updateGroupMember } from '../group';
+import { fetchGroupsByUserId } from '../group';
+import { database } from '@/firebase/config';
+import { writeBatch, doc } from '@react-native-firebase/firestore';
 
 /**
  * 사용자 프로필 조회
@@ -61,13 +63,16 @@ export const createUser = withApiLogging(
  * 사용자 프로필 업데이트
  */
 export const updateUser = withApiLogging(
-	async (userId: string, data: UpdateUserInput): Promise<void> => {
+	async (
+		userId: string,
+		data: UpdateUserInput,
+	): Promise<Partial<FirestoreUser>> => {
 		try {
 			const userService = getUserService();
 
-			await userService.updateUser(userId, data);
+			const updatedUserData = await userService.updateUser(userId, data);
 
-			if (!data.displayName && !data.photoUrl) return;
+			if (!data.displayName && !data.photoUrl) return updatedUserData;
 			const processedData = Object.assign(
 				{ id: userId },
 				data.displayName ? { displayName: data.displayName } : {},
@@ -75,9 +80,24 @@ export const updateUser = withApiLogging(
 			) satisfies UpdateGroupMemberInput;
 
 			const groups = await fetchGroupsByUserId(userId);
-			for (const group of groups) {
-				await updateGroupMember(group.id, processedData);
+
+			// 여러 그룹의 멤버 정보를 batch로 한 번에 업데이트
+			if (groups.length > 0) {
+				const batch = writeBatch(database);
+
+				for (const group of groups) {
+					const memberRef = doc(
+						database,
+						`groups/${group.id}/members/${userId}`,
+					);
+					batch.update(memberRef, processedData);
+				}
+
+				// batch 커밋
+				await batch.commit();
 			}
+
+			return updatedUserData;
 		} catch (error) {
 			throw handleApiError(error);
 		}

@@ -3,17 +3,14 @@ import {
 	Linking,
 	Platform,
 	Pressable,
-	type PressableProps,
 	ScrollView,
-	TextInput,
 	View,
 } from 'react-native';
 import Constants from 'expo-constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { type Href, router } from 'expo-router';
+import { router } from 'expo-router';
 
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { Divider } from '#/components/ui/divider';
 import { Heading } from '#/components/ui/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
@@ -41,7 +38,7 @@ import {
 	Image,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { APP_STORE_URL, PLAY_STORE_URL } from '@/shared/constants/app';
 import { useToastStore } from '@/store/toast';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
@@ -49,9 +46,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { ListItem } from '@/shared/components/ListItem';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateUser } from '@/api/user';
 import { RefreshCw } from 'lucide-react-native';
 import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();
@@ -60,7 +57,19 @@ export default function TabFourScreen() {
 
 	const [displayName, setDisplayName] = useState(user?.displayName || '');
 	const [photoUrl, setPhotoUrl] = useState(user?.photoUrl || '');
-	// isUpdating 상태는 React Query의 isPending으로 대체
+
+	// 프로필 정보가 변경되었는지 확인
+	const isDisplayNameChanged = useMemo(() => {
+		return displayName !== (user?.displayName || '');
+	}, [displayName, user?.displayName]);
+
+	const isPhotoUrlChanged = useMemo(() => {
+		return photoUrl !== (user?.photoUrl || '');
+	}, [photoUrl, user?.photoUrl]);
+
+	const isProfileChanged = useMemo(() => {
+		return isDisplayNameChanged || isPhotoUrlChanged;
+	}, [isDisplayNameChanged, isPhotoUrlChanged]);
 
 	const pickImage = async () => {
 		// Request permission
@@ -68,7 +77,7 @@ export default function TabFourScreen() {
 
 		if (status !== 'granted') {
 			showToast({
-				message: '사진 선택을 위해 갤러리 접근 권한이 필요해요.',
+				message: '사진 선택을 위해 갤러리 접근 권한이 필요해요',
 				type: 'info',
 			});
 			return;
@@ -79,12 +88,21 @@ export default function TabFourScreen() {
 			mediaTypes: ['images'],
 			allowsEditing: true,
 			aspect: [1, 1],
-			quality: 0.7,
+			quality: 0.5,
+			selectionLimit: 1,
 		});
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
 			const selectedImageUri = result.assets[0].uri;
-			setPhotoUrl(selectedImageUri);
+			const context = ImageManipulator.ImageManipulator.manipulate(
+				selectedImageUri,
+			).resize({ width: 128, height: 128 });
+			const image = await context.renderAsync();
+			const _result = await image.saveAsync({
+				format: ImageManipulator.SaveFormat.WEBP,
+			});
+
+			setPhotoUrl(_result.uri);
 		}
 	};
 
@@ -92,11 +110,23 @@ export default function TabFourScreen() {
 	const queryClient = useQueryClient();
 	const updateProfileMutation = useMutation({
 		mutationFn: async () => {
-			if (!user?.id) throw new Error('사용자 정보가 없습니다.');
-			return await updateUser(user.id, {
-				displayName,
-				photoUrl,
-			});
+			if (!user?.id) throw new Error('사용자 정보가 없습니다');
+
+			// 변경된 필드만 포함하여 업데이트
+			const updateData: Partial<{
+				displayName: string;
+				photoUrl: string;
+			}> = {};
+
+			if (isDisplayNameChanged) {
+				updateData.displayName = displayName;
+			}
+
+			if (isPhotoUrlChanged) {
+				updateData.photoUrl = photoUrl;
+			}
+
+			return await updateUserProfile(user.id, updateData);
 		},
 		onSuccess: () => {
 			if (!user?.id) return;
@@ -107,29 +137,23 @@ export default function TabFourScreen() {
 				refetchType: 'all',
 			});
 
-			// Zustand 스토어 업데이트
-			updateUserProfile(user.id, {
-				displayName,
-				photoUrl,
-			});
-
 			handleClose();
 			showToast({
-				message: '프로필이 업데이트되었습니다.',
+				message: '프로필이 업데이트되었습니다',
 				type: 'success',
 			});
 		},
 		onError: (error) => {
 			console.error('프로필 업데이트 오류:', error);
 			showToast({
-				message: '프로필 업데이트에 실패했습니다. 다시 시도해주세요.',
+				message: '프로필 업데이트에 실패했습니다. 다시 시도해주세요',
 				type: 'error',
 			});
 		},
 	});
 
 	const handleupdateUserProfile = () => {
-		if (!user?.id) return;
+		if (!user?.id || !isProfileChanged) return;
 		updateProfileMutation.mutate();
 	};
 
@@ -241,7 +265,7 @@ export default function TabFourScreen() {
 							rounded
 							action="primary"
 							onPress={handleupdateUserProfile}
-							disabled={updateProfileMutation.isPending}
+							disabled={updateProfileMutation.isPending || !isProfileChanged}
 							animation={true}
 						>
 							{updateProfileMutation.isPending && (
