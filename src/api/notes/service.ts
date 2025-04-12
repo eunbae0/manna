@@ -8,6 +8,7 @@ import {
 	where,
 	addDoc,
 	updateDoc,
+	deleteDoc,
 	type FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
@@ -179,5 +180,15 @@ export class FirestoreNotesService extends FirestoreWorshipTypesService {
 		};
 
 		await updateDoc(noteRef, noteToUpdate);
+	}
+
+	/**
+	 * Deletes a note by ID
+	 * @param noteId ID of the note to delete
+	 * @returns Promise that resolves when the note is deleted
+	 */
+	async deleteNote(noteId: Note['id']): Promise<void> {
+		const noteRef = doc(this.getNotesCollectionRef(), noteId);
+		await deleteDoc(noteRef);
 	}
 }

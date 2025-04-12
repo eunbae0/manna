@@ -167,3 +167,27 @@ export const fetchUserNotesByWorshipType = withApiLogging(
 	'fetchUserNotesByWorshipType',
 	'notes',
 );
+
+/**
+ * Deletes a sermon note for the currently logged-in user
+ * @param noteId ID of the note to delete
+ */
+export const deleteUserNote = withApiLogging(
+	async (noteId: string): Promise<void> => {
+		try {
+			await notesService.deleteNote(noteId);
+
+			// Pass metadata to the withApiLogging wrapper via context
+			const context = {
+				noteId,
+			};
+
+			// We need to return void, but we can still pass the context
+			Object.assign({}, { __logContext: context });
+		} catch (error) {
+			throw handleApiError(error, 'deleteUserNote', 'notes');
+		}
+	},
+	'deleteUserNote',
+	'notes',
+);

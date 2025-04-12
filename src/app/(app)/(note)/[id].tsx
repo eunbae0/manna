@@ -25,6 +25,7 @@ import Header from '@/components/common/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import {
 	ActivityIndicator,
+	Alert,
 	Pressable,
 	ScrollView,
 	TextInput,
@@ -39,9 +40,11 @@ import {
 	CalendarCog,
 	Check,
 	ChevronUp,
+	Delete,
 	Edit,
 	Megaphone,
 	Plus,
+	Trash,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
 import { useEffect, useState } from 'react';
@@ -53,7 +56,11 @@ import type { Note } from '@/api/notes/types';
 import { useWorshipStore } from '@/store/worship';
 import type { ClientWorshipType } from '@/api/worship-types/types';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
-import { useNote, useUpdateNote } from '@/features/notes/hooks/useNote';
+import {
+	useNote,
+	useUpdateNote,
+	useDeleteNote,
+} from '@/features/notes/hooks/useNote';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Keyboard } from 'react-native';
 import Animated, {
@@ -167,6 +174,35 @@ export default function NoteScreen() {
 		}
 	}, [note, worshipTypes]);
 
+	const { deleteNote, isLoading: isDeleting } = useDeleteNote(id, {
+		onSuccess: () => {
+			showSuccess('노트가 삭제되었어요');
+			router.canGoBack() ? router.back() : router.replace('/(app)/(tabs)/note');
+		},
+		onError: () => {
+			showSuccess('노트 삭제에 실패했어요. 다시 시도해주세요');
+		},
+	});
+
+	const handleDeleteNote = () => {
+		Alert.alert(
+			'노트 삭제',
+			'정말 이 노트를 삭제할까요?',
+			[
+				{
+					text: '취소',
+					style: 'cancel',
+				},
+				{
+					text: '삭제',
+					style: 'destructive',
+					onPress: () => deleteNote(),
+				},
+			],
+			{ cancelable: true },
+		);
+	};
+
 	const handleEditButton = () => {
 		toggleFold(false);
 		setIsEditing(true);
@@ -188,7 +224,7 @@ export default function NoteScreen() {
 		});
 	};
 
-	const isLoading = isLoadingNote || isUpdating;
+	const isLoading = isLoadingNote || isUpdating || isDeleting;
 
 	if (isLoadingNote || !note) {
 		return <ActivityIndicator />;
@@ -202,15 +238,21 @@ export default function NoteScreen() {
 	return (
 		<SafeAreaView className="h-full">
 			<VStack space="xl" className="h-full">
-				<Header className="justify-between pr-3">
-					<Button
-						variant="icon"
-						onPress={() =>
-							isEditing ? handleUpdateNoteSubmit() : handleEditButton()
-						}
-					>
-						{isEditing ? <ButtonIcon as={Check} /> : <ButtonIcon as={Edit} />}
-					</Button>
+				<Header className="justify-between pr-4">
+					{isEditing ? (
+						<Button variant="icon" onPress={handleUpdateNoteSubmit}>
+							<ButtonIcon as={Check} />
+						</Button>
+					) : (
+						<HStack space="xs">
+							<Button variant="icon" onPress={handleEditButton}>
+								<ButtonIcon as={Edit} />
+							</Button>
+							<Button variant="icon" onPress={() => handleDeleteNote()}>
+								<ButtonIcon as={Trash} className="stroke-red-600" />
+							</Button>
+						</HStack>
+					)}
 				</Header>
 				<KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
 					<VStack space="2xl" className="px-6 flex-1">
