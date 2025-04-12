@@ -12,11 +12,14 @@ import { useGroups } from '@/features/home/group/hooks/useGroups';
 import type { ClientGroup } from '@/api/group/types';
 import { cn } from '@/shared/utils/cn';
 import type { UserGroup } from '@/shared/types';
+import { NotificationPermissionBanner } from '../components/NotificationPermissionBanner';
+import { useNotificationPermission } from '../hooks/useNotificationPermission';
 
 type TabType = Pick<ClientGroup, 'id' | 'groupName'>;
 
 export default function NotificationSettingScreen() {
-	const { user, currentGroup, updateUserGroupProfile } = useAuthStore();
+	const { user, updateUserGroupProfile } = useAuthStore();
+	const { hasPermission } = useNotificationPermission();
 
 	const { groups, isLoading, error } = useGroups(
 		user?.groups?.map((g) => g.groupId) ?? [],
@@ -153,7 +156,10 @@ export default function NotificationSettingScreen() {
 
 	return (
 		<SafeAreaView className="flex-1 bg-background">
-			<Header label="알림 설정" />
+			<VStack space="xl">
+				<Header label="알림 설정" />
+				{hasPermission === false && <NotificationPermissionBanner />}
+			</VStack>
 			<VStack className="py-6">
 				<ScrollView
 					horizontal
