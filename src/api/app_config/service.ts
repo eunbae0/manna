@@ -18,7 +18,7 @@ export class FirestoreAppConfigService {
 	}
 
 	private constructor() {}
-	private readonly collectionPath: string = 'appConfig';
+	private readonly collectionPath: string = 'AppConfig';
 	private readonly versionDocPath: string = 'version';
 
 	/**

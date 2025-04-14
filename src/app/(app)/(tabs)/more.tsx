@@ -48,7 +48,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react-native';
 import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { getCurrentAppVersion } from '@/shared/utils/getCurrentAppVersion';
+import { getCurrentAppVersion } from '@/shared/utils/app_version';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();

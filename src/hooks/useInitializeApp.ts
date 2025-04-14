@@ -5,9 +5,12 @@ import { useEffect, useState } from 'react';
 import { getAnalytics } from '@react-native-firebase/analytics';
 import { setUserId, logEvent, AnalyticsEvents } from '@/utils/analytics';
 import { getToken } from '@/api/messaging';
+import { useAppVersionCheck } from './useAppVersionCheck';
 
 export function useInitializeApp() {
 	const [loaded, setIsLoaded] = useState(false);
+	// 앱 버전 체크 초기화
+	const { isLoading: versionCheckLoading } = useAppVersionCheck();
 
 	const [fontLoaded, error] = useFonts({
 		PretendardExtraBold: require('../../assets/fonts/Pretendard-ExtraBold.otf'),
@@ -40,12 +43,14 @@ export function useInitializeApp() {
 	}, [onAuthStateChanged]);
 
 	useEffect(() => {
-		if (!fontLoaded || authLoading) return;
+		if (!fontLoaded || authLoading || versionCheckLoading) return;
 
 		// Initialize analytics when app is loaded
 		initAnalytics();
 		setIsLoaded(true);
-	}, [fontLoaded, authLoading]);
+	}, [fontLoaded, authLoading, versionCheckLoading]);
+
+	// 앱 버전 체크 상태도 로딩에 포함
 
 	return [loaded, isAuthenticated];
 }
