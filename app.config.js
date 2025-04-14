@@ -3,8 +3,9 @@ const IS_DEVELOPMENT = process.env.APP_VARIANT === 'development';
 export default {
 	expo: {
 		name: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
+		displayName: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
 		slug: 'so-group',
-		scheme: IS_DEVELOPMENT ? 'sogroup-development' : 'sogroup',
+		scheme: ['sogroup-development', 'sogroup'],
 		version: '1.0.0',
 		orientation: 'portrait',
 		icon: './assets/images/icons/icon.png',
@@ -20,7 +21,7 @@ export default {
 				ITSAppUsesNonExemptEncryption: false,
 				CADisableMinimumFrameDurationOnPhone: true,
 				UIBackgroundModes: ['remote-notification'],
-				CFBundleDisplayName: '소그룹',
+				CFBundleDisplayName: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
 				CFBundleVersion: '1.0.0',
 			},
 			entitlements: {
