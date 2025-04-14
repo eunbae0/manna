@@ -15,7 +15,9 @@
 			"infoPlist": {
 				"ITSAppUsesNonExemptEncryption": false,
 				"CADisableMinimumFrameDurationOnPhone": true,
-				"UIBackgroundModes": ["remote-notification"]
+				"UIBackgroundModes": ["remote-notification"],
+				"CFBundleDisplayName": "소그룹",
+				"CFBundleVersion": "1.0.0"
 			},
 			"entitlements": {
 				"com.apple.developer.applesignin": ["Default"],
@@ -23,7 +25,8 @@
 			},
 			"usesAppleSignIn": true,
 			"googleServicesFile": "./assets/google/GoogleService-Info.plist",
-			"appleTeamId": "AQ62DT56AM"
+			"appleTeamId": "AQ62DT56AM",
+			"version": "1.0.0"
 		},
 		"android": {
 			"adaptiveIcon": {
