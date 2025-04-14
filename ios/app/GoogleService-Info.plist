@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>892340902140-luknmdbkvedhndta0r65ajru5ltimfob.apps.googleusercontent.com</string>
+	<string>892340902140-qae6dfj75ok3qmkenn4u4rnmt4dsl03b.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob</string>
+	<string>com.googleusercontent.apps.892340902140-qae6dfj75ok3qmkenn4u4rnmt4dsl03b</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDBlLTib8KaW21OVc6ofUDHL94qK1OXjKU</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.eunbae.sogroup</string>
+	<string>com.eunbae.sogroup.development</string>
 	<key>PROJECT_ID</key>
 	<string>so-group</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:892340902140:ios:972fe15f8fff95ec62df79</string>
+	<string>1:892340902140:ios:a0ebcc4df8c21d3562df79</string>
 	<key>DATABASE_URL</key>
 	<string>https://so-group-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>

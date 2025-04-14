@@ -29,20 +29,26 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>sogroup</string>
-          <string>com.eunbae.sogroup</string>
+          <string>sogroup-development</string>
+          <string>com.eunbae.sogroup.development</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.892340902140-qae6dfj75ok3qmkenn4u4rnmt4dsl03b</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+sogroup-development</string>
         </array>
       </dict>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
           <string>com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob</string>
-        </array>
-      </dict>
-      <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>exp+so-group</string>
         </array>
       </dict>
     </array>

@@ -25,9 +25,9 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="sogroup"/>
+        <data android:scheme="sogroup-development"/>
         <data android:scheme="com.eunbae.sogroup"/>
-        <data android:scheme="exp+so-group"/>
+        <data android:scheme="exp+sogroup-development"/>
       </intent-filter>
     </activity>
   </application>

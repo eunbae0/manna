@@ -1,0 +1,107 @@
+const IS_DEVELOPMENT = process.env.APP_VARIANT === 'development';
+
+export default {
+	expo: {
+		name: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
+		slug: 'so-group',
+		scheme: IS_DEVELOPMENT ? 'sogroup-development' : 'sogroup',
+		version: '1.0.0',
+		orientation: 'portrait',
+		icon: './assets/images/icons/icon.png',
+		userInterfaceStyle: 'automatic',
+		newArchEnabled: true,
+		ios: {
+			associatedDomains: ['applinks:so-group.firebaseapp.com'],
+			supportsTablet: true,
+			bundleIdentifier: IS_DEVELOPMENT
+				? 'com.eunbae.sogroup.development'
+				: 'com.eunbae.sogroup',
+			infoPlist: {
+				ITSAppUsesNonExemptEncryption: false,
+				CADisableMinimumFrameDurationOnPhone: true,
+				UIBackgroundModes: ['remote-notification'],
+				CFBundleDisplayName: '소그룹',
+				CFBundleVersion: '1.0.0',
+			},
+			entitlements: {
+				'com.apple.developer.applesignin': ['Default'],
+				'aps-environment': 'production',
+			},
+			usesAppleSignIn: true,
+			googleServicesFile: IS_DEVELOPMENT
+				? './assets/google/development/GoogleService-Info.plist'
+				: './assets/google/GoogleService-Info.plist',
+			appleTeamId: 'AQ62DT56AM',
+			version: '1.0.0',
+		},
+		android: {
+			adaptiveIcon: {
+				foregroundImage: './assets/images/icons/play_store_icon.png',
+				backgroundColor: '#FEF8EF',
+			},
+			package: 'com.eunbae.sogroup',
+			googleServicesFile: './assets/google/GoogleService-Info.plist',
+		},
+		web: {
+			bundler: 'metro',
+			output: 'static',
+		},
+		plugins: [
+			'expo-router',
+			'expo-apple-authentication',
+			[
+				'expo-splash-screen',
+				{
+					image: './assets/images/icons/play_store_icon.png',
+					imageWidth: 200,
+					resizeMode: 'contain',
+					backgroundColor: '#FEF8EF',
+				},
+			],
+			[
+				'@react-native-google-signin/google-signin',
+				{
+					iosUrlScheme:
+						'com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob',
+				},
+			],
+			['expo-image-picker'],
+			'@react-native-firebase/app',
+			'@react-native-firebase/auth',
+			'@react-native-firebase/crashlytics',
+			[
+				'expo-build-properties',
+				{
+					ios: {
+						useFrameworks: 'static',
+					},
+				},
+			],
+			[
+				'@sentry/react-native/expo',
+				{
+					organization: 'so-group',
+					project: 'react-native',
+				},
+			],
+			[
+				'expo-dev-client',
+				{
+					addGeneratedScheme: !!IS_DEVELOPMENT,
+				},
+			],
+		],
+		experiments: {
+			typedRoutes: true,
+		},
+		extra: {
+			router: {
+				origin: false,
+			},
+			eas: {
+				projectId: '51171585-bdaa-4cf9-ba68-b03a6e850062',
+			},
+		},
+		owner: 'eunbae',
+	},
+};

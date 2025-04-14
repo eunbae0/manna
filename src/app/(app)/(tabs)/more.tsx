@@ -6,7 +6,6 @@ import {
 	ScrollView,
 	View,
 } from 'react-native';
-import Constants from 'expo-constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
@@ -49,6 +48,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react-native';
 import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { getCurrentAppVersion } from '@/shared/utils/getCurrentAppVersion';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();
@@ -298,7 +298,7 @@ function openAppStoreReview() {
 }
 
 function VersionListItem() {
-	const version = Constants.expoConfig?.version || '1.0.0';
+	const version = getCurrentAppVersion();
 	return (
 		<HStack className="items-center justify-between py-4">
 			<HStack space="md" className="items-center">
