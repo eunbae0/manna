@@ -11,16 +11,14 @@ export default function HomeScreen() {
 	const isGroup = (user?.groups?.length ?? 0) > 0;
 
 	return (
-		<SafeAreaView>
-			<VStack space="xl" className="h-full">
-				{isGroup ? (
-					<>
-						<GroupHomeScreen />
-					</>
-				) : (
-					<EmptyGroupHomeScreen />
-				)}
-			</VStack>
+		<SafeAreaView className="relative h-full">
+			{isGroup ? (
+				<>
+					<GroupHomeScreen />
+				</>
+			) : (
+				<EmptyGroupHomeScreen />
+			)}
 		</SafeAreaView>
 	);
 }

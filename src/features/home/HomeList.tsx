@@ -84,14 +84,14 @@ function HomeList() {
 	// }, [recentFellowships, isLoadingRecentFellowships]);
 
 	return (
-		<VStack className="relative h-full">
+		<VStack className="relative flex-1">
 			{/* <CalendarTab
 				date={date}
 				onDateChange={handleDateChange}
 			/> */}
 			<ScrollView
 				showsVerticalScrollIndicator={false}
-				className="h-full flex-1"
+				className=""
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -144,7 +144,7 @@ function HomeList() {
 			<Button
 				size="lg"
 				variant="solid"
-				className="absolute bottom-16 right-4"
+				className="absolute bottom-5 right-4"
 				rounded
 				onPress={handlePressAddButton}
 			>
