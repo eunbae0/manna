@@ -40,7 +40,6 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 		})),
 	completeOnboarding: async (id: string) => {
 		const { displayName } = get().userData;
-		console.log(displayName);
 		try {
 			await updateUser(id, {
 				displayName,

@@ -89,7 +89,6 @@ export default function FellowshipInfoScreen() {
 		isActive:
 			info.preacher?.isActive === undefined ? true : info.preacher?.isActive,
 	});
-	console.log(info.preachText?.isActive, info.preacher?.isActive, preacher);
 	const [selectedMember, setSelectedMember] = useState<FellowshipMember | null>(
 		null,
 	);
@@ -564,7 +563,7 @@ export default function FellowshipInfoScreen() {
 							</VStack>
 						</VStack>
 					</CreateBottomSheetContainer>
-					<DateBottomSheetContainer>
+					<DateBottomSheetContainer snapPoints={['50%']}>
 						<Box className="items-center justify-center pt-4 pb-10">
 							<DateTimePicker
 								value={selectedDate}
