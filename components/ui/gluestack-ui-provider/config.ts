@@ -5,11 +5,11 @@ export const config = {
 	light: vars({
 		"--color-primary-0": "254 249 242",
 		"--color-primary-50": "254 248 240",
-		"--color-primary-100": "254 248 239",
+		"--color-primary-100": "254 248 239", // #fef8ef
 		"--color-primary-200": "248 206 136",
 		"--color-primary-300": "242 165 32",
 		"--color-primary-400": "148 100 18",
-		"--color-primary-500": "54 35 3",
+		"--color-primary-500": "54 35 3", // #362303
 		"--color-primary-600": "43 28 2",
 		"--color-primary-700": "32 21 2",
 		"--color-primary-800": "21 14 1",

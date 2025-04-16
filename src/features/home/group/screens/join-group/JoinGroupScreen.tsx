@@ -97,13 +97,7 @@ export default function JoinGroupScreen() {
 				</VStack>
 			</VStack>
 			<VStack space="lg" className={cn('mx-4', isOnboarding ? 'mb-4' : 'mb-8')}>
-				<Button
-					className="rounded-full"
-					size="lg"
-					disabled={!code}
-					onPress={handlePressJoin}
-					rounded
-				>
+				<Button size="lg" disabled={!code} onPress={handlePressJoin} rounded>
 					<ButtonText>그룹 참여하기</ButtonText>
 				</Button>
 				{isOnboarding && (

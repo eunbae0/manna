@@ -129,7 +129,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 
 					<VStack space="lg" className="mb-4">
 						<Button
-							className="rounded-full"
+							rounded
 							size="lg"
 							disabled={!selectedOption}
 							onPress={() => handlePressOption(selectedOption)}

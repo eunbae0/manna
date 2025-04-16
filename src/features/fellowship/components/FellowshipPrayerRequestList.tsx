@@ -92,7 +92,7 @@ export default forwardRef<
 
 	return (
 		<>
-			<VStack space="sm" className="pl-2">
+			<VStack space="xl" className="pl-2">
 				{existedAnswers.map((answer) => (
 					<VStack key={answer.member.id}>
 						<HStack space="md" className="">

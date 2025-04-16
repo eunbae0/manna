@@ -12,11 +12,7 @@ export default function NotFoundScreen() {
 			<Stack.Screen options={{ title: 'Oops!' }} />
 			<VStack space="4xl" className="px-4 mt-8 justify-between">
 				<Heading size="xl">해당 페이지는 존재하지 않습니다</Heading>
-				<Button
-					size="lg"
-					className="rounded-full"
-					onPress={() => router.replace('/')}
-				>
+				<Button size="lg" rounded onPress={() => router.replace('/')}>
 					<ButtonText>홈으로 돌아가기</ButtonText>
 				</Button>
 			</VStack>

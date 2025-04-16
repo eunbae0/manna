@@ -84,14 +84,14 @@ function HomeList() {
 	// }, [recentFellowships, isLoadingRecentFellowships]);
 
 	return (
-		<VStack className="relative flex-1">
+		<>
 			{/* <CalendarTab
 				date={date}
 				onDateChange={handleDateChange}
 			/> */}
 			<ScrollView
 				showsVerticalScrollIndicator={false}
-				className=""
+				className="h-full"
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -106,7 +106,7 @@ function HomeList() {
 					<HomeSkeleton />
 				) : (
 					<VStack space="2xl" className="pt-2 pb-4">
-						<VStack space="lg">
+						<VStack space="lg" className="pt-2">
 							<NotificationBox
 								title={'새 나눔이 등록되었어요'}
 								description={'클릭해서 나눔에 참여해보세요'}
@@ -151,7 +151,7 @@ function HomeList() {
 				<ButtonText>작성하기</ButtonText>
 				<ButtonIcon as={Pen} />
 			</Button>
-		</VStack>
+		</>
 	);
 }
 

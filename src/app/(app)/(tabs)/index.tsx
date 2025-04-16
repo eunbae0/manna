@@ -11,7 +11,7 @@ export default function HomeScreen() {
 	const isGroup = (user?.groups?.length ?? 0) > 0;
 
 	return (
-		<SafeAreaView className="relative h-full">
+		<SafeAreaView className="h-full">
 			{isGroup ? (
 				<>
 					<GroupHomeScreen />

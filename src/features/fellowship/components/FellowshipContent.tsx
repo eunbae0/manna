@@ -111,8 +111,8 @@ export default function FellowshipContent({
 				<VStack space="md" className="pl-4">
 					{existedAnswers.map((answer) => (
 						<VStack key={answer.member.id}>
-							<HStack space="lg" className="items-start">
-								<HStack space="sm" className="items-center pt-2">
+							<HStack space="lg" className="items-center">
+								<HStack space="sm" className="items-center">
 									<Avatar size="xs" />
 									<Text
 										size="lg"

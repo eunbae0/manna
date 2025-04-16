@@ -34,7 +34,7 @@ function OnboardingScreen() {
 		}
 	};
 	return (
-		<SafeAreaView className="flex-1">
+		<SafeAreaView className="h-full">
 			<KeyboardAvoidingView>{switchStep(currentStep)}</KeyboardAvoidingView>
 		</SafeAreaView>
 	);

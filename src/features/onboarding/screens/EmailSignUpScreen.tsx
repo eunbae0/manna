@@ -10,7 +10,6 @@ import { VStack } from '#/components/ui/vstack';
 import { Input, InputField } from '#/components/ui/input';
 import { Icon } from '#/components/ui/icon';
 import { Eye, EyeOff } from 'lucide-react-native';
-import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { Pressable, type TextInput } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
@@ -97,120 +96,117 @@ export default function EmailSignUpScreen() {
 
 	return (
 		<KeyboardDismissView>
-			<KeyboardAvoidingView>
-				<VStack className="h-full">
-					<Header
-						label="이메일로 회원가입"
-						onPressBackButton={() =>
-							router.canGoBack() ? router.back() : router.push('/(auth)')
-						}
-					/>
-					<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
-						<VStack space="4xl">
-							<VStack space="sm">
-								<Heading size="xl">이메일과 비밀번호를 입력해주세요</Heading>
-								<Text size="lg" className="text-gray-500">
-									비밀번호는 특수문자가 포함된 6자 이상이어야 해요
-								</Text>
-							</VStack>
-							<VStack space="lg" reversed={false}>
-								<VStack>
-									<Input variant="rounded" size="xl" className="rounded-2xl">
-										<InputField
-											placeholder="이메일"
-											keyboardType="email-address"
-											autoCapitalize="none"
-											value={email}
-											onChangeText={setEmail}
-											autoFocus
-										/>
-									</Input>
-								</VStack>
-								<VStack>
-									<Input variant="rounded" size="xl" className="rounded-2xl">
-										<InputField
-											placeholder="비밀번호"
-											secureTextEntry={!showPassword}
-											value={password}
-											onChangeText={(text) => {
-												setPassword(text);
-												if (text.length > 0) {
-													validatePasswordFormat(text);
-													validatePasswords(text);
-												}
-											}}
-											autoCapitalize="none"
-										/>
-										<Pressable
-											onPress={() => setShowPassword(!showPassword)}
-											className="absolute right-3 top-3"
-										>
-											<Icon as={showPassword ? Eye : EyeOff} size="md" />
-										</Pressable>
-									</Input>
-									{passwordFormatError ? (
-										<Text className="text-red-500">{passwordFormatError}</Text>
-									) : null}
-								</VStack>
-								<VStack>
-									<Input variant="rounded" size="xl" className="rounded-2xl">
-										<InputField
-											placeholder="비밀번호 확인"
-											secureTextEntry={!showConfirmPassword}
-											value={confirmPassword}
-											onChangeText={(text) => {
-												setConfirmPassword(text);
-												if (text.length > 0) {
-													validatePasswords(text);
-												}
-											}}
-											autoCapitalize="none"
-										/>
-										<Pressable
-											onPress={() =>
-												setShowConfirmPassword(!showConfirmPassword)
-											}
-											className="absolute right-3 top-3"
-										>
-											<Icon as={showConfirmPassword ? Eye : EyeOff} size="md" />
-										</Pressable>
-									</Input>
-									{passwordError ? (
-										<Text className="text-red-500">{passwordError}</Text>
-									) : null}
-								</VStack>
-							</VStack>
+			<VStack className="h-full">
+				<Header
+					label="이메일로 회원가입"
+					onPressBackButton={() =>
+						router.canGoBack() ? router.back() : router.push('/(auth)')
+					}
+				/>
+				<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
+					<VStack space="4xl">
+						<VStack space="sm">
+							<Heading size="xl">이메일과 비밀번호를 입력해주세요</Heading>
+							<Text size="lg" className="text-gray-500">
+								비밀번호는 특수문자가 포함된 6자 이상이어야 해요
+							</Text>
 						</VStack>
-						<VStack space="lg">
-							<HStack space="sm" className="w-full justify-center items-center">
-								<Text>이미 계정이 있으신가요?</Text>
-								<Pressable
-									onPress={() => {
-										setStep('EMAIL_SIGN_IN');
-									}}
-								>
-									<Text>로그인하기</Text>
-								</Pressable>
-							</HStack>
-							<Button
-								onPress={handleSignUp}
-								disabled={
-									email.length === 0 ||
-									password.length === 0 ||
-									confirmPassword.length === 0 ||
-									isLoading ||
-									Boolean(passwordError) ||
-									Boolean(passwordFormatError)
-								}
-								size="xl"
-								className="rounded-full mb-5"
-							>
-								<ButtonText>{isLoading ? '가입 중...' : '가입하기'}</ButtonText>
-							</Button>
+						<VStack space="lg" reversed={false}>
+							<VStack>
+								<Input variant="rounded" size="xl" className="rounded-2xl">
+									<InputField
+										placeholder="이메일"
+										keyboardType="email-address"
+										autoCapitalize="none"
+										value={email}
+										onChangeText={setEmail}
+										autoFocus
+									/>
+								</Input>
+							</VStack>
+							<VStack>
+								<Input variant="rounded" size="xl" className="rounded-2xl">
+									<InputField
+										placeholder="비밀번호"
+										secureTextEntry={!showPassword}
+										value={password}
+										onChangeText={(text) => {
+											setPassword(text);
+											if (text.length > 0) {
+												validatePasswordFormat(text);
+												validatePasswords(text);
+											}
+										}}
+										autoCapitalize="none"
+									/>
+									<Pressable
+										onPress={() => setShowPassword(!showPassword)}
+										className="absolute right-3 top-3"
+									>
+										<Icon as={showPassword ? Eye : EyeOff} size="md" />
+									</Pressable>
+								</Input>
+								{passwordFormatError ? (
+									<Text className="text-red-500">{passwordFormatError}</Text>
+								) : null}
+							</VStack>
+							<VStack>
+								<Input variant="rounded" size="xl" className="rounded-2xl">
+									<InputField
+										placeholder="비밀번호 확인"
+										secureTextEntry={!showConfirmPassword}
+										value={confirmPassword}
+										onChangeText={(text) => {
+											setConfirmPassword(text);
+											if (text.length > 0) {
+												validatePasswords(text);
+											}
+										}}
+										autoCapitalize="none"
+									/>
+									<Pressable
+										onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+										className="absolute right-3 top-3"
+									>
+										<Icon as={showConfirmPassword ? Eye : EyeOff} size="md" />
+									</Pressable>
+								</Input>
+								{passwordError ? (
+									<Text className="text-red-500">{passwordError}</Text>
+								) : null}
+							</VStack>
 						</VStack>
 					</VStack>
+					<VStack space="lg">
+						<HStack space="sm" className="w-full justify-center items-center">
+							<Text>이미 계정이 있으신가요?</Text>
+							<Pressable
+								onPress={() => {
+									setStep('EMAIL_SIGN_IN');
+								}}
+							>
+								<Text>로그인하기</Text>
+							</Pressable>
+						</HStack>
+						<Button
+							onPress={handleSignUp}
+							disabled={
+								email.length === 0 ||
+								password.length === 0 ||
+								confirmPassword.length === 0 ||
+								isLoading ||
+								Boolean(passwordError) ||
+								Boolean(passwordFormatError)
+							}
+							size="xl"
+							className="mb-5"
+							rounded
+						>
+							<ButtonText>{isLoading ? '가입 중...' : '가입하기'}</ButtonText>
+						</Button>
+					</VStack>
 				</VStack>
-			</KeyboardAvoidingView>
+			</VStack>
 		</KeyboardDismissView>
 	);
 }
