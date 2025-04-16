@@ -55,7 +55,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import type { Note } from '@/api/notes/types';
 import { useWorshipStore } from '@/store/worship';
 import type { ClientWorshipType } from '@/api/worship-types/types';
-import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import {
 	useNote,
 	useUpdateNote,
@@ -71,7 +70,7 @@ import Animated, {
 	Easing,
 } from 'react-native-reanimated';
 import { cn } from '@/shared/utils/cn';
-import { Box } from '#/components/ui/box';
+import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 
 export default function NoteScreen() {
 	const insets = useSafeAreaInsets();
@@ -220,7 +219,10 @@ export default function NoteScreen() {
 			content: editableNote.content || '',
 			sermon: editableNote.sermon || '',
 			preacher: editableNote.preacher || '',
-			worshipType: selectedWorshipType?.name || '',
+			worshipType: {
+				name: selectedWorshipType?.name || '',
+				id: selectedWorshipType?.id || '',
+			},
 		});
 	};
 
@@ -236,203 +238,105 @@ export default function NoteScreen() {
 	};
 
 	return (
-		<SafeAreaView className="h-full">
-			<VStack space="xl" className="h-full">
-				<Header className="justify-between pr-4">
-					{isEditing ? (
-						<Button variant="icon" onPress={handleUpdateNoteSubmit}>
-							<ButtonIcon as={Check} />
-						</Button>
-					) : (
-						<HStack space="xs">
-							<Button variant="icon" onPress={handleEditButton}>
-								<ButtonIcon as={Edit} />
+		<>
+			<SafeAreaView className="h-full">
+				<VStack space="xl" className="h-full">
+					<Header className="justify-between pr-4">
+						{isEditing ? (
+							<Button variant="icon" onPress={handleUpdateNoteSubmit}>
+								<ButtonIcon as={Check} />
 							</Button>
-							<Button variant="icon" onPress={() => handleDeleteNote()}>
-								<ButtonIcon as={Trash} className="stroke-red-600" />
-							</Button>
-						</HStack>
-					)}
-				</Header>
-				<KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
-					<VStack space="2xl" className="px-6 flex-1">
-						<VStack space="md" className="w-full">
-							{isEditing ? (
-								<TextInput
-									placeholder="설교 제목"
-									className="text-3xl font-pretendard-bold text-typography-700"
-									value={editableNote.title}
-									onChangeText={(title) =>
-										setEditableNote((prev: Partial<Note>) => ({
-											...prev,
-											title,
-										}))
-									}
-								/>
-							) : (
-								<Text className="text-3xl font-pretendard-bold text-typography-900">
-									{note.title}
-								</Text>
-							)}
-							<HStack className="items-center justify-between">
-								<Text size="lg" className="text-typography-500">
-									{selectedDate.toLocaleDateString('ko-KR', {
-										year: 'numeric',
-										month: 'long',
-										day: 'numeric',
-										weekday: 'long',
-									})}
-								</Text>
-								{isEditing && (
-									<Button size="sm" variant="icon" onPress={handlePressDate}>
-										<ButtonIcon as={CalendarCog} />
-									</Button>
-								)}
+						) : (
+							<HStack space="xs">
+								<Button variant="icon" onPress={handleEditButton}>
+									<ButtonIcon as={Edit} />
+								</Button>
+								<Button variant="icon" onPress={() => handleDeleteNote()}>
+									<ButtonIcon as={Trash} className="stroke-red-600" />
+								</Button>
 							</HStack>
-						</VStack>
-						<VStack className="gap-10">
-							<VStack
-								space="sm"
-								className="relative bg-gray-50 border border-gray-200 rounded-2xl px-4 py-5"
-							>
-								{!isEditing && (
-									<Pressable
-										onPress={() => toggleFold()}
-										className="absolute top-5 right-4 z-10"
-									>
-										<HStack space="xs" className="items-center">
-											<Text size="md" className="text-typography-600">
-												{isFolded ? '펼치기' : '접기'}
-											</Text>
-											<Animated.View style={iconStyle}>
-												<Icon
-													as={ChevronUp}
-													size="md"
-													className="stroke-typography-600"
-												/>
-											</Animated.View>
-										</HStack>
-									</Pressable>
+						)}
+					</Header>
+					<KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
+						<VStack space="2xl" className="px-6 flex-1">
+							<VStack space="md" className="w-full">
+								{isEditing ? (
+									<TextInput
+										placeholder="설교 제목"
+										className="text-3xl font-pretendard-bold text-typography-700"
+										value={editableNote.title}
+										onChangeText={(title) =>
+											setEditableNote((prev: Partial<Note>) => ({
+												...prev,
+												title,
+											}))
+										}
+									/>
+								) : (
+									<Text className="text-3xl font-pretendard-bold text-typography-900">
+										{note.title}
+									</Text>
 								)}
-								<VStack space="xs">
-									<HStack space="sm" className="items-center">
-										<Icon
-											as={BookText}
-											size="sm"
-											className="stroke-typography-600"
-										/>
-										<Text size="md" className="text-typography-600">
-											설교 본문
-										</Text>
-									</HStack>
-									{isEditing ? (
-										<TextInput
-											placeholder="ex. 창세기 1장 1절"
-											className="w-full text-xl ml-6"
-											value={editableNote.sermon}
-											onChangeText={(sermon) =>
-												setEditableNote((prev) => ({
-													...prev,
-													sermon,
-												}))
-											}
-										/>
-									) : (
-										<Text
-											size="xl"
-											className={cn(
-												'ml-6',
-												!note.sermon && 'text-typography-500',
-											)}
-										>
-											{note.sermon || '비어 있음'}
-										</Text>
+								<HStack className="items-center justify-between">
+									<Text size="lg" className="text-typography-500">
+										{selectedDate.toLocaleDateString('ko-KR', {
+											year: 'numeric',
+											month: 'long',
+											day: 'numeric',
+											weekday: 'long',
+										})}
+									</Text>
+									{isEditing && (
+										<Button size="sm" variant="icon" onPress={handlePressDate}>
+											<ButtonIcon as={CalendarCog} />
+										</Button>
 									)}
-								</VStack>
-								<Animated.View style={contentStyle}>
-									<VStack space="xs">
-										<HStack space="sm" className="items-center">
-											<Icon
-												as={AlignJustify}
-												size="sm"
-												className="stroke-typography-600"
-											/>
-											<Text size="md" className="text-typography-600">
-												예배 종류
-											</Text>
-										</HStack>
-										{isEditing ? (
-											<ScrollView
-												horizontal
-												showsHorizontalScrollIndicator={false}
-												contentContainerStyle={{ paddingRight: 20 }}
-												className="flex-grow ml-4"
-											>
-												<HStack space="sm" className="py-1 items-center">
-													{worshipTypes.map((type) => (
-														<TouchableOpacity
-															key={type.id.toString()}
-															onPress={() => setSelectedWorshipType(type)}
-															className={cn(
-																'mr-1 px-3 py-1 rounded-full',
-																selectedWorshipType?.id === type.id
-																	? 'border border-primary-200 bg-primary-100 text-primary-700'
-																	: 'border border-primary-200 text-typography-700',
-															)}
-														>
-															<HStack space="xs" className="items-center">
-																<Text size="md">{type.name}</Text>
-																{selectedWorshipType?.id === type.id && (
-																	<Icon
-																		as={Check}
-																		size="xs"
-																		className="stroke-typography-700"
-																	/>
-																)}
-															</HStack>
-														</TouchableOpacity>
-													))}
-													<TouchableOpacity
-														onPress={() =>
-															router.push('/(app)/selectWorshipTypeModal')
-														}
-														className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"
-													>
-														<Icon as={Plus} size="sm" className="" />
-													</TouchableOpacity>
-												</HStack>
-											</ScrollView>
-										) : (
-											<HStack space="sm" className="ml-4 py-1">
-												<Text
-													size="md"
-													className="px-3 py-1 rounded-full bg-primary-100 border border-primary-200 text-primary-700"
-												>
-													{selectedWorshipType?.name || '예배 종류 없음'}
+								</HStack>
+							</VStack>
+							<VStack className="gap-10">
+								<VStack
+									space="sm"
+									className="relative bg-gray-50 border border-gray-200 rounded-2xl px-4 py-5"
+								>
+									{!isEditing && (
+										<Pressable
+											onPress={() => toggleFold()}
+											className="absolute top-5 right-4 z-10"
+										>
+											<HStack space="xs" className="items-center">
+												<Text size="md" className="text-typography-600">
+													{isFolded ? '펼치기' : '접기'}
 												</Text>
+												<Animated.View style={iconStyle}>
+													<Icon
+														as={ChevronUp}
+														size="md"
+														className="stroke-typography-600"
+													/>
+												</Animated.View>
 											</HStack>
-										)}
-									</VStack>
+										</Pressable>
+									)}
 									<VStack space="xs">
 										<HStack space="sm" className="items-center">
 											<Icon
-												as={Megaphone}
+												as={BookText}
 												size="sm"
 												className="stroke-typography-600"
 											/>
 											<Text size="md" className="text-typography-600">
-												설교자
+												설교 본문
 											</Text>
 										</HStack>
 										{isEditing ? (
 											<TextInput
-												placeholder="비어 있음"
+												placeholder="ex. 창세기 1장 1절"
 												className="w-full text-xl ml-6"
-												value={editableNote.preacher}
-												onChangeText={(preacher) =>
+												value={editableNote.sermon}
+												onChangeText={(sermon) =>
 													setEditableNote((prev) => ({
 														...prev,
-														preacher,
+														sermon,
 													}))
 												}
 											/>
@@ -441,69 +345,169 @@ export default function NoteScreen() {
 												size="xl"
 												className={cn(
 													'ml-6',
-													!note.preacher && 'text-typography-500',
+													!note.sermon && 'text-typography-500',
 												)}
 											>
-												{note.preacher || '비어 있음'}
+												{note.sermon || '비어 있음'}
 											</Text>
 										)}
 									</VStack>
-								</Animated.View>
+									<Animated.View style={contentStyle}>
+										<VStack space="xs">
+											<HStack space="sm" className="items-center">
+												<Icon
+													as={AlignJustify}
+													size="sm"
+													className="stroke-typography-600"
+												/>
+												<Text size="md" className="text-typography-600">
+													예배 종류
+												</Text>
+											</HStack>
+											{isEditing ? (
+												<ScrollView
+													horizontal
+													showsHorizontalScrollIndicator={false}
+													contentContainerStyle={{ paddingRight: 20 }}
+													className="flex-grow ml-4"
+												>
+													<HStack space="sm" className="py-1 items-center">
+														{worshipTypes.map((type) => (
+															<TouchableOpacity
+																key={type.id.toString()}
+																onPress={() => setSelectedWorshipType(type)}
+																className={cn(
+																	'mr-1 px-3 py-1 rounded-full',
+																	selectedWorshipType?.id === type.id
+																		? 'border border-primary-200 bg-primary-100 text-primary-700'
+																		: 'border border-primary-200 text-typography-700',
+																)}
+															>
+																<HStack space="xs" className="items-center">
+																	<Text size="md">{type.name}</Text>
+																	{selectedWorshipType?.id === type.id && (
+																		<Icon
+																			as={Check}
+																			size="xs"
+																			className="stroke-typography-700"
+																		/>
+																	)}
+																</HStack>
+															</TouchableOpacity>
+														))}
+														<TouchableOpacity
+															onPress={() =>
+																router.push('/(app)/selectWorshipTypeModal')
+															}
+															className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"
+														>
+															<Icon as={Plus} size="sm" className="" />
+														</TouchableOpacity>
+													</HStack>
+												</ScrollView>
+											) : (
+												<HStack space="sm" className="ml-4 py-1">
+													<Text
+														size="md"
+														className="px-3 py-1 rounded-full bg-primary-100 border border-primary-200 text-primary-700"
+													>
+														{selectedWorshipType?.name || '예배 종류 없음'}
+													</Text>
+												</HStack>
+											)}
+										</VStack>
+										<VStack space="xs">
+											<HStack space="sm" className="items-center">
+												<Icon
+													as={Megaphone}
+													size="sm"
+													className="stroke-typography-600"
+												/>
+												<Text size="md" className="text-typography-600">
+													설교자
+												</Text>
+											</HStack>
+											{isEditing ? (
+												<TextInput
+													placeholder="비어 있음"
+													className="w-full text-xl ml-6"
+													value={editableNote.preacher}
+													onChangeText={(preacher) =>
+														setEditableNote((prev) => ({
+															...prev,
+															preacher,
+														}))
+													}
+												/>
+											) : (
+												<Text
+													size="xl"
+													className={cn(
+														'ml-6',
+														!note.preacher && 'text-typography-500',
+													)}
+												>
+													{note.preacher || '비어 있음'}
+												</Text>
+											)}
+										</VStack>
+									</Animated.View>
+								</VStack>
+								{isEditing ? (
+									<TextInput
+										placeholder="설교 노트를 적어보세요..."
+										className="text-xl flex-1 h-full pb-6 min-h-80"
+										multiline={true}
+										textAlignVertical="top"
+										scrollEnabled={false}
+										value={editableNote.content}
+										onChangeText={(content) =>
+											setEditableNote((prev: Partial<Note>) => ({
+												...prev,
+												content,
+											}))
+										}
+									/>
+								) : (
+									<Text className="text-xl flex-1 pb-6">{note.content}</Text>
+								)}
 							</VStack>
-							{isEditing ? (
-								<TextInput
-									placeholder="설교 노트를 적어보세요..."
-									className="text-xl flex-1 h-full pb-6 min-h-80"
-									multiline={true}
-									textAlignVertical="top"
-									scrollEnabled={false}
-									value={editableNote.content}
-									onChangeText={(content) =>
-										setEditableNote((prev: Partial<Note>) => ({
-											...prev,
-											content,
-										}))
-									}
-								/>
-							) : (
-								<Text className="text-xl flex-1 pb-6">{note.content}</Text>
-							)}
 						</VStack>
-					</VStack>
-				</KeyboardAwareScrollView>
-				{isEditing && (
-					<Button
-						size="lg"
-						className="mx-6 mb-6"
-						onPress={handleUpdateNoteSubmit}
-						rounded
-						disabled={isLoading}
+					</KeyboardAwareScrollView>
+					{isEditing && (
+						<Button
+							size="lg"
+							className="mx-6 mb-6"
+							onPress={handleUpdateNoteSubmit}
+							rounded
+							disabled={isLoading}
+						>
+							<ButtonText>노트 수정하기</ButtonText>
+						</Button>
+					)}
+				</VStack>
+				{/* Bottom Sheet for Date Picker */}
+				<BottomSheetContainer snapPoints={['50%']}>
+					<View
+						className="items-center justify-center pt-5 pb-10"
+						style={{ marginBottom: insets.bottom }}
 					>
-						<ButtonText>노트 수정하기</ButtonText>
-					</Button>
-				)}
-			</VStack>
-
-			{/* Bottom Sheet for Date Picker */}
-			<BottomSheetContainer snapPoints={['50%']}>
-				<View
-					className="items-center justify-center pt-5 pb-10"
-					style={{ marginBottom: insets.bottom }}
-				>
-					<DateTimePicker
-						value={selectedDate}
-						mode="date"
-						display="inline"
-						locale="ko"
-						onChange={(event, date) => {
-							if (date) {
-								setSelectedDate(date);
-								handleClose();
-							}
-						}}
-					/>
-				</View>
-			</BottomSheetContainer>
-		</SafeAreaView>
+						<DateTimePicker
+							value={selectedDate}
+							mode="date"
+							display="inline"
+							locale="ko"
+							onChange={(event, date) => {
+								if (date) {
+									setSelectedDate(date);
+									handleClose();
+								}
+							}}
+						/>
+					</View>
+				</BottomSheetContainer>
+			</SafeAreaView>
+			<KeyboardToolbar />
+		</>
 	);
 }
