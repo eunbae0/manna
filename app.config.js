@@ -97,7 +97,6 @@ export default {
 					addGeneratedScheme: !!IS_DEVELOPMENT,
 				},
 			],
-			['expo-tracking-transparency'],
 		],
 		experiments: {
 			typedRoutes: true,
