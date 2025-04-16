@@ -1491,6 +1491,8 @@ PODS:
     - ExpoModulesCore
   - ExpoSystemUI (4.0.8):
     - ExpoModulesCore
+  - ExpoTrackingTransparency (5.1.1):
+    - ExpoModulesCore
   - ExpoWebBrowser (14.0.2):
     - ExpoModulesCore
   - EXUpdatesInterface (1.0.0):
@@ -3482,7 +3484,7 @@ PODS:
   - RNFBApp (21.13.0):
     - Firebase/CoreOnly (= 11.10.0)
     - React-Core
-  - RNFBAuth (21.13.0):
+  - RNFBAuth (21.14.0):
     - Firebase/Auth (= 11.10.0)
     - React-Core
     - RNFBApp
@@ -3794,6 +3796,7 @@ DEPENDENCIES:
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
+  - ExpoTrackingTransparency (from `../node_modules/expo-tracking-transparency/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -3991,6 +3994,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-symbols/ios"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
+  ExpoTrackingTransparency:
+    :path: "../node_modules/expo-tracking-transparency/ios"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
   EXUpdatesInterface:
@@ -4195,6 +4200,7 @@ SPEC CHECKSUMS:
   ExpoSplashScreen: 2625fffb137856c82c32d6f25e7ee97249bdc0ee
   ExpoSymbols: b9f255ce49868d46a73f30e12859efeb8117bcad
   ExpoSystemUI: ba4507df7d8d15f5e1694a3c7fc6bc3cca3803e5
+  ExpoTrackingTransparency: c7cc2db827cee8e6e7230aada8319c31a54fd2df
   ExpoWebBrowser: 6890a769e6c9d83da938dceb9a03e764afc3ec9c
   EXUpdatesInterface: 1dcebac98ac5dad4289e6ff2bd5616822e894397
   FBLazyVector: be509404b5de73a64a74284edcaf73a5d1e128b1
@@ -4300,7 +4306,7 @@ SPEC CHECKSUMS:
   RNDateTimePicker: b4dbbbe7a49cf4c9d9c01179f6d30242018e20da
   RNFBAnalytics: 4f1f85b79acea474421d865c9ce6f9ce455b1a17
   RNFBApp: 9b353818307a942fd12025ec8963375649086f37
-  RNFBAuth: 5cdcba52eada64622c849b668f9cb47a87442923
+  RNFBAuth: d9528b194eb505b664b243c025b389ed79b8f2c8
   RNFBCrashlytics: d5968d207b4627c7bbca7f1c716892fd34a87395
   RNFBFirestore: 73da57b8d901ee46ae46ff2c1eaa478aab1152c8
   RNFBMessaging: cb481e60e60069c87809add23817619d52524b5a

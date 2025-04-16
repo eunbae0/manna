@@ -2712,9 +2712,9 @@
     firebase "11.3.1"
 
 "@react-native-firebase/auth@^21.13.0":
-  version "21.13.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-21.13.0.tgz#685146588bc537e1e6de5adbfcdf1972c4d09e1f"
-  integrity sha512-oM4PgOmh5xSB+pDQil5ATbEZ48AxBU2lC6EJCDCcSf5LqdWwOm8LA3Ew1ffJnCQJ0RafH7eSrYpFgnxR2y2sPg==
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-21.14.0.tgz#d5ba902567dfd94ba995815bdcf34da90be9e744"
+  integrity sha512-m4BFrq/pC4OlPPLZJjDu0n/3QHM+pE5KlYc7dvnE8zavtlqKclvZ6cchcfm4DsPVqmuQOJ1QQqrYdOfRm3hsHA==
   dependencies:
     plist "^3.1.0"
 
@@ -5607,6 +5607,11 @@ expo-system-ui@~4.0.8:
   dependencies:
     "@react-native/normalize-colors" "0.76.7"
     debug "^4.3.2"
+
+expo-tracking-transparency@~5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/expo-tracking-transparency/-/expo-tracking-transparency-5.1.1.tgz#e1b52d4006fd752cdb1aeca2790fa8bc8cdca679"
+  integrity sha512-fiT079Wf5YOPIqc2osTuPrQsOn4+5kXMRQmjUqe3z5PdeCF8nqJg5qrOLP1vaG5Cq8J8ws3Q2Sc7q4kR2G0yTw==
 
 expo-updates-interface@~1.0.0:
   version "1.0.0"

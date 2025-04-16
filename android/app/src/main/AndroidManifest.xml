@@ -5,6 +5,7 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -28,7 +29,6 @@
         <data android:scheme="sogroup-development"/>
         <data android:scheme="sogroup"/>
         <data android:scheme="com.eunbae.sogroup"/>
-        <data android:scheme="exp+so-group"/>
       </intent-filter>
     </activity>
   </application>

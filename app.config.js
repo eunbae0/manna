@@ -66,7 +66,13 @@ export default {
 						'com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob',
 				},
 			],
-			['expo-image-picker'],
+			[
+				'expo-image-picker',
+				{
+					photosPermission:
+						'소그룹 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.',
+				},
+			],
 			'@react-native-firebase/app',
 			'@react-native-firebase/auth',
 			'@react-native-firebase/crashlytics',
@@ -91,6 +97,7 @@ export default {
 					addGeneratedScheme: !!IS_DEVELOPMENT,
 				},
 			],
+			['expo-tracking-transparency'],
 		],
 		experiments: {
 			typedRoutes: true,
