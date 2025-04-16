@@ -13,7 +13,7 @@ export type OnboardingStep =
 	| 'GROUP_CREATE'
 	| 'GROUP_JOIN';
 
-type OnboardingState = {
+export type OnboardingState = {
 	currentStep: OnboardingStep;
 	userData: {
 		displayName: string;

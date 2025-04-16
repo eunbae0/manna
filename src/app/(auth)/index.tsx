@@ -19,7 +19,7 @@ import { Pressable } from 'react-native';
 
 function AuthStepScreen() {
 	const { signIn } = useAuthStore();
-	const { setStep, setOnboarding } = useOnboardingStore();
+	const { setStep, setOnboarding, updateUserData } = useOnboardingStore();
 
 	const [isAppleAuthAvailable, setIsAppleAuthAvailable] = useState(false);
 	useEffect(() => {
@@ -33,7 +33,7 @@ function AuthStepScreen() {
 	}, []);
 
 	const onAppleButtonPress = async () => {
-		await signIn('APPLE', undefined);
+		await signIn('APPLE', { updateUserData });
 		setOnboarding();
 	};
 
@@ -53,35 +53,35 @@ function AuthStepScreen() {
 					<VStack space="3xl" className="w-full">
 						<VStack space="lg" className="w-full">
 							{isAppleAuthAvailable && (
-								// <AppleAuthentication.AppleAuthenticationButton
-								// 	buttonType={
-								// 		AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
-								// 	}
-								// 	buttonStyle={
-								// 		AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-								// 	}
-								// 	cornerRadius={999}
-								// 	style={{ width: '100%', height: 42 }}
-								// 	onPress={onAppleButtonPress}
-								// 	className="rounded-full gap-4"
-								// />
-								<Button
+								<AppleAuthentication.AppleAuthenticationButton
+									buttonType={
+										AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
+									}
+									buttonStyle={
+										AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+									}
+									cornerRadius={999}
+									style={{ width: '100%', height: 42 }}
 									onPress={onAppleButtonPress}
-									size="lg"
-									className="bg-black"
-									rounded
-									variant="outline"
-									innerClassName="active:bg-black"
-								>
-									<ButtonIcon
-										as={AppleIcon}
-										size="sm"
-										className="fill-white stroke-white text-typography-black"
-									/>
-									<ButtonText size="lg" className="text-white">
-										Apple로 계속하기
-									</ButtonText>
-								</Button>
+									className="rounded-full gap-4"
+								/>
+								// <Button
+								// 	onPress={onAppleButtonPress}
+								// 	size="lg"
+								// 	className="bg-black"
+								// 	rounded
+								// 	variant="outline"
+								// 	innerClassName="active:bg-black"
+								// >
+								// 	<ButtonIcon
+								// 		as={AppleIcon}
+								// 		size="sm"
+								// 		className="fill-white stroke-white text-typography-black"
+								// 	/>
+								// 	<ButtonText size="lg" className="text-white">
+								// 		Apple로 계속하기
+								// 	</ButtonText>
+								// </Button>
 							)}
 							<Button
 								onPress={onGoogleButtonPress}

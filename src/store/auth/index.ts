@@ -27,6 +27,7 @@ import {
 	updateUser,
 	updateUserGroup,
 } from '@/api/user';
+import type { OnboardingState } from '../onboarding';
 
 type AuthState = {
 	user: ClientUser | null;
@@ -39,7 +40,11 @@ type AuthState = {
 type AuthActions = {
 	signIn: <T extends AuthType>(
 		type: T,
-		data: T extends 'EMAIL' ? EmailSignInInput : undefined,
+		data: T extends 'EMAIL'
+			? EmailSignInInput
+			: T extends 'APPLE'
+				? { updateUserData?: OnboardingState['updateUserData'] }
+				: undefined,
 	) => Promise<{ id: string }>;
 	signUp: (data: EmailSignInInput) => Promise<{ id: string }>;
 	// sendEmailLink: (email: string) => Promise<void>;
@@ -93,7 +98,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 								return { id: user.id };
 							}
 							case 'APPLE': {
-								const { user, existUser } = await signInWithApple();
+								const { user, existUser, givenName } = await signInWithApple();
+								data?.updateUserData({ displayName: givenName });
 								set({
 									user,
 									currentGroup: user?.groups?.[0] ?? null,

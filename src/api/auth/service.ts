@@ -16,6 +16,7 @@ import {
 	GoogleAuthProvider,
 	reauthenticateWithCredential,
 	signOut,
+	signInWithCredential,
 	type FirebaseAuthTypes,
 } from '@react-native-firebase/auth';
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -23,10 +24,7 @@ import {
 	GoogleSignin,
 	isSuccessResponse,
 } from '@react-native-google-signin/google-signin';
-import {
-	OAuthProvider,
-	signInWithCredential,
-} from '@react-native-firebase/auth';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { AuthType, EmailSignInInput, SignInResponse } from './types';
 import { Alert } from 'react-native';
@@ -109,7 +107,10 @@ export class FirestoreAuthService {
 	 * Signs in with Apple
 	 * @returns User credential
 	 */
-	async signInWithApple(): Promise<FirebaseAuthTypes.UserCredential> {
+	async signInWithApple(): Promise<{
+		userCredential: FirebaseAuthTypes.UserCredential;
+		givenName: string | null;
+	}> {
 		// Apple 로그인 요청
 		const appleAuthCredential = await AppleAuthentication.signInAsync({
 			requestedScopes: [
@@ -119,7 +120,7 @@ export class FirestoreAuthService {
 		});
 
 		// Firebase 인증 정보 생성
-		const { identityToken } = appleAuthCredential;
+		const { identityToken, fullName } = appleAuthCredential;
 		if (!identityToken) {
 			throw new Error('Apple 로그인 실패: 인증 정보가 없습니다');
 		}
@@ -127,7 +128,8 @@ export class FirestoreAuthService {
 		const credential = AppleAuthProvider.credential(identityToken);
 
 		// Firebase로 로그인
-		return await signInWithCredential(auth, credential);
+		const userCredential = await signInWithCredential(auth, credential);
+		return { userCredential, givenName: fullName?.givenName ?? null };
 	}
 
 	/**
@@ -203,19 +205,15 @@ export class FirestoreAuthService {
 				// Apple 인증의 경우
 				try {
 					// Apple 인증 정보 가져오기
-					const appleCredential = await AppleAuthentication.refreshAsync({
+					const { identityToken } = await AppleAuthentication.refreshAsync({
 						user: userId,
 					});
 
-					const provider = new OAuthProvider('apple.com');
-					const authCredential = provider.credential({
-						idToken: appleCredential.identityToken || '',
-						accessToken: appleCredential.authorizationCode || '',
-					});
+					const authCredential = AppleAuthProvider.credential(identityToken);
 
 					await reauthenticateWithCredential(currentUser, authCredential);
 				} catch (appleError) {
-					throw new Error('재인증에 실패했어요. 다시 시도해주세요.');
+					throw new Error(`Apple 재인증 실패: ${appleError}`);
 				}
 			} else if (providerData?.providerId === 'google.com') {
 				// Google 인증의 경우
@@ -237,7 +235,7 @@ export class FirestoreAuthService {
 
 					await reauthenticateWithCredential(currentUser, authCredential);
 				} catch (googleError) {
-					console.error('Google 재인증 오류:', googleError);
+					console.error(`Google 재인증 오류: ${googleError}`);
 					throw new Error('재인증에 실패했어요. 다시 시도해주세요.');
 				}
 			}

@@ -1,5 +1,10 @@
 import { getAuthService } from './service';
-import type { SignInResponse, AuthType, EmailSignInInput } from './types';
+import type {
+	SignInResponse,
+	AuthType,
+	EmailSignInInput,
+	AppleSignInResponse,
+} from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { requestNotificationPermission } from '../messaging';
@@ -55,19 +60,21 @@ export const signInWithEmail = withApiLogging(
  * Apple로 인증하기
  */
 export const signInWithApple = withApiLogging(
-	async (): Promise<SignInResponse> => {
+	async (): Promise<AppleSignInResponse> => {
 		try {
 			const authService = getAuthService();
-			const userCredential = await authService.signInWithApple();
+			const { userCredential, givenName } = await authService.signInWithApple();
 
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
 			const fcmToken = await requestNotificationPermission();
 
-			return await authService.handleUserProfile(
+			const signInResponse = await authService.handleUserProfile(
 				userCredential,
 				'APPLE',
 				fcmToken,
 			);
+
+			return { ...signInResponse, givenName };
 		} catch (error) {
 			throw handleApiError(error);
 		}

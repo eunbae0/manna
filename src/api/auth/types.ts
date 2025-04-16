@@ -25,3 +25,9 @@ export interface SignInResponse {
 	user: ClientUser;
 	existUser: boolean;
 }
+
+export interface AppleSignInResponse {
+	user: ClientUser;
+	existUser: boolean;
+	givenName: string | null;
+}
