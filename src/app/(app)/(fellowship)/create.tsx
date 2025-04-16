@@ -1,6 +1,5 @@
 import { Animated } from 'react-native';
 import { Redirect } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useFellowshipStore } from '@/store/createFellowship';
 import type { FellowshipStoreStep } from '@/store/createFellowship/types';
@@ -9,6 +8,8 @@ import FellowshipInfoScreen from '@/features/fellowship/screens/create/Fellowshi
 import FellowshipContentScreen from '@/features/fellowship/screens/create/FellowshipContentScreen';
 import FellowshipIcebrakingScreen from '@/features/fellowship/screens/create/FellowshipIcebrakingScreen';
 import FellowshipSermonTopicScreen from '@/features/fellowship/screens/create/FellowshipSermonTopicScreen';
+import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
+import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 
 export default function CreateFellowshipScreen() {
 	const { currentStep } = useFellowshipStore();
@@ -27,14 +28,18 @@ export default function CreateFellowshipScreen() {
 				return <Redirect href="/+not-found" />;
 		}
 	};
+	const { bottomSheetProps, handleExit } = usePreventBackWithConfirm({
+		condition: true,
+	});
 
 	return (
-		<SafeAreaView>
+		<>
 			<Animated.View
 			// style={{ transform: [{ translateX: slideAnim }] }}
 			>
 				{switchStep(currentStep)}
 			</Animated.View>
-		</SafeAreaView>
+			<ExitConfirmModal {...bottomSheetProps} onExit={handleExit} />
+		</>
 	);
 }

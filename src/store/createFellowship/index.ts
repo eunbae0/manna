@@ -107,7 +107,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 
 				get().clearFellowship();
 				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
-				router.back();
+				router.dismiss();
 				break;
 			}
 		}
