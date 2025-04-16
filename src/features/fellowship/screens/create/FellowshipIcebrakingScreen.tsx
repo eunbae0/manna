@@ -14,7 +14,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Pressable, SafeAreaView, type TextInput } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 
 export default function FellowshipIcebrakingScreen() {
 	const { setStep, updateFellowshipContent, content } = useFellowshipStore();
@@ -58,9 +58,9 @@ export default function FellowshipIcebrakingScreen() {
 
 	return (
 		<SafeAreaView className="h-full">
-			<KeyboardAvoidingView keyboardVerticalOffset={52}>
+			<KeyboardAvoidingView>
 				<Header onPressBackButton={() => setStep('CONTENT')} />
-				<KeyboardAwareScrollView>
+				<KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
 					<VStack className="px-5 py-6 gap-10 flex-1">
 						<HStack className="items-center justify-between">
 							<Heading className="text-[24px]">아이스 브레이킹</Heading>
