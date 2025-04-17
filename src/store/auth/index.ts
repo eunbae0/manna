@@ -57,7 +57,7 @@ type AuthActions = {
 	updateUserGroupProfile: (userId: string, group: UserGroup) => Promise<void>;
 	onAuthStateChanged: (
 		user: FirebaseAuthTypes.User | null,
-		fcmToken: string,
+		fcmTokens: string,
 	) => Promise<void>;
 	clearError: () => void;
 	updateAuthenticated: (isAuthenticated: AuthState['isAuthenticated']) => void;
@@ -241,7 +241,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						throw handleApiError(error);
 					}
 				},
-				onAuthStateChanged: async (user, fcmToken) => {
+				onAuthStateChanged: async (user, fcmTokens) => {
 					set({ loading: true });
 					if (!user) {
 						set({
@@ -253,7 +253,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						return;
 					}
 					try {
-						await updateUser(user.uid, { fcmToken });
+						await updateUser(user.uid, { fcmTokens: [fcmTokens] });
 						const firestoreUser = await getUser(user.uid);
 						set({
 							isAuthenticated: true,

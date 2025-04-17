@@ -16,12 +16,12 @@ export const signUpWithEmail = withApiLogging(
 			const userCredential = await authService.signUpWithEmail(data);
 
 			// 가입 성공 후 알림 권한 요청 및 토큰 가져오기
-			const fcmToken = await requestNotificationPermission();
+			const fcmTokens = await requestNotificationPermission();
 
 			return await authService.handleUserProfile(
 				userCredential,
 				'EMAIL',
-				fcmToken,
+				fcmTokens,
 			);
 		} catch (error) {
 			throw handleApiError(error);
@@ -41,12 +41,12 @@ export const signInWithEmail = withApiLogging(
 			const userCredential = await authService.signInWithEmail(data);
 
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
-			const fcmToken = await requestNotificationPermission();
+			const fcmTokens = await requestNotificationPermission();
 
 			return await authService.handleUserProfile(
 				userCredential,
 				'EMAIL',
-				fcmToken,
+				fcmTokens,
 			);
 		} catch (error) {
 			throw handleApiError(error);
@@ -66,12 +66,12 @@ export const signInWithApple = withApiLogging(
 			const { userCredential, givenName } = await authService.signInWithApple();
 
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
-			const fcmToken = await requestNotificationPermission();
+			const fcmTokens = await requestNotificationPermission();
 
 			const signInResponse = await authService.handleUserProfile(
 				userCredential,
 				'APPLE',
-				fcmToken,
+				fcmTokens,
 			);
 
 			return { ...signInResponse, givenName };
@@ -93,12 +93,12 @@ export const signInWithGoogle = withApiLogging(
 			const userCredential = await authService.signInWithGoogle();
 
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
-			const fcmToken = await requestNotificationPermission();
+			const fcmTokens = await requestNotificationPermission();
 
 			return await authService.handleUserProfile(
 				userCredential,
 				'GOOGLE',
-				fcmToken,
+				fcmTokens,
 			);
 		} catch (error) {
 			throw handleApiError(error);

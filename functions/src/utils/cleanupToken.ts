@@ -7,6 +7,7 @@ import { warn } from 'firebase-functions/logger';
 export async function cleanupToken(
 	error: unknown,
 	userId: string,
+	token: string,
 ): Promise<void> {
 	// If the error is not related to invalid tokens, just return
 	if (
@@ -19,8 +20,11 @@ export async function cleanupToken(
 	}
 
 	// Remove the invalid token
-	await firestore().collection('users').doc(userId).update({
-		fcmToken: firestore.FieldValue.delete(),
-	});
+	await firestore()
+		.collection('users')
+		.doc(userId)
+		.update({
+			fcmTokens: firestore.FieldValue.arrayRemove(token),
+		});
 	warn(`Notification failed to send and tokens cleaned up: ${userId}`);
 }

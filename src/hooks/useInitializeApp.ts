@@ -27,9 +27,9 @@ export function useInitializeApp() {
 	useEffect(() => {
 		const subscriber = auth.onAuthStateChanged(async (user) => {
 			setAuthLoading(true);
-			const token = await getToken();
+			const fcmToken = await getToken();
 			// Handle auth state in the store
-			await onAuthStateChanged(user, token);
+			await onAuthStateChanged(user, fcmToken);
 
 			// Set user ID for analytics
 			if (user) {

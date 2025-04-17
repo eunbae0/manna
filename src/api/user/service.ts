@@ -8,6 +8,7 @@ import {
 	collection,
 	getDocs,
 	deleteDoc,
+	arrayUnion,
 } from '@react-native-firebase/firestore';
 
 import { createUserWithServerTimestamp } from '@/shared/utils/auth';
@@ -93,24 +94,39 @@ export class FirestoreUserService {
 	/**
 	 * Updates an existing user profile
 	 * @param userId ID of the user to update
-	 * @param userData Updated user data
+	 * @param updatedUserData Updated user data
 	 */
 	async updateUser(
 		userId: string,
-		userData: Partial<FirestoreUser>,
+		updatedUserData: Partial<FirestoreUser>,
 	): Promise<Partial<FirestoreUser>> {
 		const userRef = doc(database, this.usersCollectionPath, userId);
 
-		if (userData.photoUrl) {
+		if (updatedUserData.photoUrl) {
 			const path = `${FIREBASE_STORAGE_IMAGE_BASE_URL}/user/${userId}/profileImage`;
 
-			const photoUrl = await uploadImageAsync(userData.photoUrl, path);
-			userData.photoUrl = photoUrl;
+			const photoUrl = await uploadImageAsync(updatedUserData.photoUrl, path);
+			updatedUserData.photoUrl = photoUrl;
 		}
 
-		await updateDoc(userRef, userData);
+		const { fcmTokens, ...rest } = updatedUserData;
 
-		return userData;
+		const newfcmTokens = fcmTokens
+			? fcmTokens[fcmTokens.length - 1]
+			: undefined;
+
+		const updateData = Object.assign(
+			rest,
+			newfcmTokens
+				? {
+						fcmTokens: arrayUnion(newfcmTokens),
+					}
+				: {},
+		);
+
+		await updateDoc(userRef, updateData);
+
+		return updatedUserData;
 	}
 
 	/**

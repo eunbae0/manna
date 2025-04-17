@@ -39,7 +39,7 @@ exports.prayerRequestNotification = onDocumentCreated(
 			if (!userDoc.exists) continue;
 
 			const data = userDoc.data() as {
-				fcmToken?: string;
+				fcmTokens?: string[];
 				groups: {
 					groupId: string;
 					notificationPreferences: { prayerRequest: boolean };
@@ -50,8 +50,8 @@ exports.prayerRequestNotification = onDocumentCreated(
 			);
 
 			if (userGroup?.notificationPreferences?.prayerRequest === true) {
-				const token = data.fcmToken;
-				if (!token) continue;
+				const tokens = data.fcmTokens;
+				if (!tokens) continue;
 
 				const payload = {
 					notification: {
@@ -63,36 +63,38 @@ exports.prayerRequestNotification = onDocumentCreated(
 					},
 				};
 
-				try {
-					// send notification
-					await messaging().send({
-						token,
-						...payload,
-					});
-
-					const messageId = uuidv4();
-
-					// save notification
-					await firestore()
-						.collection('users')
-						.doc(currentMemberId)
-						.collection('notifications')
-						.doc(messageId)
-						.set({
-							...payload.notification,
-							...payload.data,
-							metadata: {
-								groupId,
-								prayerRequestId,
-								senderId,
-							},
-							isRead: false,
-							timestamp: firestore.FieldValue.serverTimestamp(),
+				for (const token of tokens) {
+					try {
+						// send notification
+						await messaging().send({
+							token,
+							...payload,
 						});
-					log(`Notification sent and saved successfully: ${messageId}`);
-				} catch (error) {
-					warn(`Notification failed to send: ${error}`);
-					await cleanupToken(error, member.user.id);
+
+						const messageId = uuidv4();
+
+						// save notification
+						await firestore()
+							.collection('users')
+							.doc(currentMemberId)
+							.collection('notifications')
+							.doc(messageId)
+							.set({
+								...payload.notification,
+								...payload.data,
+								metadata: {
+									groupId,
+									prayerRequestId,
+									senderId,
+								},
+								isRead: false,
+								timestamp: firestore.FieldValue.serverTimestamp(),
+							});
+						log(`Notification sent and saved successfully: ${messageId}`);
+					} catch (error) {
+						warn(`Notification failed to send: ${error}`);
+						await cleanupToken(error, member.user.id, token);
+					}
 				}
 			}
 		}
@@ -137,7 +139,7 @@ exports.fellowshipNotification = onDocumentCreated(
 			if (!userDoc.exists) continue;
 
 			const data = userDoc.data() as {
-				fcmToken?: string;
+				fcmTokens?: string;
 				groups: {
 					groupId: string;
 					notificationPreferences: { fellowship: boolean };
@@ -148,8 +150,8 @@ exports.fellowshipNotification = onDocumentCreated(
 			);
 
 			if (userGroup?.notificationPreferences?.fellowship === true) {
-				const token = data.fcmToken;
-				if (!token) continue;
+				const tokens = data.fcmTokens;
+				if (!tokens) continue;
 
 				const payload = {
 					notification: {
@@ -161,36 +163,38 @@ exports.fellowshipNotification = onDocumentCreated(
 					},
 				};
 
-				try {
-					// send notification
-					await messaging().send({
-						token,
-						...payload,
-					});
-
-					const messageId = uuidv4();
-
-					// save notification
-					await firestore()
-						.collection('users')
-						.doc(currentMemberId)
-						.collection('notifications')
-						.doc(messageId)
-						.set({
-							...payload.notification,
-							...payload.data,
-							metadata: {
-								groupId,
-								fellowshipId,
-								senderId,
-							},
-							isRead: false,
-							timestamp: firestore.FieldValue.serverTimestamp(),
+				for (const token of tokens) {
+					try {
+						// send notification
+						await messaging().send({
+							token,
+							...payload,
 						});
-					log(`Notification sent and saved successfully: ${messageId}`);
-				} catch (error) {
-					warn(`Notification failed to send: ${error}`);
-					await cleanupToken(error, member.user.id);
+
+						const messageId = uuidv4();
+
+						// save notification
+						await firestore()
+							.collection('users')
+							.doc(currentMemberId)
+							.collection('notifications')
+							.doc(messageId)
+							.set({
+								...payload.notification,
+								...payload.data,
+								metadata: {
+									groupId,
+									fellowshipId,
+									senderId,
+								},
+								isRead: false,
+								timestamp: firestore.FieldValue.serverTimestamp(),
+							});
+						log(`Notification sent and saved successfully: ${messageId}`);
+					} catch (error) {
+						warn(`Notification failed to send: ${error}`);
+						await cleanupToken(error, member.user.id, token);
+					}
 				}
 			}
 		}
