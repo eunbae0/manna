@@ -32,6 +32,7 @@ import Animated, {
 
 import * as Haptics from 'expo-haptics';
 import { Button, ButtonIcon } from '@/components/common/button';
+import { useToastStore } from '@/store/toast';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
@@ -50,6 +51,8 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 	);
 
 	const isOwner = prayerRequest.member.id === member.id;
+
+	const { showSuccess } = useToastStore();
 
 	const { mutate: toggleLike } = useMutation({
 		mutationFn: async () => {
@@ -135,7 +138,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 					deletePrayerRequest(prayerRequest.id, {
 						onSuccess: () => {
 							// Toast or notification could be shown here
-							console.log('Prayer request deleted successfully');
+							showSuccess('기도 제목이 삭제되었어요');
 							Promise.all([
 								queryClient.invalidateQueries({
 									queryKey: [
