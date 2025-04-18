@@ -360,6 +360,7 @@ export default function FellowshipInfoScreen() {
 															size="lg"
 															type={member.isLeader ? 'leader' : 'member'}
 															label={member.displayName || ''}
+															photoUrl={member.photoUrl || ''}
 														/>
 													</Pressable>
 												))}
@@ -422,7 +423,8 @@ export default function FellowshipInfoScreen() {
 								)}
 							</HStack>
 							<VStack space="sm" className="w-full py-5">
-								<Pressable
+								{/* INFO: 나눔 인도자 만들기 기능 삭제 */}
+								{/* <Pressable
 									onPress={() => {
 										setMembers((prev) =>
 											prev.map((member) =>
@@ -445,7 +447,7 @@ export default function FellowshipInfoScreen() {
 										/>
 										<Text size="lg">나눔 인도자 만들기</Text>
 									</HStack>
-								</Pressable>
+								</Pressable> */}
 								<Divider />
 								<Pressable
 									onPress={() => {
