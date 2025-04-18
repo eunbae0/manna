@@ -21,17 +21,21 @@ exports.prayerRequestNotification = onDocumentCreated(
 			member: { id: string; displayName: string };
 		};
 		const group = await event.data?.ref.parent.parent?.get();
-		const { id: groupId, members } = group?.data() as {
+		const { id: groupId } = group?.data() as {
 			id: string;
-			members: { user: { id: string } }[];
 		};
 
-		const otherMembers = members.filter(
-			(member) => member.user.id !== senderId,
-		);
+		const membersRef = await group?.ref.collection('members').get();
+		const members: { id: string }[] = [];
+		for (const memberDoc of membersRef?.docs || []) {
+			const member = memberDoc.data() as { id: string };
+			members.push(member);
+		}
+
+		const otherMembers = members.filter((member) => member.id !== senderId);
 
 		for (const member of otherMembers) {
-			const currentMemberId = member.user.id;
+			const currentMemberId = member.id;
 			const userDoc = await firestore()
 				.collection('users')
 				.doc(currentMemberId)
@@ -40,14 +44,21 @@ exports.prayerRequestNotification = onDocumentCreated(
 
 			const data = userDoc.data() as {
 				fcmTokens?: string[];
-				groups: {
+			};
+
+			const userGroupsDoc = await userDoc.ref.collection('groups').get();
+			const userGroups: {
+				groupId: string;
+				notificationPreferences: { prayerRequest: boolean };
+			}[] = [];
+			for (const groupDoc of userGroupsDoc.docs) {
+				const groupData = groupDoc.data() as {
 					groupId: string;
 					notificationPreferences: { prayerRequest: boolean };
-				}[];
-			};
-			const userGroup = data?.groups?.find(
-				(group) => group.groupId === groupId,
-			);
+				};
+				userGroups.push(groupData);
+			}
+			const userGroup = userGroups.find((group) => group.groupId === groupId);
 
 			if (userGroup?.notificationPreferences?.prayerRequest === true) {
 				const tokens = data.fcmTokens;
@@ -63,6 +74,9 @@ exports.prayerRequestNotification = onDocumentCreated(
 					},
 				};
 
+				let isNotificationSentwithSaveFirestore = false;
+				const messageId = uuidv4();
+
 				for (const token of tokens) {
 					try {
 						// send notification
@@ -71,9 +85,9 @@ exports.prayerRequestNotification = onDocumentCreated(
 							...payload,
 						});
 
-						const messageId = uuidv4();
+						if (isNotificationSentwithSaveFirestore) return;
 
-						// save notification
+						// save notification to firestore
 						await firestore()
 							.collection('users')
 							.doc(currentMemberId)
@@ -90,10 +104,11 @@ exports.prayerRequestNotification = onDocumentCreated(
 								isRead: false,
 								timestamp: firestore.FieldValue.serverTimestamp(),
 							});
+						isNotificationSentwithSaveFirestore = true;
 						log(`Notification sent and saved successfully: ${messageId}`);
 					} catch (error) {
 						warn(`Notification failed to send: ${error}`);
-						await cleanupToken(error, member.user.id, token);
+						await cleanupToken(error, member.id, token);
 					}
 				}
 			}
@@ -121,36 +136,55 @@ exports.fellowshipNotification = onDocumentCreated(
 			};
 
 		const group = await event.data?.ref.parent.parent?.get();
-		const { id: groupId, members } = group?.data() as {
+
+		const members: { id: string }[] = [];
+		const { id: groupId } = group?.data() as {
 			id: string;
-			members: { user: { id: string } }[];
 		};
 
-		const otherMembers = members.filter(
-			(member) => member.user.id !== senderId,
-		);
+		const membersRef = await group?.ref.collection('members').get();
+		for (const memberDoc of membersRef?.docs || []) {
+			const member = memberDoc.data() as { id: string };
+			members.push(member);
+		}
+
+		const otherMembers = members.filter((member) => member.id !== senderId);
 
 		for (const member of otherMembers) {
-			const currentMemberId = member.user.id;
+			const currentMemberId = member.id;
 			const userDoc = await firestore()
 				.collection('users')
 				.doc(currentMemberId)
 				.get();
 			if (!userDoc.exists) continue;
 
-			const data = userDoc.data() as {
-				fcmTokens?: string;
-				groups: {
-					groupId: string;
-					notificationPreferences: { fellowship: boolean };
-				}[];
+			const user = userDoc.data() as {
+				fcmTokens?: string[];
 			};
-			const userGroup = data?.groups?.find(
-				(group) => group.groupId === groupId,
-			);
+
+			const userGroupDocs = await userDoc.ref.collection('groups').get();
+			const userGroups: {
+				groupId: string;
+				notificationPreferences: {
+					fellowship: boolean;
+					prayerRequest: boolean;
+				};
+			}[] = [];
+			for (const groupDoc of userGroupDocs.docs) {
+				const data = groupDoc.data() as {
+					groupId: string;
+					notificationPreferences: {
+						fellowship: boolean;
+						prayerRequest: boolean;
+					};
+				};
+				userGroups.push(data);
+			}
+
+			const userGroup = userGroups.find((group) => group.groupId === groupId);
 
 			if (userGroup?.notificationPreferences?.fellowship === true) {
-				const tokens = data.fcmTokens;
+				const tokens = user.fcmTokens;
 				if (!tokens) continue;
 
 				const payload = {
@@ -163,6 +197,9 @@ exports.fellowshipNotification = onDocumentCreated(
 					},
 				};
 
+				let isNotificationSentwithSaveFirestore = false;
+				const messageId = uuidv4();
+
 				for (const token of tokens) {
 					try {
 						// send notification
@@ -170,8 +207,7 @@ exports.fellowshipNotification = onDocumentCreated(
 							token,
 							...payload,
 						});
-
-						const messageId = uuidv4();
+						if (isNotificationSentwithSaveFirestore) return;
 
 						// save notification
 						await firestore()
@@ -190,10 +226,11 @@ exports.fellowshipNotification = onDocumentCreated(
 								isRead: false,
 								timestamp: firestore.FieldValue.serverTimestamp(),
 							});
+						isNotificationSentwithSaveFirestore = true;
 						log(`Notification sent and saved successfully: ${messageId}`);
 					} catch (error) {
 						warn(`Notification failed to send: ${error}`);
-						await cleanupToken(error, member.user.id, token);
+						await cleanupToken(error, member.id, token);
 					}
 				}
 			}
