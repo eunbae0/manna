@@ -109,6 +109,7 @@ function EmailSignInStepScreen() {
 								email.length === 0 || password.length === 0 || isLoading
 							}
 							size="xl"
+							className="mb-5"
 							rounded
 						>
 							<ButtonText>{isLoading ? '로그인 중...' : '로그인'}</ButtonText>
