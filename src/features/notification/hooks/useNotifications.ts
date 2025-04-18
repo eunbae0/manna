@@ -20,6 +20,7 @@ export function useNotifications() {
 	} = useQuery<ClientNotification[]>({
 		queryKey: NOTIFICATIONS_QUERY_KEY,
 		queryFn: getNotifications,
+		staleTime: 1 * 60 * 1000, // 1 minute
 	});
 
 	const markAsReadMutation = useMutation({

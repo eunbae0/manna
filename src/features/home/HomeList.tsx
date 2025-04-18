@@ -1,10 +1,9 @@
-import { useCallback, useState, useEffect } from 'react';
-import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState, useEffect, useMemo } from 'react';
+import { type Href, router, useFocusEffect } from 'expo-router';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '#/components/ui/heading';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
 import { Pen } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import { Box } from '#/components/ui/box';
@@ -12,14 +11,12 @@ import type { YYYYMMDD } from '@/shared/types/date';
 import { getKSTDate } from '@/shared/utils/date';
 import { RefreshControl, ScrollView } from 'react-native';
 import { usePrayerRequestsByDate } from '@/features/home/hooks/usePrayerRequestsByDate';
-import type { ClientPrayerRequest } from '@/api/prayer-request/types';
-import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
 import { useAuthStore } from '@/store/auth';
 import NotificationBox from './components/NotificationBox';
 import ServiceGroups from './components/ServiceGroups';
 import { HomeSkeleton } from './components/HomeSkeleton';
-import { useRecentFellowships } from '@/features/fellowship/hooks/useRecentFellowships';
 import PreayerRequestList from './components/PreayerRequestList';
+import { useNotifications } from '@/features/notification/hooks/useNotifications';
 
 function HomeList() {
 	const [date, setDate] = useState<YYYYMMDD>(getKSTDate(new Date()));
@@ -28,13 +25,11 @@ function HomeList() {
 
 	const { user, currentGroup } = useAuthStore();
 
-	// Query for recent fellowships (created within the last 6 hours)
-	// const {
-	// 	data: recentFellowships,
-	// 	isLoading: isLoadingRecentFellowships,
-	// 	isError: isErrorRecentFellowships,
-	// 	refetch: refetchRecentFellowships,
-	// } = useRecentFellowships();
+	const {
+		notifications,
+		refetch: refetchNotifications,
+		markAsRead,
+	} = useNotifications();
 
 	const {
 		data: prayerRequests,
@@ -48,40 +43,53 @@ function HomeList() {
 		if (date !== newDate) {
 			setDate(newDate);
 		}
-		// refetchRecentFellowships();
+		// refetchNotifications();
 	});
 
 	// Handle pull-to-refresh
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		try {
-			await Promise.all([
-				refetchPrayerRequests(),
-				// refetchRecentFellowships(),
-			]);
+			await Promise.all([refetchPrayerRequests(), refetchNotifications()]);
 		} finally {
 			setRefreshing(false);
 		}
-	}, [
-		refetchPrayerRequests,
-		// refetchRecentFellowships,
-	]);
+	}, [refetchPrayerRequests, refetchNotifications]);
 
 	const handlePressAddButton = () => {
 		router.navigate('/(app)/createPrayerRequestModal');
 	};
 
-	const handleDismissNotification = useCallback(() => {
-		setShowNotification(false);
-	}, []);
+	const recentFellowshipNotification = useMemo(() => {
+		const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
+		return notifications?.find(
+			(notification) =>
+				notification.metadata?.fellowshipId &&
+				notification.isRead === false &&
+				notification.timestamp > sixHoursAgo,
+		);
+	}, [notifications]);
 
-	// useEffect(() => {
-	// 	if (!isLoadingRecentFellowships) {
-	// 		setTimeout(() => {
-	// 			setShowNotification(recentFellowships !== null);
-	// 		}, 500);
-	// 	}
-	// }, [recentFellowships, isLoadingRecentFellowships]);
+	const handleDismissNotification = useCallback(() => {
+		if (!recentFellowshipNotification) return;
+		markAsRead(recentFellowshipNotification.id);
+		setShowNotification(false);
+	}, [markAsRead, recentFellowshipNotification]);
+
+	const handlePressRecentFellowshipNotification = useCallback(() => {
+		if (!recentFellowshipNotification) return;
+		markAsRead(recentFellowshipNotification.id);
+		setShowNotification(false);
+		router.push(
+			(recentFellowshipNotification.screen as Href) ||
+				'/(app)/(fellowship)/list',
+		);
+	}, [recentFellowshipNotification, markAsRead]);
+
+	useEffect(() => {
+		if (!recentFellowshipNotification) return;
+		setShowNotification(true);
+	}, [recentFellowshipNotification]);
 
 	return (
 		<>
@@ -111,7 +119,7 @@ function HomeList() {
 								title={'새 나눔이 등록되었어요'}
 								description={'클릭해서 나눔에 참여해보세요'}
 								visible={showNotification}
-								onPress={() => router.push('/(app)/(fellowship)/list')}
+								onPress={handlePressRecentFellowshipNotification}
 								onDismiss={handleDismissNotification}
 							/>
 							<ServiceGroups />
