@@ -31,6 +31,7 @@ import { Alert } from 'react-native';
 import { getUserService } from '../user/service';
 import type { ClientUser, FirestoreUser } from '@/shared/types';
 import { createUser } from '../user';
+import { DELETED_MEMBER_DISPLAY_NAME } from '@/shared/constants';
 
 /**
  * Firestore service for user authentication and profile operations
@@ -245,6 +246,7 @@ export class FirestoreAuthService {
 
 			// 3. Firestore에서 사용자 데이터 soft delete 처리
 			await updateDoc(userDocRef, {
+				displayName: DELETED_MEMBER_DISPLAY_NAME,
 				isDeleted: true,
 				deletedAt: serverTimestamp(),
 			});
