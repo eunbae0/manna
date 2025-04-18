@@ -15,77 +15,136 @@ import {
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
-	Fellowship,
 	ClientFellowship,
 	UpdateFellowshipInput,
+	CreateFellowshipInput,
+	ServerFellowship,
+	ClientFellowshipMember,
 } from '@/features/fellowship/api/types';
 import { serverTimestamp } from '@/firebase/firestore';
-import { FirestoreService } from '@/api/services';
 import { flattenObject } from '@/shared/utils/flattenObject';
 import { v4 as uuidv4 } from 'uuid';
+import { DELETED_MEMBER_DISPLAY_NAME } from '@/shared/constants';
+import type { ClientGroupMember } from '@/api/prayer-request/types';
 
 /**
  * Fellowship service class for handling Firestore operations related to fellowship data
  */
-export class FirestoreFellowshipService extends FirestoreService {
-	private groupId: string;
+export class FirestoreFellowshipService {
+	private static instance: FirestoreFellowshipService | null = null;
 
-	constructor(groupId?: string) {
-		super();
-		this.groupId = groupId || '';
+	public static getInstance(): FirestoreFellowshipService {
+		if (!FirestoreFellowshipService.instance) {
+			FirestoreFellowshipService.instance = new FirestoreFellowshipService();
+		}
+		return FirestoreFellowshipService.instance;
 	}
 
-	/**
-	 * Sets the current group ID
-	 * @param groupId The group ID to set
-	 */
-	setGroupId(groupId: string): void {
-		this.groupId = groupId;
-	}
+	private readonly collectionPath: string = 'groups';
+	private readonly subCollectionPath: string = 'fellowship';
+	private readonly memberCollectionPath: string = 'members';
 
 	/**
 	 * Gets the fellowship collection reference for a specific group
 	 * @returns CollectionReference for the fellowship collection
 	 */
-	getFellowshipCollectionRef(): FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData> {
-		if (!this.groupId) {
-			throw new Error('Group ID is not set');
-		}
-		return collection(database, 'groups', this.groupId, 'fellowship');
+	private getFellowshipCollectionRef({
+		groupId,
+	}: {
+		groupId: string;
+	}): FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData> {
+		return collection(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+		);
 	}
 	/**
 	 * Gets a specific fellowship document reference
 	 * @param fellowshipId ID of the fellowship document
 	 * @returns DocumentReference for the fellowship document
 	 */
-	getFellowshipDocRef(
-		fellowshipId: string,
-	): FirebaseFirestoreTypes.DocumentReference<FirebaseFirestoreTypes.DocumentData> {
-		if (!this.groupId) {
-			throw new Error('Group ID is not set');
-		}
-		return doc(database, 'groups', this.groupId, 'fellowship', fellowshipId);
+	private getFellowshipDocRef({
+		groupId,
+		fellowshipId,
+	}: {
+		groupId: string;
+		fellowshipId: string;
+	}): FirebaseFirestoreTypes.DocumentReference<FirebaseFirestoreTypes.DocumentData> {
+		return doc(
+			database,
+			this.collectionPath,
+			groupId,
+			this.subCollectionPath,
+			fellowshipId,
+		);
+	}
+
+	private convertToClientFellowship(
+		data: ServerFellowship,
+		members: ClientFellowshipMember[],
+	): ClientFellowship {
+		return {
+			...data,
+			info: {
+				...data.info,
+				date: data.info.date.toDate(),
+				members,
+			},
+		};
 	}
 
 	/**
 	 * Fetches all fellowships for a specific group
 	 * @returns Array of fellowship data
 	 */
-	async getGroupFellowships(): Promise<Fellowship[]> {
+	async getGroupFellowships({
+		groupId,
+	}: {
+		groupId: string;
+	}): Promise<ClientFellowship[]> {
 		const q = query(
-			this.getFellowshipCollectionRef(),
+			this.getFellowshipCollectionRef({ groupId }),
 			orderBy('createdAt', 'desc'),
 		);
 		const querySnapshot = await getDocs(q);
 
-		const fellowships: Fellowship[] = [];
-		for (const doc of querySnapshot.docs) {
-			const data = doc.data() as FirebaseFirestoreTypes.DocumentData;
-			fellowships.push({
-				id: doc.id,
-				groupId: this.groupId,
-				...data,
-			} as Fellowship);
+		const fellowships: ClientFellowship[] = [];
+		for (const fellowshipsDoc of querySnapshot.docs) {
+			const members: ClientFellowshipMember[] = [];
+			const data = fellowshipsDoc.data() as ServerFellowship;
+			for (const member of data.info.members) {
+				const groupMemberDoc = await getDoc(
+					doc(
+						database,
+						this.collectionPath,
+						groupId,
+						this.memberCollectionPath,
+						member.id,
+					),
+				);
+
+				// 탈퇴유저 또는 게스트유저인 경우
+				if (!groupMemberDoc.exists) {
+					const clientMember = {
+						id: member.id,
+						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
+						isLeader: member.isLeader,
+						isGuest: member.isGuest,
+					};
+					members.push(clientMember);
+					continue;
+				}
+
+				const clientMember = groupMemberDoc.data() as ClientGroupMember;
+				members.push({
+					...clientMember,
+					isLeader: member.isLeader,
+					isGuest: member.isGuest,
+				});
+			}
+			fellowships.push(this.convertToClientFellowship(data, members));
 		}
 
 		return fellowships;
@@ -96,22 +155,51 @@ export class FirestoreFellowshipService extends FirestoreService {
 	 * @param fellowshipId ID of the fellowship to fetch
 	 * @returns Fellowship data or null if not found
 	 */
-	async getFellowshipById(
-		fellowshipId: string,
-	): Promise<ClientFellowship | null> {
-		const docRef = this.getFellowshipDocRef(fellowshipId);
+	async getFellowshipById({
+		groupId,
+		fellowshipId,
+	}: {
+		groupId: string;
+		fellowshipId: string;
+	}): Promise<ClientFellowship | null> {
+		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
 		const docSnap = await getDoc(docRef);
 
 		if (docSnap.exists) {
-			const data = docSnap.data() as Fellowship;
+			const data = docSnap.data() as ServerFellowship;
+			const members: ClientFellowshipMember[] = [];
+			for (const member of data.info.members) {
+				const groupMemberDoc = await getDoc(
+					doc(
+						database,
+						this.collectionPath,
+						groupId,
+						this.memberCollectionPath,
+						member.id,
+					),
+				);
 
-			return {
-				...data,
-				info: {
-					...data.info,
-					date: data.info.date.toDate(),
-				},
-			} as ClientFellowship;
+				// 탈퇴유저 또는 게스트유저인 경우
+				if (!groupMemberDoc.exists) {
+					const clientMember = {
+						id: member.id,
+						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
+						isLeader: member.isLeader,
+						isGuest: member.isGuest,
+					};
+					members.push(clientMember);
+					continue;
+				}
+
+				const clientMember = groupMemberDoc.data() as ClientGroupMember;
+				members.push({
+					...clientMember,
+					isLeader: member.isLeader,
+					isGuest: member.isGuest,
+				});
+			}
+
+			return this.convertToClientFellowship(data, members);
 		}
 
 		return null;
@@ -123,16 +211,14 @@ export class FirestoreFellowshipService extends FirestoreService {
 	 * @returns ID of the created fellowship
 	 */
 	async createFellowship(
-		fellowshipData: Omit<
-			ClientFellowship,
-			'id' | 'groupId' | 'createdAt' | 'updatedAt'
-		>,
+		{ groupId }: { groupId: string },
+		fellowshipData: CreateFellowshipInput,
 	): Promise<string> {
-		const id = uuidv4();
+		const fellowshipId = uuidv4();
 		const processedData = {
 			...fellowshipData,
-			id,
-			groupId: this.groupId,
+			id: fellowshipId,
+			groupId,
 			info: {
 				...fellowshipData.info,
 				date: Timestamp.fromDate(fellowshipData.info.date),
@@ -140,9 +226,13 @@ export class FirestoreFellowshipService extends FirestoreService {
 			},
 			createdAt: serverTimestamp(),
 			updatedAt: serverTimestamp(),
-		} satisfies Fellowship;
-		await setDoc(this.getFellowshipDocRef(id), processedData);
-		return id;
+		} satisfies ServerFellowship;
+
+		await setDoc(
+			this.getFellowshipDocRef({ groupId, fellowshipId }),
+			processedData,
+		);
+		return fellowshipId;
 	}
 
 	/**
@@ -151,10 +241,10 @@ export class FirestoreFellowshipService extends FirestoreService {
 	 * @param fellowshipData Updated fellowship data
 	 */
 	async updateFellowship(
-		fellowshipId: string,
+		{ groupId, fellowshipId }: { groupId: string; fellowshipId: string },
 		fellowshipData: UpdateFellowshipInput,
 	): Promise<void> {
-		const docRef = this.getFellowshipDocRef(fellowshipId);
+		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
 
 		// 중첩된 객체를 Firestore의 dot notation으로 변환
 		const flattenedData = flattenObject(fellowshipData);
@@ -184,10 +274,13 @@ export class FirestoreFellowshipService extends FirestoreService {
 
 	/**
 	 * Deletes a fellowship
-	 * @param fellowshipId ID of the fellowship to delete
+	 * @param { groupId: string; fellowshipId: string } ID of the fellowship to delete
 	 */
-	async deleteFellowship(fellowshipId: string): Promise<void> {
-		const docRef = this.getFellowshipDocRef(fellowshipId);
+	async deleteFellowship({
+		groupId,
+		fellowshipId,
+	}: { groupId: string; fellowshipId: string }): Promise<void> {
+		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
 		await deleteDoc(docRef);
 	}
 
@@ -198,6 +291,7 @@ export class FirestoreFellowshipService extends FirestoreService {
 	 * @returns Array of fellowship data within the date range
 	 */
 	async getFellowshipsByDateRange(
+		{ groupId }: { groupId: string },
 		startDate: Date,
 		endDate: Date,
 	): Promise<ClientFellowship[]> {
@@ -205,7 +299,7 @@ export class FirestoreFellowshipService extends FirestoreService {
 		const endTimestamp = Timestamp.fromDate(endDate);
 
 		const q = query(
-			this.getFellowshipCollectionRef(),
+			this.getFellowshipCollectionRef({ groupId }),
 			where('info.date', '>=', startTimestamp),
 			where('info.date', '<=', endTimestamp),
 			orderBy('info.date', 'desc'),
@@ -214,17 +308,46 @@ export class FirestoreFellowshipService extends FirestoreService {
 		const querySnapshot = await getDocs(q);
 
 		const fellowships: ClientFellowship[] = [];
-		for (const doc of querySnapshot.docs) {
-			const data = doc.data() as Fellowship;
-			fellowships.push({
-				...data,
-				info: {
-					...data.info,
-					date: data.info.date.toDate(),
-				},
-			} as ClientFellowship);
+		for (const fellowshipDoc of querySnapshot.docs) {
+			const data = fellowshipDoc.data() as ServerFellowship;
+			const members: ClientFellowshipMember[] = [];
+			for (const member of data.info.members) {
+				const groupMemberDoc = await getDoc(
+					doc(
+						database,
+						this.collectionPath,
+						groupId,
+						this.memberCollectionPath,
+						member.id,
+					),
+				);
+
+				// 탈퇴유저 또는 게스트유저인 경우
+				if (!groupMemberDoc.exists) {
+					const clientMember = {
+						id: member.id,
+						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
+						isLeader: member.isLeader,
+						isGuest: member.isGuest,
+					};
+					members.push(clientMember);
+					continue;
+				}
+
+				const clientMember = groupMemberDoc.data() as ClientGroupMember;
+				members.push({
+					...clientMember,
+					isLeader: member.isLeader,
+					isGuest: member.isGuest,
+				});
+			}
+			fellowships.push(this.convertToClientFellowship(data, members));
 		}
 
 		return fellowships;
 	}
 }
+
+export const getFellowshipService = (): FirestoreFellowshipService => {
+	return FirestoreFellowshipService.getInstance();
+};

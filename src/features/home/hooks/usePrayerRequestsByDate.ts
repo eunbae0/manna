@@ -7,6 +7,8 @@ import {
 } from '@/shared/utils/date';
 import type { YYYYMMDD } from '@/shared/types/date';
 
+export const PRAYER_REQUESTS_QUERY_KEY = 'prayer-requests';
+
 /**
  * Custom hook to fetch prayer requests for a specific date
  * @param groupId ID of the group
@@ -15,7 +17,7 @@ import type { YYYYMMDD } from '@/shared/types/date';
  */
 export function usePrayerRequestsByDate(groupId: string, date: YYYYMMDD) {
 	return useQuery({
-		queryKey: ['prayer-requests', groupId, date],
+		queryKey: [PRAYER_REQUESTS_QUERY_KEY, groupId, date],
 		queryFn: async () => {
 			const dateObj = parseKSTDate(date);
 			const startDate = getStartOfDayKST(dateObj);

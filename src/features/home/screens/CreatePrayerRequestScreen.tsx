@@ -23,6 +23,8 @@ import { KeyboardAvoidingView } from '@/components/common/keyboard-view/Keyboard
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getKSTDate } from '@/shared/utils/date';
 import { useCreatePrayerRequest } from '@/features/prayer-request/hooks/useCreatePrayerRequest';
+import { PRAYER_REQUESTS_QUERY_KEY } from '../hooks/usePrayerRequestsByDate';
+import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '@/features/prayer-request/hooks/usePrayerRequests';
 
 export function CreatePrayerRequestScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -62,8 +64,6 @@ export function CreatePrayerRequestScreen() {
 					value: prayerRequestText.trim(),
 					member: {
 						id: user?.id || '',
-						displayName: user?.displayName || '',
-						photoUrl: user?.photoUrl || '',
 					},
 					isAnonymous,
 				},
@@ -74,13 +74,16 @@ export function CreatePrayerRequestScreen() {
 				Promise.all([
 					queryClient.invalidateQueries({
 						queryKey: [
-							'prayer-requests',
+							PRAYER_REQUESTS_QUERY_KEY,
 							currentGroup?.groupId || '',
 							todayDate,
 						],
 					}),
 					queryClient.invalidateQueries({
-						queryKey: ['all-prayer-requests', currentGroup?.groupId || ''],
+						queryKey: [
+							ALL_PRAYER_REQUESTS_QUERY_KEY,
+							currentGroup?.groupId || '',
+						],
 					}),
 				]);
 				router.back();
@@ -88,7 +91,6 @@ export function CreatePrayerRequestScreen() {
 		} else {
 			submitPrayerRequest({
 				value: prayerRequestText,
-				date: new Date(),
 				isAnonymous,
 			});
 		}

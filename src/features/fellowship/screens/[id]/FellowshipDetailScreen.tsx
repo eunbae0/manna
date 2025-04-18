@@ -33,8 +33,8 @@ import { Avatar } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import type {
-	FellowshipMember,
 	ClientFellowship,
+	ServerFellowshipMember,
 } from '@/features/fellowship/api/types';
 import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
 import { FellowshipSkeleton } from './FellowshipSkeleton';
@@ -258,7 +258,7 @@ export default function FellowshipDetailScreen({
 			fellowship
 				? user?.id ===
 					fellowship.info.members.find(
-						(member: FellowshipMember) => member.isLeader,
+						(member: ServerFellowshipMember) => member.isLeader,
 					)?.id
 				: false,
 		[fellowship, user],

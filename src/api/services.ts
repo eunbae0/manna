@@ -1,9 +1,12 @@
 import { auth } from '@/firebase/config';
 
+/**
+ * @deprecated
+ */
 export class FirestoreService {
 	// 싱글톤 인스턴스를 저장할 정적 변수
 	private static instance: FirestoreService | null = null;
-	
+
 	userId: string;
 
 	// 싱글톤 인스턴스를 반환하는 정적 메서드

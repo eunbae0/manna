@@ -17,16 +17,9 @@ export function useFellowships() {
 				return [];
 			}
 
-			const fellowships = await fetchGroupFellowships(currentGroup.groupId);
-
-			// Convert server Fellowship objects to ClientFellowship objects
-			return fellowships.map((fellowship) => ({
-				...fellowship,
-				info: {
-					...fellowship.info,
-					date: fellowship.info.date.toDate(),
-				},
-			})) as ClientFellowship[];
+			return await fetchGroupFellowships({
+				groupId: currentGroup.groupId,
+			});
 		},
 		staleTime: 5 * 60 * 1000, // 5 minutes
 		enabled: !!currentGroup?.groupId,

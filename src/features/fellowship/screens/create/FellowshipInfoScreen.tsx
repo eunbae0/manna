@@ -38,8 +38,9 @@ import {
 } from 'lucide-react-native';
 import { useToastStore } from '@/store/toast';
 import type {
+	ClientFellowshipMember,
 	FellowshipInfoField,
-	FellowshipMember,
+	ServerFellowshipMember,
 } from '@/features/fellowship/api/types';
 import { Avatar } from '@/components/common/avatar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
@@ -89,10 +90,9 @@ export default function FellowshipInfoScreen() {
 		isActive:
 			info.preacher?.isActive === undefined ? true : info.preacher?.isActive,
 	});
-	const [selectedMember, setSelectedMember] = useState<FellowshipMember | null>(
-		null,
-	);
-	const [members, setMembers] = useState<FellowshipMember[]>(
+	const [selectedMember, setSelectedMember] =
+		useState<ClientFellowshipMember | null>(null);
+	const [members, setMembers] = useState<ClientFellowshipMember[]>(
 		info.members.length === 0
 			? [
 					{
@@ -100,6 +100,7 @@ export default function FellowshipInfoScreen() {
 						displayName: user?.displayName || '',
 						photoUrl: user?.photoUrl || '',
 						isLeader: true,
+						isGuest: false,
 					},
 				]
 			: info.members,
@@ -107,7 +108,7 @@ export default function FellowshipInfoScreen() {
 	const [memberNameInput, setMemberNameInput] = useState('');
 	// 선택된 그룹 멤버를 저장하는 상태
 	const [selectedGroupMembers, setSelectedGroupMembers] = useState<
-		FellowshipMember[]
+		ClientFellowshipMember[]
 	>([]);
 	const handleCloseMemberSheet = () => {
 		setSelectedMember(null);
@@ -120,7 +121,7 @@ export default function FellowshipInfoScreen() {
 	};
 
 	// 그룹 멤버를 선택하거나 선택 해제하는 함수
-	const toggleSelectGroupMember = (member: FellowshipMember) => {
+	const toggleSelectGroupMember = (member: ClientFellowshipMember) => {
 		setSelectedGroupMembers((prev) => {
 			// 이미 선택된 멤버인지 확인
 			const isAlreadySelected = prev.some((m) => m.id === member.id);
@@ -160,10 +161,11 @@ export default function FellowshipInfoScreen() {
 		if (!memberNameInput.trim()) return;
 
 		// 새로운 멤버 생성
-		const newMember: FellowshipMember = {
+		const newMember: ClientFellowshipMember = {
 			id: `custom-${Date.now()}`,
 			displayName: memberNameInput.trim(),
 			isLeader: false,
+			isGuest: true,
 		};
 
 		// 선택된 멤버로 추가 (리스트에 표시되도록)
@@ -173,7 +175,7 @@ export default function FellowshipInfoScreen() {
 	};
 
 	// 그룹 멤버 리스트
-	const allFellowshipMembers = useMemo<FellowshipMember[]>(() => {
+	const allFellowshipMembers = useMemo<ClientFellowshipMember[]>(() => {
 		if (!group || !group.members) return [];
 
 		// 이미 추가된 멤버 ID 목록
@@ -187,6 +189,7 @@ export default function FellowshipInfoScreen() {
 					{
 						id: member.id,
 						isLeader: false,
+						isGuest: false,
 					},
 					member.displayName ? { displayName: member.displayName } : {},
 					member.photoUrl ? { photoUrl: member.photoUrl } : {},

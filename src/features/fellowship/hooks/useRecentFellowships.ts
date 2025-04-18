@@ -6,6 +6,7 @@ import type { ClientFellowship } from '../api/types';
 /**
  * Custom hook to get the most recent fellowship created within the last 6 hours
  * @returns Object containing the most recent fellowship data and query state
+ * @deprecated
  */
 export function useRecentFellowships() {
 	const { currentGroup } = useAuthStore();
@@ -17,7 +18,7 @@ export function useRecentFellowships() {
 	// 고정된 queryKey를 사용하여 불필요한 리렌더링 방지
 	return useQuery({
 		queryKey: [
-			'fellowships',
+			'fellowship',
 			'recent',
 			currentGroup?.groupId || '',
 			'last6hours',

@@ -49,6 +49,9 @@ import { RefreshCw } from 'lucide-react-native';
 import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { getCurrentAppVersion } from '@/shared/utils/app_version';
+import { FELLOWSHIP_QUERY_KEY } from '@/features/fellowship/hooks/useFellowship';
+import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '@/features/prayer-request/hooks/usePrayerRequests';
+import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();
@@ -134,6 +137,18 @@ export default function TabFourScreen() {
 			queryClient.invalidateQueries({ queryKey: ['user', user.id] });
 			queryClient.invalidateQueries({
 				queryKey: [GROUPS_QUERY_KEY],
+				refetchType: 'all',
+			});
+			queryClient.invalidateQueries({
+				queryKey: [FELLOWSHIP_QUERY_KEY],
+				refetchType: 'all',
+			});
+			queryClient.invalidateQueries({
+				queryKey: [PRAYER_REQUESTS_QUERY_KEY],
+				refetchType: 'all',
+			});
+			queryClient.invalidateQueries({
+				queryKey: [ALL_PRAYER_REQUESTS_QUERY_KEY],
 				refetchType: 'all',
 			});
 

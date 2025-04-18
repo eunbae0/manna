@@ -1,7 +1,10 @@
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { togglePrayerRequestReaction } from '@/api/prayer-request';
-import type { ClientPrayerRequest, Member } from '@/api/prayer-request/types';
+import type {
+	ClientGroupMember,
+	ClientPrayerRequest,
+} from '@/api/prayer-request/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Heart, MoreHorizontal, Pen, Trash } from 'lucide-react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -33,10 +36,12 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
+import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
+import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '../hooks/usePrayerRequests';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
-	member: Member;
+	member: ClientGroupMember;
 	date: YYYYMMDD;
 };
 
@@ -52,7 +57,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 
 	const isOwner = prayerRequest.member.id === member.id;
 
-	const { showSuccess } = useToastStore();
+	const { showSuccess, showError } = useToastStore();
 
 	const { mutate: toggleLike } = useMutation({
 		mutationFn: async () => {
@@ -88,10 +93,17 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 
 			Promise.all([
 				queryClient.invalidateQueries({
-					queryKey: ['prayer-requests', currentGroup?.groupId || '', date],
+					queryKey: [
+						PRAYER_REQUESTS_QUERY_KEY,
+						currentGroup?.groupId || '',
+						date,
+					],
 				}),
 				queryClient.invalidateQueries({
-					queryKey: ['all-prayer-requests', currentGroup?.groupId || ''],
+					queryKey: [
+						ALL_PRAYER_REQUESTS_QUERY_KEY,
+						currentGroup?.groupId || '',
+					],
 				}),
 			]);
 		},
@@ -142,22 +154,21 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 							Promise.all([
 								queryClient.invalidateQueries({
 									queryKey: [
-										'prayer-requests',
+										PRAYER_REQUESTS_QUERY_KEY,
 										currentGroup?.groupId || '',
 										date,
 									],
 								}),
 								queryClient.invalidateQueries({
 									queryKey: [
-										'all-prayer-requests',
+										ALL_PRAYER_REQUESTS_QUERY_KEY,
 										currentGroup?.groupId || '',
 									],
 								}),
 							]);
 						},
 						onError: (error: Error) => {
-							console.error('Failed to delete prayer request:', error);
-							// Show error toast or notification
+							showError('기도 제목을 삭제하는데 실패했어요.');
 						},
 					});
 				},
@@ -186,7 +197,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 										: prayerRequest.member.displayName || '이름없음'}
 								</Text>
 								<Text className="text-typography-500" size="sm">
-									{formatRelativeTime(prayerRequest.date)}
+									{formatRelativeTime(prayerRequest.createdAt)}
 								</Text>
 							</HStack>
 							{isOwner && (

@@ -1,7 +1,7 @@
 import type {
 	ClientPrayerRequest,
 	CreatePrayerRequestInput,
-	Member,
+	ClientGroupMember,
 	UpdatePrayerRequestInput,
 } from './types';
 import { handleApiError } from '../errors';
@@ -184,7 +184,7 @@ export const togglePrayerRequestReaction = withApiLogging(
 		prayerRequestId: string,
 		reaction: {
 			type: 'LIKE';
-			member: Member;
+			member: ClientGroupMember;
 		},
 	): Promise<void> => {
 		try {

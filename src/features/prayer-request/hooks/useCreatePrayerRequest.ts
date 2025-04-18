@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPrayerRequest } from '@/api/prayer-request';
 import { useAuthStore } from '@/store/auth';
-import type { Member } from '@/api/prayer-request/types';
 import { getKSTDate } from '@/shared/utils/date';
 import { router } from 'expo-router';
+import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
+import { ALL_PRAYER_REQUESTS_QUERY_KEY } from './usePrayerRequests';
+import { useToastStore } from '@/store/toast';
 
 /**
  * Custom hook for creating a prayer request
@@ -15,30 +17,23 @@ export function useCreatePrayerRequest() {
 	const queryClient = useQueryClient();
 	const groupId = currentGroup?.groupId || '';
 
+	const { showError } = useToastStore();
+
 	const { mutate, isPending, error, isSuccess } = useMutation({
 		mutationFn: async ({
 			value,
-			date,
 			isAnonymous,
 		}: {
 			value: string;
-			date: Date;
 			isAnonymous: boolean;
 		}) => {
 			if (!value.trim()) {
 				throw new Error('Prayer request text is required');
 			}
 
-			const member: Member = {
-				id: user?.id || '',
-				displayName: user?.displayName || '',
-				photoUrl: user?.photoUrl || '',
-			};
-
 			return createPrayerRequest(groupId, {
 				value: value.trim(),
-				date,
-				member,
+				member: { id: user?.id || '' },
 				isAnonymous,
 			});
 		},
@@ -47,16 +42,16 @@ export function useCreatePrayerRequest() {
 
 			Promise.all([
 				queryClient.invalidateQueries({
-					queryKey: ['prayer-requests', groupId, todayDate],
+					queryKey: [PRAYER_REQUESTS_QUERY_KEY, groupId, todayDate],
 				}),
 				queryClient.invalidateQueries({
-					queryKey: ['all-prayer-requests', groupId],
+					queryKey: [ALL_PRAYER_REQUESTS_QUERY_KEY, groupId],
 				}),
 			]);
 			router.back();
 		},
 		onError: (error: Error) => {
-			console.error('Failed to create prayer request:', error);
+			showError('기도 제목을 생성하는데 실패했어요.');
 		},
 	});
 

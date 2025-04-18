@@ -1,20 +1,11 @@
 import { handleApiError } from '@/api/errors';
 import { withApiLogging } from '@/api/utils/logger';
-import { FirestoreFellowshipService } from './service';
+import { FirestoreFellowshipService, getFellowshipService } from './service';
 import type {
-	Fellowship,
 	ClientFellowship,
+	CreateFellowshipInput,
 	UpdateFellowshipInput,
 } from './types';
-
-/**
- * Creates a fellowship service instance for a specific group
- * @param groupId ID of the group
- * @returns Fellowship service instance
- */
-function createFellowshipService(groupId: string) {
-	return new FirestoreFellowshipService(groupId);
-}
 
 /**
  * Fetches all fellowships for a specific group
@@ -22,10 +13,10 @@ function createFellowshipService(groupId: string) {
  * @returns Array of fellowship data
  */
 export const fetchGroupFellowships = withApiLogging(
-	async (groupId: string): Promise<Fellowship[]> => {
+	async ({ groupId }: { groupId: string }): Promise<ClientFellowship[]> => {
 		try {
-			const fellowshipService = createFellowshipService(groupId);
-			const result = await fellowshipService.getGroupFellowships();
+			const fellowshipService = getFellowshipService();
+			const result = await fellowshipService.getGroupFellowships({ groupId });
 
 			// Pass metadata to the withApiLogging wrapper via context
 			const context = {
@@ -50,13 +41,19 @@ export const fetchGroupFellowships = withApiLogging(
  * @returns Fellowship data or null if not found
  */
 export const fetchFellowshipById = withApiLogging(
-	async (
-		groupId: string,
-		fellowshipId: string,
-	): Promise<ClientFellowship | null> => {
+	async ({
+		groupId,
+		fellowshipId,
+	}: {
+		groupId: string;
+		fellowshipId: string;
+	}): Promise<ClientFellowship | null> => {
 		try {
-			const fellowshipService = createFellowshipService(groupId);
-			return await fellowshipService.getFellowshipById(fellowshipId);
+			const fellowshipService = getFellowshipService();
+			return await fellowshipService.getFellowshipById({
+				groupId,
+				fellowshipId,
+			});
 		} catch (error) {
 			throw handleApiError(error, 'fetchFellowshipById', 'fellowship');
 		}
@@ -73,15 +70,17 @@ export const fetchFellowshipById = withApiLogging(
  */
 export const createFellowship = withApiLogging(
 	async (
-		groupId: string,
-		fellowshipData: Omit<
-			ClientFellowship,
-			'id' | 'groupId' | 'createdAt' | 'updatedAt'
-		>,
+		{ groupId }: { groupId: string },
+		fellowshipData: CreateFellowshipInput,
 	): Promise<string> => {
 		try {
-			const fellowshipService = createFellowshipService(groupId);
-			return await fellowshipService.createFellowship(fellowshipData);
+			const fellowshipService = getFellowshipService();
+			return await fellowshipService.createFellowship(
+				{
+					groupId,
+				},
+				fellowshipData,
+			);
 		} catch (error) {
 			throw handleApiError(error, 'createFellowship', 'fellowship');
 		}
@@ -98,13 +97,18 @@ export const createFellowship = withApiLogging(
  */
 export const updateFellowship = withApiLogging(
 	async (
-		groupId: string,
-		fellowshipId: string,
+		{ groupId, fellowshipId }: { groupId: string; fellowshipId: string },
 		fellowshipData: UpdateFellowshipInput,
 	): Promise<void> => {
 		try {
-			const fellowshipService = createFellowshipService(groupId);
-			await fellowshipService.updateFellowship(fellowshipId, fellowshipData);
+			const fellowshipService = getFellowshipService();
+			await fellowshipService.updateFellowship(
+				{
+					groupId,
+					fellowshipId,
+				},
+				fellowshipData,
+			);
 		} catch (error) {
 			throw handleApiError(error, 'updateFellowship', 'fellowship');
 		}
@@ -119,10 +123,13 @@ export const updateFellowship = withApiLogging(
  * @param fellowshipId ID of the fellowship to delete
  */
 export const deleteFellowship = withApiLogging(
-	async (groupId: string, fellowshipId: string): Promise<void> => {
+	async ({
+		groupId,
+		fellowshipId,
+	}: { groupId: string; fellowshipId: string }): Promise<void> => {
 		try {
-			const fellowshipService = createFellowshipService(groupId);
-			await fellowshipService.deleteFellowship(fellowshipId);
+			const fellowshipService = getFellowshipService();
+			await fellowshipService.deleteFellowship({ groupId, fellowshipId });
 		} catch (error) {
 			throw handleApiError(error, 'deleteFellowship', 'fellowship');
 		}
@@ -140,13 +147,16 @@ export const deleteFellowship = withApiLogging(
  */
 export const fetchFellowshipsByDateRange = withApiLogging(
 	async (
-		groupId: string,
+		{ groupId }: { groupId: string },
 		startDate: Date,
 		endDate: Date,
 	): Promise<ClientFellowship[]> => {
 		try {
-			const fellowshipService = createFellowshipService(groupId);
+			const fellowshipService = getFellowshipService();
 			const result = await fellowshipService.getFellowshipsByDateRange(
+				{
+					groupId,
+				},
 				startDate,
 				endDate,
 			);

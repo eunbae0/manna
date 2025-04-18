@@ -1,9 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type {
-	ClientFellowship,
-	FellowshipMember,
-	UpdateFellowshipInput,
-} from '../api/types';
+import type { ClientFellowship, UpdateFellowshipInput } from '../api/types';
 import {
 	deleteFellowship,
 	fetchFellowshipById,
@@ -13,7 +9,7 @@ import { useToastStore } from '@/store/toast';
 import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
 
-const FELLOWSHIP_QUERY_KEY = 'fellowship';
+export const FELLOWSHIP_QUERY_KEY = 'fellowship';
 
 /**
  * 특정 나눔 노트의 상세 정보를 가져오는 훅
@@ -35,10 +31,10 @@ export function useFellowship(id: string | undefined) {
 		queryKey: [FELLOWSHIP_QUERY_KEY, id],
 		queryFn: async () => {
 			if (!id) throw new Error('ID가 없습니다.');
-			const data = await fetchFellowshipById(
-				currentGroup?.groupId || '',
-				id as string,
-			);
+			const data = await fetchFellowshipById({
+				groupId: currentGroup?.groupId || '',
+				fellowshipId: id,
+			});
 			if (!data) {
 				throw new Error('나눔 노트를 찾을 수 없습니다.');
 			}
@@ -54,8 +50,10 @@ export function useFellowship(id: string | undefined) {
 		mutationFn: async (updatedFellowship: UpdateFellowshipInput) => {
 			if (!id) throw new Error('ID가 없습니다.');
 			await updateFellowship(
-				currentGroup?.groupId || '',
-				id,
+				{
+					groupId: currentGroup?.groupId || '',
+					fellowshipId: id,
+				},
 				updatedFellowship,
 			);
 		},
@@ -74,7 +72,10 @@ export function useFellowship(id: string | undefined) {
 	const deleteFellowshipMutation = useMutation({
 		mutationFn: async () => {
 			if (!id) throw new Error('ID가 없습니다');
-			await deleteFellowship(currentGroup?.groupId || '', id);
+			await deleteFellowship({
+				groupId: currentGroup?.groupId || '',
+				fellowshipId: id,
+			});
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({

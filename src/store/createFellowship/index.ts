@@ -1,5 +1,4 @@
 import { createFellowship, updateFellowship } from '@/features/fellowship/api';
-import type { ClientFellowship } from '@/features/fellowship/api/types';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 import type {
@@ -23,10 +22,7 @@ type FellowShipStoreState = FellowShipStoreData & {
 	updateFellowshipContent: (
 		data: Partial<FellowShipStoreState['content']>,
 	) => void;
-	transformFellowshipData: () => Omit<
-		ClientFellowship,
-		'id' | 'groupId' | 'createdAt' | 'updatedAt'
-	>;
+	transformFellowshipData: () => FellowShipStoreData;
 	completeFellowship: ({
 		type,
 		groupId,
@@ -80,6 +76,12 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	transformFellowshipData: () => {
 		const { info, content } = get();
 
+		// change members client to server
+		info.members = info.members.map((member) => {
+			const { photoUrl, ...restMemberField } = member;
+			return restMemberField;
+		});
+
 		return {
 			info,
 			content,
@@ -91,7 +93,12 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 
 		switch (type) {
 			case 'CREATE': {
-				const id = await createFellowship(groupId, fellowshipData);
+				const id = await createFellowship(
+					{
+						groupId,
+					},
+					fellowshipData,
+				);
 				get().clearFellowship();
 				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
 				router.replace(`/(app)/(fellowship)/${id}`);
@@ -100,7 +107,13 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 			case 'EDIT': {
 				if (!fellowshipId) return;
 
-				await updateFellowship(groupId, fellowshipId, fellowshipData);
+				await updateFellowship(
+					{
+						groupId,
+						fellowshipId,
+					},
+					fellowshipData,
+				);
 
 				// Set lastUpdatedId to let components know this ID needs to be refreshed
 				set({ lastUpdatedId: fellowshipId });

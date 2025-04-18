@@ -3,6 +3,7 @@ import { Note } from '@/api/notes/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Timestamp } from '@react-native-firebase/firestore';
 import type { ClientWorshipType } from '@/api/worship-types/types';
+import { useToastStore } from '@/store/toast';
 
 interface UpdateNoteData {
 	title: string;
@@ -52,6 +53,7 @@ export function useUpdateNote(
 	{ onSuccess, onError }: UpdateNoteParams = {},
 ) {
 	const queryClient = useQueryClient();
+	const { showError } = useToastStore();
 
 	const { mutate, isPending, error, isSuccess } = useMutation({
 		mutationFn: async (noteData: UpdateNoteData) => {
@@ -86,7 +88,7 @@ export function useUpdateNote(
 			onSuccess?.();
 		},
 		onError: (error: Error) => {
-			console.error('Failed to update note:', error);
+			showError('노트를 수정하는데 실패했어요.');
 			onError?.(error);
 		},
 	});
@@ -110,6 +112,7 @@ export function useDeleteNote(
 	{ onSuccess, onError }: UpdateNoteParams = {},
 ) {
 	const queryClient = useQueryClient();
+	const { showError } = useToastStore();
 
 	const { mutate, isPending, error, isSuccess } = useMutation({
 		mutationFn: async () => {
@@ -123,7 +126,7 @@ export function useDeleteNote(
 			onSuccess?.();
 		},
 		onError: (error: Error) => {
-			console.error('Failed to delete note:', error);
+			showError('노트를 삭제하는데 실패했어요.');
 			onError?.(error);
 		},
 	});

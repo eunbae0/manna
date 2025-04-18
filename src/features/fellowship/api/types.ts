@@ -1,4 +1,7 @@
-import type { ClientUser } from '@/shared/types';
+import type {
+	ClientGroupMember,
+	ServerGroupMember,
+} from '@/api/prayer-request/types';
 import type { DeepPartial } from '@/shared/utils/deepPartial';
 import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 
@@ -12,7 +15,6 @@ interface BaseFellowship {
 		preachTitle: string;
 		preacher?: FellowshipInfoField;
 		preachText?: FellowshipInfoField;
-		members: FellowshipMember[];
 	};
 	content: {
 		iceBreaking: FellowshipContentField[];
@@ -21,11 +23,17 @@ interface BaseFellowship {
 	};
 }
 
+export type ClientFellowshipMember = ClientGroupMember & {
+	isLeader: boolean;
+	isGuest: boolean;
+};
+export type ServerFellowshipMember = Omit<ClientFellowshipMember, 'photoUrl'>;
+
 /**
  * Server-side Fellowship with Timestamp objects
  * Used for Firestore storage and retrieval
  */
-export interface Fellowship extends BaseFellowship {
+export interface ServerFellowship extends BaseFellowship {
 	createdAt: FieldValue;
 	updatedAt: FieldValue;
 	info: {
@@ -33,7 +41,7 @@ export interface Fellowship extends BaseFellowship {
 		preachTitle: string;
 		preacher?: FellowshipInfoField;
 		preachText?: FellowshipInfoField;
-		members: FellowshipMember[];
+		members: ServerFellowshipMember[];
 	};
 }
 
@@ -47,33 +55,41 @@ export interface ClientFellowship extends BaseFellowship {
 		preachTitle: string;
 		preacher?: FellowshipInfoField;
 		preachText?: FellowshipInfoField;
-		members: FellowshipMember[];
+		members: ClientFellowshipMember[];
 	};
 }
 
-export type FellowshipMember = Partial<
-	Pick<ClientUser, 'displayName' | 'photoUrl'>
-> & {
-	id: string;
-	isLeader: boolean;
-};
-
 // Fellowship fields
 export type FellowshipInfoField = { value?: string; isActive: boolean };
+
 export type FellowshipContentField = {
 	id: string;
 	question: string;
 	answers: FellowshipAnswerField[];
 };
+
 export type FellowshipPrayerRequestField = {
 	isActive: boolean;
 	answers: FellowshipAnswerField[];
 };
+
 export type FellowshipAnswerField = {
-	member: FellowshipMember;
+	member: ServerFellowshipMember;
 	value: string;
 };
 
-export type UpdateFellowshipInput = DeepPartial<
-	Omit<ClientFellowship, 'id' | 'groupId' | 'createdAt'>
+export type CreateFellowshipInput = Omit<
+	FellowshipUpdateData,
+	'id' | 'groupId'
 >;
+export type UpdateFellowshipInput = DeepPartial<FellowshipUpdateData>;
+
+export interface FellowshipUpdateData extends BaseFellowship {
+	info: {
+		date: Date;
+		preachTitle: string;
+		preacher?: FellowshipInfoField;
+		preachText?: FellowshipInfoField;
+		members: ServerFellowshipMember[];
+	};
+}

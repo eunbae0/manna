@@ -3,7 +3,6 @@ import {
 	doc,
 	getDoc,
 	getDocs,
-	addDoc,
 	updateDoc,
 	deleteDoc,
 	serverTimestamp,
@@ -16,14 +15,15 @@ import {
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
-	PrayerRequest,
 	ClientPrayerRequest,
 	CreatePrayerRequestInput,
 	UpdatePrayerRequestInput,
-	PrayerRequestReaction,
-	Member,
+	ServerPrayerRequest,
+	ServerPrayerRequestReaction,
+	ClientGroupMember,
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
+import { DELETED_MEMBER_DISPLAY_NAME } from '@/shared/constants';
 
 /**
  * Firestore service for prayer request operations
@@ -41,6 +41,7 @@ export class FirestorePrayerRequestService {
 
 	private readonly collectionPath: string = 'groups';
 	private readonly subCollectionPath: string = 'prayer-requests';
+	private readonly memberCollectionPath: string = 'members';
 
 	/**
 	 * Converts a Firestore prayer request to a client prayer request
@@ -48,16 +49,15 @@ export class FirestorePrayerRequestService {
 	 * @returns Client prayer request
 	 */
 	private convertToClientPrayerRequest(
-		id: string,
 		data: FirebaseFirestoreTypes.DocumentData,
+		member: ClientGroupMember,
 	): ClientPrayerRequest {
 		return {
-			id,
+			id: data.id,
 			groupId: data.groupId,
 			createdAt: data.createdAt?.toDate() || new Date(),
 			updatedAt: data.updatedAt?.toDate() || new Date(),
-			date: data.date?.toDate() || new Date(),
-			member: data.member,
+			member,
 			value: data.value,
 			reactions: data.reactions || [],
 			isAnonymous: data.isAnonymous,
@@ -81,9 +81,33 @@ export class FirestorePrayerRequestService {
 		const querySnapshot = await getDocs(q);
 
 		const prayerRequests: ClientPrayerRequest[] = [];
-		for (const doc of querySnapshot.docs) {
-			const data = doc.data();
-			prayerRequests.push(this.convertToClientPrayerRequest(doc.id, data));
+		for (const prayerRequestDoc of querySnapshot.docs) {
+			const data = prayerRequestDoc.data() as ServerPrayerRequest;
+			const groupMemberDoc = await getDoc(
+				doc(
+					database,
+					this.collectionPath,
+					groupId,
+					this.subCollectionPath,
+					data.member.id,
+				),
+			);
+
+			// 탈퇴한 유저인 경우
+			if (!groupMemberDoc.exists) {
+				prayerRequests.push(
+					this.convertToClientPrayerRequest(data, {
+						id: data.member.id,
+						displayName: DELETED_MEMBER_DISPLAY_NAME,
+					}),
+				);
+				continue;
+			}
+
+			const clientMember = groupMemberDoc.data() as ClientGroupMember;
+			prayerRequests.push(
+				this.convertToClientPrayerRequest(data, clientMember),
+			);
 		}
 
 		return prayerRequests;
@@ -111,8 +135,28 @@ export class FirestorePrayerRequestService {
 			return null;
 		}
 
-		const data = prayerRequestDoc.data() || {};
-		return this.convertToClientPrayerRequest(prayerRequestDoc.id, data);
+		const data = prayerRequestDoc.data() as ServerPrayerRequest;
+
+		const groupMemberDoc = await getDoc(
+			doc(
+				database,
+				this.collectionPath,
+				groupId,
+				this.memberCollectionPath,
+				data.member.id,
+			),
+		);
+
+		// 탈퇴한 유저인 경우
+		if (!groupMemberDoc.exists) {
+			return this.convertToClientPrayerRequest(data, {
+				id: data.member.id,
+				displayName: DELETED_MEMBER_DISPLAY_NAME,
+			});
+		}
+		const clientMember = groupMemberDoc.data() as ClientGroupMember;
+
+		return this.convertToClientPrayerRequest(data, clientMember);
 	}
 
 	/**
@@ -137,17 +181,41 @@ export class FirestorePrayerRequestService {
 		);
 		const q = query(
 			prayerRequestsRef,
-			where('date', '>=', startTimestamp),
-			where('date', '<=', endTimestamp),
-			orderBy('date', 'desc'),
+			where('createdAt', '>=', startTimestamp),
+			where('createdAt', '<=', endTimestamp),
+			orderBy('createdAt', 'desc'),
 		);
 
 		const querySnapshot = await getDocs(q);
 
 		const prayerRequests: ClientPrayerRequest[] = [];
-		for (const doc of querySnapshot.docs) {
-			const data = doc.data();
-			prayerRequests.push(this.convertToClientPrayerRequest(doc.id, data));
+		for (const prayerRequestDoc of querySnapshot.docs) {
+			const data = prayerRequestDoc.data() as ServerPrayerRequest;
+
+			const groupMemberDoc = await getDoc(
+				doc(
+					database,
+					this.collectionPath,
+					groupId,
+					this.memberCollectionPath,
+					data.member.id,
+				),
+			);
+
+			// 탈퇴한 유저인 경우
+			if (!groupMemberDoc.exists) {
+				prayerRequests.push(
+					this.convertToClientPrayerRequest(data, {
+						id: data.member.id,
+						displayName: DELETED_MEMBER_DISPLAY_NAME,
+					}),
+				);
+				continue;
+			}
+			const clientMember = groupMemberDoc.data() as ClientGroupMember;
+			prayerRequests.push(
+				this.convertToClientPrayerRequest(data, clientMember),
+			);
 		}
 
 		return prayerRequests;
@@ -171,16 +239,12 @@ export class FirestorePrayerRequestService {
 			id,
 		);
 
-		const { date, ...restData } = prayerRequestData;
-
-		const data: PrayerRequest = {
-			...restData,
+		const data: Omit<ServerPrayerRequest, 'reactions'> = {
+			...prayerRequestData,
 			id,
 			groupId,
-			date: Timestamp.fromDate(date),
 			createdAt: serverTimestamp(),
 			updatedAt: serverTimestamp(),
-			reactions: prayerRequestData.reactions || [],
 		};
 
 		await setDoc(prayerRequestsRef, data);
@@ -205,15 +269,10 @@ export class FirestorePrayerRequestService {
 			prayerRequestId,
 		);
 
-		const data: Record<string, any> = {
+		const data: Partial<ServerPrayerRequest> = {
 			...prayerRequestData,
 			updatedAt: serverTimestamp(),
 		};
-
-		// Convert Date to Timestamp if present
-		if (prayerRequestData.date) {
-			data.date = Timestamp.fromDate(prayerRequestData.date);
-		}
 
 		await updateDoc(prayerRequestRef, data);
 	}
@@ -244,10 +303,7 @@ export class FirestorePrayerRequestService {
 	async addReaction(
 		groupId: string,
 		prayerRequestId: string,
-		reaction: {
-			type: 'LIKE';
-			member: Member;
-		},
+		reaction: ServerPrayerRequestReaction,
 	): Promise<void> {
 		const prayerRequest = await this.getPrayerRequestById(
 			groupId,
@@ -263,7 +319,7 @@ export class FirestorePrayerRequestService {
 			(r) => r.member.id === reaction.member.id && r.type === reaction.type,
 		);
 
-		let updatedReactions: PrayerRequestReaction[];
+		let updatedReactions: ServerPrayerRequestReaction[];
 
 		if (existingReactionIndex >= 0) {
 			// Remove the reaction if it already exists (toggle behavior)
