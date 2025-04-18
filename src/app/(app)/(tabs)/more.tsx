@@ -66,10 +66,7 @@ export default function TabFourScreen() {
 		return displayName !== (user?.displayName || '');
 	}, [displayName, user?.displayName]);
 
-	const isPhotoUrlChanged = useMemo(() => {
-		return photoUrl !== (user?.photoUrl || '');
-	}, [photoUrl, user?.photoUrl]);
-
+	const [isPhotoUrlChanged, setIsPhotoUrlChanged] = useState(false);
 	const isProfileChanged = useMemo(() => {
 		return isDisplayNameChanged || isPhotoUrlChanged;
 	}, [isDisplayNameChanged, isPhotoUrlChanged]);
@@ -106,6 +103,7 @@ export default function TabFourScreen() {
 			});
 
 			setPhotoUrl(_result.uri);
+			setIsPhotoUrlChanged(true);
 		}
 	};
 
@@ -124,7 +122,6 @@ export default function TabFourScreen() {
 			if (isDisplayNameChanged) {
 				updateData.displayName = displayName;
 			}
-
 			if (isPhotoUrlChanged) {
 				updateData.photoUrl = photoUrl;
 			}
@@ -152,6 +149,7 @@ export default function TabFourScreen() {
 				refetchType: 'all',
 			});
 
+			setIsPhotoUrlChanged(false);
 			handleClose();
 			showToast({
 				message: '프로필이 업데이트되었습니다',
@@ -306,7 +304,7 @@ function openAppStoreReview() {
 		} else {
 			Alert.alert(
 				'알림',
-				'스토어를 열 수 없습니다. 앱이 아직 스토어에 등록되지 않았을 수 있습니다.',
+				'스토어를 열 수 없어요. 앱이 아직 스토어에 등록되지 않았을 수 있습니다.',
 			);
 		}
 	});
