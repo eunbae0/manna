@@ -237,7 +237,7 @@ export default function FellowshipDetailScreen({
 	};
 
 	const handlePressDeleteButton = () => {
-		Alert.alert('나눔을 삭제하시겠습니까?', '', [
+		Alert.alert('나눔을 삭제할까요?', '', [
 			{
 				text: '삭제',
 				style: 'destructive',

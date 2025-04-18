@@ -55,7 +55,7 @@ export default function selectedWorshipTypeModal() {
 			const types = await fetchUserWorshipTypes();
 			setWorshipTypes(types);
 		} catch (error) {
-			Alert.alert('오류', '예배 종류를 불러오는 중 오류가 발생했습니다.');
+			Alert.alert('오류', '예배 종류를 불러오는 중 오류가 발생했어요.');
 			console.error('Failed to fetch worship types:', error);
 		} finally {
 			setIsLoading(false);
@@ -88,7 +88,7 @@ export default function selectedWorshipTypeModal() {
 
 			setNewWorshipTypeName('');
 		} catch (error) {
-			Alert.alert('오류', '예배 종류를 추가하는 중 오류가 발생했습니다.');
+			Alert.alert('오류', '예배 종류를 추가하는 중 오류가 발생했어요.');
 			console.error('Failed to add worship type:', error);
 		}
 	};
@@ -126,7 +126,7 @@ export default function selectedWorshipTypeModal() {
 			setEditWorshipTypeName('');
 			setEditingWorshipType(null);
 		} catch (error) {
-			Alert.alert('오류', '예배 종류를 수정하는 중 오류가 발생했습니다.');
+			Alert.alert('오류', '예배 종류를 수정하는 중 오류가 발생했어요.');
 			console.error('Failed to update worship type:', error);
 		}
 	};
@@ -164,10 +164,7 @@ export default function selectedWorshipTypeModal() {
 								setNewWorshipTypeName('');
 							}
 						} catch (error) {
-							Alert.alert(
-								'오류',
-								'예배 종류를 삭제하는 중 오류가 발생했습니다.',
-							);
+							Alert.alert('오류', '예배 종류를 삭제하는 중 오류가 발생했어요.');
 							console.error('Failed to delete worship type:', error);
 						}
 					},

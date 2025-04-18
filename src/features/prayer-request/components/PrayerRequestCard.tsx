@@ -141,7 +141,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 	const handlePressDelete = () => {
 		handleClose();
 		// Show confirmation dialog before deleting
-		Alert.alert('기도 제목 삭제', '이 기도 제목을 삭제하시겠습니까?', [
+		Alert.alert('기도 제목 삭제', '이 기도 제목을 삭제할까요?', [
 			{ text: '취소', style: 'cancel' },
 			{
 				text: '삭제',

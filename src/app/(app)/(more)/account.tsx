@@ -16,7 +16,7 @@ export default function AccountSettingScreen() {
 	const handleDeleteAccount = () => {
 		Alert.alert(
 			'계정 탈퇴',
-			'정말로 계정을 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+			'정말로 계정을 탈퇴할까요? 이 작업은 되돌릴 수 없습니다.',
 			[
 				{
 					text: '취소',
@@ -52,7 +52,7 @@ export default function AccountSettingScreen() {
 						} catch (error) {
 							Alert.alert(
 								'오류',
-								'로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.',
+								'로그아웃 중 문제가 했어요. 다시 시도해주세요.',
 							);
 						}
 					},
