@@ -113,15 +113,14 @@ export default function NotificationSettingScreen() {
 		// 특정 그룹 탭일 경우 해당 그룹의 설정만 표시
 		const selectedGroup = groups.find((g) => g.id === selectedTab.id);
 		if (!selectedGroup) return null;
-
 		return (
 			<VStack space="4xl" className="px-6">
 				<NotificationSettingItem
 					title="기도 제목 알림"
 					description="기도 제목이 등록된 경우 알림"
 					enabled={
-						notificationSettings[selectedGroup.groupName]
-							?.notificationPreferences?.prayerRequest ?? true
+						notificationSettings[selectedGroup.id]?.notificationPreferences
+							?.prayerRequest ?? true
 					}
 					onValueChange={(value) =>
 						handleNotificationChange(
@@ -136,8 +135,8 @@ export default function NotificationSettingScreen() {
 					title="나눔 알림"
 					description="나눔이 등록된 경우 알림"
 					enabled={
-						notificationSettings[selectedGroup.groupName]
-							?.notificationPreferences?.fellowship ?? true
+						notificationSettings[selectedGroup.id]?.notificationPreferences
+							?.fellowship ?? true
 					}
 					onValueChange={(value) =>
 						handleNotificationChange(

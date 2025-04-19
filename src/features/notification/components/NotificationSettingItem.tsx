@@ -17,13 +17,6 @@ export const NotificationSettingItem = ({
 	enabled,
 	onValueChange,
 }: Props) => {
-	const [_enabled, setEnabled] = useState(enabled);
-
-	const handleValueChange = (value: boolean) => {
-		setEnabled(value);
-		onValueChange(value);
-	};
-
 	return (
 		<HStack className="justify-between items-center">
 			<VStack space="xs" className="flex-1 mr-4">
@@ -32,7 +25,7 @@ export const NotificationSettingItem = ({
 				</Text>
 				<Text className="text-typography-500">{description}</Text>
 			</VStack>
-			<Switch value={_enabled} onValueChange={handleValueChange} />
+			<Switch value={enabled} onValueChange={onValueChange} />
 		</HStack>
 	);
 };
