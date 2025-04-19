@@ -12,6 +12,8 @@ import {
 	Timestamp,
 	setDoc,
 	type FirebaseFirestoreTypes,
+	limit,
+	startAfter,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
@@ -24,6 +26,8 @@ import type {
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { DELETED_MEMBER_DISPLAY_NAME } from '@/shared/constants';
+
+const DEFAULT_PRAYER_REQUEST_PAGE_SIZE = 5;
 
 /**
  * Firestore service for prayer request operations
@@ -70,6 +74,7 @@ export class FirestorePrayerRequestService {
 	 */
 	async getGroupPrayerRequests(
 		groupId: string,
+		lastKey: string,
 	): Promise<ClientPrayerRequest[]> {
 		const prayerRequestsRef = collection(
 			database,
@@ -77,7 +82,18 @@ export class FirestorePrayerRequestService {
 			groupId,
 			this.subCollectionPath,
 		);
-		const q = query(prayerRequestsRef, orderBy('date', 'desc'));
+		const q = lastKey
+			? query(
+					prayerRequestsRef,
+					orderBy('createdAt', 'desc'),
+					startAfter(lastKey),
+					limit(DEFAULT_PRAYER_REQUEST_PAGE_SIZE),
+				)
+			: query(
+					prayerRequestsRef,
+					orderBy('createdAt', 'desc'),
+					limit(DEFAULT_PRAYER_REQUEST_PAGE_SIZE),
+				);
 		const querySnapshot = await getDocs(q);
 
 		const prayerRequests: ClientPrayerRequest[] = [];
@@ -88,7 +104,7 @@ export class FirestorePrayerRequestService {
 					database,
 					this.collectionPath,
 					groupId,
-					this.subCollectionPath,
+					this.memberCollectionPath,
 					data.member.id,
 				),
 			);

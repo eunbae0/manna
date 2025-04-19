@@ -15,6 +15,7 @@ import { Divider } from '#/components/ui/divider';
 
 /**
  * @deprecated
+ * TODO: 기도제목 필터링(날짜, 작성자 등) 화면으로 수정
  */
 export default function PrayerRequestListScreen() {
 	const { user } = useAuthStore();

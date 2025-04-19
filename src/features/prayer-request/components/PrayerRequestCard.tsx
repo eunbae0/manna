@@ -41,21 +41,19 @@ import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '../hooks/usePrayerRequests';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
-	member: ClientGroupMember;
-	date: YYYYMMDD;
 };
 
-const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
+const PrayerRequestCard = ({ prayerRequest }: Props) => {
 	// Animation value for heart icon
 	const heartScale = useSharedValue(1);
 	const heartTranslateY = useSharedValue(0);
-	const { currentGroup } = useAuthStore();
+	const { currentGroup, user } = useAuthStore();
 	const queryClient = useQueryClient();
 	const hasLiked = prayerRequest.reactions.some(
-		(reaction) => reaction.type === 'LIKE' && reaction.member.id === member.id,
+		(reaction) => reaction.type === 'LIKE' && reaction.member.id === user?.id,
 	);
 
-	const isOwner = prayerRequest.member.id === member.id;
+	const isOwner = prayerRequest.member.id === user?.id;
 
 	const { showSuccess, showError } = useToastStore();
 
@@ -66,7 +64,9 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 				prayerRequest.id,
 				{
 					type: 'LIKE',
-					member,
+					member: {
+						id: user?.id || '',
+					},
 				},
 			);
 		},
@@ -93,11 +93,7 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 
 			Promise.all([
 				queryClient.invalidateQueries({
-					queryKey: [
-						PRAYER_REQUESTS_QUERY_KEY,
-						currentGroup?.groupId || '',
-						date,
-					],
+					queryKey: [PRAYER_REQUESTS_QUERY_KEY, currentGroup?.groupId || ''],
 				}),
 				queryClient.invalidateQueries({
 					queryKey: [
@@ -131,7 +127,6 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 			pathname: '/(app)/createPrayerRequestModal',
 			params: {
 				id: prayerRequest.id,
-				date: date,
 				value: prayerRequest.value,
 				isAnonymous: prayerRequest.isAnonymous ? 'true' : 'false',
 			},
@@ -156,7 +151,6 @@ const PrayerRequestCard = ({ prayerRequest, member, date }: Props) => {
 									queryKey: [
 										PRAYER_REQUESTS_QUERY_KEY,
 										currentGroup?.groupId || '',
-										date,
 									],
 								}),
 								queryClient.invalidateQueries({

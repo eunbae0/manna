@@ -3,6 +3,8 @@ import type {
 	CreatePrayerRequestInput,
 	ClientGroupMember,
 	UpdatePrayerRequestInput,
+	ServerGroupMember,
+	ServerPrayerRequestReaction,
 } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
@@ -14,10 +16,13 @@ import { getPrayerRequestService } from './service';
  * @returns Array of prayer request data
  */
 export const fetchGroupPrayerRequests = withApiLogging(
-	async (groupId: string): Promise<ClientPrayerRequest[]> => {
+	async (groupId: string, lastKey: string): Promise<ClientPrayerRequest[]> => {
 		try {
 			const prayerRequestService = getPrayerRequestService();
-			const result = await prayerRequestService.getGroupPrayerRequests(groupId);
+			const result = await prayerRequestService.getGroupPrayerRequests(
+				groupId,
+				lastKey,
+			);
 
 			// Pass metadata to the withApiLogging wrapper via context
 			const context = {
@@ -182,10 +187,7 @@ export const togglePrayerRequestReaction = withApiLogging(
 	async (
 		groupId: string,
 		prayerRequestId: string,
-		reaction: {
-			type: 'LIKE';
-			member: ClientGroupMember;
-		},
+		reaction: ServerPrayerRequestReaction,
 	): Promise<void> => {
 		try {
 			const prayerRequestService = getPrayerRequestService();

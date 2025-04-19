@@ -24,7 +24,7 @@ export function useFellowshipsByDate(date: YYYYMMDD) {
 		queryKey: ['fellowships', currentGroup?.groupId || '', date],
 		queryFn: () =>
 			fetchFellowshipsByDateRange(
-				currentGroup?.groupId || '',
+				{ groupId: currentGroup?.groupId || '' },
 				startDate,
 				endDate,
 			),
