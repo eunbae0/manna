@@ -17,6 +17,7 @@ import ServiceGroups from './components/ServiceGroups';
 import { HomeSkeleton } from './components/HomeSkeleton';
 import PreayerRequestList from './components/PreayerRequestList';
 import { useNotifications } from '@/features/notification/hooks/useNotifications';
+import { useRefetchOnFocus } from '@/shared/hooks/useRefetchOnFocus';
 
 function HomeList() {
 	const [date, setDate] = useState<YYYYMMDD>(getKSTDate(new Date()));
@@ -38,11 +39,12 @@ function HomeList() {
 		refetch: refetchPrayerRequests,
 	} = usePrayerRequestsByDate(currentGroup?.groupId || '', date);
 
-	useFocusEffect(() => {
+	useRefetchOnFocus(() => {
 		const newDate = getKSTDate(new Date());
 		if (date !== newDate) {
 			setDate(newDate);
 		}
+		// refetchPrayerRequests();
 		// refetchNotifications();
 	});
 

@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
 import { FlatList, RefreshControl } from 'react-native';
 import { useNotifications } from '../hooks/useNotifications';
-import { type Href, router, useFocusEffect } from 'expo-router';
+import { type Href, router } from 'expo-router';
 import { Button } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { EmptyState } from '@/components/common/empty-state';
@@ -17,7 +16,7 @@ import Animated, {
 	withTiming,
 	Easing,
 } from 'react-native-reanimated';
-import { setBadgeCountAsync } from 'expo-notifications';
+import { useRefetchOnFocus } from '@/shared/hooks/useRefetchOnFocus';
 
 /**
  * 알림 목록 스켈레톤 UI 컴포넌트
@@ -135,9 +134,7 @@ export function NotificationList() {
 		});
 	};
 
-	// useFocusEffect(() => {
-	// 	refetch();
-	// });
+	useRefetchOnFocus(refetch);
 
 	if (isLoading) {
 		return <NotificationSkeleton />;
