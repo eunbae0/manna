@@ -13,6 +13,9 @@ import { useState, useCallback } from 'react';
 import { EmptyState } from '#/src/components/common/empty-state';
 import { Divider } from '#/components/ui/divider';
 
+/**
+ * @deprecated
+ */
 export default function PrayerRequestListScreen() {
 	const { user } = useAuthStore();
 	const { prayerRequests, isLoading, refetch } = usePrayerRequests();
@@ -59,15 +62,7 @@ export default function PrayerRequestListScreen() {
 							/>
 						}
 						renderItem={({ item }) => (
-							<PrayerRequestCard
-								prayerRequest={item}
-								member={{
-									id: user.id,
-									displayName: user.displayName || '',
-									photoUrl: user.photoUrl || '',
-								}}
-								date={todayDate}
-							/>
+							<PrayerRequestCard prayerRequest={item} date={todayDate} />
 						)}
 						ItemSeparatorComponent={() => (
 							<Divider className="mx-4 bg-background-100" />

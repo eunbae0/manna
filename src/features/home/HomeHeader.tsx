@@ -10,11 +10,11 @@ import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 import {
 	ChevronDown,
 	MenuIcon,
-	HandHelping,
 	Library,
 	Settings,
 	SettingsIcon,
 	Copy,
+	Users,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 
@@ -58,14 +58,13 @@ function HomeHeader({ groups }: Props) {
 			setIsExpanded(false);
 		},
 	});
-	const { showToast } = useToastStore();
 
 	const group = groups.find((group) => group.id === currentGroup?.groupId);
 
-	const handlePressPrayerRequestList = () => {
-		router.push('/(app)/(prayerRequest)/list');
-		handleCloseMenu();
-	};
+	// const handlePressPrayerRequestList = () => {
+	// 	router.push('/(app)/(prayerRequest)/list');
+	// 	handleCloseMenu();
+	// };
 
 	const handlePressFellowshipList = () => {
 		router.push('/(app)/(fellowship)/list');
@@ -90,6 +89,11 @@ function HomeHeader({ groups }: Props) {
 	const handlePressManageMyGroup = () => {
 		router.push('/(app)/(group)/manage-my-group');
 		handleCloseMenu();
+	};
+
+	const handlePressGroupMemberList = () => {
+		handleCloseMenu();
+		handleOpenMember();
 	};
 
 	return (
@@ -155,10 +159,15 @@ function HomeHeader({ groups }: Props) {
 						label="소그룹 메뉴"
 						onPress={handleCloseMenu}
 					/>
-					<BottomSheetListItem
+					{/* <BottomSheetListItem
 						label="기도 제목 모아보기"
 						icon={HandHelping}
 						onPress={handlePressPrayerRequestList}
+					/> */}
+					<BottomSheetListItem
+						label="그룹원 목록"
+						icon={Users}
+						onPress={handlePressGroupMemberList}
 					/>
 					<Divider />
 					<BottomSheetListItem
