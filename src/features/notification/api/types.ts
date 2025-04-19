@@ -29,6 +29,7 @@ export interface ClientNotification {
 		fellowshipId?: string;
 		groupId?: string;
 		senderId?: string;
+		groupName?: string;
 	};
 	screen?: string;
 	timestamp: Date;

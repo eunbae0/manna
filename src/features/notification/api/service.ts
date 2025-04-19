@@ -14,6 +14,7 @@ import type {
 	Notification,
 	NotificationService,
 } from './types';
+import type { ClientGroup, Group } from '@/api/group/types';
 
 /**
  * Firestore 기반 알림 서비스 구현
@@ -42,11 +43,43 @@ export class FirestoreNotificationService implements NotificationService {
 			const querySnapshot = await getDocs(q);
 
 			const notifications: ClientNotification[] = [];
+			const groupDataMap = new Map<
+				ClientGroup['id'],
+				ClientGroup['groupName']
+			>();
 
-			for (const doc of querySnapshot.docs) {
-				const data = doc.data() as Notification;
+			for (const notificationDoc of querySnapshot.docs) {
+				const data = notificationDoc.data() as Notification;
+				if (!data.metadata.groupId) {
+					notifications.push(
+						this.convertToClientNotification(notificationDoc.id, data),
+					);
+					continue;
+				}
 
-				notifications.push(this.convertToClientNotification(doc.id, data));
+				if (!groupDataMap.has(data.metadata.groupId)) {
+					const groupRef = doc(database, 'groups', data.metadata.groupId);
+					const groupDoc = await getDoc(groupRef);
+					if (groupDoc.exists) {
+						const groupData = groupDoc.data() as Group;
+						groupDataMap.set(data.metadata.groupId, groupData.groupName);
+					}
+				}
+
+				const clientNotificationData = {
+					...data,
+					metadata: {
+						...data.metadata,
+						groupName: groupDataMap.get(data.metadata.groupId),
+					},
+				};
+
+				notifications.push(
+					this.convertToClientNotification(
+						notificationDoc.id,
+						clientNotificationData,
+					),
+				);
 			}
 
 			return notifications;

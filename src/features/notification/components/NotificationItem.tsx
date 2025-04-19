@@ -20,6 +20,8 @@ import {
 	GestureHandlerRootView,
 } from 'react-native-gesture-handler';
 import { cn } from '@/shared/utils/cn';
+import { useAuthStore } from '@/store/auth';
+import { useToastStore } from '@/store/toast';
 
 /**
  * 알림 아이템 컴포넌트 Props
@@ -128,6 +130,9 @@ export function NotificationItem({
 		});
 
 	// 아이템 탭 핸들러
+	const { currentGroup, updateCurrentGroup } = useAuthStore();
+	const { showInfo } = useToastStore();
+
 	const onItemPress = useCallback(() => {
 		// 스와이프가 열려있으면 닫기만 하고, 닫혀있으면 onPress 실행
 		if (isSwipeOpen.value) {
@@ -137,9 +142,33 @@ export function NotificationItem({
 			});
 			isSwipeOpen.value = false;
 		} else {
+			// 그룹 ID가 있고 현재 선택된 그룹과 다르면 그룹 변경
+			const notificationGroupId = item.metadata?.groupId;
+			const notificationGroupName = item.metadata?.groupName;
+
+			if (
+				notificationGroupId &&
+				notificationGroupName &&
+				currentGroup?.groupId !== notificationGroupId
+			) {
+				// 현재 그룹 변경
+				updateCurrentGroup({ groupId: notificationGroupId });
+				// 토스트 메시지 표시
+				showInfo(`${notificationGroupName} 그룹으로 이동했어요`);
+			}
+
+			// 기존 onPress 함수 호출
 			onPress(item);
 		}
-	}, [item, onPress, isSwipeOpen, translateX]);
+	}, [
+		item,
+		onPress,
+		isSwipeOpen,
+		translateX,
+		currentGroup,
+		updateCurrentGroup,
+		showInfo,
+	]);
 
 	// 삭제 버튼 핸들러
 	const handleDelete = useCallback(() => {
@@ -179,14 +208,28 @@ export function NotificationItem({
 					>
 						<Pressable onPress={onItemPress} className="w-full">
 							<VStack space="sm" className="p-5">
-								<HStack className="justify-between items-center">
-									<Text size="md" className="text-typography-500">
-										{item.title}
-									</Text>
-									<Text size="sm" className="text-gray-500">
-										{formatRelativeTime(item.timestamp)}
-									</Text>
-								</HStack>
+								<VStack space="xs">
+									<HStack className="justify-between items-center">
+										<HStack space="sm" className="items-center flex-wrap">
+											<Text size="md" className="text-typography-500">
+												{item.title}
+											</Text>
+											{item.metadata?.groupName && (
+												<View className="bg-primary-100 border border-primary-200 px-2 py-0.5 rounded-2xl">
+													<Text
+														size="xs"
+														className="text-primary-700 font-semibold"
+													>
+														{item.metadata.groupName}
+													</Text>
+												</View>
+											)}
+										</HStack>
+										<Text size="sm" className="text-gray-500">
+											{formatRelativeTime(item.timestamp)}
+										</Text>
+									</HStack>
+								</VStack>
 								<Text size="xl">{item.body}</Text>
 							</VStack>
 						</Pressable>
