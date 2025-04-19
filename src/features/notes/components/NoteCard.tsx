@@ -42,7 +42,7 @@ export const NoteCard = ({
 						<Text
 							size="md"
 							numberOfLines={1}
-							className="font-pretendard-regular text-typography-500"
+							className="font-pretendard-regular text-typography-500 truncate max-w-[200px]"
 						>
 							{content.trim()}
 						</Text>
