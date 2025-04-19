@@ -54,5 +54,5 @@ export interface NotificationService {
 	 * 알림을 삭제합니다
 	 * @param notificationId 알림 ID
 	 */
-	deleteNotification(notificationId: string): Promise<void>;
+	deleteNotification(notificationId: string): Promise<ClientNotification>;
 }

@@ -2,6 +2,7 @@ import {
 	collection,
 	deleteDoc,
 	doc,
+	getDoc,
 	getDocs,
 	orderBy,
 	query,
@@ -82,7 +83,9 @@ export class FirestoreNotificationService implements NotificationService {
 	 * 알림을 삭제합니다
 	 * @param notificationId 알림 ID
 	 */
-	async deleteNotification(notificationId: string): Promise<void> {
+	async deleteNotification(
+		notificationId: string,
+	): Promise<ClientNotification> {
 		try {
 			const notificationRef = doc(
 				database,
@@ -92,7 +95,16 @@ export class FirestoreNotificationService implements NotificationService {
 				notificationId,
 			);
 
+			const docSnapshot = await getDoc(notificationRef);
+
+			if (!docSnapshot.exists) {
+				throw new Error('알림을 찾을 수 없어요.');
+			}
+
+			const notification = docSnapshot.data() as Notification;
+
 			await deleteDoc(notificationRef);
+			return this.convertToClientNotification(notificationId, notification);
 		} catch (error) {
 			console.error('Error deleting notification:', error);
 			throw new Error('알림을 삭제하는 중 오류가 발생했어요.');

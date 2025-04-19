@@ -135,15 +135,9 @@ export function NotificationList() {
 		});
 	};
 
-	useFocusEffect(() => {
-		refetch();
-	});
-
-	useEffect(() => {
-		if (unreadCount > 0) {
-			setBadgeCountAsync(unreadCount);
-		}
-	}, [unreadCount]);
+	// useFocusEffect(() => {
+	// 	refetch();
+	// });
 
 	if (isLoading) {
 		return <NotificationSkeleton />;

@@ -52,7 +52,7 @@ export const markNotificationAsRead = withApiLogging(
  * @param notificationId 알림 ID
  */
 export const deleteNotification = withApiLogging(
-	async (notificationId: string): Promise<void> => {
+	async (notificationId: string): Promise<ClientNotification> => {
 		try {
 			const user = auth.currentUser;
 			if (!user) {
@@ -60,7 +60,7 @@ export const deleteNotification = withApiLogging(
 			}
 
 			const notificationService = getNotificationService(user.uid);
-			await notificationService.deleteNotification(notificationId);
+			return await notificationService.deleteNotification(notificationId);
 		} catch (error) {
 			throw handleApiError(error);
 		}
