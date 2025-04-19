@@ -16,17 +16,19 @@ import { LogOut, UserPlus, Users, Settings } from 'lucide-react-native';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import type { ClientGroup } from '@/api/group/types';
 import type { UserGroup } from '@/shared/types';
-import { useQueryClient } from '@tanstack/react-query';
-import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
+import { useToastStore } from '@/store/toast';
+import { GROUPS_CREATE_LIMIT } from '@/shared/constants';
 
 export default function ManageMyGroupScreen() {
 	const { user, updateAllUserGroupProfile } = useAuthStore();
-	const queryClient = useQueryClient();
+
 	const [refreshing, setRefreshing] = useState(false);
 
 	const { groups, isLoading, refetch } = useGroups(user?.groups ?? []);
 
 	const { leaveGroup, isLeaving } = useLeaveGroup();
+
+	const { showInfo } = useToastStore();
 
 	const handleRefresh = async () => {
 		setRefreshing(true);
@@ -35,10 +37,24 @@ export default function ManageMyGroupScreen() {
 	};
 
 	const handleCreateGroup = () => {
+		if (groups.length >= GROUPS_CREATE_LIMIT) {
+			showInfo(
+				'더 생성하고 싶다면 기존 그룹을 삭제해주세요',
+				'더 이상 그룹을 생성할 수 없어요',
+			);
+			return;
+		}
 		router.push('/(app)/(group)/create-group');
 	};
 
 	const handleJoinGroup = () => {
+		if (groups.length >= GROUPS_CREATE_LIMIT) {
+			showInfo(
+				'더 생성하고 싶다면 기존 그룹을 삭제해주세요',
+				'더 이상 그룹을 생성할 수 없어요',
+			);
+			return;
+		}
 		router.push('/(app)/(group)/join-group');
 	};
 
