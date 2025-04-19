@@ -6,7 +6,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
 import { Heading } from '#/components/ui/heading';
 import { Icon } from '#/components/ui/icon';
-import * as Clipboard from 'expo-clipboard';
+import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 import {
 	ChevronDown,
 	MenuIcon,
@@ -77,23 +77,7 @@ function HomeHeader({ groups }: Props) {
 		handleOpenMember();
 	};
 
-	const handleCopyInviteCode = async () => {
-		if (group?.inviteCode) {
-			try {
-				await Clipboard.setStringAsync(group.inviteCode);
-				showToast({
-					message: '초대 코드가 클립보드에 복사되었습니다.',
-					type: 'success',
-				});
-			} catch (error) {
-				showToast({
-					message: '초대 코드 복사에 실패했습니다. 직접 코드를 입력해주세요.',
-					type: 'error',
-				});
-				console.error('Clipboard error:', error);
-			}
-		}
-	};
+	const { copyInviteCode } = useCopyInviteCode(group?.inviteCode || '');
 
 	const handlePressManageMember = () => {
 		router.push('/(app)/(group)/(manage-group)');
@@ -256,7 +240,7 @@ function HomeHeader({ groups }: Props) {
 							<Text size="lg" className="font-pretendard-semi-bold">
 								{group?.inviteCode}
 							</Text>
-							<Pressable onPress={handleCopyInviteCode} className="p-2">
+							<Pressable onPress={copyInviteCode} className="p-2">
 								<Icon as={Copy} size="md" className="stroke-primary-500" />
 							</Pressable>
 						</HStack>
@@ -268,7 +252,7 @@ function HomeHeader({ groups }: Props) {
 							variant="solid"
 							className="flex-1"
 							rounded
-							onPress={handleCopyInviteCode}
+							onPress={copyInviteCode}
 						>
 							<ButtonText>초대링크 복사하기</ButtonText>
 						</Button>
