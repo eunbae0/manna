@@ -60,9 +60,12 @@ export default function CreateGroupFirstStepScreen({
 			}
 			setGroup(res);
 			if (!user) return;
+			const isMain =
+				user.groups?.find((g) => g.groupId === res.id)?.isMain ?? false;
 			updateUserGroupProfile(user.id, {
 				groupId: res.id,
 				notificationPreferences: { fellowship: true, prayerRequest: true },
+				isMain,
 			});
 			queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
 			setStep('CODE');

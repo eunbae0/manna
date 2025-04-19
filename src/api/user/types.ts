@@ -8,6 +8,10 @@ export type UserGroup = {
 		fellowship: boolean;
 		prayerRequest: boolean;
 	};
+	/**
+	 * 대표 그룹 여부 (true = 대표 그룹)
+	 */
+	isMain?: boolean;
 };
 
 export type ManagedUserGroup = Pick<UserGroup, 'groupId'>;
@@ -42,4 +46,4 @@ export interface ClientUser
 /**
  * Input data for updating user profile
  */
-export type UpdateUserInput = Partial<Omit<ClientUser, 'id' | 'groups'>>;
+export type UpdateUserInput = Partial<Omit<ClientUser, 'id'>>;

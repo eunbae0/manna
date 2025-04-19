@@ -77,22 +77,28 @@ export class FirestoreGroupService {
 	 */
 	async getGroupsByGroupIds(groupIds: string[]): Promise<ClientGroup[]> {
 		const groupsRef = collection(database, this.collectionPath);
-		const q = query(
-			groupsRef,
-			where('id', 'in', groupIds),
-			orderBy('createdAt', 'desc'),
-		);
+		const q = query(groupsRef, where('id', 'in', groupIds));
 		const querySnapshot = await getDocs(q);
 
-		const groups: ClientGroup[] = [];
+		// 그룹 ID를 키로, 그룹 객체를 값으로 하는 Map 생성
+		const groupMap = new Map<string, ClientGroup>();
 		for (const doc of querySnapshot.docs) {
 			const group = doc.data() as Group;
 			const groupMembers = await this.getGroupMembers(doc.id);
-
-			groups.push(this.convertToClientGroup(doc.id, group, groupMembers));
+			const clientGroup = this.convertToClientGroup(doc.id, group, groupMembers);
+			groupMap.set(clientGroup.id, clientGroup);
 		}
 
-		return groups;
+		// 입력된 groupIds 순서대로 결과 배열 구성
+		const sortedGroups: ClientGroup[] = [];
+		for (const groupId of groupIds) {
+			const group = groupMap.get(groupId);
+			if (group) {
+				sortedGroups.push(group);
+			}
+		}
+
+		return sortedGroups;
 	}
 
 	/**

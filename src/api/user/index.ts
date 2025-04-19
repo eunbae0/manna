@@ -162,6 +162,18 @@ export const updateUserGroup = withApiLogging(
 	'updateUserGroup',
 	'auth',
 );
+export const updateAllUserGroup = withApiLogging(
+	async (userId: string, data: UserGroup[]): Promise<void> => {
+		try {
+			const userService = getUserService();
+			await userService.updateAllUserGroup(userId, data);
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'updateAllUserGroup',
+	'auth',
+);
 
 export const removeUserGroup = withApiLogging(
 	async (userId: string, groupId: string): Promise<void> => {

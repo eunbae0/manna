@@ -15,14 +15,16 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { LogOut, UserPlus, Users, Settings } from 'lucide-react-native';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import type { ClientGroup } from '@/api/group/types';
+import type { UserGroup } from '@/shared/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
 
 export default function ManageMyGroupScreen() {
-	const { user } = useAuthStore();
+	const { user, updateAllUserGroupProfile } = useAuthStore();
+	const queryClient = useQueryClient();
 	const [refreshing, setRefreshing] = useState(false);
 
-	const { groups, isLoading, refetch } = useGroups(
-		user?.groups?.map((g) => g.groupId) ?? [],
-	);
+	const { groups, isLoading, refetch } = useGroups(user?.groups ?? []);
 
 	const { leaveGroup, isLeaving } = useLeaveGroup();
 
@@ -81,12 +83,33 @@ export default function ManageMyGroupScreen() {
 		const userMember = item.members.find((m) => m.id === user?.id);
 		const isLeader = userMember?.role === 'leader';
 		const role = isLeader ? '그룹장' : '멤버';
+		// 대표 그룹 여부
+		const isMain = user?.groups?.find((g) => g.groupId === item.id)?.isMain;
+
+		const handleSetMainGroup = async () => {
+			if (!user || !user.groups) return;
+			const updatedGroups: UserGroup[] = user.groups.map((g) => ({
+				...g,
+				isMain: g.groupId === item.id,
+			}));
+
+			await updateAllUserGroupProfile(user.id, updatedGroups);
+		};
 
 		return (
 			<Box className="bg-white rounded-xl p-4 mb-4 border border-gray-200">
 				<VStack space="md">
 					<HStack className="justify-between items-center">
-						<Heading size="lg">{item.groupName}</Heading>
+						<HStack space="sm" className="items-center">
+							<Heading size="lg">{item.groupName}</Heading>
+							{isMain && (
+								<Box className="bg-primary-100 px-2 py-1 rounded-md ml-2">
+									<Text size="xs" className="text-primary-700 font-semibold">
+										대표 그룹
+									</Text>
+								</Box>
+							)}
+						</HStack>
 						<Text
 							size="sm"
 							className={
@@ -104,30 +127,43 @@ export default function ManageMyGroupScreen() {
 							멤버 {item.members.length}명
 						</Text>
 
-						{isLeader ? (
-							<Button
-								variant="outline"
-								action="primary"
-								size="sm"
-								onPress={() => handleManageGroup(item.id)}
-								rounded
-							>
-								<ButtonIcon as={Settings} />
-								<ButtonText>그룹 관리</ButtonText>
-							</Button>
-						) : (
-							<Button
-								variant="outline"
-								action="negative"
-								size="sm"
-								onPress={() => handleLeaveGroup(item)}
-								disabled={isLeaving}
-								rounded
-							>
-								<ButtonIcon as={LogOut} />
-								<ButtonText>나가기</ButtonText>
-							</Button>
-						)}
+						<HStack space="sm">
+							{!isMain && (
+								<Button
+									variant="outline"
+									action="primary"
+									size="sm"
+									onPress={handleSetMainGroup}
+									rounded
+								>
+									<ButtonText>대표 그룹 지정</ButtonText>
+								</Button>
+							)}
+							{isLeader ? (
+								<Button
+									variant="outline"
+									action="primary"
+									size="sm"
+									onPress={() => handleManageGroup(item.id)}
+									rounded
+								>
+									<ButtonIcon as={Settings} />
+									<ButtonText>그룹 관리</ButtonText>
+								</Button>
+							) : (
+								<Button
+									variant="outline"
+									action="negative"
+									size="sm"
+									onPress={() => handleLeaveGroup(item)}
+									disabled={isLeaving}
+									rounded
+								>
+									<ButtonIcon as={LogOut} />
+									<ButtonText>나가기</ButtonText>
+								</Button>
+							)}
+						</HStack>
 					</HStack>
 				</VStack>
 			</Box>

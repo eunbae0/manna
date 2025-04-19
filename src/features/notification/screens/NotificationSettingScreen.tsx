@@ -21,9 +21,7 @@ export default function NotificationSettingScreen() {
 	const { user, updateUserGroupProfile } = useAuthStore();
 	const { hasPermission } = useNotificationPermission();
 
-	const { groups, isLoading, error } = useGroups(
-		user?.groups?.map((g) => g.groupId) ?? [],
-	);
+	const { groups, isLoading, error } = useGroups(user?.groups ?? []);
 
 	// 그룹별 탭 생성
 	const allTabs = groups.map((g) => ({ id: g.id, groupName: g.groupName }));

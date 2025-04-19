@@ -24,6 +24,7 @@ import type {
 import {
 	createUserGroup,
 	getUser,
+	updateAllUserGroup,
 	updateUser,
 	updateUserGroup,
 } from '@/api/user';
@@ -55,6 +56,10 @@ type AuthActions = {
 		group: Required<UserGroup>,
 	) => Promise<void>;
 	updateUserGroupProfile: (userId: string, group: UserGroup) => Promise<void>;
+	updateAllUserGroupProfile: (
+		userId: string,
+		groups: UserGroup[],
+	) => Promise<void>;
 	onAuthStateChanged: (
 		user: FirebaseAuthTypes.User | null,
 		fcmTokens: string,
@@ -89,9 +94,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 									password: data.password,
 								});
 
+								const currentGroup =
+									user?.groups?.find((g) => g.isMain) ??
+									user?.groups?.[0] ??
+									null;
 								set({
 									user,
-									currentGroup: user?.groups?.[0] ?? null,
+									currentGroup,
 									isAuthenticated: true,
 									loading: false,
 								});
@@ -100,9 +109,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							case 'APPLE': {
 								const { user, existUser, givenName } = await signInWithApple();
 								data?.updateUserData({ displayName: givenName });
+								const currentGroup =
+									user?.groups?.find((g) => g.isMain) ??
+									user?.groups?.[0] ??
+									null;
 								set({
 									user,
-									currentGroup: user?.groups?.[0] ?? null,
+									currentGroup,
 									isAuthenticated: true,
 									loading: false,
 								});
@@ -115,9 +128,13 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							}
 							case 'GOOGLE': {
 								const { user, existUser } = await signInWithGoogle();
+								const currentGroup =
+									user?.groups?.find((g) => g.isMain) ??
+									user?.groups?.[0] ??
+									null;
 								set({
 									user,
-									currentGroup: user?.groups?.[0] ?? null,
+									currentGroup,
 									isAuthenticated: true,
 									loading: false,
 								});
@@ -142,9 +159,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					set({ loading: true, error: null });
 					try {
 						const { user } = await signUpWithEmail(data);
+						const currentGroup =
+							user?.groups?.find((g) => g.isMain) ?? user?.groups?.[0] ?? null;
 						set({
 							user,
-							currentGroup: user?.groups?.[0] ?? null,
+							currentGroup,
 							isAuthenticated: true,
 							loading: false,
 						});
@@ -241,6 +260,20 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						throw handleApiError(error);
 					}
 				},
+				updateAllUserGroupProfile: async (userId, groups) => {
+					const user = get().user;
+					if (!user) return;
+					try {
+						await updateAllUserGroup(userId, groups);
+
+						set((state) => ({
+							user: state.user ? { ...state.user, groups } : null,
+							currentGroup: state.currentGroup,
+						}));
+					} catch (error) {
+						throw handleApiError(error);
+					}
+				},
 				onAuthStateChanged: async (user, fcmTokens) => {
 					set({ loading: true });
 					if (!user) {
@@ -255,10 +288,14 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					try {
 						await updateUser(user.uid, { fcmTokens: [fcmTokens] });
 						const firestoreUser = await getUser(user.uid);
+						const currentGroup =
+							firestoreUser?.groups?.find((g) => g.isMain) ??
+							firestoreUser?.groups?.[0] ??
+							null;
 						set({
 							isAuthenticated: true,
 							user: firestoreUser,
-							currentGroup: firestoreUser?.groups?.[0] ?? null,
+							currentGroup,
 						});
 					} catch (err) {
 						// signOut

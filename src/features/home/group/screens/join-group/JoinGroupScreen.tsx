@@ -38,10 +38,13 @@ export default function JoinGroupScreen() {
 			inviteCode: code,
 		});
 
+		const isMain =
+			user.groups?.find((g) => g.groupId === groupId)?.isMain ?? false;
 		// update firestore user groups
 		await addUserGroupProfile(user.id, {
 			groupId,
 			notificationPreferences: { fellowship: true, prayerRequest: true },
+			isMain,
 		});
 
 		// if onboarding, complete onboarding

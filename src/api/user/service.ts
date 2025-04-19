@@ -9,6 +9,9 @@ import {
 	getDocs,
 	deleteDoc,
 	arrayUnion,
+	writeBatch,
+	query,
+	orderBy,
 } from '@react-native-firebase/firestore';
 
 import { createUserWithServerTimestamp } from '@/shared/utils/auth';
@@ -144,13 +147,15 @@ export class FirestoreUserService {
 
 	async getUserGroups(userId: string): Promise<UserGroup[] | null> {
 		const userGroupsRef = collection(database, 'users', userId, 'groups');
-		const userGroupsDoc = await getDocs(userGroupsRef);
+		const q = query(userGroupsRef, orderBy('createdAt', 'asc'));
+		const userGroupsDoc = await getDocs(q);
 
 		if (userGroupsDoc.empty) {
 			return null;
 		}
 
 		const data = userGroupsDoc.docs.map((doc) => doc.data() as UserGroup);
+		console.log(data);
 		return data;
 	}
 
@@ -162,7 +167,11 @@ export class FirestoreUserService {
 			'groups',
 			group.groupId,
 		);
-		await setDoc(userGroupsRef, group);
+		const groupWithCreatedAt = {
+			...group,
+			createdAt: serverTimestamp(),
+		};
+		await setDoc(userGroupsRef, groupWithCreatedAt);
 	}
 
 	async updateUserGroup(userId: string, group: UserGroup): Promise<void> {
@@ -174,6 +183,21 @@ export class FirestoreUserService {
 			group.groupId,
 		);
 		await updateDoc(userGroupsRef, group);
+	}
+
+	async updateAllUserGroup(userId: string, groups: UserGroup[]): Promise<void> {
+		const batch = writeBatch(database);
+		for (const group of groups) {
+			const userGroupsRef = doc(
+				database,
+				'users',
+				userId,
+				'groups',
+				group.groupId,
+			);
+			batch.update(userGroupsRef, group);
+		}
+		await batch.commit();
 	}
 
 	async removeUserGroup(userId: string, groupId: string): Promise<void> {

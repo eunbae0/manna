@@ -7,9 +7,7 @@ import { HomeHeaderSkeleton } from '@/features/home/components/HomeHeaderSkeleto
 export default function GroupHomeScreen() {
 	const { user } = useAuthStore();
 
-	const { groups, isLoading, error } = useGroups(
-		user?.groups?.map((g) => g.groupId) ?? [],
-	);
+	const { groups, isLoading } = useGroups(user?.groups ?? []);
 
 	return (
 		<>
