@@ -127,13 +127,6 @@ function HomeList() {
 		[isLoading],
 	);
 
-	// 데이터가 없는 상태
-	if (!prayerRequests || prayerRequests.length === 0) {
-		return (
-			<Text className="text-center py-8 text-gray-500">기도 제목이 없어요</Text>
-		);
-	}
-
 	return (
 		<>
 			<FlatList
@@ -172,13 +165,18 @@ function HomeList() {
 				}
 				data={prayerRequests}
 				renderItem={renderPrayerRequestItem}
+				ListEmptyComponent={
+					<Text className="text-center py-8 text-gray-500">
+						기도 제목이 없어요
+					</Text>
+				}
 				keyExtractor={(item) => item.id}
 				ItemSeparatorComponent={renderSeparator}
 				ListFooterComponent={renderFooter}
 				onEndReached={loadMorePrayerRequests}
 				onEndReachedThreshold={0.3}
 				showsVerticalScrollIndicator={false}
-				contentContainerStyle={{ paddingBottom: 20 }}
+				contentContainerStyle={{ paddingBottom: 28 }}
 			/>
 			<Button
 				size="lg"
