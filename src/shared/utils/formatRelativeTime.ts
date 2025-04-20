@@ -14,5 +14,10 @@ export const formatRelativeTime = (date: Date | string): string => {
 	}
 
 	const diffHours = Math.floor(diffMinutes / 60);
-	return `${diffHours}시간 전`;
+	if (diffHours < 24) {
+		return `${diffHours}시간 전`;
+	}
+
+	const diffDays = Math.floor(diffHours / 24);
+	return `${diffDays}일 전`;
 };
