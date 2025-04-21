@@ -41,7 +41,7 @@ export default {
 				backgroundColor: '#FEF8EF',
 			},
 			package: 'com.eunbae.sogroup',
-			googleServicesFile: './assets/google/GoogleService-Info.plist',
+			googleServicesFile: './assets/google/google-services.json',
 		},
 		web: {
 			bundler: 'metro',

@@ -1,36 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>CLIENT_ID</key>
-	<string>892340902140-luknmdbkvedhndta0r65ajru5ltimfob.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.892340902140-luknmdbkvedhndta0r65ajru5ltimfob</string>
-	<key>API_KEY</key>
-	<string>AIzaSyDBlLTib8KaW21OVc6ofUDHL94qK1OXjKU</string>
-	<key>GCM_SENDER_ID</key>
-	<string>892340902140</string>
-	<key>PLIST_VERSION</key>
-	<string>1</string>
-	<key>BUNDLE_ID</key>
-	<string>com.eunbae.sogroup</string>
-	<key>PROJECT_ID</key>
-	<string>so-group</string>
-	<key>STORAGE_BUCKET</key>
-	<string>so-group.firebasestorage.app</string>
-	<key>IS_ADS_ENABLED</key>
-	<false></false>
-	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
-	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
-	<key>IS_GCM_ENABLED</key>
-	<true></true>
-	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
-	<key>GOOGLE_APP_ID</key>
-	<string>1:892340902140:ios:972fe15f8fff95ec62df79</string>
-	<key>DATABASE_URL</key>
-	<string>https://so-group-default-rtdb.asia-southeast1.firebasedatabase.app</string>
-</dict>
-</plist>
+{
+	"project_info": {
+		"project_number": "892340902140",
+		"firebase_url": "https://so-group-default-rtdb.asia-southeast1.firebasedatabase.app",
+		"project_id": "so-group",
+		"storage_bucket": "so-group.firebasestorage.app"
+	},
+	"client": [
+		{
+			"client_info": {
+				"mobilesdk_app_id": "1:892340902140:android:49dd46600514b5a962df79",
+				"android_client_info": {
+					"package_name": "com.eunbae.sogroup"
+				}
+			},
+			"oauth_client": [
+				{
+					"client_id": "892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com",
+					"client_type": 3
+				}
+			],
+			"api_key": [
+				{
+					"current_key": "AIzaSyBbC-krg4xNsLT_hzb-1UX4Z_QLQFuZNHc"
+				}
+			],
+			"services": {
+				"appinvite_service": {
+					"other_platform_oauth_client": [
+						{
+							"client_id": "892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com",
+							"client_type": 3
+						},
+						{
+							"client_id": "892340902140-luknmdbkvedhndta0r65ajru5ltimfob.apps.googleusercontent.com",
+							"client_type": 2,
+							"ios_info": {
+								"bundle_id": "com.eunbae.sogroup",
+								"app_store_id": "6744582157"
+							}
+						}
+					]
+				}
+			}
+		}
+	],
+	"configuration_version": "1"
+}
