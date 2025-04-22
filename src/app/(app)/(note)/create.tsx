@@ -32,7 +32,9 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+	DateTimePickerAndroid,
+} from '@react-native-community/datetimepicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
@@ -47,6 +49,7 @@ import Animated, {
 	interpolate,
 	Easing,
 } from 'react-native-reanimated';
+import { isAndroid } from '@/shared/utils/platform';
 
 export default function CreateScreen() {
 	const insets = useSafeAreaInsets();
@@ -107,8 +110,23 @@ export default function CreateScreen() {
 	};
 
 	const handleOpenDate = () => {
+		if (Keyboard.isVisible()) {
+			Keyboard.dismiss();
+		}
+		if (isAndroid) {
+			DateTimePickerAndroid.dismiss('date');
+			DateTimePickerAndroid.open({
+				mode: 'date',
+				value: selectedDate,
+				onChange: (event, date) => {
+					if (event.type === 'set') {
+						setSelectedDate(date ?? new Date());
+					}
+				},
+			});
+			return;
+		}
 		handleOpen();
-		Keyboard.dismiss();
 	};
 
 	useEffect(() => {
@@ -171,19 +189,21 @@ export default function CreateScreen() {
 										value={title}
 										onChangeText={setTitle}
 									/>
-									<HStack className="items-center justify-between">
-										<Text size="lg" className="text-typography-500">
-											{selectedDate.toLocaleDateString('ko-KR', {
-												year: 'numeric',
-												month: 'long',
-												day: 'numeric',
-												weekday: 'long',
-											})}
-										</Text>
-										<Button size="sm" variant="icon" onPress={handleOpenDate}>
-											<ButtonIcon as={CalendarCog} />
-										</Button>
-									</HStack>
+									<Pressable onPress={handleOpenDate}>
+										<HStack className="items-center justify-between">
+											<Text size="lg" className="text-typography-500">
+												{selectedDate.toLocaleDateString('ko-KR', {
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric',
+													weekday: 'long',
+												})}
+											</Text>
+											<Button size="sm" variant="icon" onPress={handleOpenDate}>
+												<ButtonIcon as={CalendarCog} />
+											</Button>
+										</HStack>
+									</Pressable>
 								</VStack>
 								<VStack
 									space="sm"
