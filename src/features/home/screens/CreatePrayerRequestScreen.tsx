@@ -1,6 +1,6 @@
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
-import { Pressable, SafeAreaView, View, type TextInput } from 'react-native';
+import { View, type TextInput } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { CheckIcon, ChevronLeft, X } from 'lucide-react-native';
@@ -107,13 +107,12 @@ export function CreatePrayerRequestScreen() {
 	}, []);
 
 	const { bottom, top } = useSafeAreaInsets();
-	console.log(top);
 
 	return (
 		<KeyboardAvoidingView className="h-full">
 			<VStack
-				className="flex-1 w-full gap-10 pt-2"
-				style={{ paddingTop: isAndroid ? top : 0 }}
+				className="flex-1 w-full gap-10"
+				style={{ paddingTop: isAndroid ? top + 20 : 0 }}
 			>
 				<ModalHeader
 					title={isEditMode ? '기도 제목 수정하기' : '기도 제목 작성하기'}
@@ -137,6 +136,7 @@ export function CreatePrayerRequestScreen() {
 										onChangeText={setPrayerRequestText}
 										textAlignVertical="top"
 										style={{ paddingTop: 12 }}
+										className="font-pretendard-Regular"
 									/>
 								</Textarea>
 							</View>
@@ -150,7 +150,9 @@ export function CreatePrayerRequestScreen() {
 								<CheckboxIndicator>
 									<CheckboxIcon as={CheckIcon} />
 								</CheckboxIndicator>
-								<CheckboxLabel>익명으로 작성할래요</CheckboxLabel>
+								<CheckboxLabel className="font-pretendard-Regular">
+									익명으로 작성할래요
+								</CheckboxLabel>
 							</Checkbox>
 						</VStack>
 					</VStack>

@@ -298,25 +298,23 @@ export default function NoteScreen() {
 									space="sm"
 									className="relative bg-gray-50 border border-gray-200 rounded-2xl px-4 py-5"
 								>
-									{!isEditing && (
-										<Pressable
-											onPress={() => toggleFold()}
-											className="absolute top-5 right-4 z-10"
-										>
-											<HStack space="xs" className="items-center">
-												<Text size="md" className="text-typography-600">
-													{isFolded ? '펼치기' : '접기'}
-												</Text>
-												<Animated.View style={iconStyle}>
-													<Icon
-														as={ChevronUp}
-														size="md"
-														className="stroke-typography-600"
-													/>
-												</Animated.View>
-											</HStack>
-										</Pressable>
-									)}
+									<Pressable
+										onPress={() => toggleFold()}
+										className="absolute top-5 right-4 z-10"
+									>
+										<HStack space="xs" className="items-center">
+											<Text size="md" className="text-typography-600">
+												{isFolded ? '펼치기' : '접기'}
+											</Text>
+											<Animated.View style={iconStyle}>
+												<Icon
+													as={ChevronUp}
+													size="md"
+													className="stroke-typography-600"
+												/>
+											</Animated.View>
+										</HStack>
+									</Pressable>
 									<VStack space="xs">
 										<HStack space="sm" className="items-center">
 											<Icon
@@ -331,7 +329,7 @@ export default function NoteScreen() {
 										{isEditing ? (
 											<TextInput
 												placeholder="ex. 창세기 1장 1절"
-												className="w-full text-xl ml-6"
+												className="w-full text-xl ml-6 font-pretendard-Regular"
 												value={editableNote.sermon}
 												onChangeText={(sermon) =>
 													setEditableNote((prev) => ({
@@ -430,7 +428,7 @@ export default function NoteScreen() {
 											{isEditing ? (
 												<TextInput
 													placeholder="비어 있음"
-													className="w-full text-xl ml-6"
+													className="w-full text-xl ml-6 font-pretendard-Regular"
 													value={editableNote.preacher}
 													onChangeText={(preacher) =>
 														setEditableNote((prev) => ({
@@ -456,7 +454,7 @@ export default function NoteScreen() {
 								{isEditing ? (
 									<TextInput
 										placeholder="설교 노트를 적어보세요..."
-										className="text-xl flex-1 h-full pb-6 min-h-80"
+										className="text-xl flex-1 h-full pb-6 min-h-80 font-pretendard-Regular"
 										multiline={true}
 										textAlignVertical="top"
 										scrollEnabled={false}

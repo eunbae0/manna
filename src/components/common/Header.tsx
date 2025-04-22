@@ -8,6 +8,7 @@ import { Divider } from '#/components/ui/divider';
 import { VStack } from '#/components/ui/vstack';
 import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
+import { isAndroid } from '@/shared/utils/platform';
 
 type Props = {
 	label?: string;
@@ -48,7 +49,11 @@ function Header({
 	return (
 		<VStack space="xs">
 			<HStack
-				className={cn('w-full relative items-center', className)}
+				className={cn(
+					'w-full relative items-center',
+					isAndroid && 'mt-4',
+					className,
+				)}
 				{...props}
 			>
 				<HStack className="items-center">

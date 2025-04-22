@@ -186,7 +186,7 @@ export default function selectedWorshipTypeModal() {
 		<KeyboardAvoidingView>
 			<VStack
 				className="w-full h-full gap-4"
-				style={{ paddingTop: isAndroid ? top : 0 }}
+				style={{ paddingTop: isAndroid ? top + 20 : 0 }}
 			>
 				<ModalHeader title="예배 종류" onBackPress={() => router.back()} />
 				<VStack className="w-full flex-1 px-6 py-6">

@@ -207,11 +207,11 @@ export function NotificationItem({
 						className={cn('w-full', item.isRead ? '' : 'bg-primary-100')}
 					>
 						<Pressable onPress={onItemPress} className="w-full">
-							<VStack space="sm" className="p-5">
+							<VStack space="xs" className="p-5">
 								<VStack space="xs">
 									<HStack className="justify-between items-center">
 										<HStack space="sm" className="items-center flex-wrap">
-											<Text size="md" className="text-typography-500">
+											<Text size="sm" className="text-typography-500">
 												{item.title}
 											</Text>
 											{item.metadata?.groupName && (
@@ -230,7 +230,7 @@ export function NotificationItem({
 										</Text>
 									</HStack>
 								</VStack>
-								<Text size="xl">{item.body}</Text>
+								<Text size="lg">{item.body}</Text>
 							</VStack>
 						</Pressable>
 					</Animated.View>

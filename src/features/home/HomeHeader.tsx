@@ -33,6 +33,7 @@ import { router } from 'expo-router';
 import { Box } from '#/components/ui/box';
 import { cn } from '@/shared/utils/cn';
 import { ScrollView } from 'react-native-gesture-handler';
+import { isIOS } from '@/shared/utils/platform';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
@@ -97,7 +98,12 @@ function HomeHeader({ groups }: Props) {
 	};
 
 	return (
-		<HStack className="items-center justify-between pt-2 pl-4 pr-3">
+		<HStack
+			className={cn(
+				'items-center justify-between pl-4 pr-3',
+				isIOS ? 'pt-2' : 'pt-5',
+			)}
+		>
 			<Menu
 				placement="bottom left"
 				offset={5}
@@ -105,7 +111,7 @@ function HomeHeader({ groups }: Props) {
 					return (
 						<Pressable {...triggerProps}>
 							<HStack space="xs" className="items-center">
-								<Heading className="text-[24px]">{group?.groupName}</Heading>
+								<Heading size="2xl">{group?.groupName}</Heading>
 								<Icon
 									as={ChevronDown}
 									className="w-7 h-7 color-typography-900"

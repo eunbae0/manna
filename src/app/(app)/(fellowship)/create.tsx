@@ -34,11 +34,7 @@ export default function CreateFellowshipScreen() {
 
 	return (
 		<>
-			<Animated.View
-			// style={{ transform: [{ translateX: slideAnim }] }}
-			>
-				{switchStep(currentStep)}
-			</Animated.View>
+			{switchStep(currentStep)}
 			<ExitConfirmModal {...bottomSheetProps} onExit={handleExit} />
 		</>
 	);

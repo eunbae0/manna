@@ -239,7 +239,7 @@ export default function CreateScreen() {
 										</HStack>
 										<TextInput
 											placeholder="ex. 창세기 1장 1절"
-											className="w-full text-xl ml-6"
+											className="w-full text-xl ml-6 font-pretendard-Regular"
 											value={scripture}
 											onChangeText={setScripture}
 										/>

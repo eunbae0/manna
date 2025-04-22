@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import GroupLandingScreen, {
 	type GroupLandingOption,
 } from '../group/screens/GroupLandingScreen';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function EmptyGroupScreen() {
 	const handleOptionPress = (option: GroupLandingOption) => {

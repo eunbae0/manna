@@ -17,6 +17,8 @@ import { useWorshipStore } from '@/store/worship';
 import { WorshipTypeSelector } from '@/features/worship/WorshipTypeSelector';
 import { useNotes } from '@/features/notes/hooks/useNotes';
 import { useWorshipTypes } from '@/features/notes/hooks/useWorshipTypes';
+import { cn } from '@/shared/utils/cn';
+import { isIOS } from '@/shared/utils/platform';
 
 export default function NoteScreen() {
 	const { setWorshipTypes, selectedWorshipType } = useWorshipStore();
@@ -47,7 +49,7 @@ export default function NoteScreen() {
 			<VStack space="xl" className="px-4 h-full">
 				<VStack space="sm">
 					<VStack space="xl">
-						<Heading size="2xl" className="pt-5">
+						<Heading size="2xl" className={cn(isIOS ? 'pt-5' : 'pt-6')}>
 							설교 노트
 						</Heading>
 						<HStack space="lg" className="pl-2 items-center">

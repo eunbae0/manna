@@ -24,7 +24,7 @@ export const NoteCard = ({
 					<HStack space="md" className="items-center">
 						<Text
 							size="md"
-							className="font-pretendard-regular text-typography-500"
+							className="font-pretendard-Regular text-typography-500"
 						>
 							{(() => {
 								try {
@@ -42,7 +42,7 @@ export const NoteCard = ({
 						<Text
 							size="md"
 							numberOfLines={1}
-							className="font-pretendard-regular text-typography-500 truncate max-w-[200px]"
+							className="font-pretendard-Regular text-typography-500 truncate max-w-[200px]"
 						>
 							{content.trim()}
 						</Text>

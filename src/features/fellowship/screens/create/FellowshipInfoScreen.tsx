@@ -1,10 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import {
-	Pressable,
-	SafeAreaView,
-	ScrollView,
-	type TextInput,
-} from 'react-native';
+import { Pressable, ScrollView, type TextInput } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Box } from '#/components/ui/box';
@@ -50,6 +45,7 @@ import { useGroup } from '@/features/home/group/hooks/useGroup';
 import type { GroupMember } from '@/api/group/types';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FellowshipInfoScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -263,6 +259,7 @@ export default function FellowshipInfoScreen() {
 												placeholder="설교 제목을 입력해주세요."
 												value={preachTitle}
 												onChangeText={(value) => setPreachTitle(value)}
+												className="font-pretendard-Regular"
 											/>
 										</Input>
 									</VStack>
@@ -285,7 +282,9 @@ export default function FellowshipInfoScreen() {
 												<CheckboxIndicator>
 													<CheckboxIcon as={CheckIcon} />
 												</CheckboxIndicator>
-												<CheckboxLabel>본문이 없어요</CheckboxLabel>
+												<CheckboxLabel className="font-pretendard-Regular">
+													본문이 없어요
+												</CheckboxLabel>
 											</Checkbox>
 										</HStack>
 										<Input
@@ -300,6 +299,7 @@ export default function FellowshipInfoScreen() {
 												onChangeText={(value) =>
 													setPreachText({ ...preachText, value })
 												}
+												className="font-pretendard-Regular"
 											/>
 										</Input>
 									</VStack>
@@ -322,7 +322,9 @@ export default function FellowshipInfoScreen() {
 												<CheckboxIndicator>
 													<CheckboxIcon as={CheckIcon} />
 												</CheckboxIndicator>
-												<CheckboxLabel>설교자가 없어요</CheckboxLabel>
+												<CheckboxLabel className="font-pretendard-Regular">
+													설교자가 없어요
+												</CheckboxLabel>
 											</Checkbox>
 										</HStack>
 										<Input
@@ -337,6 +339,7 @@ export default function FellowshipInfoScreen() {
 												onChangeText={(value) =>
 													setPreacher({ ...preacher, value })
 												}
+												className="font-pretendard-Regular"
 											/>
 										</Input>
 									</VStack>
@@ -497,28 +500,39 @@ export default function FellowshipInfoScreen() {
 									) : (
 										<ScrollView className="py-3 max-h-60">
 											{allFellowshipMembers.map((item) => (
-												<Pressable
-													onPress={() => toggleSelectGroupMember(item)}
-													className="py-3"
-													key={item.id}
-												>
-													<HStack className="items-center justify-between">
-														<HStack space="sm" className="items-center">
-															<Avatar
-																size="sm"
-																photoUrl={item.photoUrl || undefined}
-															/>
-															<Text size="md">{item.displayName}</Text>
+												<VStack key={item.id}>
+													<Pressable
+														onPress={() => toggleSelectGroupMember(item)}
+														className="py-4"
+													>
+														<HStack className="items-center justify-between">
+															<HStack space="sm" className="items-center">
+																<Avatar
+																	size="sm"
+																	photoUrl={item.photoUrl || undefined}
+																/>
+																<Text size="md">{item.displayName}</Text>
+															</HStack>
+															{selectedGroupMembers.some(
+																(m) => m.id === item.id,
+															) ? (
+																<Box className="bg-primary-500 rounded-full p-1 w-6 h-6 mr-2">
+																	<Icon
+																		as={CheckIcon}
+																		size="sm"
+																		color="white"
+																	/>
+																</Box>
+															) : (
+																<Box className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
+															)}
 														</HStack>
-														{selectedGroupMembers.some(
-															(m) => m.id === item.id,
-														) && (
-															<Box className="bg-primary-500 rounded-full p-1 mr-2">
-																<Icon as={CheckIcon} size="sm" color="white" />
-															</Box>
-														)}
-													</HStack>
-												</Pressable>
+													</Pressable>
+													{item.id !==
+														allFellowshipMembers[
+															allFellowshipMembers.length - 1
+														].id && <Divider />}
+												</VStack>
 											))}
 										</ScrollView>
 									)}

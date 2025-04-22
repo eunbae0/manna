@@ -9,12 +9,14 @@ import { VStack } from '#/components/ui/vstack';
 import type { FellowshipContentField } from '@/features/fellowship/api/types';
 import Header from '@/components/common/Header';
 import { useFellowshipStore } from '@/store/createFellowship';
-import { CircleHelp, Plus, X } from 'lucide-react-native';
+import { Plus, X } from 'lucide-react-native';
 import { useState, useRef, useEffect } from 'react';
-import { Pressable, SafeAreaView, type TextInput } from 'react-native';
+import { Pressable, type TextInput } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FellowshipIcebrakingScreen() {
 	const { setStep, updateFellowshipContent, content } = useFellowshipStore();
@@ -94,7 +96,9 @@ export default function FellowshipIcebrakingScreen() {
 													};
 													setIceBreaking(updatedIceBreaking);
 												}}
-												placeholder="ex. 오늘 말씀을 삶에 어떻게 적용하면 좋을까요?"
+												placeholder="ex. 이번 주 동안 있었던 재밌는 일 한가지를 말해주세요"
+												textAlignVertical="top"
+												className="font-pretendard-Regular"
 											/>
 										</Textarea>
 										<Pressable
@@ -107,20 +111,19 @@ export default function FellowshipIcebrakingScreen() {
 									</HStack>
 								))}
 							</VStack>
-							<HStack space="xl" className="items-center py-3 w-full">
-								<Pressable
-									className="border-[1px] border-primary-300 rounded-full p-2"
-									onPress={handlePressAdd}
-								>
-									<Icon as={Plus} size="lg" className="color-primary-700" />
-								</Pressable>
-								<Text
-									size="lg"
-									className="font-pretendard-semi-bold text-typography-600"
-								>
-									추가하기
-								</Text>
-							</HStack>
+							<AnimatedPressable onPress={handlePressAdd}>
+								<HStack space="xl" className="items-center py-3 w-full">
+									<Box className="border-[1px] border-primary-300 rounded-full p-2">
+										<Icon as={Plus} size="lg" className="color-primary-700" />
+									</Box>
+									<Text
+										size="lg"
+										className="font-pretendard-semi-bold text-typography-600"
+									>
+										추가하기
+									</Text>
+								</HStack>
+							</AnimatedPressable>
 						</VStack>
 					</VStack>
 				</KeyboardAwareScrollView>

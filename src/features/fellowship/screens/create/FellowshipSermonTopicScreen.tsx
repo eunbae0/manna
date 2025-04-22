@@ -11,10 +11,12 @@ import Header from '@/components/common/Header';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { Plus, X } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, SafeAreaView, type TextInput } from 'react-native';
+import { Pressable, type TextInput } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FellowshipSermonTopicScreen() {
 	const { setStep, updateFellowshipContent, content } = useFellowshipStore();
@@ -94,6 +96,8 @@ export default function FellowshipSermonTopicScreen() {
 													setSermonTopic(updatedSermonTopic);
 												}}
 												placeholder="ex. 오늘 말씀을 삶에 어떻게 적용하면 좋을까요?"
+												textAlignVertical="top"
+												className="font-pretendard-Regular"
 											/>
 										</Textarea>
 										<Pressable onPress={() => handlePressDelete(id)}>
@@ -102,20 +106,19 @@ export default function FellowshipSermonTopicScreen() {
 									</HStack>
 								))}
 							</VStack>
-							<HStack space="xl" className="items-center py-3 w-full">
-								<Pressable
-									className="border-[1px] border-primary-300 rounded-full p-2"
-									onPress={handlePressAdd}
-								>
-									<Icon as={Plus} size="lg" className="color-primary-700" />
-								</Pressable>
-								<Text
-									size="lg"
-									className="font-pretendard-semi-bold text-typography-600"
-								>
-									추가하기
-								</Text>
-							</HStack>
+							<AnimatedPressable onPress={handlePressAdd}>
+								<HStack space="xl" className="items-center py-3 w-full">
+									<Box className="border-[1px] border-primary-300 rounded-full p-2">
+										<Icon as={Plus} size="lg" className="color-primary-700" />
+									</Box>
+									<Text
+										size="lg"
+										className="font-pretendard-semi-bold text-typography-600"
+									>
+										추가하기
+									</Text>
+								</HStack>
+							</AnimatedPressable>
 						</VStack>
 					</VStack>
 				</KeyboardAwareScrollView>
