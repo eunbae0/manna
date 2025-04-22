@@ -25,6 +25,8 @@ import { isRunningInExpoGo } from 'expo';
 import { useSentry } from '@/hooks/useSentry';
 import { SENTRY_DSN } from '@/shared/constants/keys';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { useBackAlertOnExit } from '@/shared/hooks/useBackAlertOnExit';
+import { isAndroid } from '@/shared/utils/platform';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -51,6 +53,11 @@ function RootLayout() {
 	useReactQueryDevTools(queryClient);
 
 	useNotification();
+
+	// Android
+	if (isAndroid) {
+		useBackAlertOnExit();
+	}
 
 	useSentry(navigationIntegration);
 
