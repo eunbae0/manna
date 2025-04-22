@@ -14,6 +14,7 @@ import { joinGroup } from '@/api/group';
 import { useAuthStore } from '@/store/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { GROUPS_QUERY_KEY } from '../../hooks/useGroups';
+import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 
 export default function JoinGroupScreen() {
 	const { user, addUserGroupProfile } = useAuthStore();
@@ -73,47 +74,52 @@ export default function JoinGroupScreen() {
 	};
 
 	return (
-		<VStack className="h-full">
-			<Header onPressBackButton={onPressBackButton} />
-			<VStack space="4xl" className="px-4 mt-8 flex-1">
-				<VStack space="3xl">
-					<VStack space="sm">
-						<Heading size="2xl">소그룹 초대코드를 입력해주세요</Heading>
-						{isOnboarding && (
-							<Text>초대된 그룹이 없다면 넘어갈 수 있어요.</Text>
-						)}
+		<KeyboardAvoidingView>
+			<VStack className="h-full">
+				<Header onPressBackButton={onPressBackButton} />
+				<VStack space="4xl" className="px-4 mt-8 flex-1">
+					<VStack space="3xl">
+						<VStack space="sm">
+							<Heading size="2xl">소그룹 초대코드를 입력해주세요</Heading>
+							{isOnboarding && (
+								<Text>초대된 그룹이 없다면 넘어갈 수 있어요.</Text>
+							)}
+						</VStack>
+						<Input
+							variant="outline"
+							size="md"
+							isDisabled={false}
+							isInvalid={false}
+							isReadOnly={false}
+							className="rounded-2xl"
+						>
+							<InputField
+								value={code}
+								onChangeText={(text) => {
+									const newText = text.trim();
+									setCode(newText);
+								}}
+								placeholder="초대코드"
+								maxLength={6}
+								autoCapitalize="characters"
+							/>
+						</Input>
 					</VStack>
-					<Input
-						variant="outline"
-						size="md"
-						isDisabled={false}
-						isInvalid={false}
-						isReadOnly={false}
-						className="rounded-2xl"
-					>
-						<InputField
-							value={code}
-							onChangeText={(text) => {
-								const newText = text.trim();
-								setCode(newText);
-							}}
-							placeholder="초대코드"
-							maxLength={6}
-							autoCapitalize="characters"
-						/>
-					</Input>
+				</VStack>
+				<VStack
+					space="lg"
+					className={cn('mx-4', isOnboarding ? 'mb-4' : 'mb-8')}
+				>
+					<Button size="lg" disabled={!code} onPress={handlePressJoin} rounded>
+						<ButtonText>그룹 참여하기</ButtonText>
+					</Button>
+					{isOnboarding && (
+						<Button size="lg" variant="link" onPress={handlePressLater}>
+							<ButtonText>다음에 할래요</ButtonText>
+						</Button>
+					)}
 				</VStack>
 			</VStack>
-			<VStack space="lg" className={cn('mx-4', isOnboarding ? 'mb-4' : 'mb-8')}>
-				<Button size="lg" disabled={!code} onPress={handlePressJoin} rounded>
-					<ButtonText>그룹 참여하기</ButtonText>
-				</Button>
-				{isOnboarding && (
-					<Button size="lg" variant="link" onPress={handlePressLater}>
-						<ButtonText>다음에 할래요</ButtonText>
-					</Button>
-				)}
-			</VStack>
-		</VStack>
+		</KeyboardAvoidingView>
 	);
 }
