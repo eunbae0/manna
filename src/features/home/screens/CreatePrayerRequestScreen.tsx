@@ -3,9 +3,9 @@ import { Text } from '#/components/ui/text';
 import { Pressable, SafeAreaView, View, type TextInput } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
-import { CheckIcon, X } from 'lucide-react-native';
+import { CheckIcon, ChevronLeft, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Button, ButtonText } from '@/components/common/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '#/components/ui/heading';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { useEffect, useRef, useState } from 'react';
@@ -25,6 +25,10 @@ import { getKSTDate } from '@/shared/utils/date';
 import { useCreatePrayerRequest } from '@/features/prayer-request/hooks/useCreatePrayerRequest';
 import { PRAYER_REQUESTS_QUERY_KEY } from '../hooks/usePrayerRequestsByDate';
 import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '@/features/prayer-request/hooks/usePrayerRequests';
+import { isAndroid } from '@/shared/utils/platform';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { cn } from '@/shared/utils/cn';
+import { ModalHeader } from '@/shared/components/modal-header/ModalHeader';
 
 export function CreatePrayerRequestScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -103,23 +107,19 @@ export function CreatePrayerRequestScreen() {
 	}, []);
 
 	const { bottom, top } = useSafeAreaInsets();
+	console.log(top);
 
 	return (
 		<KeyboardAvoidingView className="h-full">
-			<VStack className="flex-1">
-				<VStack className="w-full px-6 py-6 gap-10">
-					<HStack className="relative items-center justify-end font-pretendard-semi-bold">
-						<Text
-							size="xl"
-							className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"
-						>
-							{isEditMode ? '기도 제목 수정하기' : '기도 제목 작성하기'}
-						</Text>
-						<Pressable onPress={() => router.back()}>
-							<Icon as={X} size="lg" />
-						</Pressable>
-					</HStack>
-
+			<VStack
+				className="flex-1 w-full gap-10 pt-2"
+				style={{ paddingTop: isAndroid ? top : 0 }}
+			>
+				<ModalHeader
+					title={isEditMode ? '기도 제목 수정하기' : '기도 제목 작성하기'}
+					onBackPress={() => router.back()}
+				/>
+				<VStack className="w-full px-6 pb-6">
 					<VStack space="3xl" className="w-full">
 						<Heading className="text-[24px]">
 							{isEditMode
@@ -135,6 +135,8 @@ export function CreatePrayerRequestScreen() {
 										placeholder="기도 제목을 입력해주세요"
 										value={prayerRequestText}
 										onChangeText={setPrayerRequestText}
+										textAlignVertical="top"
+										style={{ paddingTop: 12 }}
 									/>
 								</Textarea>
 							</View>

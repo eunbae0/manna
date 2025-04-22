@@ -26,6 +26,8 @@ import type {
 	CreateWorshipTypeInput,
 	UpdateWorshipTypeInput,
 } from '@/api/worship-types/types';
+import { ModalHeader } from '@/shared/components/modal-header/ModalHeader';
+import { isAndroid } from '@/shared/utils/platform';
 
 export default function selectedWorshipTypeModal() {
 	const isPresented = router.canGoBack();
@@ -182,22 +184,12 @@ export default function selectedWorshipTypeModal() {
 
 	return (
 		<KeyboardAvoidingView>
-			<VStack className="w-full h-full">
-				<VStack className="w-full flex-1 px-6 py-6 gap-12">
-					<HStack className="relative items-center justify-end font-pretendard-semi-bold">
-						<Text
-							size="xl"
-							className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2"
-						>
-							예배 종류
-						</Text>
-						{isPresented && (
-							<Pressable onPress={() => router.back()}>
-								<Icon as={X} size="lg" />
-							</Pressable>
-						)}
-					</HStack>
-
+			<VStack
+				className="w-full h-full gap-4"
+				style={{ paddingTop: isAndroid ? top : 0 }}
+			>
+				<ModalHeader title="예배 종류" onBackPress={() => router.back()} />
+				<VStack className="w-full flex-1 px-6 py-6">
 					{isLoading ? (
 						<VStack className="flex-1 justify-center items-center">
 							<Spinner size="large" />
