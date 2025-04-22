@@ -196,25 +196,25 @@ export default function ManageMyGroupScreen() {
 						<Button
 							variant="solid"
 							action="primary"
-							size="lg"
+							size="md"
 							onPress={handleCreateGroup}
 							className="flex-1"
 							rounded
 						>
 							<ButtonIcon as={Users} />
-							<ButtonText>그룹 생성하기</ButtonText>
+							<ButtonText>새 그룹 생성하기</ButtonText>
 						</Button>
 
 						<Button
 							variant="outline"
 							action="primary"
-							size="lg"
+							size="md"
 							onPress={handleJoinGroup}
 							className="flex-1"
 							rounded
 						>
 							<ButtonIcon as={UserPlus} />
-							<ButtonText>그룹 참여하기</ButtonText>
+							<ButtonText>새 그룹 참여하기</ButtonText>
 						</Button>
 					</HStack>
 
