@@ -44,12 +44,12 @@ const headingStyles = cva('font-pretendard-bold', {
 export interface HeadingProps
 	extends ComponentPropsWithoutRef<typeof Text>,
 		VariantProps<typeof headingStyles> {
-	size: HeadingSize;
+	size?: HeadingSize;
 }
 
 export function Heading({
 	className,
-	size,
+	size = 'xl',
 	align,
 	color,
 	children,
