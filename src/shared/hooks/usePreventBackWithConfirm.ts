@@ -82,7 +82,7 @@ export function usePreventBackWithConfirm({
 	usePreventRemove(condition, ({ data }) => {
 		// FIX: iOS에서 뒤로가기시 action.type이 'GO_BACK'이 인식되지 않아 뒤로가기가 수행됨
 		console.log(data);
-		if (data.action.type !== 'GO_BACK') {
+		if (data.action.type !== 'GO_BACK' && data.action.type !== 'POP') {
 			navigation.dispatch(data.action);
 			return;
 		}
