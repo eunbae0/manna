@@ -51,6 +51,7 @@ export function KeyboardToolbar({
 			insets={insets}
 			onDoneCallback={haptic}
 			theme={theme}
+			opacity="EE"
 			{...rest}
 		/>
 	);
