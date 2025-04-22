@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Text } from '#/components/ui/text';
 import { Button, ButtonText } from '@/components/common/button';
 import Header from '@/components/common/Header';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Input, InputField } from '#/components/ui/input';
 import { Icon } from '#/components/ui/icon';

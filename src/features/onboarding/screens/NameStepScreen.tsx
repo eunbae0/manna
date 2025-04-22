@@ -4,7 +4,7 @@ import type { TextInput } from 'react-native';
 import { Button, ButtonText } from '@/components/common/button';
 
 import { useOnboardingStore } from '@/store/onboarding';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';
 

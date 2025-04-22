@@ -4,7 +4,7 @@ import { Crown, Users } from 'lucide-react-native';
 import { Button, ButtonText } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { cn } from '@/shared/utils/cn';
 import { Text } from '#/components/ui/text';
 import { Icon } from '#/components/ui/icon';

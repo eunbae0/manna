@@ -9,7 +9,7 @@ import Header from '@/components/common/Header';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Box } from '#/components/ui/box';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { LogOut, UserPlus, Users, Settings } from 'lucide-react-native';

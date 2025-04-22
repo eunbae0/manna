@@ -4,7 +4,7 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Icon } from '#/components/ui/icon';
 import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 import {

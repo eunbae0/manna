@@ -6,7 +6,7 @@ import { Icon } from '#/components/ui/icon';
 import { CheckIcon, ChevronLeft, X } from 'lucide-react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';

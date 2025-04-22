@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { Button, ButtonText } from '@/components/common/button';
 import { useRef, useEffect } from 'react';

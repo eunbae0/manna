@@ -3,7 +3,7 @@ import { FlatList, ActivityIndicator } from 'react-native';
 import { RefreshControl } from 'react-native';
 import { type Href, router } from 'expo-router';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Pen } from 'lucide-react-native';

@@ -2,18 +2,18 @@ import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Divider } from '#/components/ui/divider';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Text } from '#/components/ui/text';
 import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 
 import Markdown from 'react-native-markdown-display';
 import { canOpenURL, openURL } from 'expo-linking';
-import { 
-	PRIVACY_POLICY, 
-	TERMS_OF_SERVICE, 
-	COMMUNITY_GUIDELINES, 
-	CONTACT_INFO 
+import {
+	PRIVACY_POLICY,
+	TERMS_OF_SERVICE,
+	COMMUNITY_GUIDELINES,
+	CONTACT_INFO,
 } from '@/shared/constants/policy';
 
 const onLinkPress = async (url: string) => {
@@ -42,7 +42,10 @@ export default function PolicyScreen() {
 
 						<PolicySection title="개인정보 처리방침" content={PRIVACY_POLICY} />
 
-						<PolicySection title="커뮤니티 가이드라인" content={COMMUNITY_GUIDELINES} />
+						<PolicySection
+							title="커뮤니티 가이드라인"
+							content={COMMUNITY_GUIDELINES}
+						/>
 
 						<PolicySection title="문의 및 피드백" content={CONTACT_INFO} />
 					</VStack>

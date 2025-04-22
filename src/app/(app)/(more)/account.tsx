@@ -1,5 +1,5 @@
 import { Button, ButtonText } from '@/components/common/button';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
 import Header from '@/components/common/Header';

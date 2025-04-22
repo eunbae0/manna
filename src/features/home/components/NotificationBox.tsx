@@ -1,4 +1,4 @@
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
 import LottieView from 'lottie-react-native';

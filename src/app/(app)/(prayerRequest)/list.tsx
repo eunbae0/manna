@@ -2,7 +2,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import Header from '@/components/common/Header';
 import { router } from 'expo-router';
 import { useAuthStore } from '@/store/auth';

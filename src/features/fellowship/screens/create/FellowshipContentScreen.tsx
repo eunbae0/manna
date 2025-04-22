@@ -1,6 +1,6 @@
 import { Button, ButtonText } from '@/components/common/button';
 import { Divider } from '#/components/ui/divider';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Switch } from '#/components/ui/switch';

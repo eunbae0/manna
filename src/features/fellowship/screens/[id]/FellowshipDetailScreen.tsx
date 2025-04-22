@@ -28,7 +28,7 @@ import Animated, {
 	Easing,
 } from 'react-native-reanimated';
 import { useFellowshipStore } from '@/store/createFellowship';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Avatar } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';

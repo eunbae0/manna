@@ -4,7 +4,7 @@ import { Text } from '#/components/ui/text';
 import { Icon } from '#/components/ui/icon';
 import { AlertCircle } from 'lucide-react-native';
 import { Button, ButtonText } from '@/components/common/button';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 
 interface ExitConfirmModalProps {
 	BottomSheetContainer: React.FC<{

@@ -1,12 +1,13 @@
 import React, { Children, isValidElement } from 'react';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useScaleAnimation } from '@/shared/hooks';
 import { cn } from '@/shared/utils/cn';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
 import { Icon as UIIcon } from '#/components/ui/icon';
+import { Text } from '#/components/ui/text';
 
 // Define button size type
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

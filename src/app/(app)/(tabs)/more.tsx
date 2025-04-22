@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
@@ -273,21 +273,28 @@ export default function TabFourScreen() {
 							</VStack>
 						</VStack>
 
-						<Button
-							size="lg"
-							rounded
-							action="primary"
-							onPress={handleupdateUserProfile}
-							disabled={updateProfileMutation.isPending || !isProfileChanged}
-							animation={true}
-						>
+						<VStack space="sm">
 							{updateProfileMutation.isPending && (
-								<ButtonIcon as={RefreshCw} className="animate-spin mr-1" />
+								<Text size="xs" className="text-center text-typography-600">
+									이미지 업데이트는 시간이 소요될 수 있어요. 잠시 기다려주세요
+								</Text>
 							)}
-							<ButtonText>
-								{updateProfileMutation.isPending ? '업데이트 중...' : '완료'}
-							</ButtonText>
-						</Button>
+							<Button
+								size="lg"
+								rounded
+								action="primary"
+								onPress={handleupdateUserProfile}
+								disabled={updateProfileMutation.isPending || !isProfileChanged}
+								animation={true}
+							>
+								{updateProfileMutation.isPending && (
+									<ButtonIcon as={RefreshCw} className="animate-spin mr-1" />
+								)}
+								<ButtonText>
+									{updateProfileMutation.isPending ? '업데이트 중...' : '완료'}
+								</ButtonText>
+							</Button>
+						</VStack>
 					</VStack>
 				</BottomSheetListLayout>
 			</BottomSheetContainer>

@@ -1,6 +1,6 @@
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Icon } from '#/components/ui/icon';
 import { AlertCircle } from 'lucide-react-native';
 

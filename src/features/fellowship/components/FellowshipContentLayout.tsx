@@ -1,4 +1,4 @@
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import type { ViewProps } from 'react-native';
 import { Button, ButtonIcon } from '@/components/common/button';

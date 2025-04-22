@@ -28,7 +28,7 @@ import type { GroupMemberRole, GroupUser } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Box } from '#/components/ui/box';
 import { cn } from '@/shared/utils/cn';
 import { useToastStore } from '@/store/toast';
