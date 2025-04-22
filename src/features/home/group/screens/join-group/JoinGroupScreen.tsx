@@ -19,7 +19,7 @@ import { useToastStore } from '@/store/toast';
 
 export default function JoinGroupScreen() {
 	const { user, addUserGroupProfile } = useAuthStore();
-	const { setStep, currentStep, userData, completeOnboarding } =
+	const { setStep, currentStep, userData, submitOnboardingData } =
 		useOnboardingStore();
 	const [code, setCode] = useState('');
 	const queryClient = useQueryClient();
@@ -55,7 +55,7 @@ export default function JoinGroupScreen() {
 			});
 
 			// if onboarding, complete onboarding
-			if (isOnboarding) await completeOnboarding(user.id);
+			if (isOnboarding) await submitOnboardingData(user.id);
 			else {
 				queryClient.invalidateQueries({
 					queryKey: [GROUPS_QUERY_KEY],
@@ -65,14 +65,14 @@ export default function JoinGroupScreen() {
 
 			router.push('/(app)/(tabs)');
 		} catch (error) {
-			showError(error);
+			showError(`${error}`);
 			return;
 		}
 	};
 
 	const handlePressLater = async () => {
 		if (!user) return;
-		await completeOnboarding(user.id);
+		await submitOnboardingData(user.id);
 	};
 
 	const onPressBackButton = () => {

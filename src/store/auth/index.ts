@@ -43,7 +43,7 @@ type AuthActions = {
 		type: T,
 		data: T extends 'EMAIL'
 			? EmailSignInInput
-			: T extends 'APPLE'
+			: T extends 'APPLE' | 'GOOGLE'
 				? { updateUserData?: OnboardingState['updateUserData'] }
 				: undefined,
 	) => Promise<{ id: string }>;
@@ -127,7 +127,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 								return { id: user.id };
 							}
 							case 'GOOGLE': {
-								const { user, existUser } = await signInWithGoogle();
+								const { user, existUser, profileImage } =
+									await signInWithGoogle();
+								data?.updateUserData({ photoUrl: profileImage ?? null });
 								const currentGroup =
 									user?.groups?.find((g) => g.isMain) ??
 									user?.groups?.[0] ??

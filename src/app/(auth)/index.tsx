@@ -38,7 +38,7 @@ function AuthStepScreen() {
 	};
 
 	const onGoogleButtonPress = async () => {
-		await signIn('GOOGLE', undefined);
+		await signIn('GOOGLE', { updateUserData });
 		setOnboarding();
 	};
 

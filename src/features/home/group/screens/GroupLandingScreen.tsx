@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
-import { Crown, Users } from 'lucide-react-native';
-import { Button, ButtonText } from '@/components/common/button';
+import { ChevronRight, Crown, Plus, Users } from 'lucide-react-native';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Heading } from '@/shared/components/heading';
@@ -23,14 +23,14 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 	const [selectedOption, setSelectedOption] =
 		useState<GroupLandingOption>('create');
 
-	const { currentStep, setStep, completeOnboarding } = useOnboardingStore();
+	const { currentStep, setStep, submitOnboardingData } = useOnboardingStore();
 	const { user } = useAuthStore();
 
 	const isOnboarding = currentStep === 'GROUP_LANDING';
 
 	const handlePressLater = () => {
 		if (!user) return;
-		completeOnboarding(user.id);
+		submitOnboardingData(user.id);
 	};
 
 	const buttonText = useMemo(() => {
@@ -44,7 +44,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 
 	return (
 		<VStack className="h-full flex-1">
-			{isOnboarding && <Header onPressBackButton={() => setStep('NAME')} />}
+			{isOnboarding && <Header onPressBackButton={() => setStep('IMAGE')} />}
 			<VStack className="px-4 mt-12 flex-1">
 				<VStack space="md" className="flex-1">
 					<Heading size="2xl">
@@ -135,6 +135,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 							onPress={() => handlePressOption(selectedOption)}
 						>
 							<ButtonText>{buttonText}</ButtonText>
+							<ButtonIcon as={ChevronRight} />
 						</Button>
 						{isOnboarding && (
 							<Button

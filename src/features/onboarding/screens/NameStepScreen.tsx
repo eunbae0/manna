@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '@/shared/components/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';
+import { Text } from '#/components/ui/text';
 
 export default function NameStepScreen() {
 	const { setStep, updateUserData, userData } = useOnboardingStore();
@@ -22,30 +23,39 @@ export default function NameStepScreen() {
 
 	const handlePressNext = () => {
 		updateUserData({ displayName: name.trim() });
-		setStep('GROUP_LANDING');
+		setStep('IMAGE');
 	};
 
 	return (
 		<VStack className="flex-1 h-full">
-			<VStack className="flex-1 px-5 mt-8 gap-12">
-				<VStack space="3xl">
-					<Heading size="2xl">이름을 입력해주세요</Heading>
-					<Input
-						variant="outline"
-						size="lg"
-						isDisabled={false}
-						isInvalid={false}
-						isReadOnly={false}
-						className="rounded-2xl"
-					>
-						<InputField
-							// @ts-ignore
-							ref={ref}
-							value={name}
-							onChangeText={(text) => setName(text)}
-							placeholder="이름"
-						/>
-					</Input>
+			<VStack className="flex-1 px-4 mt-16 gap-12">
+				<VStack className="gap-10">
+					<VStack space="sm">
+						<Heading size="2xl">소그룹에 가입하신 것을 환영해요 🙌</Heading>
+						<Text className="text-typography-600">
+							회원가입을 완료하기 위해 정보를 입력해주세요
+						</Text>
+					</VStack>
+					<VStack space="sm">
+						<Text className="text-typography-700">이름을 입력해주세요</Text>
+						<Input
+							variant="outline"
+							size="lg"
+							isDisabled={false}
+							isInvalid={false}
+							isReadOnly={false}
+							className="rounded-xl"
+						>
+							<InputField
+								// @ts-ignore
+								ref={ref}
+								value={name}
+								onChangeText={(text) => setName(text)}
+								placeholder="그룹원들에게 보여질 이름이에요"
+								className="font-pretendard-Regular text-md"
+							/>
+						</Input>
+					</VStack>
 				</VStack>
 			</VStack>
 			<Button

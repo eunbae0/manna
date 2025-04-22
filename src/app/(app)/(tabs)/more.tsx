@@ -94,15 +94,8 @@ export default function TabFourScreen() {
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
 			const selectedImageUri = result.assets[0].uri;
-			const context = ImageManipulator.ImageManipulator.manipulate(
-				selectedImageUri,
-			).resize({ width: 128, height: 128 });
-			const image = await context.renderAsync();
-			const _result = await image.saveAsync({
-				format: ImageManipulator.SaveFormat.WEBP,
-			});
 
-			setPhotoUrl(_result.uri);
+			setPhotoUrl(selectedImageUri);
 			setIsPhotoUrlChanged(true);
 		}
 	};

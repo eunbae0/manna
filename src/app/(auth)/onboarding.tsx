@@ -11,6 +11,9 @@ import { KeyboardAvoidingView } from '@/components/common/keyboard-view/Keyboard
 import CreateGroupContainerScreen from '@/features/home/group/screens/create-group/CreateGroupContainerScreen';
 import JoinGroupScreen from '@/features/home/group/screens/join-group/JoinGroupScreen';
 import EmailSignUpScreen from '@/features/onboarding/screens/EmailSignUpScreen';
+import ImageStepScreen from '@/features/onboarding/screens/ImageStepScreen';
+import PendingSubmitScreen from '@/features/onboarding/screens/PendingSubmitScreen';
+import FinishStepScreen from '@/features/onboarding/screens/FinishStepScreen';
 
 function OnboardingScreen() {
 	const { currentStep } = useOnboardingStore();
@@ -23,16 +26,23 @@ function OnboardingScreen() {
 				return <EmailSignUpScreen />;
 			case 'NAME':
 				return <NameStepScreen />;
+			case 'IMAGE':
+				return <ImageStepScreen />;
 			case 'GROUP_LANDING':
 				return <GroupStepScreen />;
 			case 'GROUP_CREATE':
 				return <CreateGroupContainerScreen />;
 			case 'GROUP_JOIN':
 				return <JoinGroupScreen />;
+			case 'PENDING_SUBMIT':
+				return <PendingSubmitScreen />;
+				case 'FINISH':
+					return <FinishStepScreen />;
 			default:
 				return <Redirect href="/+not-found" />;
 		}
 	};
+
 	return (
 		<SafeAreaView className="h-full">
 			<KeyboardAvoidingView>{switchStep(currentStep)}</KeyboardAvoidingView>

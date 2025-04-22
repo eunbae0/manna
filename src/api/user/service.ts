@@ -19,6 +19,7 @@ import type { ClientUser, FirestoreUser, UserGroup } from './types';
 import type { AuthType } from '@/shared/types';
 import { FIREBASE_STORAGE_IMAGE_BASE_URL } from '@/shared/constants/firebase';
 import { uploadImageAsync } from '@/shared/utils/firebase';
+import { resizeImage } from '@/shared/utils/resize_image';
 
 /**
  * Firestore service for user profile operations
@@ -108,7 +109,8 @@ export class FirestoreUserService {
 		if (updatedUserData.photoUrl) {
 			const path = `${FIREBASE_STORAGE_IMAGE_BASE_URL}/user/${userId}/profileImage`;
 
-			const photoUrl = await uploadImageAsync(updatedUserData.photoUrl, path);
+			const resizedPhotoUrl = await resizeImage(updatedUserData.photoUrl);
+			const photoUrl = await uploadImageAsync(resizedPhotoUrl, path);
 			updatedUserData.photoUrl = photoUrl;
 		}
 

@@ -139,7 +139,10 @@ export class FirestoreAuthService {
 	 * Signs in with Google
 	 * @returns User credential
 	 */
-	async signInWithGoogle(): Promise<FirebaseAuthTypes.UserCredential> {
+	async signInWithGoogle(): Promise<{
+		userCredential: FirebaseAuthTypes.UserCredential;
+		profileImage: string | null;
+	}> {
 		// Google Sign-In configuration
 		GoogleSignin.configure({
 			webClientId:
@@ -163,7 +166,10 @@ export class FirestoreAuthService {
 			error.code = statusCodes.SIGN_IN_CANCELLED;
 			throw error;
 		}
-		const { idToken } = response.data;
+		const {
+			idToken,
+			user: { photo },
+		} = response.data;
 		if (!idToken) {
 			throw new Error('Google 로그인 실패: 인증 정보가 없습니다');
 		}
@@ -171,7 +177,8 @@ export class FirestoreAuthService {
 		const credential = GoogleAuthProvider.credential(idToken);
 
 		// Firebase로 로그인
-		return await signInWithCredential(auth, credential);
+		const userCredential = await signInWithCredential(auth, credential);
+		return { userCredential, profileImage: photo ?? null };
 	}
 
 	async sendPasswordResetEmail(email: string): Promise<void> {
@@ -241,7 +248,6 @@ export class FirestoreAuthService {
 				GoogleSignin.configure({
 					webClientId:
 						'892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com',
-					scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
 				});
 				// Google 인증의 경우
 				try {
@@ -249,6 +255,9 @@ export class FirestoreAuthService {
 					await GoogleSignin.hasPlayServices({
 						showPlayServicesUpdateDialog: true,
 					});
+
+					// allow time for play services to initialize
+					await new Promise((resolve) => setTimeout(resolve, 100));
 					const response = await GoogleSignin.signIn();
 
 					if (!isSuccessResponse(response)) {
@@ -262,9 +271,9 @@ export class FirestoreAuthService {
 
 					const authCredential = GoogleAuthProvider.credential(idToken);
 
-					await reauthenticateWithCredential(currentUser, authCredential);
 					await GoogleSignin.signOut();
-					await GoogleSignin.revokeAccess();
+
+					await reauthenticateWithCredential(currentUser, authCredential);
 				} catch (googleError) {
 					console.error(`Google 재인증 오류: ${googleError}`);
 					throw new Error('재인증에 실패했어요. 다시 시도해주세요.');

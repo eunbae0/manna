@@ -31,3 +31,8 @@ export interface AppleSignInResponse {
 	existUser: boolean;
 	givenName: string | null;
 }
+export interface GoogleSignInResponse {
+	user: ClientUser;
+	existUser: boolean;
+	profileImage: string | null;
+}

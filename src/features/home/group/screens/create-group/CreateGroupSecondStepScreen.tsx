@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function CreateGroupSecondStepScreen({ group }: Props) {
-	const { currentStep, completeOnboarding } = useOnboardingStore();
+	const { currentStep, submitOnboardingData } = useOnboardingStore();
 	const isOnboarding = currentStep === 'GROUP_CREATE';
 	const { user } = useAuthStore();
 
@@ -25,7 +25,7 @@ export default function CreateGroupSecondStepScreen({ group }: Props) {
 			return;
 		}
 		if (!user) return;
-		completeOnboarding(user.id);
+		submitOnboardingData(user.id);
 	};
 
 	const { copyInviteCode } = useCopyInviteCode(group?.inviteCode || '');

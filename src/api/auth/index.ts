@@ -4,6 +4,7 @@ import type {
 	AuthType,
 	EmailSignInInput,
 	AppleSignInResponse,
+	GoogleSignInResponse,
 } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
@@ -87,19 +88,22 @@ export const signInWithApple = withApiLogging(
  * Google로 인증하기
  */
 export const signInWithGoogle = withApiLogging(
-	async (): Promise<SignInResponse> => {
+	async (): Promise<GoogleSignInResponse> => {
 		try {
 			const authService = getAuthService();
-			const userCredential = await authService.signInWithGoogle();
+			const { userCredential, profileImage } =
+				await authService.signInWithGoogle();
 
 			// 로그인 성공 후 알림 권한 요청 및 토큰 가져오기
 			const fcmTokens = await requestNotificationPermission();
 
-			return await authService.handleUserProfile(
+			const signInResponse = await authService.handleUserProfile(
 				userCredential,
 				'GOOGLE',
 				fcmTokens,
 			);
+
+			return { ...signInResponse, profileImage };
 		} catch (error) {
 			throw handleApiError(error);
 		}
