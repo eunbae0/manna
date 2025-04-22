@@ -373,8 +373,15 @@ const Button = React.forwardRef<View, ButtonProps>(
 						innerClassName,
 					)}
 					disabled={disabled}
-					onPressIn={handlePressIn}
-					onPressOut={handlePressOut}
+					onPressIn={(e) => {
+						handlePressIn();
+						props.onPress?.(e);
+						props.onPressIn?.(e);
+					}}
+					onPressOut={(e) => {
+						handlePressOut();
+						props.onPressOut?.(e);
+					}}
 					{...props}
 				>
 					{childrenWithProps}
