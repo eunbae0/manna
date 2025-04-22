@@ -5,7 +5,7 @@ import Header from '@/components/common/Header';
 import { Text } from '#/components/ui/text';
 
 import { useOnboardingStore } from '@/store/onboarding';
-import { Heading } from '#/components/ui/heading';
+import { Heading } from '@/shared/components/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';
 import { cn } from '@/shared/utils/cn';
@@ -93,8 +93,13 @@ export default function JoinGroupScreen() {
 					>
 						<InputField
 							value={code}
-							onChangeText={setCode}
+							onChangeText={(text) => {
+								const newText = text.trim();
+								setCode(newText);
+							}}
 							placeholder="초대코드"
+							maxLength={6}
+							autoCapitalize="characters"
 						/>
 					</Input>
 				</VStack>
