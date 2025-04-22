@@ -39,8 +39,7 @@ export default function JoinGroupScreen() {
 			inviteCode: code,
 		});
 
-		const isMain =
-			user.groups?.find((g) => g.groupId === groupId)?.isMain ?? false;
+		const isMain = user.groups?.findIndex((g) => g.isMain === true) !== -1;
 		// update firestore user groups
 		await addUserGroupProfile(user.id, {
 			groupId,

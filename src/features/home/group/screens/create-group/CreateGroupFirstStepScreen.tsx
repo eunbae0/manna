@@ -65,8 +65,7 @@ export default function CreateGroupFirstStepScreen({
 			}
 			setGroup(res);
 			if (!user) return;
-			const isMain =
-				user.groups?.find((g) => g.groupId === res.id)?.isMain ?? false;
+			const isMain = user.groups?.findIndex((g) => g.isMain === true) !== -1;
 			updateUserGroupProfile(user.id, {
 				groupId: res.id,
 				notificationPreferences: { fellowship: true, prayerRequest: true },
