@@ -85,7 +85,11 @@ export class FirestoreGroupService {
 		for (const doc of querySnapshot.docs) {
 			const group = doc.data() as Group;
 			const groupMembers = await this.getGroupMembers(doc.id);
-			const clientGroup = this.convertToClientGroup(doc.id, group, groupMembers);
+			const clientGroup = this.convertToClientGroup(
+				doc.id,
+				group,
+				groupMembers,
+			);
 			groupMap.set(clientGroup.id, clientGroup);
 		}
 
@@ -335,12 +339,11 @@ export class FirestoreGroupService {
 		const group = await this.getGroupByInviteCode(inviteCode);
 
 		if (!group) {
-			throw new Error(`Group with invite code ${inviteCode} not found`);
+			throw new Error(`${inviteCode}에 해당하는 그룹이 없어요`);
 		}
 
-		// TODO: 유저가 이미 그룹에 있는 경우 안내 처리
 		if (group.members.find((m) => m.id === member.id)) {
-			throw new Error('User is already a member of this group');
+			throw new Error('이미 해당 소그룹에 참여하고 있어요');
 		}
 
 		await this.addGroupMember(group.id, member);

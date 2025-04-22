@@ -15,6 +15,7 @@ import { useAuthStore } from '@/store/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { GROUPS_QUERY_KEY } from '../../hooks/useGroups';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
+import { useToastStore } from '@/store/toast';
 
 export default function JoinGroupScreen() {
 	const { user, addUserGroupProfile } = useAuthStore();
@@ -22,41 +23,51 @@ export default function JoinGroupScreen() {
 		useOnboardingStore();
 	const [code, setCode] = useState('');
 	const queryClient = useQueryClient();
+	const { showInfo, showError } = useToastStore();
 
 	const isOnboarding = currentStep === 'GROUP_JOIN';
 
 	const handlePressJoin = async () => {
 		if (!user) return;
-
-		// update firestore group member
-		const groupId = await joinGroup({
-			member: {
-				id: user.id,
-				displayName: isOnboarding ? userData.displayName : user.displayName,
-				photoUrl: user.photoUrl,
-				role: 'member',
-			},
-			inviteCode: code,
-		});
-
-		const isMain = user.groups?.findIndex((g) => g.isMain === true) !== -1;
-		// update firestore user groups
-		await addUserGroupProfile(user.id, {
-			groupId,
-			notificationPreferences: { fellowship: true, prayerRequest: true },
-			isMain,
-		});
-
-		// if onboarding, complete onboarding
-		if (isOnboarding) await completeOnboarding(user.id);
-		else {
-			queryClient.invalidateQueries({
-				queryKey: [GROUPS_QUERY_KEY],
-				refetchType: 'all',
-			});
+		if (code.length !== 6) {
+			showInfo('6자리 초대코드를 입력해주세요');
+			return;
 		}
 
-		router.push('/(app)/(tabs)');
+		// update firestore group member
+		// TODO: error handling 개선
+		try {
+			const groupId = await joinGroup({
+				member: {
+					id: user.id,
+					displayName: isOnboarding ? userData.displayName : user.displayName,
+					photoUrl: user.photoUrl,
+					role: 'member',
+				},
+				inviteCode: code,
+			});
+			const isMain = user.groups?.findIndex((g) => g.isMain === true) !== -1;
+			// update firestore user groups
+			await addUserGroupProfile(user.id, {
+				groupId,
+				notificationPreferences: { fellowship: true, prayerRequest: true },
+				isMain,
+			});
+
+			// if onboarding, complete onboarding
+			if (isOnboarding) await completeOnboarding(user.id);
+			else {
+				queryClient.invalidateQueries({
+					queryKey: [GROUPS_QUERY_KEY],
+					refetchType: 'all',
+				});
+			}
+
+			router.push('/(app)/(tabs)');
+		} catch (error) {
+			showError(error);
+			return;
+		}
 	};
 
 	const handlePressLater = async () => {
