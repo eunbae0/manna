@@ -236,7 +236,7 @@ export const updateGroupMember = withApiLogging(
  * @returns ID of the joined group
  */
 export const joinGroup = withApiLogging(
-	async (joinData: JoinGroupInput): Promise<string> => {
+	async (joinData: JoinGroupInput): Promise<ClientGroup> => {
 		try {
 			const groupService = getGroupService();
 			return await groupService.joinGroup(joinData);

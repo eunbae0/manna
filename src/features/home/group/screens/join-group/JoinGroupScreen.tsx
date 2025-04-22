@@ -37,7 +37,7 @@ export default function JoinGroupScreen() {
 		// update firestore group member
 		// TODO: error handling 개선
 		try {
-			const groupId = await joinGroup({
+			const group = await joinGroup({
 				member: {
 					id: user.id,
 					displayName: isOnboarding ? userData.displayName : user.displayName,
@@ -46,10 +46,10 @@ export default function JoinGroupScreen() {
 				},
 				inviteCode: code,
 			});
-			const isMain = user.groups?.findIndex((g) => g.isMain === true) !== -1;
+			const isMain = user.groups?.findIndex((g) => g.isMain === true) === -1;
 			// update firestore user groups
 			await addUserGroupProfile(user.id, {
-				groupId,
+				groupId: group.id,
 				notificationPreferences: { fellowship: true, prayerRequest: true },
 				isMain,
 			});
@@ -57,6 +57,7 @@ export default function JoinGroupScreen() {
 			// if onboarding, complete onboarding
 			if (isOnboarding) await submitOnboardingData(user.id);
 			else {
+				showInfo(`${group.groupName}에 참여했어요`);
 				queryClient.invalidateQueries({
 					queryKey: [GROUPS_QUERY_KEY],
 					refetchType: 'all',
@@ -97,7 +98,7 @@ export default function JoinGroupScreen() {
 						</VStack>
 						<Input
 							variant="outline"
-							size="md"
+							size="lg"
 							isDisabled={false}
 							isInvalid={false}
 							isReadOnly={false}
@@ -106,12 +107,13 @@ export default function JoinGroupScreen() {
 							<InputField
 								value={code}
 								onChangeText={(text) => {
-									const newText = text.trim();
+									const newText = text.trim().toUpperCase();
 									setCode(newText);
 								}}
-								placeholder="초대코드"
+								placeholder="6자리 초대코드"
 								maxLength={6}
 								autoCapitalize="characters"
+								className="text-md font-pretendard-Regular"
 							/>
 						</Input>
 					</VStack>

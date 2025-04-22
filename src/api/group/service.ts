@@ -333,7 +333,7 @@ export class FirestoreGroupService {
 	 * @param joinData Join group data
 	 * @returns ID of the joined group
 	 */
-	async joinGroup(joinData: JoinGroupInput): Promise<string> {
+	async joinGroup(joinData: JoinGroupInput): Promise<ClientGroup> {
 		const { inviteCode, member } = joinData;
 
 		const group = await this.getGroupByInviteCode(inviteCode);
@@ -348,7 +348,7 @@ export class FirestoreGroupService {
 
 		await this.addGroupMember(group.id, member);
 
-		return group.id;
+		return group;
 	}
 
 	/**
