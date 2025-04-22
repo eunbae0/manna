@@ -139,10 +139,15 @@ export class FirestoreAuthService {
 	 */
 	async signInWithGoogle(): Promise<FirebaseAuthTypes.UserCredential> {
 		// Google Sign-In configuration
-		GoogleSignin.configure();
+		GoogleSignin.configure({
+			webClientId:
+				'892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com',
+		});
 
 		// Google 로그인 요청
-		await GoogleSignin.hasPlayServices();
+		await GoogleSignin.hasPlayServices({
+			showPlayServicesUpdateDialog: true,
+		});
 		const response = await GoogleSignin.signIn();
 		if (!isSuccessResponse(response)) {
 			throw new Error('Google 로그인 실패: 유저가 로그인을 취소했습니다.');
