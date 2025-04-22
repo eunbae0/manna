@@ -16,10 +16,14 @@ import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRe
 import { Text } from '#/components/ui/text';
 import { PrayerRequestSkeleton } from '@/features/prayer-request/components/PrayerRequestSkeleton';
 import { usePrayerRequests } from '@/features/prayer-request/hooks/usePrayerRequests';
+import { useQueryClient } from '@tanstack/react-query';
+import { GROUP_QUERY_KEY, GROUPS_QUERY_KEY } from './group/hooks/useGroups';
 
 function HomeList() {
 	const [refreshing, setRefreshing] = useState(false);
 	const [showNotification, setShowNotification] = useState(false);
+
+	const queryClient = useQueryClient();
 
 	const {
 		prayerRequests,
@@ -41,11 +45,22 @@ function HomeList() {
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
 		try {
-			await Promise.all([refetchPrayerRequests(), refetchNotifications()]);
+			await Promise.all([
+				refetchPrayerRequests(),
+				refetchNotifications(),
+				queryClient.invalidateQueries({
+					queryKey: [GROUP_QUERY_KEY],
+					refetchType: 'all',
+				}),
+				queryClient.invalidateQueries({
+					queryKey: [GROUPS_QUERY_KEY],
+					refetchType: 'all',
+				}),
+			]);
 		} finally {
 			setRefreshing(false);
 		}
-	}, [refetchPrayerRequests, refetchNotifications]);
+	}, [refetchPrayerRequests, refetchNotifications, queryClient]);
 
 	const handlePressAddButton = () => {
 		router.navigate('/(app)/createPrayerRequestModal');
