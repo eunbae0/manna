@@ -1,3 +1,4 @@
+import { isIOS } from '@/shared/utils/platform';
 import messaging from '@react-native-firebase/messaging';
 import { PermissionsAndroid, Platform } from 'react-native';
 
@@ -35,7 +36,12 @@ export class FirestoreMessagingService {
 	}
 
 	async getToken(): Promise<string> {
-		return await messaging().getToken();
+		if (isIOS && !messaging().isDeviceRegisteredForRemoteMessages) {
+			await messaging().registerDeviceForRemoteMessages();
+		}
+		return await messaging()
+			.getToken()
+			.then((token) => token);
 	}
 }
 
