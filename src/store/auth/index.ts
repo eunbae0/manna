@@ -251,7 +251,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						if (existingGroup) {
 							newGroups.splice(newGroups.indexOf(existingGroup), 1, group);
 						} else {
-							newGroups.replace(group);
+							newGroups.push(group);
 						}
 
 						set((state) => ({
