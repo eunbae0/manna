@@ -2,7 +2,9 @@ import { ApiError, ErrorCode } from './types';
 import { mapFirebaseError } from './mappers/firebase';
 import { errorMessages } from '@/localization/errors';
 import { mapAppleError } from './mappers/apple';
+import { mapGoogleError } from './mappers/google';
 import { logApiError } from '../utils/logger';
+import { statusCodes } from '@react-native-google-signin/google-signin';
 
 export function createApiError(
 	code: ErrorCode,
@@ -82,6 +84,18 @@ export function handleApiError(
 		error.code.startsWith('ERR_')
 	) {
 		return mapAppleError(error);
+	}
+
+	console.log('code', error.code);
+	// Google 오류 탐지 및 변환
+	if (
+		error &&
+		'code' in error &&
+		(error.code === statusCodes.SIGN_IN_CANCELLED ||
+			error.code === statusCodes.IN_PROGRESS ||
+			error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE)
+	) {
+		return mapGoogleError(error);
 	}
 
 	// 기타 오류를 일반 API 오류로 변환

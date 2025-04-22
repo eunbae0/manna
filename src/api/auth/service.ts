@@ -23,6 +23,7 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import {
 	GoogleSignin,
 	isSuccessResponse,
+	statusCodes,
 } from '@react-native-google-signin/google-signin';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,6 +33,7 @@ import { getUserService } from '../user/service';
 import type { ClientUser, FirestoreUser } from '@/shared/types';
 import { createUser } from '../user';
 import { DELETED_MEMBER_DISPLAY_NAME } from '@/shared/constants';
+import { ApiError, ErrorCode } from '../errors/types';
 
 /**
  * Firestore service for user authentication and profile operations
@@ -143,17 +145,24 @@ export class FirestoreAuthService {
 			webClientId:
 				'892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com',
 		});
-
 		// Google 로그인 요청
 		await GoogleSignin.hasPlayServices({
 			showPlayServicesUpdateDialog: true,
 		});
+
+		// allow time for play services to initialize
+		await new Promise((resolve) => setTimeout(resolve, 100));
+
 		const response = await GoogleSignin.signIn();
 		if (!isSuccessResponse(response)) {
-			throw new Error('Google 로그인 실패: 유저가 로그인을 취소했습니다.');
-		}
+			const error = new Error(
+				'Google 로그인 실패: 유저가 로그인을 취소했습니다.',
+			);
+			//@ts-expect-error
 
-		// Firebase 인증 정보 생성
+			error.code = statusCodes.SIGN_IN_CANCELLED;
+			throw error;
+		}
 		const { idToken } = response.data;
 		if (!idToken) {
 			throw new Error('Google 로그인 실패: 인증 정보가 없습니다');
@@ -174,7 +183,14 @@ export class FirestoreAuthService {
 	 */
 	async signOut(authType: AuthType | null): Promise<void> {
 		if (authType === 'GOOGLE') {
+			GoogleSignin.configure({
+				webClientId:
+					'892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com',
+				scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
+			});
 			await GoogleSignin.signOut();
+			await signOut(auth);
+			return;
 		}
 		await signOut(auth);
 	}
@@ -222,10 +238,17 @@ export class FirestoreAuthService {
 					throw new Error(`Apple 재인증 실패: ${appleError}`);
 				}
 			} else if (providerData?.providerId === 'google.com') {
+				GoogleSignin.configure({
+					webClientId:
+						'892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com',
+					scopes: ['https://www.googleapis.com/auth/drive.readonly'], // what API you want to access on behalf of the user, default is email and profile
+				});
 				// Google 인증의 경우
 				try {
 					// Google 인증 정보 가져오기
-					await GoogleSignin.hasPlayServices();
+					await GoogleSignin.hasPlayServices({
+						showPlayServicesUpdateDialog: true,
+					});
 					const response = await GoogleSignin.signIn();
 
 					if (!isSuccessResponse(response)) {
@@ -240,6 +263,8 @@ export class FirestoreAuthService {
 					const authCredential = GoogleAuthProvider.credential(idToken);
 
 					await reauthenticateWithCredential(currentUser, authCredential);
+					await GoogleSignin.signOut();
+					await GoogleSignin.revokeAccess();
 				} catch (googleError) {
 					console.error(`Google 재인증 오류: ${googleError}`);
 					throw new Error('재인증에 실패했어요. 다시 시도해주세요.');
