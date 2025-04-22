@@ -27,6 +27,7 @@ import { SENTRY_DSN } from '@/shared/constants/keys';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useBackAlertOnExit } from '@/shared/hooks/useBackAlertOnExit';
 import { isAndroid } from '@/shared/utils/platform';
+import * as amplitude from '@amplitude/analytics-react-native';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -45,6 +46,9 @@ Sentry.init({
 	enableNativeFramesTracking: !__DEV__,
 	enabled: !__DEV__,
 });
+
+// biome-ignore lint/style/noNonNullAssertion: <explanation>
+amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY!);
 
 function RootLayout() {
 	const colorScheme = useColorScheme();

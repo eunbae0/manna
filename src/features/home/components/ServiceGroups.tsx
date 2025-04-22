@@ -6,20 +6,24 @@ import { VStack } from '#/components/ui/vstack';
 import { router } from 'expo-router';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { useFellowshipStore } from '@/store/createFellowship';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export default function ServiceGroups() {
 	const { setType } = useFellowshipStore();
 
 	const handlePressCreateFellowship = () => {
+		trackAmplitudeEvent('Create Fellowship', { screen: 'Tab_Home' });
 		setType('CREATE');
 		router.push('/(app)/(fellowship)/create');
 	};
 
 	const handlePressNotes = () => {
+		trackAmplitudeEvent('View Notes', { screen: 'Tab_Home' });
 		router.replace('/(app)/(tabs)/note');
 	};
 
 	const handlePressFellowships = () => {
+		trackAmplitudeEvent('View Fellowships List', { screen: 'Tab_Home' });
 		router.push('/(app)/(fellowship)/list');
 	};
 

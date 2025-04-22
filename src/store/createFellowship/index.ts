@@ -6,6 +6,7 @@ import type {
 	FellowshipStoreStep,
 	FellowshipStoreType,
 } from './types';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export const FELLOWSHIP_DEFAULT_STEP: FellowshipStoreStep = 'INFO';
 
@@ -101,6 +102,21 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 				);
 				get().clearFellowship();
 				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
+
+				// tracking amplitude
+				trackAmplitudeEvent('나눔 생성', {
+					screen: 'Fellowship_Create',
+					fellowship_ice_breaking_count:
+						fellowshipData.content.iceBreaking.length,
+					fellowship_sermon_topic_count:
+						fellowshipData.content.sermonTopic.length,
+					fellowship_prayer_request_enabled:
+						fellowshipData.content.prayerRequest.isActive,
+					fellowship_disabled_pracher: !fellowshipData.info.preacher?.isActive,
+					fellowship_disabled_preach_text:
+						!fellowshipData.info.preachText?.isActive,
+					fellowship_member_count: fellowshipData.info.members.length,
+				});
 				router.replace(`/(app)/(fellowship)/${id}`);
 				break;
 			}
@@ -117,6 +133,20 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 
 				// Set lastUpdatedId to let components know this ID needs to be refreshed
 				set({ lastUpdatedId: fellowshipId });
+
+				trackAmplitudeEvent('나눔 수정', {
+					screen: 'Fellowship_Edit',
+					fellowship_ice_breaking_count:
+						fellowshipData.content.iceBreaking.length,
+					fellowship_sermon_topic_count:
+						fellowshipData.content.sermonTopic.length,
+					fellowship_prayer_request_enabled:
+						fellowshipData.content.prayerRequest.isActive,
+					fellowship_disabled_pracher: !fellowshipData.info.preacher?.isActive,
+					fellowship_disabled_preach_text:
+						!fellowshipData.info.preachText?.isActive,
+					fellowship_member_count: fellowshipData.info.members.length,
+				});
 
 				get().clearFellowship();
 				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });

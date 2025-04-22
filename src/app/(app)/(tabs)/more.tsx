@@ -52,6 +52,7 @@ import { getCurrentAppVersion } from '@/shared/utils/app_version';
 import { FELLOWSHIP_QUERY_KEY } from '@/features/fellowship/hooks/useFellowship';
 import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '@/features/prayer-request/hooks/usePrayerRequests';
 import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export default function TabFourScreen() {
 	const { user, updateUserProfile } = useAuthStore();
@@ -179,7 +180,16 @@ export default function TabFourScreen() {
 									<Text>{user?.email}</Text>
 								</VStack>
 							</HStack>
-							<Button size="md" variant="icon" onPress={handleOpen}>
+							<Button
+								size="md"
+								variant="icon"
+								onPress={() => {
+									trackAmplitudeEvent('Open Profile Settings', {
+										screen: 'Tab_More',
+									});
+									handleOpen();
+								}}
+							>
 								<ButtonIcon as={Edit3Icon} />
 							</Button>
 						</HStack>
@@ -195,12 +205,22 @@ export default function TabFourScreen() {
 							<ListItem
 								label="알림"
 								icon={Bell}
-								onPress={() => router.push('/(app)/(more)/notification')}
+								onPress={() => {
+									trackAmplitudeEvent('Open Notification Settings', {
+										screen: 'Tab_More',
+									});
+									router.push('/(app)/(more)/notification');
+								}}
 							/>
 							<ListItem
 								label="계정"
 								icon={UserPen}
-								onPress={() => router.push('/(app)/(more)/account')}
+								onPress={() => {
+									trackAmplitudeEvent('Open Account Settings', {
+										screen: 'Tab_More',
+									});
+									router.push('/(app)/(more)/account');
+								}}
 							/>
 							{/* <ListItem
 								label="공지사항"
@@ -210,7 +230,12 @@ export default function TabFourScreen() {
 							<ListItem
 								label="정책"
 								icon={ScrollText}
-								onPress={() => router.push('/policy')}
+								onPress={() => {
+									trackAmplitudeEvent('Open Policy', {
+										screen: 'Tab_More',
+									});
+									router.push('/policy');
+								}}
 							/>
 							{/* <ListItem
 								label="의견 남기기"
@@ -220,7 +245,12 @@ export default function TabFourScreen() {
 							<ListItem
 								label="리뷰 남기기"
 								icon={Star}
-								onPress={openAppStoreReview}
+								onPress={() => {
+									trackAmplitudeEvent('Open App Store Review', {
+										screen: 'Tab_More',
+									});
+									openAppStoreReview();
+								}}
 							/>
 							<VersionListItem />
 						</VStack>
@@ -235,7 +265,16 @@ export default function TabFourScreen() {
 					<VStack className="gap-12">
 						<VStack space="3xl">
 							<VStack space="lg" className="items-center">
-								<Pressable onPress={pickImage} className="relative">
+								<Pressable
+									onPress={() => {
+										trackAmplitudeEvent('Open Profile Image Picker', {
+											screen: 'Tab_More',
+											location: 'More_Profile_Settings_Bottom_Sheet',
+										});
+										pickImage();
+									}}
+									className="relative"
+								>
 									<Avatar
 										size="3xl"
 										photoUrl={photoUrl || user?.photoUrl || undefined}
@@ -276,7 +315,13 @@ export default function TabFourScreen() {
 								size="lg"
 								rounded
 								action="primary"
-								onPress={handleupdateUserProfile}
+								onPress={() => {
+									trackAmplitudeEvent('Submit Profile Update', {
+										screen: 'Tab_More',
+										location: 'More_Profile_Settings_Bottom_Sheet',
+									});
+									handleupdateUserProfile();
+								}}
 								disabled={updateProfileMutation.isPending || !isProfileChanged}
 								animation={true}
 							>

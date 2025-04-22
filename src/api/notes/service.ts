@@ -82,7 +82,7 @@ export class FirestoreNotesService extends FirestoreWorshipTypesService {
 		};
 	}
 
-	async createNote(noteData: Omit<Note, 'id'>): Promise<string> {
+	async createNote(noteData: Omit<Note, 'id'>): Promise<Note> {
 		const noteToSave = {
 			...noteData,
 			createdAt: serverTimestamp(),
@@ -91,7 +91,7 @@ export class FirestoreNotesService extends FirestoreWorshipTypesService {
 
 		const newNoteRef = await addDoc(this.getNotesCollectionRef(), noteToSave);
 
-		return newNoteRef.id;
+		return { ...noteData, id: newNoteRef.id };
 	}
 
 	async getNote(noteId: string): Promise<Note | null> {

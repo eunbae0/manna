@@ -29,6 +29,7 @@ import {
 	updateUserGroup,
 } from '@/api/user';
 import type { OnboardingState } from '../onboarding';
+import { onUserSignIn, onUserSignOut } from '@/shared/utils/amplitude';
 
 type AuthState = {
 	user: ClientUser | null;
@@ -204,6 +205,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							currentGroup: null,
 							isAuthenticated: false,
 						});
+						onUserSignOut();
 					} catch (error) {
 						const apiError = handleApiError(error);
 						set({ error: apiError });
@@ -299,6 +301,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							user: firestoreUser,
 							currentGroup,
 						});
+						onUserSignIn(firestoreUser);
 					} catch (err) {
 						// signOut
 						const apiError = handleApiError(err);
@@ -326,6 +329,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					}),
 				deleteAccount: async () => {
 					await deleteAccount();
+					onUserSignOut();
 					set({
 						user: null,
 						currentGroup: null,

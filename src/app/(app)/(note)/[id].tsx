@@ -71,6 +71,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { cn } from '@/shared/utils/cn';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export default function NoteScreen() {
 	const insets = useSafeAreaInsets();
@@ -394,9 +395,15 @@ export default function NoteScreen() {
 															</TouchableOpacity>
 														))}
 														<TouchableOpacity
-															onPress={() =>
-																router.push('/(app)/selectWorshipTypeModal')
-															}
+															onPress={() => {
+																trackAmplitudeEvent(
+																	'Open Manage Worship Type',
+																	{
+																		screen: 'Note_Detail',
+																	},
+																);
+																router.push('/(app)/selectWorshipTypeModal');
+															}}
 															className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"
 														>
 															<Icon as={Plus} size="sm" className="" />

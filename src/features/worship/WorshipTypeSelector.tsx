@@ -8,6 +8,7 @@ import { useWorshipStore } from '@/store/worship';
 import type { ClientWorshipType } from '@/api/worship-types/types';
 import { router } from 'expo-router';
 import { WorshipTypeSelectorSkeleton } from './WorshipTypeSelectorSkeleton';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export function WorshipTypeSelector() {
 	const {
@@ -56,7 +57,12 @@ export function WorshipTypeSelector() {
 					</TouchableOpacity>
 				))}
 				<TouchableOpacity
-					onPress={() => router.push('/(app)/selectWorshipTypeModal')}
+					onPress={() => {
+						trackAmplitudeEvent('Open Manage Worship Type', {
+							screen: 'Tab_Note',
+						});
+						router.push('/(app)/selectWorshipTypeModal');
+					}}
 					className="mr-1 px-2 py-1 rounded-full bg-background-0 text-typography-700"
 				>
 					<Icon as={PlusIcon} size="md" />

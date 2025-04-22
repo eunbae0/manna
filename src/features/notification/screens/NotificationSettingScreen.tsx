@@ -14,6 +14,7 @@ import { cn } from '@/shared/utils/cn';
 import type { UserGroup } from '@/shared/types';
 import { NotificationPermissionBanner } from '../components/NotificationPermissionBanner';
 import { useNotificationPermission } from '../hooks/useNotificationPermission';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 type TabType = Pick<ClientGroup, 'id' | 'groupName'>;
 
@@ -72,6 +73,13 @@ export default function NotificationSettingScreen() {
 				[type]: value,
 			},
 		}));
+
+		// Amplitude Logging
+		trackAmplitudeEvent('Update Notification Setting', {
+			screen: 'More_Notification',
+			notificationEnabled: value,
+			notificationType: type,
+		});
 
 		const userGroup = user?.groups?.find((g) => g.groupId === groupId);
 		if (!userGroup) return;

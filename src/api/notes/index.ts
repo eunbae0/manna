@@ -48,18 +48,18 @@ export const fetchUserNotes = withApiLogging(
  * @returns ID of the created note
  */
 export const createUserNote = withApiLogging(
-	async (noteData: Omit<Note, 'id'>): Promise<string> => {
+	async (noteData: Omit<Note, 'id'>): Promise<Note> => {
 		try {
-			const noteId = await notesService.createNote(noteData);
+			const note = await notesService.createNote(noteData);
 
 			// Pass metadata to the withApiLogging wrapper via context
 			const context = {
-				noteId,
-				title: noteData.title,
+				noteId: note.id,
+				title: note.title,
 			};
 
 			// The withApiLogging wrapper will include this context in the success log
-			return Object.assign(noteId, { __logContext: context });
+			return Object.assign(note, { __logContext: context });
 		} catch (error) {
 			throw handleApiError(error, 'createUserNote', 'notes');
 		}

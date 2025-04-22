@@ -2,6 +2,7 @@ import { createUserNote } from '@/api/notes';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { Timestamp } from '@react-native-firebase/firestore';
 import type { ClientWorshipType } from '@/api/worship-types/types';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 interface NoteData {
 	title: string;
@@ -36,8 +37,16 @@ export function useCreateNote({ onSuccess, onError }: CreateNoteParams = {}) {
 
 			return await createUserNote(formattedData);
 		},
-		onSuccess: (noteId) => {
-			onSuccess?.(noteId);
+		onSuccess: (note) => {
+			onSuccess?.(note.id);
+
+			// tracking amplitude
+			trackAmplitudeEvent('노트 생성', {
+				screen: 'Note_Create',
+				note_has_sermon: !!note.sermon,
+				note_has_preacher: !!note.preacher,
+				note_content_length: note.content?.length || 0,
+			});
 			queryClient.invalidateQueries({ queryKey: ['notes'] });
 		},
 		onError: (error: Error) => {

@@ -35,6 +35,8 @@ import { Box } from '#/components/ui/box';
 import { cn } from '@/shared/utils/cn';
 import { ScrollView } from 'react-native-gesture-handler';
 import { isIOS } from '@/shared/utils/platform';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import type { AmplitudeLocation } from '@/shared/constants/amplitude';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
@@ -69,18 +71,30 @@ function HomeHeader({ groups }: Props) {
 	// };
 
 	const handlePressFellowshipList = () => {
+		trackAmplitudeEvent('View Fellowship List', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location: 'Group_Menu_Bottom_Sheet',
+		});
 		router.push('/(app)/(fellowship)/list');
 		handleCloseMenu();
 	};
 
 	const handlePressMemberGroup = () => {
+		trackAmplitudeEvent('View Group Member Avatar List', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+		});
 		setIsExpanded((prev) => !prev);
 		handleOpenMember();
 	};
 
-	const { copyInviteCode } = useCopyInviteCode(group?.inviteCode || '');
-
 	const handlePressManageMember = () => {
+		trackAmplitudeEvent('Manage Group', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location: 'Group_Menu_Bottom_Sheet',
+		});
 		router.push('/(app)/(group)/(manage-group)');
 		handleCloseMenu();
 	};
@@ -89,11 +103,23 @@ function HomeHeader({ groups }: Props) {
 		group?.members?.find((m) => m.id === user?.id)?.role === 'leader';
 
 	const handlePressManageMyGroup = () => {
+		trackAmplitudeEvent('Manage My Group', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location: 'Group_List_Menu',
+		});
 		router.push('/(app)/(group)/manage-my-group');
 		handleCloseMenu();
 	};
 
-	const handlePressGroupMemberList = () => {
+	const handlePressGroupMemberList = (
+		location: keyof typeof AmplitudeLocation,
+	) => {
+		trackAmplitudeEvent('View Group Member List', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location,
+		});
 		handleCloseMenu();
 		router.push('/(app)/(group)/member-list');
 	};
@@ -110,7 +136,17 @@ function HomeHeader({ groups }: Props) {
 				offset={5}
 				trigger={({ ...triggerProps }) => {
 					return (
-						<Pressable {...triggerProps}>
+						<Pressable
+							{...triggerProps}
+							onPress={() => {
+								trackAmplitudeEvent('Open Group List', {
+									screen: 'Tab_Home',
+									symbol: 'Home_Header',
+									location: 'Group_List_Menu',
+								});
+								triggerProps?.onPress();
+							}}
+						>
 							<HStack space="xs" className="items-center">
 								<Heading size="2xl">{group?.groupName}</Heading>
 								<Icon
@@ -128,7 +164,14 @@ function HomeHeader({ groups }: Props) {
 							key={group.id}
 							textValue={group.groupName}
 							closeOnSelect
-							onPress={() => updateCurrentGroup({ groupId: group.id })}
+							onPress={() => {
+								trackAmplitudeEvent('Select Group', {
+									screen: 'Tab_Home',
+									symbol: 'Home_Header',
+									location: 'Group_List_Menu',
+								});
+								updateCurrentGroup({ groupId: group.id });
+							}}
 						>
 							<MenuItemLabel size="lg">{group.groupName}</MenuItemLabel>
 						</MenuItem>
@@ -156,7 +199,18 @@ function HomeHeader({ groups }: Props) {
 						: []}
 				</AvatarGroup>
 
-				<Button size="xl" variant="icon" onPress={() => handleOpenMenu()}>
+				<Button
+					size="xl"
+					variant="icon"
+					onPress={() => {
+						trackAmplitudeEvent('Open Group Menu', {
+							screen: 'Tab_Home',
+							symbol: 'Home_Header',
+							location: 'Group_Menu_Bottom_Sheet',
+						});
+						handleOpenMenu();
+					}}
+				>
 					<ButtonIcon as={MenuIcon} />
 				</Button>
 			</HStack>
@@ -174,7 +228,9 @@ function HomeHeader({ groups }: Props) {
 					<BottomSheetListItem
 						label="그룹원 목록"
 						icon={Users}
-						onPress={handlePressGroupMemberList}
+						onPress={() =>
+							handlePressGroupMemberList('Group_Menu_Bottom_Sheet')
+						}
 					/>
 					<Divider />
 					<BottomSheetListItem
@@ -253,7 +309,9 @@ function HomeHeader({ groups }: Props) {
 							variant="outline"
 							className="flex-1"
 							rounded
-							onPress={handlePressGroupMemberList}
+							onPress={() =>
+								handlePressGroupMemberList('Group_Member_List_Bottom_Sheet')
+							}
 						>
 							<ButtonText>그룹원 더보기</ButtonText>
 							<ButtonIcon as={ChevronRight} />

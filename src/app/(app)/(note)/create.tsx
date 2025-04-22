@@ -50,6 +50,7 @@ import Animated, {
 	Easing,
 } from 'react-native-reanimated';
 import { isAndroid } from '@/shared/utils/platform';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export default function CreateScreen() {
 	const insets = useSafeAreaInsets();
@@ -288,9 +289,12 @@ export default function CreateScreen() {
 														</TouchableOpacity>
 													))}
 													<TouchableOpacity
-														onPress={() =>
-															router.push('/(app)/selectWorshipTypeModal')
-														}
+														onPress={() => {
+															trackAmplitudeEvent('Open Manage Worship Type', {
+																screen: 'Note_Create',
+															});
+															router.push('/(app)/selectWorshipTypeModal');
+														}}
 														className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"
 													>
 														<Icon as={Plus} size="sm" className="" />

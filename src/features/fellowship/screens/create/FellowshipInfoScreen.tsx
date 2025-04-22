@@ -46,6 +46,7 @@ import type { GroupMember } from '@/api/group/types';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export default function FellowshipInfoScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -271,12 +272,17 @@ export default function FellowshipInfoScreen() {
 											<Checkbox
 												size="sm"
 												value={'설교 본문'}
-												onChange={() =>
+												onChange={() => {
 													setPreachText({
 														...preachText,
 														isActive: !preachText.isActive,
-													})
-												}
+													});
+													trackAmplitudeEvent('나눔 정보의 Checkbox 클릭', {
+														screen: 'Fellowship_Create',
+														infoEnabled: !preachText.isActive,
+														infoType: '설교 본문',
+													});
+												}}
 												isChecked={!preachText.isActive}
 											>
 												<CheckboxIndicator>
@@ -311,12 +317,17 @@ export default function FellowshipInfoScreen() {
 											<Checkbox
 												size="sm"
 												value={'설교자'}
-												onChange={() =>
+												onChange={() => {
 													setPreacher({
 														...preacher,
 														isActive: !preacher.isActive,
-													})
-												}
+													});
+													trackAmplitudeEvent('나눔 정보의 Checkbox 클릭', {
+														screen: 'Fellowship_Create',
+														infoEnabled: !preachText.isActive,
+														infoType: '설교자',
+													});
+												}}
 												isChecked={!preacher.isActive}
 											>
 												<CheckboxIndicator>

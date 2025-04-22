@@ -22,6 +22,7 @@ import {
 import { cn } from '@/shared/utils/cn';
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 /**
  * 알림 아이템 컴포넌트 Props
@@ -159,6 +160,12 @@ export function NotificationItem({
 
 			// 기존 onPress 함수 호출
 			onPress(item);
+
+			// Amplitude Logging
+			trackAmplitudeEvent('Open Notification', {
+				screen: 'Tab_Notification',
+				notificationId: item.id,
+			});
 		}
 	}, [
 		item,

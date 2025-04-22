@@ -38,6 +38,8 @@ import { Button, ButtonIcon } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
 import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '../hooks/usePrayerRequests';
+import type { AmplitudeEventType } from '@/shared/constants/amplitude';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
@@ -58,8 +60,8 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 	const { showSuccess, showError } = useToastStore();
 
 	const { mutate: toggleLike } = useMutation({
-		mutationFn: async () => {
-			return togglePrayerRequestReaction(
+		mutationFn: async (eventType: keyof typeof AmplitudeEventType) => {
+			await togglePrayerRequestReaction(
 				currentGroup?.groupId || '',
 				prayerRequest.id,
 				{
@@ -69,8 +71,9 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 					},
 				},
 			);
+			return eventType;
 		},
-		onSuccess: () => {
+		onSuccess: (eventType: keyof typeof AmplitudeEventType) => {
 			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
 			const isNowLiked = !hasLiked;
@@ -102,6 +105,13 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 					],
 				}),
 			]);
+
+			// tracking amplitude
+			trackAmplitudeEvent('Like Prayer Request', {
+				screen: 'Tab_Home',
+				isNowLiked,
+				eventType,
+			});
 		},
 	});
 
@@ -110,7 +120,7 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 		.maxDuration(250)
 		.numberOfTaps(2)
 		.onEnd(() => {
-			runOnJS(toggleLike)();
+			runOnJS(toggleLike)('Double_Tab');
 		});
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
@@ -203,7 +213,10 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 						<Text size="lg" className="pr-12">
 							{prayerRequest.value}
 						</Text>
-						<Pressable onPress={() => toggleLike()} className="ml-auto mr-4">
+						<Pressable
+							onPress={() => toggleLike('Click')}
+							className="ml-auto mr-4"
+						>
 							<HStack space="xs" className="items-center">
 								<Animated.View
 									style={useAnimatedStyle(() => ({

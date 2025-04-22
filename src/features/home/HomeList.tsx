@@ -18,6 +18,7 @@ import { PrayerRequestSkeleton } from '@/features/prayer-request/components/Pray
 import { usePrayerRequests } from '@/features/prayer-request/hooks/usePrayerRequests';
 import { useQueryClient } from '@tanstack/react-query';
 import { GROUP_QUERY_KEY, GROUPS_QUERY_KEY } from './group/hooks/useGroups';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 function HomeList() {
 	const [refreshing, setRefreshing] = useState(false);
@@ -59,10 +60,13 @@ function HomeList() {
 			]);
 		} finally {
 			setRefreshing(false);
+			// tracking amplitude
+			trackAmplitudeEvent('Home List Refresh', { screen: 'Tab_Home' });
 		}
 	}, [refetchPrayerRequests, refetchNotifications, queryClient]);
 
 	const handlePressAddButton = () => {
+		trackAmplitudeEvent('Open Create Prayer Request', { screen: 'Tab_Home' });
 		router.navigate('/(app)/createPrayerRequestModal');
 	};
 

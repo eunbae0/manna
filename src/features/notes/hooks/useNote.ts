@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Timestamp } from '@react-native-firebase/firestore';
 import type { ClientWorshipType } from '@/api/worship-types/types';
 import { useToastStore } from '@/store/toast';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 interface UpdateNoteData {
 	title: string;
@@ -80,12 +81,19 @@ export function useUpdateNote(
 			await updateUserNote(id, formattedData);
 			return { id, ...formattedData };
 		},
-		onSuccess: () => {
+		onSuccess: (note) => {
 			// Invalidate and refetch the note query
 			queryClient.invalidateQueries({ queryKey: ['note', id] });
 			// Also invalidate the notes list
 			queryClient.invalidateQueries({ queryKey: ['notes'] });
 			onSuccess?.();
+			// tracking amplitude
+			trackAmplitudeEvent('노트 수정', {
+				screen: 'Note_Detail',
+				note_has_sermon: !!note.sermon,
+				note_has_preacher: !!note.preacher,
+				note_content_length: note.content?.length || 0,
+			});
 		},
 		onError: (error: Error) => {
 			showError('노트를 수정하는데 실패했어요.');

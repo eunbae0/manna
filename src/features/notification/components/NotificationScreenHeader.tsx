@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { Settings } from 'lucide-react-native';
 import { cn } from '@/shared/utils/cn';
 import { isIOS } from '@/shared/utils/platform';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export function NotificationScreenHeader() {
 	return (
@@ -19,6 +20,9 @@ export function NotificationScreenHeader() {
 				variant="icon"
 				size="lg"
 				onPress={() => {
+					trackAmplitudeEvent('Open Notification Settings', {
+						screen: 'Tab_Notification',
+					});
 					router.push('/(app)/(more)/notification');
 				}}
 			>
