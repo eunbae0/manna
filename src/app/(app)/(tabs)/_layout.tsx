@@ -28,13 +28,19 @@ import Animated, {
 	withTiming,
 	Easing,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
+
+	const insets = useSafeAreaInsets();
 	return (
 		<Tabs>
 			<TabSlot />
-			<TabList className="px-3 border-t border-gray-200 items-center justify-center">
+			<TabList
+				style={{ marginBottom: insets.bottom }}
+				className="px-3 border-t border-gray-200 items-center justify-center"
+			>
 				<TabTrigger
 					name="index"
 					href="/"
