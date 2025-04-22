@@ -15,6 +15,8 @@ import {
 	COMMUNITY_GUIDELINES,
 	CONTACT_INFO,
 } from '@/shared/constants/policy';
+import { WebView } from 'react-native-webview';
+import { PRIVACY_POLICY_URL } from '@/shared/constants/app';
 
 const onLinkPress = async (url: string) => {
 	if (url) {
@@ -33,7 +35,7 @@ export default function PolicyScreen() {
 			<VStack className="flex-1 gap-5">
 				<Header label="정책 및 약관" />
 
-				<ScrollView
+				{/* <ScrollView
 					className="flex-1 px-5"
 					showsVerticalScrollIndicator={false}
 				>
@@ -49,7 +51,13 @@ export default function PolicyScreen() {
 
 						<PolicySection title="문의 및 피드백" content={CONTACT_INFO} />
 					</VStack>
-				</ScrollView>
+				</ScrollView> */}
+				<WebView
+					style={{ flex: 1 }}
+					source={{
+						uri: PRIVACY_POLICY_URL,
+					}}
+				/>
 			</VStack>
 		</SafeAreaView>
 	);
