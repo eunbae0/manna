@@ -15,6 +15,7 @@ import {
 	SettingsIcon,
 	Copy,
 	Users,
+	ChevronRight,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 
@@ -94,7 +95,7 @@ function HomeHeader({ groups }: Props) {
 
 	const handlePressGroupMemberList = () => {
 		handleCloseMenu();
-		handleOpenMember();
+		router.push('/(app)/(group)/member-list');
 	};
 
 	return (
@@ -246,30 +247,16 @@ function HomeHeader({ groups }: Props) {
 							<Text className="text-center py-4">그룹원이 없어요.</Text>
 						)}
 					</View>
-					<VStack space="md" className="py-2">
-						<Text size="sm">
-							아래 코드를 공유하여 새로운 그룹원을 초대해보세요
-						</Text>
-
-						<HStack className="items-center justify-between bg-gray-100 rounded-lg p-4">
-							<Text size="lg" className="font-pretendard-semi-bold">
-								{group?.inviteCode}
-							</Text>
-							<Pressable onPress={copyInviteCode} className="p-2">
-								<Icon as={Copy} size="md" className="stroke-primary-500" />
-							</Pressable>
-						</HStack>
-					</VStack>
-					{/* Action Buttons */}
-					<HStack space="md" className="w-full py-2">
+					<HStack space="md" className="w-full py-4">
 						<Button
 							size="lg"
-							variant="solid"
+							variant="outline"
 							className="flex-1"
 							rounded
-							onPress={copyInviteCode}
+							onPress={handlePressGroupMemberList}
 						>
-							<ButtonText>초대링크 복사하기</ButtonText>
+							<ButtonText>그룹원 더보기</ButtonText>
+							<ButtonIcon as={ChevronRight} />
 						</Button>
 					</HStack>
 				</VStack>
