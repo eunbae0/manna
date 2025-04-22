@@ -1,4 +1,4 @@
-import React, { Children, isValidElement } from 'react';
+import React, { Children, isValidElement, useRef, useCallback } from 'react';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import Animated from 'react-native-reanimated';
@@ -278,22 +278,12 @@ export interface ButtonProps
 		VariantProps<typeof buttonStyles> {
 	children?: ReactNode;
 	/**
-	 * 버튼의 모서리를 둥근 모양으로 사용할지 여부
-	 * @default false
-	 */
-	rounded?: boolean;
-	/**
-	 * 버튼의 전체 너비를 사용할지 여부
-	 * @default false
-	 */
-	fullWidth?: boolean;
-	/**
-	 * 버튼의 크기를 결정
+	 * 버튼의 크기
 	 * @default 'md'
 	 */
 	size?: ButtonSize;
 	/**
-	 * 버튼의 스타일을 결정
+	 * 버튼의 스타일 변형
 	 * @default 'solid'
 	 */
 	variant?: 'solid' | 'outline' | 'link' | 'icon';
@@ -313,6 +303,11 @@ export interface ButtonProps
 	 * @default true
 	 */
 	animation?: boolean;
+	/**
+	 * 중복 클릭 방지 시간 (밀리초)
+	 * @default 300
+	 */
+	throttleTime?: number;
 	innerClassName?: string;
 }
 
@@ -329,10 +324,15 @@ const Button = React.forwardRef<View, ButtonProps>(
 			innerClassName,
 			disabled = false,
 			animation = true,
+			throttleTime = 300, // 기본 쓰로틀 시간 300ms
+			onPress,
 			...props
 		},
 		ref,
 	) => {
+		// 마지막 클릭 시간을 추적하기 위한 ref
+		const lastPressTimeRef = useRef<number>(0);
+
 		// useScaleAnimation 훅을 사용하여 애니메이션 로직 구현
 		const { animatedStyle, handlePressIn, handlePressOut } = useScaleAnimation({
 			enabled: animation,
@@ -374,8 +374,19 @@ const Button = React.forwardRef<View, ButtonProps>(
 					)}
 					disabled={disabled}
 					onPressIn={(e) => {
+						// 쓰로틀링 기능 구현: 지정된 시간 내에 중복 호출 방지
+						const now = Date.now();
+						if (now - lastPressTimeRef.current < throttleTime) {
+							// 지정된 시간보다 빠르게 호출되면 무시
+							return;
+						}
+
+						// 마지막 클릭 시간 업데이트
+						lastPressTimeRef.current = now;
+
+						// 애니메이션 및 이벤트 호출
 						handlePressIn();
-						props.onPress?.(e);
+						onPress?.(e);
 						props.onPressIn?.(e);
 					}}
 					onPressOut={(e) => {
