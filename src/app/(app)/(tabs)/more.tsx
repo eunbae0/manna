@@ -35,6 +35,7 @@ import {
 	UserPen,
 	User,
 	Image,
+	Info,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
 import { useState, useMemo } from 'react';
@@ -227,6 +228,16 @@ export default function TabFourScreen() {
 								icon={Megaphone}
 								link={'/(app)/(more)'}
 							/> */}
+							<ListItem
+								label="지원"
+								icon={Info}
+								onPress={() => {
+									trackAmplitudeEvent('Open Support', {
+										screen: 'Tab_More',
+									});
+									router.push('/(app)/(more)/support');
+								}}
+							/>
 							<ListItem
 								label="정책"
 								icon={ScrollText}
