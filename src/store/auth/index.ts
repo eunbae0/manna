@@ -120,9 +120,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 									loading: false,
 								});
 								if (existUser) {
-									router.push('/(app)');
+									router.replace('/(app)');
 								} else {
-									router.push('/(auth)/onboarding');
+									router.replace('/(auth)/onboarding');
 								}
 								return { id: user.id };
 							}
@@ -139,9 +139,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 									loading: false,
 								});
 								if (existUser) {
-									router.push('/(app)');
+									router.replace('/(app)');
 								} else {
-									router.push('/(auth)/onboarding');
+									router.replace('/(auth)/onboarding');
 								}
 								return { id: user.id };
 							}
@@ -249,7 +249,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						if (existingGroup) {
 							newGroups.splice(newGroups.indexOf(existingGroup), 1, group);
 						} else {
-							newGroups.push(group);
+							newGroups.replace(group);
 						}
 
 						set((state) => ({

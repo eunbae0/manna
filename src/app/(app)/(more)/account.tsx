@@ -48,7 +48,6 @@ export default function AccountSettingScreen() {
 					onPress: async () => {
 						try {
 							await logout();
-							router.replace('/(auth)');
 						} catch (error) {
 							Alert.alert(
 								'오류',
