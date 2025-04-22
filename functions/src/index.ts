@@ -14,11 +14,11 @@ exports.prayerRequestNotification = onDocumentCreated(
 		const {
 			id: prayerRequestId,
 			value,
-			member: { id: senderId, displayName },
+			member: { id: senderId },
 		} = event.data?.data() as {
 			id: string;
 			value: string;
-			member: { id: string; displayName: string };
+			member: { id: string };
 		};
 		const group = await event.data?.ref.parent.parent?.get();
 		const { id: groupId } = group?.data() as {
@@ -33,6 +33,12 @@ exports.prayerRequestNotification = onDocumentCreated(
 		}
 
 		const otherMembers = members.filter((member) => member.id !== senderId);
+
+		const senderDoc = await firestore().collection('users').doc(senderId).get();
+		if (!senderDoc.exists) return;
+		const senderData = senderDoc.data() as {
+			displayName: string;
+		};
 
 		for (const member of otherMembers) {
 			const currentMemberId = member.id;
@@ -66,7 +72,7 @@ exports.prayerRequestNotification = onDocumentCreated(
 
 				const payload = {
 					notification: {
-						title: `${displayName} 님의 새로운 기도제목 🙏`,
+						title: `${senderData.displayName} 님의 새로운 기도제목 🙏`,
 						body: value,
 					},
 					data: {
