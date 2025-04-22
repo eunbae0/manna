@@ -24,6 +24,7 @@ export function useGroups(groupIds: UserGroup[]) {
 			return groups;
 		},
 		staleTime: GROUP_STALE_TIME,
+		enabled: !!groupIds.length,
 	});
 	const groups = data ?? [];
 

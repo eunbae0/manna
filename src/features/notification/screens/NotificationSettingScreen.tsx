@@ -92,6 +92,16 @@ export default function NotificationSettingScreen() {
 	};
 
 	const renderSettingItems = () => {
+		if (!groups.length) {
+			return (
+				<VStack space="4xl" className="items-center justify-center py-10">
+					<Text className="text-typography-500">
+						그룹이 없어요. 메인화면에서 그룹을 생성하거나 참여해보세요.
+					</Text>
+				</VStack>
+			);
+		}
+
 		if (isLoading) {
 			return (
 				<VStack space="4xl" className="items-center justify-center py-10">
