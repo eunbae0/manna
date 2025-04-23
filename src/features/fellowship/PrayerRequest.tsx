@@ -16,15 +16,15 @@ import { useState } from 'react';
 import { cn } from '@/shared/utils/cn';
 import type {
 	ClientFellowship,
-	FellowshipAnswerField,
-	FellowshipMember,
+	ClientFellowshipAnswerField,
+	ClientFellowshipMember,
 } from '@/features/fellowship/api/types';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 type PrayerRequestProps = {
-	members: FellowshipMember[];
-	prayerRequests: FellowshipAnswerField[];
+	members: ClientFellowshipMember[];
+	prayerRequests: ClientFellowshipAnswerField[];
 	setFellowship: (
 		updater: (prev: ClientFellowship) => ClientFellowship,
 	) => void;
@@ -41,7 +41,7 @@ const PrayerRequestList = ({
 		BottomSheetContainer: BottomSheetPrayerRequestContainer,
 	} = useBottomSheet();
 
-	const [content, setContent] = useState<FellowshipAnswerField[]>([
+	const [content, setContent] = useState<ClientFellowshipAnswerField[]>([
 		...prayerRequests,
 		...members
 			.filter(
@@ -51,7 +51,7 @@ const PrayerRequestList = ({
 			.map((member) => ({ member, value: '' })),
 	]);
 
-	const [selectedMember, setSelectedMember] = useState<FellowshipMember>(
+	const [selectedMember, setSelectedMember] = useState<ClientFellowshipMember>(
 		members[0],
 	);
 	const memberIndex = members.findIndex(
@@ -76,7 +76,7 @@ const PrayerRequestList = ({
 		handleClosePrayerRequest();
 	};
 
-	const handlePressPrayerRequest = (member?: FellowshipMember) => {
+	const handlePressPrayerRequest = (member?: ClientFellowshipMember) => {
 		if (member) setSelectedMember(member);
 		handleOpenPrayerRequest();
 	};

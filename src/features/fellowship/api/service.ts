@@ -92,6 +92,24 @@ export class FirestoreFellowshipService {
 				date: data.info.date.toDate(),
 				members,
 			},
+			content: {
+				...data.content,
+				iceBreaking: data.content.iceBreaking.map((field) => ({
+					...field,
+					answers: field.answers.map((answer) => ({
+						...answer,
+						member: members.find((m) => m.id === answer.member.id)!,
+					})),
+				})),
+				sermonTopic: data.content.sermonTopic.map((field) => ({
+					...field,
+					answers: field.answers.map((answer) => ({
+						...answer,
+						member: members.find((m) => m.id === answer.member.id)!,
+					})),
+				})),
+				prayerRequest: data.content.prayerRequest,
+			},
 		};
 	}
 

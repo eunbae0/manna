@@ -17,9 +17,9 @@ interface BaseFellowship {
 		preachText?: FellowshipInfoField;
 	};
 	content: {
-		iceBreaking: FellowshipContentField[];
-		sermonTopic: FellowshipContentField[];
-		prayerRequest: FellowshipPrayerRequestField;
+		iceBreaking: ServerFellowshipContentField[];
+		sermonTopic: ServerFellowshipContentField[];
+		prayerRequest: ServerFellowshipPrayerRequestField;
 	};
 }
 
@@ -57,26 +57,53 @@ export interface ClientFellowship extends BaseFellowship {
 		preachText?: FellowshipInfoField;
 		members: ClientFellowshipMember[];
 	};
+	content: {
+		iceBreaking: ClientFellowshipContentField[];
+		sermonTopic: ClientFellowshipContentField[];
+		prayerRequest: ClientFellowshipPrayerRequestField;
+	};
 }
 
 // Fellowship fields
+
+// common
 export type FellowshipInfoField = { value?: string; isActive: boolean };
 
-export type FellowshipContentField = {
+// server
+export type ServerFellowshipContentField = {
 	id: string;
 	question: string;
-	answers: FellowshipAnswerField[];
+	answers: ServerFellowshipAnswerField[];
 };
 
-export type FellowshipPrayerRequestField = {
+export type ServerFellowshipPrayerRequestField = {
 	isActive: boolean;
-	answers: FellowshipAnswerField[];
+	answers: ServerFellowshipAnswerField[];
 };
 
-export type FellowshipAnswerField = {
+export type ServerFellowshipAnswerField = {
 	member: ServerFellowshipMember;
 	value: string;
 };
+
+// client
+export type ClientFellowshipContentField = {
+	id: string;
+	question: string;
+	answers: ClientFellowshipAnswerField[];
+};
+
+export type ClientFellowshipPrayerRequestField = {
+	isActive: boolean;
+	answers: ClientFellowshipAnswerField[];
+};
+
+export type ClientFellowshipAnswerField = {
+	member: ClientFellowshipMember;
+	value: string;
+};
+
+// input types
 
 export type CreateFellowshipInput = Omit<
 	FellowshipUpdateData,

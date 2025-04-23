@@ -13,18 +13,18 @@ import { useRef, useState } from 'react';
 import type { TextInput as RNTextInput } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 import type {
-	FellowshipAnswerField,
-	FellowshipContentField,
-	FellowshipMember,
+	ClientFellowshipAnswerField,
+	ClientFellowshipContentField,
+	ClientFellowshipMember,
 } from '@/features/fellowship/api/types';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 type SermonContentItemProps = {
 	index?: number;
-	members: FellowshipMember[];
-	fellowshipContent: FellowshipContentField;
-	updateContent: (answer: FellowshipContentField) => void;
+	members: ClientFellowshipMember[];
+	fellowshipContent: ClientFellowshipContentField;
+	updateContent: (answer: ClientFellowshipContentField) => void;
 	isLeader: boolean;
 };
 
@@ -57,7 +57,9 @@ export default function FellowshipContent({
 	];
 
 	const [answers, setAnswers] =
-		useState<(FellowshipAnswerField & { selected: boolean })[]>(initialContent);
+		useState<(ClientFellowshipAnswerField & { selected: boolean })[]>(
+			initialContent,
+		);
 
 	const selectedAnswer = answers.find((answer) => answer.selected);
 
@@ -68,7 +70,7 @@ export default function FellowshipContent({
 			answers: answers
 				.filter((answer) => answer.value !== '')
 				.map(({ selected, ...rest }) => rest),
-		} satisfies FellowshipContentField;
+		} satisfies ClientFellowshipContentField;
 		updateContent(newContent);
 
 		handleCloseTopic();
@@ -81,7 +83,7 @@ export default function FellowshipContent({
 	// auto focus
 	const textInputRef = useRef<RNTextInput>();
 
-	const handlePressMember = (memberId: FellowshipMember['id']) => {
+	const handlePressMember = (memberId: ClientFellowshipMember['id']) => {
 		setAnswers((prev) =>
 			prev.map((answer) =>
 				answer.member.id === memberId
@@ -113,7 +115,10 @@ export default function FellowshipContent({
 						<VStack key={answer.member.id}>
 							<HStack space="lg" className="items-center">
 								<HStack space="sm" className="items-center">
-									<Avatar size="xs" />
+									<Avatar
+										size="xs"
+										photoUrl={answer.member.photoUrl || undefined}
+									/>
 									<Text
 										size="lg"
 										className="font-pretendard-bold text-typography-600"

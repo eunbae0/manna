@@ -1,15 +1,15 @@
 import { VStack } from '#/components/ui/vstack';
 import type {
 	ClientFellowship,
-	FellowshipContentField,
-	FellowshipMember,
+	ClientFellowshipContentField,
+	ClientFellowshipMember,
 	UpdateFellowshipInput,
 } from '@/features/fellowship/api/types';
 import FellowshipContent from './FellowshipContent';
 
 type SermonContentListProps = {
-	members: FellowshipMember[];
-	fellowshipContents: FellowshipContentField[];
+	members: ClientFellowshipMember[];
+	fellowshipContents: ClientFellowshipContentField[];
 	updateFellowship: (updatedFellowship: UpdateFellowshipInput) => void;
 	contentType: Exclude<keyof ClientFellowship['content'], 'prayerRequest'>;
 	isLeader: boolean;
@@ -22,7 +22,7 @@ export default function FellowshipContentList({
 	contentType,
 	isLeader,
 }: SermonContentListProps) {
-	const updateContent = (content: FellowshipContentField) => {
+	const updateContent = (content: ClientFellowshipContentField) => {
 		const newContents = fellowshipContents.map((topic) =>
 			topic.id === content.id ? content : topic,
 		);

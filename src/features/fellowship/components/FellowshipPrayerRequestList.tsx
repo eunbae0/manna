@@ -97,7 +97,7 @@ export default forwardRef<
 					<VStack key={answer.member.id}>
 						<HStack space="md" className="">
 							<HStack space="sm" className="items-center">
-								<Avatar size="xs" />
+								<Avatar size="xs" photoUrl={answer.member.photoUrl} />
 								<Text
 									size="lg"
 									className="font-pretendard-bold text-typography-600"
