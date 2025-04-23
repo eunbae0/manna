@@ -12,7 +12,7 @@ import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConf
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 
 export default function CreateFellowshipScreen() {
-	const { currentStep } = useFellowshipStore();
+	const { currentStep, clearFellowship } = useFellowshipStore();
 
 	const switchStep = (step: FellowshipStoreStep) => {
 		switch (step) {
@@ -35,7 +35,13 @@ export default function CreateFellowshipScreen() {
 	return (
 		<>
 			{switchStep(currentStep)}
-			<ExitConfirmModal {...bottomSheetProps} onExit={handleExit} />
+			<ExitConfirmModal
+				{...bottomSheetProps}
+				onExit={() => {
+					clearFellowship();
+					handleExit();
+				}}
+			/>
 		</>
 	);
 }

@@ -9,6 +9,7 @@ import type {
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export const FELLOWSHIP_DEFAULT_STEP: FellowshipStoreStep = 'INFO';
+export const FELLOWSHIP_DEFAULT_TYPE: FellowshipStoreType = 'CREATE';
 
 type FellowShipStoreState = FellowShipStoreData & {
 	currentStep: FellowshipStoreStep;
@@ -38,7 +39,7 @@ type FellowShipStoreState = FellowShipStoreData & {
 
 export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	currentStep: FELLOWSHIP_DEFAULT_STEP,
-	type: 'CREATE',
+	type: FELLOWSHIP_DEFAULT_TYPE,
 	fellowshipId: null,
 	info: {
 		date: new Date(),
@@ -101,7 +102,6 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 					fellowshipData,
 				);
 				get().clearFellowship();
-				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
 
 				// tracking amplitude
 				trackAmplitudeEvent('나눔 생성', {
@@ -149,7 +149,6 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 				});
 
 				get().clearFellowship();
-				set({ currentStep: FELLOWSHIP_DEFAULT_STEP });
 				router.dismiss();
 				break;
 			}
@@ -159,6 +158,8 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	clearFellowship: () => {
 		set({
 			fellowshipId: null,
+			type: FELLOWSHIP_DEFAULT_TYPE,
+			currentStep: FELLOWSHIP_DEFAULT_STEP,
 			info: {
 				date: new Date(),
 				preachTitle: '',
