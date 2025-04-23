@@ -36,7 +36,7 @@ export default {
 			version: '1.0.2',
 		},
 		android: {
-			versionCode: 10200,
+			versionCode: 10201,
 			adaptiveIcon: {
 				foregroundImage: './assets/images/icons/play_store_icon.png',
 				backgroundColor: '#FEF8EF',
