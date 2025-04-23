@@ -550,16 +550,16 @@ export default function FellowshipInfoScreen() {
 								</VStack>
 
 								{/* 직접 이름 입력 필드 */}
-								<VStack space="sm">
+								<VStack space="md">
 									<Text size="sm" className="text-typography-600">
 										이름으로 추가
 									</Text>
-									<HStack className="items-center space-x-2">
+									<HStack space="xs" className="items-center">
 										<BottomSheetTextInput
 											placeholder="이름을 입력해주세요"
 											defaultValue={memberNameInput}
 											onChangeText={setMemberNameInput}
-											className={`flex-1 mr-2 ${TEXT_INPUT_STYLE}`}
+											className={`flex-1 ${TEXT_INPUT_STYLE}`}
 											// @ts-ignore
 											ref={addMemberInputRef}
 										/>
@@ -570,7 +570,7 @@ export default function FellowshipInfoScreen() {
 											disabled={!memberNameInput.trim()}
 											animation={true}
 										>
-											<ButtonIcon as={Plus} size="sm" />
+											<ButtonIcon as={Plus} size="md" />
 										</Button>
 									</HStack>
 								</VStack>
