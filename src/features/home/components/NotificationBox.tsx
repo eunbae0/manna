@@ -13,7 +13,6 @@ type Props = {
 	description: string;
 	onPress: PressableProps['onPress'];
 	onDismiss?: () => void;
-	visible: boolean;
 };
 
 export default function NotificationBox({
@@ -21,19 +20,12 @@ export default function NotificationBox({
 	description,
 	onPress,
 	onDismiss,
-	visible,
 }: Props) {
-	if (!visible) {
-		return null;
-	}
-
 	const handleDismiss = () => {
 		if (onDismiss) {
 			onDismiss();
 		}
 	};
-
-	// TODO: 사라지는 애니메이션 추가
 
 	return (
 		<Animated.View>

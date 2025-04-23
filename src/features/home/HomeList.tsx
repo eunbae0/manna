@@ -50,12 +50,10 @@ function HomeList() {
 				refetchPrayerRequests(),
 				refetchNotifications(),
 				queryClient.invalidateQueries({
-					queryKey: [GROUP_QUERY_KEY],
-					refetchType: 'all',
+					queryKey: [GROUPS_QUERY_KEY],
 				}),
 				queryClient.invalidateQueries({
-					queryKey: [GROUPS_QUERY_KEY],
-					refetchType: 'all',
+					queryKey: [GROUP_QUERY_KEY],
 				}),
 			]);
 		} finally {
@@ -71,73 +69,53 @@ function HomeList() {
 	};
 
 	// 현재 표시할 알림 상태 관리
-	const [currentNotification, setCurrentNotification] = useState<{
-		id: string;
-		screen?: string;
-	} | null>(null);
+	const [recentFellowshipNotification, setRecentFellowshipNotification] =
+		useState<{
+			id: string;
+			screen?: string;
+		} | null>(null);
 
 	// 최근 나눔 알림 찾기
-	const recentFellowshipNotification = useMemo(() => {
+	useEffect(() => {
 		const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
-		return notifications?.find(
+		const recentFellowshipNotification = notifications?.find(
 			(notification) =>
 				notification.metadata?.fellowshipId &&
 				notification.isRead === false &&
 				notification.timestamp > sixHoursAgo,
 		);
-	}, [notifications]);
-
-	// 가장 최근 읽지 않은 알림 찾기
-	const recentNotification = useMemo(() => {
-		return notifications?.find((notification) => !notification.isRead);
+		if (recentFellowshipNotification) {
+			setRecentFellowshipNotification({
+				id: recentFellowshipNotification.id,
+				screen: recentFellowshipNotification.screen,
+			});
+		}
 	}, [notifications]);
 
 	// 알림 닫기 핸들러
 	const handleDismissNotification = useCallback(() => {
-		if (!currentNotification) return;
+		if (!recentFellowshipNotification) return;
 
 		// 현재 표시된 알림을 읽음 처리
-		markAsRead(currentNotification.id);
-		setShowNotification(false);
-		setCurrentNotification(null);
-	}, [markAsRead, currentNotification]);
+		markAsRead(recentFellowshipNotification.id);
+		setRecentFellowshipNotification(null);
+	}, [markAsRead, recentFellowshipNotification]);
 
 	// 알림 클릭 핸들러
 	const handlePressNotification = useCallback(() => {
-		if (!currentNotification) return;
+		if (!recentFellowshipNotification) return;
 
 		// 현재 표시된 알림을 읽음 처리
-		markAsRead(currentNotification.id);
-		setShowNotification(false);
-		setCurrentNotification(null);
+		setRecentFellowshipNotification(null);
+		markAsRead(recentFellowshipNotification.id);
 
-		// 알림에 연결된 화면으로 이동
-		if (currentNotification.screen) {
-			router.push(currentNotification.screen as Href);
+		// 알림에 연결된 화면으로 redirect
+		if (recentFellowshipNotification.screen) {
+			router.push(recentFellowshipNotification.screen as Href);
 		} else {
 			router.push('/(app)/(fellowship)/list');
 		}
-	}, [currentNotification, markAsRead]);
-
-	// 알림 상태 업데이트
-	useEffect(() => {
-		// 나눔 알림 우선 처리
-		if (recentFellowshipNotification) {
-			setCurrentNotification({
-				id: recentFellowshipNotification.id,
-				screen: recentFellowshipNotification.screen,
-			});
-			setShowNotification(true);
-		}
-		// 나눔 알림이 없으면 다른 읽지 않은 알림 처리
-		else if (recentNotification && !currentNotification) {
-			setCurrentNotification({
-				id: recentNotification.id,
-				screen: recentNotification.screen,
-			});
-			setShowNotification(true);
-		}
-	}, [recentFellowshipNotification, recentNotification, currentNotification]);
+	}, [recentFellowshipNotification, markAsRead]);
 
 	// 다음 페이지 로드 함수
 	const loadMorePrayerRequests = useCallback(() => {
@@ -190,13 +168,14 @@ function HomeList() {
 				ListHeaderComponent={
 					<VStack space="2xl" className="pt-2 pb-4">
 						<VStack space="lg" className="pt-2">
-							<NotificationBox
-								title="새 나눔이 등록되었어요"
-								description="클릭해서 나눔에 참여해보세요"
-								visible={showNotification && currentNotification !== null}
-								onPress={handlePressNotification}
-								onDismiss={handleDismissNotification}
-							/>
+							{recentFellowshipNotification && (
+								<NotificationBox
+									title="새 나눔이 등록되었어요"
+									description="클릭해서 나눔에 참여해보세요"
+									onPress={handlePressNotification}
+									onDismiss={handleDismissNotification}
+								/>
+							)}
 							<ServiceGroups />
 						</VStack>
 
