@@ -3,7 +3,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { Alert, Pressable, ScrollView, View } from 'react-native';
+import {
+	Alert,
+	Pressable,
+	ScrollView,
+	View,
+	RefreshControl,
+} from 'react-native';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import {
@@ -192,6 +198,7 @@ function AdditionalInfo({
 export default function FellowshipDetailScreen({
 	id,
 }: FellowshipDetailScreenProps) {
+	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 	const { user } = useAuthStore();
 
 	const {
@@ -295,6 +302,15 @@ export default function FellowshipDetailScreen({
 		);
 	}
 
+	const handleRefresh = useCallback(async () => {
+		setIsRefreshing(true);
+		try {
+			await refetch();
+		} finally {
+			setIsRefreshing(false);
+		}
+	}, [refetch]);
+
 	return (
 		<SafeAreaView className="h-full">
 			<VStack space="xl" className="h-full">
@@ -306,7 +322,15 @@ export default function FellowshipDetailScreen({
 					)}
 				</Header>
 
-				<ScrollView showsVerticalScrollIndicator={false}>
+				<ScrollView
+					showsVerticalScrollIndicator={false}
+					refreshControl={
+						<RefreshControl
+							refreshing={isRefreshing}
+							onRefresh={handleRefresh}
+						/>
+					}
+				>
 					<VStack space="2xl" className="px-5 flex-1 pb-8">
 						{/* 나눔 노트 제목 및 정보 */}
 						<VStack space="md">
