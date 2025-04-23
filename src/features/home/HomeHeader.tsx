@@ -120,6 +120,7 @@ function HomeHeader({ groups }: Props) {
 			symbol: 'Home_Header',
 			location,
 		});
+		handleCloseMember();
 		handleCloseMenu();
 		router.push('/(app)/(group)/member-list');
 	};
