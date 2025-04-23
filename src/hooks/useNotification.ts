@@ -3,6 +3,7 @@ import * as Notifications from 'expo-notifications';
 import { getMessaging } from '@react-native-firebase/messaging';
 import type { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { type Href, router } from 'expo-router';
+import { addBadgeCountAsync } from '@/shared/utils/notification_badge';
 
 /**
  * 알림 설정을 초기화하는 함수
@@ -15,11 +16,6 @@ function setupNotificationHandler(): void {
 			shouldSetBadge: false,
 		}),
 	});
-}
-
-async function addBadgeCountAsync(): Promise<void> {
-	const badgeCount = await Notifications.getBadgeCountAsync();
-	await Notifications.setBadgeCountAsync(badgeCount + 1);
 }
 
 /**

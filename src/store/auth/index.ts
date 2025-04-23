@@ -30,6 +30,7 @@ import {
 } from '@/api/user';
 import type { OnboardingState } from '../onboarding';
 import { onUserSignIn, onUserSignOut } from '@/shared/utils/amplitude';
+import { resetBadgeCountAsync } from '@/shared/utils/notification_badge';
 
 type AuthState = {
 	user: ClientUser | null;
@@ -205,6 +206,10 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							currentGroup: null,
 							isAuthenticated: false,
 						});
+						// reset badge
+						await resetBadgeCountAsync();
+
+						// amplitude
 						onUserSignOut();
 					} catch (error) {
 						const apiError = handleApiError(error);
@@ -312,6 +317,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 							currentGroup: null,
 							error: apiError,
 						});
+						await resetBadgeCountAsync();
 					} finally {
 						set({ loading: false });
 					}
@@ -329,6 +335,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 					}),
 				deleteAccount: async () => {
 					await deleteAccount();
+					await resetBadgeCountAsync();
 					onUserSignOut();
 					set({
 						user: null,

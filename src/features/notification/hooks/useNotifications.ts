@@ -5,8 +5,8 @@ import {
 	deleteNotification,
 } from '../api';
 import type { ClientNotification } from '../api/types';
-import { setBadgeCountAsync } from 'expo-notifications';
 import { useEffect, useMemo } from 'react';
+import { setBadgeCountAsync } from '@/shared/utils/notification_badge';
 
 const NOTIFICATIONS_QUERY_KEY = ['notifications'];
 
@@ -47,6 +47,7 @@ export function useNotifications() {
 			}
 		},
 	});
+
 	useEffect(() => {
 		if (unreadCount > 0) {
 			setBadgeCountAsync(unreadCount);
