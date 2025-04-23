@@ -158,7 +158,6 @@ export class FirestoreUserService {
 		}
 
 		const data = userGroupsDoc.docs.map((doc) => doc.data() as UserGroup);
-		console.log(data);
 		return data;
 	}
 
