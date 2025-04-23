@@ -275,6 +275,15 @@ export default function FellowshipDetailScreen({
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
+	const handleRefresh = useCallback(async () => {
+		setIsRefreshing(true);
+		try {
+			await refetch();
+		} finally {
+			setIsRefreshing(false);
+		}
+	}, [refetch]);
+
 	if (isLoading) {
 		return <FellowshipSkeleton />;
 	}
@@ -301,15 +310,6 @@ export default function FellowshipDetailScreen({
 			</VStack>
 		);
 	}
-
-	const handleRefresh = useCallback(async () => {
-		setIsRefreshing(true);
-		try {
-			await refetch();
-		} finally {
-			setIsRefreshing(false);
-		}
-	}, [refetch]);
 
 	return (
 		<SafeAreaView className="h-full">
