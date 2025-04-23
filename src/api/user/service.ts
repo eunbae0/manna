@@ -116,9 +116,10 @@ export class FirestoreUserService {
 
 		const { fcmTokens, ...rest } = updatedUserData;
 
-		const newfcmTokens = fcmTokens
-			? fcmTokens[fcmTokens.length - 1]
-			: undefined;
+		const newfcmTokens =
+			fcmTokens && fcmTokens.length > 0
+				? fcmTokens[fcmTokens.length - 1]
+				: undefined;
 
 		const updateData = Object.assign(
 			rest,

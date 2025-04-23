@@ -14,6 +14,13 @@ export class FirestoreMessagingService {
 
 	private constructor() {}
 
+	async getHasPermission(): Promise<boolean> {
+		return (
+			(await messaging().hasPermission()) ===
+			messaging.AuthorizationStatus.AUTHORIZED
+		);
+	}
+
 	async requestUserPermission(): Promise<boolean> {
 		switch (Platform.OS) {
 			case 'ios': {

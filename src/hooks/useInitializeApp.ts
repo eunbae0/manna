@@ -4,8 +4,10 @@ import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
 import { getAnalytics } from '@react-native-firebase/analytics';
 import { setUserId, logEvent, AnalyticsEvents } from '@/utils/analytics';
-import { getToken } from '@/api/messaging';
+import { getToken, requestNotificationPermission } from '@/api/messaging';
 import { useAppVersionCheck } from './useAppVersionCheck';
+import * as Sentry from '@sentry/react';
+import { onUserSignIn } from '@/shared/utils/amplitude';
 
 export function useInitializeApp() {
 	const [loaded, setIsLoaded] = useState(false);
@@ -27,17 +29,22 @@ export function useInitializeApp() {
 	useEffect(() => {
 		const subscriber = auth.onAuthStateChanged(async (user) => {
 			setAuthLoading(true);
-			const fcmToken = await getToken();
-			// Handle auth state in the store
-			await onAuthStateChanged(user, fcmToken);
-
-			// Set user ID for analytics
-			if (user) {
-				await setUserId(user.uid);
-			} else {
-				await setUserId(null);
+			try {
+				const fcmToken = await requestNotificationPermission();
+				await onAuthStateChanged(user, fcmToken ?? '');
+			} catch (error) {
+				console.error('Error initializing auth state:', error);
+				Sentry.captureException(error);
+				await onAuthStateChanged(user, '');
+			} finally {
+				// Set user ID for analytics
+				if (user) {
+					await setUserId(user.uid);
+				} else {
+					await setUserId(null);
+				}
+				setAuthLoading(false);
 			}
-			setAuthLoading(false);
 		});
 		return subscriber;
 	}, [onAuthStateChanged]);

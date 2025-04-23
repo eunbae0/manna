@@ -31,11 +31,16 @@ export const getToken = withApiLogging(
 export const requestNotificationPermission = withApiLogging(
 	async (): Promise<string | null> => {
 		try {
-			const permission = await getMessagingService().requestUserPermission();
+			const messagingService = getMessagingService();
+
+			const hasPermission = await messagingService.getHasPermission();
+			if (hasPermission) return await messagingService.getToken();
+
+			const permission = await messagingService.requestUserPermission();
 
 			if (!permission) return null;
 
-			return await getMessagingService().getToken();
+			return await messagingService.getToken();
 		} catch (error) {
 			throw handleApiError(error);
 		}

@@ -278,7 +278,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						throw handleApiError(error);
 					}
 				},
-				onAuthStateChanged: async (user, fcmTokens) => {
+				onAuthStateChanged: async (user, fcmToken) => {
 					set({ loading: true });
 					if (!user) {
 						set({
@@ -290,7 +290,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 						return;
 					}
 					try {
-						await updateUser(user.uid, { fcmTokens: [fcmTokens] });
+						await updateUser(user.uid, { fcmTokens: [fcmToken] });
 						const firestoreUser = await getUser(user.uid);
 						const currentGroup =
 							firestoreUser?.groups?.find((g) => g.isMain) ??
