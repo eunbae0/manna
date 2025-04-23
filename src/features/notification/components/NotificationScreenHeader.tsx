@@ -20,7 +20,7 @@ export function NotificationScreenHeader() {
 				variant="icon"
 				size="lg"
 				onPress={() => {
-					trackAmplitudeEvent('Open Notification Settings', {
+					trackAmplitudeEvent('알림설정 클릭', {
 						screen: 'Tab_Notification',
 					});
 					router.push('/(app)/(more)/notification');

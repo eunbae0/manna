@@ -277,7 +277,7 @@ export default function FellowshipInfoScreen() {
 														...preachText,
 														isActive: !preachText.isActive,
 													});
-													trackAmplitudeEvent('나눔 정보의 Checkbox 클릭', {
+													trackAmplitudeEvent('나눔 정보 Checkbox 클릭', {
 														screen: 'Fellowship_Create',
 														infoEnabled: !preachText.isActive,
 														infoType: '설교 본문',
@@ -322,7 +322,7 @@ export default function FellowshipInfoScreen() {
 														...preacher,
 														isActive: !preacher.isActive,
 													});
-													trackAmplitudeEvent('나눔 정보의 Checkbox 클릭', {
+													trackAmplitudeEvent('나눔 정보 Checkbox 클릭', {
 														screen: 'Fellowship_Create',
 														infoEnabled: !preachText.isActive,
 														infoType: '설교자',

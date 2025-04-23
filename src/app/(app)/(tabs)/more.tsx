@@ -185,7 +185,7 @@ export default function TabFourScreen() {
 								size="md"
 								variant="icon"
 								onPress={() => {
-									trackAmplitudeEvent('Open Profile Settings', {
+									trackAmplitudeEvent('프로필 수정 클릭', {
 										screen: 'Tab_More',
 									});
 									handleOpen();
@@ -207,7 +207,7 @@ export default function TabFourScreen() {
 								label="알림"
 								icon={Bell}
 								onPress={() => {
-									trackAmplitudeEvent('Open Notification Settings', {
+									trackAmplitudeEvent('알림설정 클릭', {
 										screen: 'Tab_More',
 									});
 									router.push('/(app)/(more)/notification');
@@ -217,7 +217,7 @@ export default function TabFourScreen() {
 								label="계정"
 								icon={UserPen}
 								onPress={() => {
-									trackAmplitudeEvent('Open Account Settings', {
+									trackAmplitudeEvent('계정설정 클릭', {
 										screen: 'Tab_More',
 									});
 									router.push('/(app)/(more)/account');
@@ -232,7 +232,7 @@ export default function TabFourScreen() {
 								label="지원"
 								icon={Info}
 								onPress={() => {
-									trackAmplitudeEvent('Open Support', {
+									trackAmplitudeEvent('지원 클릭', {
 										screen: 'Tab_More',
 									});
 									router.push('/(app)/(more)/support');
@@ -242,7 +242,7 @@ export default function TabFourScreen() {
 								label="정책"
 								icon={ScrollText}
 								onPress={() => {
-									trackAmplitudeEvent('Open Policy', {
+									trackAmplitudeEvent('정책 클릭', {
 										screen: 'Tab_More',
 									});
 									router.push('/policy');
@@ -257,7 +257,7 @@ export default function TabFourScreen() {
 								label="리뷰 남기기"
 								icon={Star}
 								onPress={() => {
-									trackAmplitudeEvent('Open App Store Review', {
+									trackAmplitudeEvent('리뷰 남기기 클릭', {
 										screen: 'Tab_More',
 									});
 									openAppStoreReview();
@@ -278,10 +278,10 @@ export default function TabFourScreen() {
 							<VStack space="lg" className="items-center">
 								<Pressable
 									onPress={() => {
-										trackAmplitudeEvent('Open Profile Image Picker', {
-											screen: 'Tab_More',
-											location: 'More_Profile_Settings_Bottom_Sheet',
-										});
+										// trackAmplitudeEvent('Open Profile Image Picker', {
+										// 	screen: 'Tab_More',
+										// 	location: 'More_Profile_Settings_Bottom_Sheet',
+										// });
 										pickImage();
 									}}
 									className="relative"
@@ -327,7 +327,7 @@ export default function TabFourScreen() {
 								rounded
 								action="primary"
 								onPress={() => {
-									trackAmplitudeEvent('Submit Profile Update', {
+									trackAmplitudeEvent('프로필 업데이트', {
 										screen: 'Tab_More',
 										location: 'More_Profile_Settings_Bottom_Sheet',
 									});

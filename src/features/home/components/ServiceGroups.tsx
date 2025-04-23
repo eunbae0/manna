@@ -12,18 +12,18 @@ export default function ServiceGroups() {
 	const { setType } = useFellowshipStore();
 
 	const handlePressCreateFellowship = () => {
-		trackAmplitudeEvent('Create Fellowship', { screen: 'Tab_Home' });
+		trackAmplitudeEvent('나눔 만들기 클릭', { screen: 'Tab_Home' });
 		setType('CREATE');
 		router.push('/(app)/(fellowship)/create');
 	};
 
 	const handlePressNotes = () => {
-		trackAmplitudeEvent('View Notes', { screen: 'Tab_Home' });
+		trackAmplitudeEvent('내 설교 노트 클릭', { screen: 'Tab_Home' });
 		router.replace('/(app)/(tabs)/note');
 	};
 
 	const handlePressFellowships = () => {
-		trackAmplitudeEvent('View Fellowships List', { screen: 'Tab_Home' });
+		trackAmplitudeEvent('나눔 기록 클릭', { screen: 'Tab_Home' });
 		router.push('/(app)/(fellowship)/list');
 	};
 

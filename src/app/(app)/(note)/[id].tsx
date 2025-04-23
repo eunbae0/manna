@@ -396,12 +396,12 @@ export default function NoteScreen() {
 														))}
 														<TouchableOpacity
 															onPress={() => {
-																trackAmplitudeEvent(
-																	'Open Manage Worship Type',
-																	{
-																		screen: 'Note_Detail',
-																	},
-																);
+																// trackAmplitudeEvent(
+																// 	'Open Manage Worship Type',
+																// 	{
+																// 		screen: 'Note_Detail',
+																// 	},
+																// );
 																router.push('/(app)/selectWorshipTypeModal');
 															}}
 															className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"

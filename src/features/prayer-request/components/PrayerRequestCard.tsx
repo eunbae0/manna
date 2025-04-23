@@ -107,7 +107,7 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 			]);
 
 			// tracking amplitude
-			trackAmplitudeEvent('Like Prayer Request', {
+			trackAmplitudeEvent('기도제목 좋아요', {
 				screen: 'Tab_Home',
 				isNowLiked,
 				eventType,

@@ -290,9 +290,9 @@ export default function CreateScreen() {
 													))}
 													<TouchableOpacity
 														onPress={() => {
-															trackAmplitudeEvent('Open Manage Worship Type', {
-																screen: 'Note_Create',
-															});
+															// trackAmplitudeEvent('Open Manage Worship Type', {
+															// 	screen: 'Note_Create',
+															// });
 															router.push('/(app)/selectWorshipTypeModal');
 														}}
 														className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"

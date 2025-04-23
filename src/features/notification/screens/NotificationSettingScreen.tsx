@@ -75,11 +75,11 @@ export default function NotificationSettingScreen() {
 		}));
 
 		// Amplitude Logging
-		trackAmplitudeEvent('Update Notification Setting', {
-			screen: 'More_Notification',
-			notificationEnabled: value,
-			notificationType: type,
-		});
+		// trackAmplitudeEvent('Update Notification Setting', {
+		// 	screen: 'More_Notification',
+		// 	notificationEnabled: value,
+		// 	notificationType: type,
+		// });
 
 		const userGroup = user?.groups?.find((g) => g.groupId === groupId);
 		if (!userGroup) return;

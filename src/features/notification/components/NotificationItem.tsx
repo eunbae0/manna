@@ -162,10 +162,10 @@ export function NotificationItem({
 			onPress(item);
 
 			// Amplitude Logging
-			trackAmplitudeEvent('Open Notification', {
-				screen: 'Tab_Notification',
-				notificationId: item.id,
-			});
+			// trackAmplitudeEvent('Open Notification', {
+			// 	screen: 'Tab_Notification',
+			// 	notificationId: item.id,
+			// });
 		}
 	}, [
 		item,

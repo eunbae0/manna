@@ -71,7 +71,7 @@ function HomeHeader({ groups }: Props) {
 	// };
 
 	const handlePressFellowshipList = () => {
-		trackAmplitudeEvent('View Fellowship List', {
+		trackAmplitudeEvent('나눔 기록 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 			location: 'Group_Menu_Bottom_Sheet',
@@ -81,7 +81,7 @@ function HomeHeader({ groups }: Props) {
 	};
 
 	const handlePressMemberGroup = () => {
-		trackAmplitudeEvent('View Group Member Avatar List', {
+		trackAmplitudeEvent('홈 아바타 그룹 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 		});
@@ -90,7 +90,7 @@ function HomeHeader({ groups }: Props) {
 	};
 
 	const handlePressManageMember = () => {
-		trackAmplitudeEvent('Manage Group', {
+		trackAmplitudeEvent('소그룹 관리하기 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 			location: 'Group_Menu_Bottom_Sheet',
@@ -103,7 +103,7 @@ function HomeHeader({ groups }: Props) {
 		group?.members?.find((m) => m.id === user?.id)?.role === 'leader';
 
 	const handlePressManageMyGroup = () => {
-		trackAmplitudeEvent('Manage My Group', {
+		trackAmplitudeEvent('내 그룹 관리하기 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 			location: 'Group_List_Menu',
@@ -115,7 +115,7 @@ function HomeHeader({ groups }: Props) {
 	const handlePressGroupMemberList = (
 		location: keyof typeof AmplitudeLocation,
 	) => {
-		trackAmplitudeEvent('View Group Member List', {
+		trackAmplitudeEvent('그룹원 목록 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 			location,
@@ -140,7 +140,7 @@ function HomeHeader({ groups }: Props) {
 						<Pressable
 							{...triggerProps}
 							onPress={() => {
-								trackAmplitudeEvent('Open Group List', {
+								trackAmplitudeEvent('홈 소그룹 더보기 클릭', {
 									screen: 'Tab_Home',
 									symbol: 'Home_Header',
 									location: 'Group_List_Menu',
@@ -166,7 +166,7 @@ function HomeHeader({ groups }: Props) {
 							textValue={group.groupName}
 							closeOnSelect
 							onPress={() => {
-								trackAmplitudeEvent('Select Group', {
+								trackAmplitudeEvent('소그룹 선택', {
 									screen: 'Tab_Home',
 									symbol: 'Home_Header',
 									location: 'Group_List_Menu',
@@ -204,7 +204,7 @@ function HomeHeader({ groups }: Props) {
 					size="xl"
 					variant="icon"
 					onPress={() => {
-						trackAmplitudeEvent('Open Group Menu', {
+						trackAmplitudeEvent('홈 메뉴 클릭', {
 							screen: 'Tab_Home',
 							symbol: 'Home_Header',
 							location: 'Group_Menu_Bottom_Sheet',

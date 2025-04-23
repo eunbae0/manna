@@ -59,12 +59,12 @@ function HomeList() {
 		} finally {
 			setRefreshing(false);
 			// tracking amplitude
-			trackAmplitudeEvent('Home List Refresh', { screen: 'Tab_Home' });
+			trackAmplitudeEvent('홈 새로고침', { screen: 'Tab_Home' });
 		}
 	}, [refetchPrayerRequests, refetchNotifications, queryClient]);
 
 	const handlePressAddButton = () => {
-		trackAmplitudeEvent('Open Create Prayer Request', { screen: 'Tab_Home' });
+		trackAmplitudeEvent('기도제목 작성하기 클릭', { screen: 'Tab_Home' });
 		router.navigate('/(app)/createPrayerRequestModal');
 	};
 

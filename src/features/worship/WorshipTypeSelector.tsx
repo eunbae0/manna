@@ -58,9 +58,9 @@ export function WorshipTypeSelector() {
 				))}
 				<TouchableOpacity
 					onPress={() => {
-						trackAmplitudeEvent('Open Manage Worship Type', {
-							screen: 'Tab_Note',
-						});
+						// trackAmplitudeEvent('Open Manage Worship Type', {
+						// 	screen: 'Tab_Note',
+						// });
 						router.push('/(app)/selectWorshipTypeModal');
 					}}
 					className="mr-1 px-2 py-1 rounded-full bg-background-0 text-typography-700"
