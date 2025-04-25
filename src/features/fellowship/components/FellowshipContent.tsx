@@ -170,7 +170,10 @@ export default function FellowshipContent({
 																: 'text-typography-700',
 														)}
 													>
-														<Avatar size="xs" />
+														<Avatar
+															size="xs"
+															photoUrl={answer.member.photoUrl || undefined}
+														/>
 														<Text size="md">{answer.member.displayName}</Text>
 													</HStack>
 												</Pressable>
