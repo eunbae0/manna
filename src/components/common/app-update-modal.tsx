@@ -9,7 +9,8 @@ import { Linking } from 'react-native';
 import { logEvent, AnalyticsEvents } from '@/utils/analytics';
 import { useCallback } from 'react';
 import { cn } from '@/shared/utils/cn';
-import { APP_STORE_URL } from '@/shared/constants/app';
+import { APP_STORE_URL, PLAY_STORE_URL } from '@/shared/constants/app';
+import { isIOS } from '@/shared/utils/platform';
 
 interface AppUpdateModalProps {
 	isVisible: boolean;
@@ -32,7 +33,8 @@ export function AppUpdateModal({
 				latest_version: latestVersion,
 			});
 
-			await Linking.openURL(APP_STORE_URL);
+			const url = isIOS ? APP_STORE_URL : PLAY_STORE_URL;
+			await Linking.openURL(url);
 		} catch (error) {
 			console.error('스토어 열기 실패:', error);
 		}
