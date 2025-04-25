@@ -9,10 +9,12 @@ export const ListItem = ({
 	icon,
 	label,
 	onPress,
+	isNew = false,
 }: {
 	icon: LucideIcon;
 	label: string;
 	onPress?: PressableProps['onPress'];
+	isNew?: boolean;
 }) => {
 	return (
 		<AnimatedPressable onPress={onPress}>
@@ -20,6 +22,11 @@ export const ListItem = ({
 				<HStack space="md" className="items-center">
 					<Icon as={icon} size="md" />
 					<Text size="lg">{label}</Text>
+					{isNew && (
+						<Text size="md" className="text-yellow-500">
+							NEW!
+						</Text>
+					)}
 				</HStack>
 				<Icon as={ChevronRight} size="lg" />
 			</HStack>
