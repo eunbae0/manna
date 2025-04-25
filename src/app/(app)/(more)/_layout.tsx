@@ -13,6 +13,7 @@ export default function HomeLayout() {
 			<Stack.Screen name="account" />
 			<Stack.Screen name="policy" />
 			<Stack.Screen name="support" />
+			<Stack.Screen name="(feedback)" />
 		</Stack>
 	);
 }

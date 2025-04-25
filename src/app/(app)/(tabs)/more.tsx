@@ -255,7 +255,7 @@ export default function TabFourScreen() {
 										trackAmplitudeEvent('개발자에게 피드백 보내기 클릭', {
 											screen: 'Tab_More',
 										});
-										router.push('/(app)/(more)/feedback');
+										router.push('/(app)/(more)/(feedback)/feedback-index');
 									}}
 									isNew
 								/>
