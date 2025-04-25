@@ -12,6 +12,18 @@ import { isAndroid } from '@/shared/utils/platform';
 
 type Props = {
 	label?: string;
+	labelSize?:
+		| 'md'
+		| 'sm'
+		| 'lg'
+		| 'xl'
+		| '2xl'
+		| 'xs'
+		| '3xl'
+		| '4xl'
+		| '2xs'
+		| '5xl'
+		| '6xl';
 	onPressBackButton?: () => void;
 	onPressBackButtonWithRouter?: () => void;
 	isLabelCentered?: boolean;
@@ -21,6 +33,7 @@ type Props = {
 
 function Header({
 	label = '',
+	labelSize = '2xl',
 	onPressBackButton,
 	onPressBackButtonWithRouter,
 	isLabelCentered = false,
@@ -68,7 +81,7 @@ function Header({
 						</Button>
 					)}
 					<Text
-						size="2xl"
+						size={labelSize}
 						className={cn(
 							'font-pretendard-semi-bold',
 							isLabelCentered
