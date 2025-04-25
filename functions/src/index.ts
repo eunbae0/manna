@@ -80,9 +80,9 @@ exports.prayerRequestNotification = onDocumentCreated(
 					},
 				};
 
-				let isNotificationSentwithSaveFirestore = false;
 				const messageId = uuidv4();
 
+				let isNotificationSentwithSaveFirestore = false;
 				for (const token of tokens) {
 					try {
 						// send notification
@@ -91,7 +91,7 @@ exports.prayerRequestNotification = onDocumentCreated(
 							...payload,
 						});
 
-						if (isNotificationSentwithSaveFirestore) return;
+						if (isNotificationSentwithSaveFirestore) continue;
 
 						// save notification to firestore
 						await firestore()
@@ -213,7 +213,7 @@ exports.fellowshipNotification = onDocumentCreated(
 							token,
 							...payload,
 						});
-						if (isNotificationSentwithSaveFirestore) return;
+						if (isNotificationSentwithSaveFirestore) continue;
 
 						// save notification
 						await firestore()
