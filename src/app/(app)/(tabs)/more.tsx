@@ -36,6 +36,7 @@ import {
 	User,
 	Image,
 	Info,
+	MessageCircleReply,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
 import { useState, useMemo } from 'react';
@@ -172,13 +173,19 @@ export default function TabFourScreen() {
 					<VStack space="3xl">
 						<Heading size="xl">내 정보</Heading>
 						<HStack className="w-full justify-between items-center">
-							<HStack space="lg" className="items-center">
+							<HStack space="lg" className="items-center flex-1">
 								<Avatar size="lg" photoUrl={user?.photoUrl ?? undefined} />
-								<VStack space="xs">
+								<VStack space="xs" className="flex-1">
 									<Text size="lg" className="font-pretendard-semi-bold">
 										{user?.displayName ?? '이름없음'}
 									</Text>
-									<Text>{user?.email}</Text>
+									<Text
+										className="flex-1"
+										ellipsizeMode="tail"
+										numberOfLines={1}
+									>
+										{user?.email}
+									</Text>
 								</VStack>
 							</HStack>
 							<Button
@@ -197,73 +204,88 @@ export default function TabFourScreen() {
 					</VStack>
 					<VStack space="2xl">
 						<Heading size="xl">앱 설정</Heading>
-						<VStack space="xs">
+						<VStack space="xl">
 							{/* <ListItem
 								label="화면"
 								icon={Smartphone}
 								link={'/(app)/(more)/screen'}
 							/> */}
-							<ListItem
-								label="알림"
-								icon={Bell}
-								onPress={() => {
-									trackAmplitudeEvent('알림설정 클릭', {
-										screen: 'Tab_More',
-									});
-									router.push('/(app)/(more)/notification');
-								}}
-							/>
-							<ListItem
-								label="계정"
-								icon={UserPen}
-								onPress={() => {
-									trackAmplitudeEvent('계정설정 클릭', {
-										screen: 'Tab_More',
-									});
-									router.push('/(app)/(more)/account');
-								}}
-							/>
+							<VStack space="xs">
+								<ListItem
+									label="알림"
+									icon={Bell}
+									onPress={() => {
+										trackAmplitudeEvent('알림설정 클릭', {
+											screen: 'Tab_More',
+										});
+										router.push('/(app)/(more)/notification');
+									}}
+								/>
+								<ListItem
+									label="계정"
+									icon={UserPen}
+									onPress={() => {
+										trackAmplitudeEvent('계정설정 클릭', {
+											screen: 'Tab_More',
+										});
+										router.push('/(app)/(more)/account');
+									}}
+								/>
+							</VStack>
 							{/* <ListItem
 								label="공지사항"
 								icon={Megaphone}
 								link={'/(app)/(more)'}
 							/> */}
-							<ListItem
-								label="지원"
-								icon={Info}
-								onPress={() => {
-									trackAmplitudeEvent('지원 클릭', {
-										screen: 'Tab_More',
-									});
-									router.push('/(app)/(more)/support');
-								}}
-							/>
-							<ListItem
-								label="정책"
-								icon={ScrollText}
-								onPress={() => {
-									trackAmplitudeEvent('정책 클릭', {
-										screen: 'Tab_More',
-									});
-									router.push('/policy');
-								}}
-							/>
-							{/* <ListItem
+							<VStack space="xs">
+								<ListItem
+									label="지원"
+									icon={Info}
+									onPress={() => {
+										trackAmplitudeEvent('지원 클릭', {
+											screen: 'Tab_More',
+										});
+										router.push('/(app)/(more)/support');
+									}}
+								/>
+								<ListItem
+									label="개발자에게 피드백 보내기"
+									icon={MessageCircleReply}
+									onPress={() => {
+										trackAmplitudeEvent('개발자에게 피드백 보내기 클릭', {
+											screen: 'Tab_More',
+										});
+										router.push('/(app)/(more)/feedback');
+									}}
+									isNew
+								/>
+								<ListItem
+									label="정책"
+									icon={ScrollText}
+									onPress={() => {
+										trackAmplitudeEvent('정책 클릭', {
+											screen: 'Tab_More',
+										});
+										router.push('/policy');
+									}}
+								/>
+								{/* <ListItem
 								label="의견 남기기"
 								icon={MessageCircleMore}
 								link={'/(app)/(more)'}
 							/> */}
-							<ListItem
-								label="리뷰 남기기"
-								icon={Star}
-								onPress={() => {
-									trackAmplitudeEvent('리뷰 남기기 클릭', {
-										screen: 'Tab_More',
-									});
-									openAppStoreReview();
-								}}
-							/>
-							<VersionListItem />
+								<ListItem
+									label="리뷰 남기기"
+									icon={Star}
+									onPress={() => {
+										trackAmplitudeEvent('리뷰 남기기 클릭', {
+											screen: 'Tab_More',
+										});
+										openAppStoreReview();
+									}}
+								/>
+								<VersionListItem />
+							</VStack>
 						</VStack>
 					</VStack>
 				</VStack>
