@@ -30,6 +30,7 @@ import {
 	UserRound,
 	Search,
 	Users,
+	Calendar,
 } from 'lucide-react-native';
 import { useToastStore } from '@/store/toast';
 import type {
@@ -237,7 +238,7 @@ export default function FellowshipInfoScreen() {
 												handleOpenDate();
 											}}
 										>
-											<Box className="w-full rounded-xl border-[1px] border-typography-300 px-3 py-3">
+											<HStack className="w-full rounded-xl border-[1px] border-typography-300 px-3 py-3 items-center justify-between">
 												<Text size="xl" className="text-typography-700">
 													{selectedDate.toLocaleDateString('ko-KR', {
 														year: 'numeric',
@@ -246,7 +247,12 @@ export default function FellowshipInfoScreen() {
 														weekday: 'long',
 													})}
 												</Text>
-											</Box>
+												<Icon
+													as={Calendar}
+													size="lg"
+													className="stroke-primary-500"
+												/>
+											</HStack>
 										</Pressable>
 									</VStack>
 									<VStack space="sm">

@@ -88,7 +88,7 @@ export default function MemberListScreen() {
 						rounded
 						onPress={copyInviteCode}
 					>
-						<ButtonText>초대링크 복사하기</ButtonText>
+						<ButtonText>초대코드 복사하기</ButtonText>
 					</Button>
 				</HStack>
 			</VStack>
