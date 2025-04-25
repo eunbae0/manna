@@ -2777,6 +2777,11 @@
   dependencies:
     stacktrace-js "^2.0.2"
 
+"@react-native-firebase/database@^21.14.0":
+  version "21.14.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-21.14.0.tgz#d4fc3680fc6a317111bf9491d2cc0f712e330322"
+  integrity sha512-V1yBf1QWjOzd6kB7eaiLtyvS4+4BHSVk5Uk87647bs6+ByNdBxH64b9c1Gs14bEDBvdRy4NzLfTqrMYhFVS2Kw==
+
 "@react-native-firebase/firestore@^21.14.0":
   version "21.14.0"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.14.0.tgz#76a946a35cb7856e838ce34e99d4372de2343671"
