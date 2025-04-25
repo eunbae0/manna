@@ -1,16 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
 	ActivityIndicator,
 	FlatList,
 	KeyboardAvoidingView,
 	Platform,
 	TextInput,
-	View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFeedback } from '@/features/feedback/hooks/useFeedback';
 import { useToastStore } from '@/store/toast';
-import { useAuthStore } from '@/store/auth';
 import type { FeedbackMessage, ChatRoom } from '@/api/feedback/types';
 import { MessageBubble, ChatRoomItem } from '@/features/feedback/components';
 import { VStack } from '#/components/ui/vstack';
@@ -18,8 +16,8 @@ import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
 import Header from '@/components/common/Header';
 import { Heading } from '@/shared/components/heading';
-import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
-import { ArrowUp, Send } from 'lucide-react-native';
+import { Button, ButtonIcon } from '@/components/common/button';
+import { ArrowUp } from 'lucide-react-native';
 import { router } from 'expo-router';
 
 export default function FeedbackScreen() {
@@ -33,7 +31,6 @@ export default function FeedbackScreen() {
 		chatRooms,
 	} = useFeedback();
 	const [inputMessage, setInputMessage] = useState('');
-	const { user } = useAuthStore();
 	const flatListRef = useRef<FlatList>(null);
 
 	const handleSendMessage = async () => {
@@ -122,12 +119,13 @@ export default function FeedbackScreen() {
 				className="flex-1"
 			>
 				<VStack className="flex-1">
-					<Header>
-						<Text size="lg" className="font-pretendard-semi-bold">
-							개발자에게 피드백 보내기
+					<Header label="개발자에게 피드백 보내기" labelSize="xl" />
+					<HStack className="mt-1 px-4 py-2 bg-primary-100">
+						<Text size="sm">
+							문의사항, 오류, 서비스 개선 방향 등이 있다면 편하게 메시지를
+							보내주세요.
 						</Text>
-					</Header>
-
+					</HStack>
 					<VStack className="p-4 flex-1">
 						{isLoading ? (
 							<VStack className="flex-1 justify-center items-center">
