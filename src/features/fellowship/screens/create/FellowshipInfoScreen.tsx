@@ -230,6 +230,21 @@ export default function FellowshipInfoScreen() {
 									<VStack space="sm">
 										<HStack className="items-center justify-between">
 											<Text size="md" className="font-pretendard-semi-bold">
+												제목
+											</Text>
+										</HStack>
+										<Input variant="outline" size="xl" className="rounded-xl">
+											<InputField
+												placeholder="제목 또는 설교 제목을 입력해주세요."
+												value={preachTitle}
+												onChangeText={(value) => setPreachTitle(value)}
+												className="font-pretendard-Regular"
+											/>
+										</Input>
+									</VStack>
+									<VStack space="sm">
+										<HStack className="items-center justify-between">
+											<Text size="md" className="font-pretendard-semi-bold">
 												나눔 날짜
 											</Text>
 										</HStack>
@@ -255,21 +270,7 @@ export default function FellowshipInfoScreen() {
 											</HStack>
 										</Pressable>
 									</VStack>
-									<VStack space="sm">
-										<HStack className="items-center justify-between">
-											<Text size="md" className="font-pretendard-semi-bold">
-												설교 제목
-											</Text>
-										</HStack>
-										<Input variant="outline" size="xl" className="rounded-xl">
-											<InputField
-												placeholder="설교 제목을 입력해주세요."
-												value={preachTitle}
-												onChangeText={(value) => setPreachTitle(value)}
-												className="font-pretendard-Regular"
-											/>
-										</Input>
-									</VStack>
+
 									<VStack space="sm">
 										<HStack className="items-center justify-between">
 											<Text size="md" className="font-pretendard-semi-bold">
@@ -495,64 +496,69 @@ export default function FellowshipInfoScreen() {
 					</MemberBottomSheetContainer>
 					<CreateBottomSheetContainer>
 						<VStack className="px-5 py-6 gap-6">
-							<VStack space="lg">
-								<Heading size="xl">나눔 인원 추가하기</Heading>
+							<VStack space="2xl">
+								<Heading size="2xl">나눔 인원 추가하기</Heading>
 								{/* 그룹 멤버 목록 */}
-								<VStack className="px-2">
-									{isGroupsLoading ? (
-										<VStack className="items-center justify-center py-10">
-											<Text>그룹 멤버를 불러오는 중...</Text>
-										</VStack>
-									) : allFellowshipMembers.length === 0 ? (
-										<VStack className="items-center justify-center py-10">
-											<Icon
-												as={Users}
-												size="xl"
-												className="mb-2 text-typography-400"
-											/>
-											<Text className="text-typography-500">
-												추가할 수 있는 멤버가 없어요
-											</Text>
-										</VStack>
-									) : (
-										<ScrollView className="py-3 max-h-60">
-											{allFellowshipMembers.map((item) => (
-												<VStack key={item.id}>
-													<Pressable
-														onPress={() => toggleSelectGroupMember(item)}
-														className="py-4"
-													>
-														<HStack className="items-center justify-between">
-															<HStack space="sm" className="items-center">
-																<Avatar
-																	size="sm"
-																	photoUrl={item.photoUrl || undefined}
-																/>
-																<Text size="md">{item.displayName}</Text>
-															</HStack>
-															{selectedGroupMembers.some(
-																(m) => m.id === item.id,
-															) ? (
-																<Box className="bg-primary-500 rounded-full p-1 w-6 h-6 mr-2">
-																	<Icon
-																		as={CheckIcon}
+								<VStack className="">
+									<Text size="sm" className="text-typography-600">
+										그룹에서 추가
+									</Text>
+									<VStack className="px-2">
+										{isGroupsLoading ? (
+											<VStack className="items-center justify-center py-10">
+												<Text>그룹 멤버를 불러오는 중...</Text>
+											</VStack>
+										) : allFellowshipMembers.length === 0 ? (
+											<VStack className="items-center justify-center py-10">
+												<Icon
+													as={Users}
+													size="xl"
+													className="mb-2 text-typography-400"
+												/>
+												<Text className="text-typography-500">
+													추가할 수 있는 멤버가 없어요
+												</Text>
+											</VStack>
+										) : (
+											<ScrollView className="py-3 max-h-60">
+												{allFellowshipMembers.map((item) => (
+													<VStack key={item.id}>
+														<Pressable
+															onPress={() => toggleSelectGroupMember(item)}
+															className="py-4"
+														>
+															<HStack className="items-center justify-between">
+																<HStack space="sm" className="items-center">
+																	<Avatar
 																		size="sm"
-																		color="white"
+																		photoUrl={item.photoUrl || undefined}
 																	/>
-																</Box>
-															) : (
-																<Box className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
-															)}
-														</HStack>
-													</Pressable>
-													{item.id !==
-														allFellowshipMembers[
-															allFellowshipMembers.length - 1
-														].id && <Divider />}
-												</VStack>
-											))}
-										</ScrollView>
-									)}
+																	<Text size="md">{item.displayName}</Text>
+																</HStack>
+																{selectedGroupMembers.some(
+																	(m) => m.id === item.id,
+																) ? (
+																	<Box className="bg-primary-500 rounded-full p-1 w-6 h-6 mr-2">
+																		<Icon
+																			as={CheckIcon}
+																			size="sm"
+																			color="white"
+																		/>
+																	</Box>
+																) : (
+																	<Box className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
+																)}
+															</HStack>
+														</Pressable>
+														{item.id !==
+															allFellowshipMembers[
+																allFellowshipMembers.length - 1
+															].id && <Divider />}
+													</VStack>
+												))}
+											</ScrollView>
+										)}
+									</VStack>
 								</VStack>
 
 								{/* 직접 이름 입력 필드 */}
