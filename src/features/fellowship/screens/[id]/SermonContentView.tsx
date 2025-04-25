@@ -2,10 +2,10 @@ import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
 import { Avatar } from '@/components/common/avatar';
-import type { FellowshipContentField } from '@/features/fellowship/api/types';
+import type { ClientFellowshipContentField } from '@/features/fellowship/api/types';
 
 interface SermonContentViewProps {
-	sermonTopic: FellowshipContentField[];
+	sermonTopic: ClientFellowshipContentField[];
 }
 
 export default function SermonContentView({

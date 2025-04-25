@@ -12,16 +12,16 @@ import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import type { TextInput as RNTextInput } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 import type {
-	FellowshipAnswerField,
-	FellowshipMember,
+	ClientFellowshipAnswerField,
+	ClientFellowshipMember,
 	UpdateFellowshipInput,
 } from '@/features/fellowship/api/types';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 type FellowshipPrayerRequestListProps = {
-	members: FellowshipMember[];
-	answers: FellowshipAnswerField[];
+	members: ClientFellowshipMember[];
+	answers: ClientFellowshipAnswerField[];
 	updateFellowship: (updatedFellowship: UpdateFellowshipInput) => void;
 };
 
@@ -61,7 +61,9 @@ export default forwardRef<
 	];
 
 	const [answers, setAnswers] =
-		useState<(FellowshipAnswerField & { selected: boolean })[]>(initialContent);
+		useState<(ClientFellowshipAnswerField & { selected: boolean })[]>(
+			initialContent,
+		);
 
 	const selectedAnswer = answers.find((answer) => answer.selected);
 
@@ -77,7 +79,7 @@ export default forwardRef<
 	// auto focus
 	const textInputRef = useRef<RNTextInput>();
 
-	const handlePressMember = (memberId: FellowshipMember['id']) => {
+	const handlePressMember = (memberId: ClientFellowshipMember['id']) => {
 		setAnswers((prev) =>
 			prev.map((answer) =>
 				answer.member.id === memberId
@@ -97,7 +99,10 @@ export default forwardRef<
 					<VStack key={answer.member.id}>
 						<HStack space="md" className="">
 							<HStack space="sm" className="items-center">
-								<Avatar size="xs" photoUrl={answer.member.photoUrl} />
+								<Avatar
+									size="xs"
+									photoUrl={answer.member.photoUrl || undefined}
+								/>
 								<Text
 									size="lg"
 									className="font-pretendard-bold text-typography-600"
@@ -138,7 +143,10 @@ export default forwardRef<
 																: 'text-typography-700',
 														)}
 													>
-														<Avatar size="xs" />
+														<Avatar
+															size="xs"
+															photoUrl={answer.member.photoUrl || undefined}
+														/>
 														<Text size="md">{answer.member.displayName}</Text>
 													</HStack>
 												</Pressable>
