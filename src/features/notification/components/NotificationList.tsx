@@ -1,7 +1,7 @@
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
-import { FlatList, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, Pressable } from 'react-native';
 import { useNotifications } from '../hooks/useNotifications';
 import { type Href, router } from 'expo-router';
 import { Button } from '@/components/common/button';
@@ -9,6 +9,9 @@ import { useToastStore } from '@/store/toast';
 import { EmptyState } from '@/components/common/empty-state';
 import { NotificationItem } from './NotificationItem';
 import type { ClientNotification } from '../api/types';
+import { useAuthStore } from '@/store/auth';
+import { Text } from '#/components/ui/text';
+import { useState, useMemo } from 'react';
 import Animated, {
 	useSharedValue,
 	useAnimatedStyle,
@@ -17,6 +20,11 @@ import Animated, {
 	Easing,
 } from 'react-native-reanimated';
 import { useRefetchOnFocus } from '@/shared/hooks/useRefetchOnFocus';
+import { useGroups } from '@/features/home/group/hooks/useGroups';
+import type { ClientGroup } from '@/api/group/types';
+import type { UserGroup } from '@/api/user/types';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { cn } from '@/shared/utils/cn';
 
 /**
  * 알림 목록 스켈레톤 UI 컴포넌트
@@ -94,6 +102,47 @@ function NotificationSkeleton() {
 	);
 }
 
+/**
+ * 그룹 필터 태그 컴포넌트
+ */
+function GroupFilterTag({
+	label,
+	isSelected,
+	onPress,
+}: {
+	label: string;
+	isSelected: boolean;
+	onPress: () => void;
+}) {
+	return (
+		<AnimatedPressable onPress={onPress}>
+			<Box
+				className={cn('px-3 py-1.5 rounded-full mr-2', {
+					'bg-primary-500': isSelected,
+					'bg-gray-200': !isSelected,
+				})}
+			>
+				<Text
+					className={cn('text-sm font-pretendard-medium', {
+						'text-white': isSelected,
+						'text-gray-700': !isSelected,
+					})}
+				>
+					{label}
+				</Text>
+			</Box>
+		</AnimatedPressable>
+	);
+}
+
+/**
+ * 그룹 정보를 포함한 필터 아이템 타입
+ */
+type GroupFilterItem = {
+	groupId: string;
+	groupName: string;
+};
+
 export function NotificationList() {
 	const {
 		notifications,
@@ -106,7 +155,41 @@ export function NotificationList() {
 		isDeleting,
 	} = useNotifications();
 
+	const { user } = useAuthStore();
 	const { showToast } = useToastStore();
+
+	// 선택된 그룹 필터 (null이면 '전체')
+	const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+
+	// 사용자의 그룹 목록
+	const userGroups = useMemo(() => {
+		return user?.groups || [];
+	}, [user?.groups]);
+
+	// useGroups 훅을 사용하여 그룹 정보 가져오기
+	const { groups: groupsData, isLoading: isGroupsLoading } =
+		useGroups(userGroups);
+
+	// 필터링을 위한 그룹 정보 처리
+	const groupFilterItems: GroupFilterItem[] = useMemo(() => {
+		if (!groupsData || groupsData.length === 0) return [];
+
+		return groupsData.map((group: ClientGroup) => ({
+			groupId: group.id,
+			groupName: group.groupName,
+		}));
+	}, [groupsData]);
+
+	// 필터링된 알림 목록
+	const filteredNotifications = useMemo(() => {
+		if (!selectedGroupId) {
+			return notifications; // '전체' 선택 시 모든 알림 표시
+		}
+
+		return notifications.filter(
+			(notification) => notification.metadata.groupId === selectedGroupId,
+		);
+	}, [notifications, selectedGroupId]);
 
 	const handleNotificationPress = (notification: {
 		id: string;
@@ -136,6 +219,52 @@ export function NotificationList() {
 
 	useRefetchOnFocus(refetch);
 
+	// 그룹 필터 태그 렌더링 함수
+	const renderGroupFilterTags = () => {
+		return (
+			<Box className="py-2 px-4 h-12 overflow-hidden">
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					className="h-full"
+				>
+					<HStack className="items-center h-full">
+						{/* '전체' 필터 태그 */}
+						<GroupFilterTag
+							label="전체"
+							isSelected={selectedGroupId === null}
+							onPress={() => setSelectedGroupId(null)}
+						/>
+
+						{/* 사용자의 소그룹 필터 태그 */}
+						{isGroupsLoading ? (
+							<>
+								{/* 로딩 스켈레톤 태그 */}
+								{[1, 2].map((i) => (
+									<Box
+										key={`skeleton-${i}`}
+										className="px-3 py-1.5 rounded-full mr-2 bg-gray-200 animate-pulse"
+									>
+										<Box className="w-16 h-4" />
+									</Box>
+								))}
+							</>
+						) : (
+							groupFilterItems.map((group) => (
+								<GroupFilterTag
+									key={group.groupId}
+									label={group.groupName}
+									isSelected={selectedGroupId === group.groupId}
+									onPress={() => setSelectedGroupId(group.groupId)}
+								/>
+							))
+						)}
+					</HStack>
+				</ScrollView>
+			</Box>
+		);
+	};
+
 	if (isLoading) {
 		return <NotificationSkeleton />;
 	}
@@ -156,40 +285,60 @@ export function NotificationList() {
 
 	if (notifications.length === 0) {
 		return (
-			<FlatList
-				data={[]}
-				keyExtractor={() => 'empty'}
-				renderItem={() => null}
-				refreshControl={
-					<RefreshControl refreshing={isLoading} onRefresh={refetch} />
-				}
-				ListEmptyComponent={
-					<VStack className="flex-1 items-center justify-center py-20">
-						<EmptyState
-							title="알림이 없어요"
-							description="새로운 알림이 오면 여기에 표시됩니다"
-						/>
-					</VStack>
-				}
-			/>
+			<VStack className="flex-1">
+				{renderGroupFilterTags()}
+				<FlatList
+					data={[]}
+					keyExtractor={() => 'empty'}
+					renderItem={() => null}
+					refreshControl={
+						<RefreshControl refreshing={isLoading} onRefresh={refetch} />
+					}
+					ListEmptyComponent={
+						<VStack className="flex-1 items-center justify-center py-20">
+							<EmptyState
+								title="알림이 없어요"
+								description="새로운 알림이 오면 여기에 표시됩니다"
+							/>
+						</VStack>
+					}
+				/>
+			</VStack>
 		);
 	}
 
+	// 필터링된 알림이 없는 경우
+	const isFilteredEmpty =
+		selectedGroupId !== null && filteredNotifications.length === 0;
+
 	return (
-		<FlatList
-			data={notifications}
-			keyExtractor={(item: { id: string }) => item.id}
-			refreshControl={
-				<RefreshControl refreshing={isLoading} onRefresh={refetch} />
-			}
-			renderItem={({ item }: { item: ClientNotification }) => (
-				<NotificationItem
-					item={item}
-					onPress={handleNotificationPress}
-					onDelete={handleDeleteNotification}
-					isDeleting={isDeleting}
-				/>
-			)}
-		/>
+		<VStack className="flex-1">
+			{renderGroupFilterTags()}
+			<FlatList
+				data={filteredNotifications}
+				keyExtractor={(item: { id: string }) => item.id}
+				refreshControl={
+					<RefreshControl refreshing={isLoading} onRefresh={refetch} />
+				}
+				renderItem={({ item }: { item: ClientNotification }) => (
+					<NotificationItem
+						item={item}
+						onPress={handleNotificationPress}
+						onDelete={handleDeleteNotification}
+						isDeleting={isDeleting}
+					/>
+				)}
+				ListEmptyComponent={
+					isFilteredEmpty ? (
+						<VStack className="flex-1 items-center justify-center py-20">
+							<EmptyState
+								title="해당 그룹의 알림이 없어요"
+								description="다른 그룹을 선택하거나 전체 알림을 확인해보세요"
+							/>
+						</VStack>
+					) : null
+				}
+			/>
+		</VStack>
 	);
 }
