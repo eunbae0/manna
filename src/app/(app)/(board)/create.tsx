@@ -27,7 +27,11 @@ import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { categoryLabels } from '@/features/board/constants';
 import { PostCategory } from '@/features/board/types';
-import { useCreateBoardPost } from '@/features/board/hooks';
+import {
+	useBoardPost,
+	useCreateBoardPost,
+	useUpdateBoardPost,
+} from '@/features/board/hooks';
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
 
@@ -37,28 +41,44 @@ import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConf
 export default function CreateBoardPostScreen() {
 	const { user, currentGroup } = useAuthStore();
 	const { showSuccess, showError } = useToastStore();
+	const { isEdit, id } = useLocalSearchParams<{
+		id?: string;
+		isEdit?: string;
+	}>();
 
+	// 게시글 수정 모드 확인
+	const isEditMode = isEdit === 'true';
+
+	// 게시글 수정 모드에서 게시글 데이터 가져오기
+	const { data: editPost } = useBoardPost(
+		currentGroup?.groupId || '',
+		id || '',
+	);
 
 	// 게시글 제목과 내용
-	const [title, setTitle] = useState('');
-	const [content, setContent] = useState('');
+	const [title, setTitle] = useState(isEditMode ? editPost?.title || '' : '');
+	const [content, setContent] = useState(
+		isEditMode ? editPost?.content || '' : '',
+	);
 
 	// 선택된 카테고리
-	const [selectedCategory, setSelectedCategory] =
-		useState<PostCategory>(PostCategory.FREE);
+	const [selectedCategory, setSelectedCategory] = useState<PostCategory>(
+		isEditMode ? editPost?.category || PostCategory.FREE : PostCategory.FREE,
+	);
 
 	// 바텀시트 관련 후크
 	const { BottomSheetContainer, handleOpen, handleClose } = useBottomSheet();
 
 	// 화면 첫 접근 시 바텀시트 자동으로 열기
 	useEffect(() => {
+		if (isEditMode) return;
 		// 약간의 지연 후 바텀시트 열기 (화면 전환 애니메이션 완료 후)
 		const timer = setTimeout(() => {
 			handleOpen();
 		}, 300);
 
 		return () => clearTimeout(timer);
-	}, [handleOpen]);
+	}, [handleOpen, isEditMode]);
 
 	// 카테고리 선택 바텀시트 열기
 	const handleOpenCategorySheet = () => {
@@ -71,14 +91,13 @@ export default function CreateBoardPostScreen() {
 		handleClose();
 	};
 
-
 	const hasContent = !!title.trim() || !!content.trim();
 	const { bottomSheetProps, handleExit } = usePreventBackWithConfirm({
 		condition: hasContent,
 	});
 
-
 	const { mutate: createPost } = useCreateBoardPost();
+	const { mutate: updatePost } = useUpdateBoardPost();
 
 	const handleSubmit = () => {
 		if (!title.trim()) {
@@ -101,6 +120,36 @@ export default function CreateBoardPostScreen() {
 			return;
 		}
 
+		if (isEditMode) {
+			// 게시글 수정 요청
+			updatePost(
+				{
+					metadata: {
+						postId: id || '',
+						groupId: currentGroup.groupId,
+					},
+					postData: {
+						id: id || '',
+						title: title.trim(),
+						content: content.trim(),
+						category: selectedCategory,
+					},
+				},
+				{
+					onSuccess: () => {
+						showSuccess('게시글이 수정되었어요');
+						// go back시 handleExit() 호출??
+						router.dismiss();
+					},
+					onError: (error) => {
+						console.error('게시글 수정 실패:', error);
+						showError('게시글 수정에 실패했어요');
+					},
+				},
+			);
+			return;
+		}
+
 		// 게시글 생성 요청
 		createPost(
 			{
@@ -119,7 +168,7 @@ export default function CreateBoardPostScreen() {
 					console.error('게시글 등록 실패:', error);
 					showError('게시글 등록에 실패했어요');
 				},
-			}
+			},
 		);
 	};
 
@@ -131,8 +180,12 @@ export default function CreateBoardPostScreen() {
 						<VStack className="flex-1">
 							{/* 헤더 */}
 							<Header className="justify-between pr-5">
-								<Button variant="text" disabled={!title.trim() || !content.trim()} onPress={handleSubmit}>
-									<ButtonText>남기기</ButtonText>
+								<Button
+									variant="text"
+									disabled={!title.trim() || !content.trim()}
+									onPress={handleSubmit}
+								>
+									<ButtonText>{isEditMode ? '수정하기' : '남기기'}</ButtonText>
 								</Button>
 							</Header>
 							<KeyboardAwareScrollView
@@ -207,14 +260,27 @@ export default function CreateBoardPostScreen() {
 				{/* 카테고리 선택 바텀시트 */}
 				<BottomSheetContainer>
 					<BottomSheetListLayout>
-						<BottomSheetListHeader label="어디에 작성할까요?" onPress={handleClose} />
+						<BottomSheetListHeader
+							label="어디에 작성할까요?"
+							onPress={handleClose}
+						/>
 						{/* 자유게시판 선택 옵션 */}
-						<AnimatedPressable onPress={() => handleSelectCategory(PostCategory.FREE)}>
+						<AnimatedPressable
+							onPress={() => handleSelectCategory(PostCategory.FREE)}
+						>
 							<HStack
 								space="md"
 								className="items-center justify-between py-3 pl-2 pr-4"
 							>
-								<Text size="lg" className={cn(selectedCategory === 'FREE' && 'font-pretendard-bold text-primary-400')}>자유게시판</Text>
+								<Text
+									size="lg"
+									className={cn(
+										selectedCategory === 'FREE' &&
+										'font-pretendard-bold text-primary-400',
+									)}
+								>
+									자유게시판
+								</Text>
 								{selectedCategory === 'FREE' && (
 									<Icon as={Check} size="xl" className="stroke-primary-400" />
 								)}
@@ -222,12 +288,22 @@ export default function CreateBoardPostScreen() {
 						</AnimatedPressable>
 
 						{/* 공지사항 선택 옵션 */}
-						<AnimatedPressable onPress={() => handleSelectCategory(PostCategory.NOTICE)}>
+						<AnimatedPressable
+							onPress={() => handleSelectCategory(PostCategory.NOTICE)}
+						>
 							<HStack
 								space="md"
 								className="items-center justify-between py-3 pl-2 pr-4"
 							>
-								<Text size="lg" className={cn(selectedCategory === 'NOTICE' && 'font-pretendard-bold text-primary-400')}>공지사항</Text>
+								<Text
+									size="lg"
+									className={cn(
+										selectedCategory === 'NOTICE' &&
+										'font-pretendard-bold text-primary-400',
+									)}
+								>
+									공지사항
+								</Text>
 								{selectedCategory === 'NOTICE' && (
 									<Icon as={Check} size="xl" className="stroke-primary-400" />
 								)}
@@ -238,7 +314,6 @@ export default function CreateBoardPostScreen() {
 				<ExitConfirmModal {...bottomSheetProps} onExit={handleExit} />
 			</SafeAreaView>
 			<KeyboardToolbar />
-
 		</>
 	);
 }

@@ -28,8 +28,18 @@ import {
 } from '@/components/common/bottom-sheet';
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
-import type { BoardPost, PostReactionMetadata, ReactionType } from '@/features/board/types';
-import { useReactions, useAddReaction, useRemoveReaction, useUpdateBoardPost, useDeleteBoardPost } from '../hooks';
+import type {
+	BoardPost,
+	PostReactionMetadata,
+	ReactionType,
+} from '@/features/board/types';
+import {
+	useReactions,
+	useAddReaction,
+	useRemoveReaction,
+	useUpdateBoardPost,
+	useDeleteBoardPost,
+} from '../hooks';
 import { usePinPostUtils } from '../utils/pin';
 import { checkPinnedPost } from '../api';
 
@@ -65,7 +75,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 		handleOpen();
 	};
 
-	const deletePostMutation = useDeleteBoardPost()
+	const deletePostMutation = useDeleteBoardPost();
 
 	const handleDeletePost = () => {
 		Alert.alert('게시글 삭제', '정말 이 게시글을 삭제할까요?', [
@@ -109,18 +119,28 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 
 		// 고정 해제의 경우 바로 처리
 		if (post.isPinned) {
-			await updatePostPinStatus(post.id, currentGroup.groupId, false, handleClose);
+			await updatePostPinStatus(
+				post.id,
+				currentGroup.groupId,
+				false,
+				handleClose,
+			);
 			return;
 		}
 
 		// 고정하려는 경우, 이미 고정된 게시글이 있는지 확인
 		const existingPinnedPost = await checkPinnedPost({
 			groupId: currentGroup.groupId,
-			currentPostId: post.id
+			currentPostId: post.id,
 		});
 
 		if (!existingPinnedPost) {
-			await updatePostPinStatus(post.id, currentGroup.groupId, true, handleClose);
+			await updatePostPinStatus(
+				post.id,
+				currentGroup.groupId,
+				true,
+				handleClose,
+			);
 			return;
 		}
 
@@ -138,34 +158,40 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 							currentGroup.groupId,
 							false,
 							handleClose,
-							false
+							false,
 						);
 
 						if (unpinSuccess) {
-							await updatePostPinStatus(post.id, currentGroup.groupId, true, handleClose);
+							await updatePostPinStatus(
+								post.id,
+								currentGroup.groupId,
+								true,
+								handleClose,
+							);
 						}
 					},
 				},
-			]
+			],
 		);
 	};
 
 	const reactionMetadata: PostReactionMetadata = {
 		targetType: 'post',
 		groupId: currentGroup?.groupId || '',
-		postId: post.id || ''
+		postId: post.id || '',
 	};
 
-	const {
-		data: reactions,
-		isLoading: isReactionsLoading
-	} = useReactions(reactionMetadata);
+	const { data: reactions, isLoading: isReactionsLoading } =
+		useReactions(reactionMetadata);
 
-	const isLiked = reactions ? Object.values(reactions).some((reactions) =>
-		reactions.some((reaction) =>
-			reaction.userId === user?.id && reaction.type === 'like'
+	const isLiked = reactions
+		? Object.values(reactions).some((reactions) =>
+			reactions.some(
+				(reaction) =>
+					reaction.userId === user?.id && reaction.type === 'like',
+			),
 		)
-	) : false;
+		: false;
 
 	const addReactionMutation = useAddReaction();
 	const removeReactionMutation = useRemoveReaction();
@@ -175,26 +201,32 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 
 		if (isLiked) {
 			// 좋아요 취소
-			removeReactionMutation.mutate({
-				metadata: reactionMetadata,
-				userId: user.id,
-				reactionType: 'like' as ReactionType
-			}, {
-				onError: () => {
-					showError('좋아요를 취소하지 못했어요');
-				}
-			});
+			removeReactionMutation.mutate(
+				{
+					metadata: reactionMetadata,
+					userId: user.id,
+					reactionType: 'like' as ReactionType,
+				},
+				{
+					onError: () => {
+						showError('좋아요를 취소하지 못했어요');
+					},
+				},
+			);
 		} else {
 			// 좋아요 추가
-			addReactionMutation.mutate({
-				metadata: reactionMetadata,
-				userId: user.id,
-				reactionType: 'like' as ReactionType
-			}, {
-				onError: () => {
-					showError('좋아요를 추가하지 못했어요');
-				}
-			});
+			addReactionMutation.mutate(
+				{
+					metadata: reactionMetadata,
+					userId: user.id,
+					reactionType: 'like' as ReactionType,
+				},
+				{
+					onError: () => {
+						showError('좋아요를 추가하지 못했어요');
+					},
+				},
+			);
 		}
 	};
 
@@ -237,7 +269,12 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 								<HStack space="xs" className="items-center">
 									{post.isPinned && (
 										<HStack space="xs" className="items-center">
-											<Text size="xs" className="text-typography-700 font-pretendard-medium">고정됨</Text>
+											<Text
+												size="xs"
+												className="text-typography-700 font-pretendard-medium"
+											>
+												고정됨
+											</Text>
 											<Icon
 												as={Pin}
 												size="xs"
@@ -266,16 +303,22 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 						</VStack>
 						<HStack className="items-center justify-between pr-4">
 							<HStack space="lg" className="items-center">
-								<AnimatedPressable
-									onPress={handleLike}
-								>
+								<AnimatedPressable onPress={handleLike}>
 									<HStack space="xs" className="items-center">
 										<Icon
 											as={ThumbsUp}
 											size="xl"
-											className={isLiked ? 'stroke-primary-500 fill-primary-500' : 'stroke-typography-900'}
+											className={
+												isLiked
+													? 'stroke-primary-500 fill-primary-500'
+													: 'stroke-typography-900'
+											}
 										/>
-										<Text className={isLiked ? 'text-primary-500' : 'text-typography-900'}>
+										<Text
+											className={
+												isLiked ? 'text-primary-500' : 'text-typography-900'
+											}
+										>
 											{post.reactionSummary?.like || 0}
 										</Text>
 									</HStack>
@@ -303,9 +346,10 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 						label="수정하기"
 						icon={Pen}
 						onPress={() => {
+							handleClose();
 							router.push({
-								pathname: '/(app)/(board)/[id]',
-								params: { id: post.id, edit: 'true' },
+								pathname: '/(app)/(board)/create',
+								params: { id: post.id, isEdit: 'true' },
 							});
 						}}
 					/>
