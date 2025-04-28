@@ -80,7 +80,7 @@ export const AnalyticsEvents = {
 	// App usage
 	APP_OPEN: 'app_open',
 	APP_ERROR: 'app_error',
-	
+
 	// App update events
 	APP_UPDATE_NEEDED: 'app_update_needed',
 	APP_UPDATE_CLICKED: 'app_update_clicked',

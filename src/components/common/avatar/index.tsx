@@ -193,7 +193,9 @@ const AvatarGroup = forwardRef<View, AvatarGroupProps>(
 
 export { Avatar, AvatarGroup };
 
-function getAvatarSize(size: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl') {
+function getAvatarSize(
+	size: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl',
+) {
 	switch (size) {
 		case '2xs':
 			return { width: 20, height: 20 };

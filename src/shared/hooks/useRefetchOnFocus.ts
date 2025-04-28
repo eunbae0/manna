@@ -6,10 +6,10 @@ import { useIsFocused } from '@react-navigation/native';
  * @param refetch - The function to be called on focus
  */
 export function useRefetchOnFocus(refetch: () => void): void {
-  const isFocused = useIsFocused();
-  useEffect(() => {
-    if (isFocused) {
-      refetch();
-    }
-  }, [isFocused, refetch]);
+	const isFocused = useIsFocused();
+	useEffect(() => {
+		if (isFocused) {
+			refetch();
+		}
+	}, [isFocused, refetch]);
 }

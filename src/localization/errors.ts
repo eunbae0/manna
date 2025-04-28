@@ -29,5 +29,6 @@ export const errorMessages: Record<ErrorCode, string> = {
 	[ErrorCode.GOOGLE_UNKNOWN]: '알 수 없는 Google 로그인 오류가 발생했습니다',
 	[ErrorCode.GOOGLE_SIGN_IN_CANCELLED]: 'Google 로그인이 취소되었습니다',
 	[ErrorCode.GOOGLE_IN_PROGRESS]: 'Google 로그인이 이미 진행 중입니다',
-	[ErrorCode.GOOGLE_PLAY_SERVICES_NOT_AVAILABLE]: 'Google Play 서비스를 사용할 수 없습니다',
+	[ErrorCode.GOOGLE_PLAY_SERVICES_NOT_AVAILABLE]:
+		'Google Play 서비스를 사용할 수 없습니다',
 };

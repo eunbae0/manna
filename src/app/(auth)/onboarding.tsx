@@ -36,8 +36,8 @@ function OnboardingScreen() {
 				return <JoinGroupScreen />;
 			case 'PENDING_SUBMIT':
 				return <PendingSubmitScreen />;
-				case 'FINISH':
-					return <FinishStepScreen />;
+			case 'FINISH':
+				return <FinishStepScreen />;
 			default:
 				return <Redirect href="/+not-found" />;
 		}

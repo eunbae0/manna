@@ -1,5 +1,11 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
-import { FlatList, ScrollView, Animated, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+	FlatList,
+	ScrollView,
+	Animated,
+	ActivityIndicator,
+	RefreshControl,
+} from 'react-native';
 import type { NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -14,19 +20,16 @@ import { Text } from '#/components/ui/text';
 import { useToastStore } from '@/store/toast';
 
 // 게시판 관련 컴포넌트 및 데이터 import
-import {
-	FilterTag,
-	BoardPostCard,
-} from '@/features/board/components';
+import { FilterTag, BoardPostCard } from '@/features/board/components';
 import { PostCategory, BoardPost } from '@/features/board/types';
 import { useInfiniteBoardPosts } from '@/features/board/hooks';
 import { useAuthStore } from '@/store/auth';
 
 export default function BoardIndexScreen() {
 	// 선택된 카테고리 필터 (null이면 '전체')
-	const [selectedCategory, setSelectedCategory] = useState<
-		PostCategory | null
-	>(null);
+	const [selectedCategory, setSelectedCategory] = useState<PostCategory | null>(
+		null,
+	);
 
 	// 스크롤 위치에 따른 버튼 텍스트 표시 여부
 	const scrollY = useRef(new Animated.Value(0)).current;
@@ -53,7 +56,7 @@ export default function BoardIndexScreen() {
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-		refetch
+		refetch,
 	} = useInfiniteBoardPosts({
 		groupId: currentGroup?.groupId || '',
 		category: selectedCategory || undefined,
@@ -81,7 +84,7 @@ export default function BoardIndexScreen() {
 		if (!data?.pages) return [];
 
 		// 모든 페이지의 게시글을 하나의 배열로 합치기
-		const allPosts = data.pages.flatMap(page => page.items);
+		const allPosts = data.pages.flatMap((page) => page.items);
 
 		// 고정된 글과 일반 글 분리
 		const pinnedPosts = allPosts.filter((post) => post.isPinned);
@@ -177,7 +180,7 @@ export default function BoardIndexScreen() {
 	// 리스트 푸터 렌더링 함수
 	const renderFooter = () => {
 		if (!isFetchingNextPage) return null;
-		
+
 		return (
 			<Box className="py-4 items-center justify-center">
 				<ActivityIndicator size="small" color="#6366f1" />
