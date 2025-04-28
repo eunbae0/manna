@@ -1,0 +1,175 @@
+import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
+import {
+  BottomSheetListLayout,
+  BottomSheetListHeader,
+} from '@/components/common/bottom-sheet';
+import { useState } from 'react';
+import { Alert, TextInput, type ViewProps } from 'react-native';
+import { HStack } from '#/components/ui/hstack';
+import { Avatar } from '@/components/common/avatar';
+import { VStack } from '#/components/ui/vstack';
+import { Crown, MoreHorizontal, Pen, Trash } from 'lucide-react-native';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
+import { Icon } from '#/components/ui/icon';
+import { Text } from '#/components/ui/text';
+
+import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
+import type { Comment } from '../types';
+import { Box } from '#/components/ui/box';
+
+type CommentItemProps = {
+  comment: Comment;
+  onEdit: (id: string, content: string) => void;
+  onDelete: (id: string) => void;
+  isCurrentUser: boolean;
+} & ViewProps;
+
+/**
+ * 댓글 컴포넌트
+ */
+export const CommentItem = ({
+  comment,
+  onEdit,
+  onDelete,
+  isCurrentUser,
+  ...props
+}: CommentItemProps) => {
+  // 메뉴 관련 상태
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 댓글 수정을 위한 바텀시트
+  const {
+    BottomSheetContainer: EditBottomSheet,
+    handleOpen: openEditSheet,
+    handleClose: closeEditSheet,
+  } = useBottomSheet();
+
+  // 수정할 댓글 내용
+  const [editContent, setEditContent] = useState(comment.content);
+
+  // 댓글 수정 제출
+  const handleSubmitEdit = () => {
+    if (editContent.trim()) {
+      onEdit(comment.id, editContent);
+      closeEditSheet();
+    }
+  };
+
+  // 댓글 삭제 확인
+  const handleConfirmDelete = () => {
+    Alert.alert('댓글 삭제', '정말 이 댓글을 삭제할까요?', [
+      { text: '취소', style: 'cancel' },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: () => onDelete(comment.id),
+      },
+    ]);
+  };
+
+  return (
+    <HStack space="md" className="py-4" {...props}>
+      <Avatar
+        size="sm"
+        className="mt-1"
+        photoUrl={comment.author.photoUrl || ''}
+      />
+      <VStack space="xs" className="flex-1">
+        <HStack space="sm" className="items-center justify-between">
+          <HStack space="sm" className="items-center">
+            <HStack space="xs" className="items-center">
+              <Text size="sm" className="font-pretendard-bold">
+                {comment.author.displayName || '이름없음'}
+              </Text>
+              {comment.author.role === 'leader' && (
+                <Icon as={Crown} size="xs" className="text-yellow-500" />
+              )}
+            </HStack>
+            <HStack space="xs" className="items-center">
+              <Box className="w-1 h-1 rounded-full bg-gray-300" />
+              <Text className="text-typography-500" size="xs">
+                {formatRelativeTime(comment.createdAt)}
+              </Text>
+            </HStack>
+          </HStack>
+
+          {/* 댓글 작성자인 경우에만 더보기 메뉴 표시 */}
+          {isCurrentUser && (
+            <Menu
+              placement="bottom left"
+              trigger={({ ...triggerProps }) => {
+                return (
+                  <Button
+                    variant="icon"
+                    size="sm"
+                    className="absolute -top-3 -right-1"
+                    {...triggerProps}
+                  >
+                    <ButtonIcon as={MoreHorizontal} size="sm" />
+                  </Button>
+                );
+              }}
+            >
+              <MenuItem
+                key="edit"
+                textValue="수정하기"
+                closeOnSelect
+                onPress={() => {
+                  setIsMenuOpen(false);
+                  setEditContent(comment.content);
+                  openEditSheet();
+                }}
+              >
+                <Icon as={Pen} size="sm" className="mr-2 text-typography-700" />
+                <MenuItemLabel size="md">수정하기</MenuItemLabel>
+              </MenuItem>
+              <MenuItem
+                key="delete"
+                textValue="삭제하기"
+                closeOnSelect
+                onPress={() => {
+                  setIsMenuOpen(false);
+                  handleConfirmDelete();
+                }}
+              >
+                <Icon as={Trash} size="sm" className="mr-2 text-error-500" />
+                <MenuItemLabel size="md" className="text-error-500">
+                  삭제하기
+                </MenuItemLabel>
+              </MenuItem>
+            </Menu>
+          )}
+        </HStack>
+        <Text className="text-typography-700">{comment.content}</Text>
+      </VStack>
+
+      {/* 댓글 수정 바텀시트 */}
+      <EditBottomSheet>
+        <BottomSheetListLayout>
+          <BottomSheetListHeader
+            label="댓글 수정하기"
+            onPress={closeEditSheet}
+          />
+          <VStack space="md">
+            <TextInput
+              className="text-lg bg-gray-100 rounded-md p-3 text-typography-700 min-h-[100px]"
+              placeholder="댓글을 입력하세요"
+              value={editContent}
+              onChangeText={setEditContent}
+              multiline
+              autoFocus
+            />
+            <Button
+              size="lg"
+              onPress={handleSubmitEdit}
+              disabled={!editContent.trim()}
+            >
+              <ButtonText>완료</ButtonText>
+            </Button>
+          </VStack>
+        </BottomSheetListLayout>
+      </EditBottomSheet>
+    </HStack>
+  );
+};

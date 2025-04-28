@@ -15,7 +15,7 @@ import { IMAGE_BLUR_HASH } from '@/shared/constants';
 
 export type AvatarProps = {
 	type?: 'leader' | 'member';
-	size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+	size: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 	photoUrl?: string;
 	label?: string;
 } & ViewProps;
@@ -193,8 +193,10 @@ const AvatarGroup = forwardRef<View, AvatarGroupProps>(
 
 export { Avatar, AvatarGroup };
 
-function getAvatarSize(size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl') {
+function getAvatarSize(size: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl') {
 	switch (size) {
+		case '2xs':
+			return { width: 20, height: 20 };
 		case 'xs':
 			return { width: 24, height: 24 };
 		case 'sm':

@@ -7,6 +7,8 @@ import { router } from 'expo-router';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { Icon } from '#/components/ui/icon';
+import { Calendar, Presentation } from 'lucide-react-native';
 
 export default function ServiceGroups() {
 	const { setType } = useFellowshipStore();
@@ -17,18 +19,25 @@ export default function ServiceGroups() {
 		router.push('/(app)/(fellowship)/create');
 	};
 
-	const handlePressNotes = () => {
-		trackAmplitudeEvent('내 설교 노트 클릭', { screen: 'Tab_Home' });
-		router.replace('/(app)/(tabs)/note');
-	};
-
 	const handlePressFellowships = () => {
 		trackAmplitudeEvent('나눔 기록 클릭', { screen: 'Tab_Home' });
 		router.push('/(app)/(fellowship)/list');
 	};
 
+	// 일정 화면으로 이동하는 핸들러
+	const handlePressSchedule = () => {
+		trackAmplitudeEvent('일정 클릭', { screen: 'Tab_Home' });
+		router.push('/(app)/(schedule)');
+	};
+
+	// 게시판 화면으로 이동하는 핸들러
+	const handlePressBoard = () => {
+		trackAmplitudeEvent('게시판 클릭', { screen: 'Tab_Home' });
+		router.push('/(app)/(board)/board-index');
+	};
+
 	return (
-		<VStack space="md" className="px-4">
+		<VStack space="lg" className="px-4">
 			<AnimatedPressable
 				className="flex-1"
 				onPress={handlePressCreateFellowship}
@@ -54,39 +63,43 @@ export default function ServiceGroups() {
 					/>
 				</HStack>
 			</AnimatedPressable>
-			<HStack space="md">
-				<AnimatedPressable className="flex-1" onPress={handlePressNotes}>
-					<HStack className="bg-gray-200 rounded-2xl justify-between pl-5 pt-4">
-						<VStack space="xs">
-							<Heading size="md">내 설교 노트</Heading>
-						</VStack>
-						<LottieView
-							source={require('../../../../assets/lotties/notes.json')}
-							autoPlay
-							loop
-							style={{
-								width: 80,
-								height: 80,
-							}}
-						/>
-					</HStack>
-				</AnimatedPressable>
+			<HStack space="sm" className="h-20">
 				<AnimatedPressable className="flex-1" onPress={handlePressFellowships}>
-					<HStack className="bg-gray-200 rounded-2xl justify-between pl-5 pt-4">
-						<VStack space="xs">
-							<Heading size="md">나눔 기록</Heading>
-						</VStack>
+					<HStack className="bg-gray-100 pl-6 rounded-2xl items-start justify-between py-2 h-full">
+						<Heading size="lg" className="pt-2 font-pretendard-semi-bold">
+							나눔 기록
+						</Heading>
 						<LottieView
 							source={require('../../../../assets/lotties/fellowships.json')}
 							autoPlay
 							loop
 							style={{
-								width: 80,
-								height: 80,
+								width: 60,
+								height: 60,
 							}}
 						/>
 					</HStack>
 				</AnimatedPressable>
+				<HStack space="sm" className="h-full flex-1">
+					<AnimatedPressable className="flex-1" onPress={handlePressBoard}>
+						<VStack
+							space="xs"
+							className="items-center justify-center bg-gray-100 rounded-2xl h-full"
+						>
+							<Icon as={Presentation} size="xl" />
+							<Text>게시판</Text>
+						</VStack>
+					</AnimatedPressable>
+					<AnimatedPressable className="flex-1" onPress={handlePressSchedule}>
+						<VStack
+							space="xs"
+							className="items-center justify-center bg-gray-100 rounded-2xl h-full"
+						>
+							<Icon as={Calendar} size="xl" />
+							<Text>일정</Text>
+						</VStack>
+					</AnimatedPressable>
+				</HStack>
 			</HStack>
 		</VStack>
 	);

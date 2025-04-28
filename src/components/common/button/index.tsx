@@ -34,6 +34,7 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 			solid: 'bg-primary-500 active:bg-primary-600',
 			outline: 'bg-transparent border border-primary-500 active:bg-primary-50',
 			link: 'bg-transparent px-0',
+			text: 'bg-transparent px-2',
 			icon: 'bg-transparent p-2 aspect-square',
 		},
 		action: {
@@ -77,6 +78,11 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 			class: 'bg-transparent active:bg-background-200',
 		},
 		{
+			variant: 'text',
+			action: 'primary',
+			class: 'bg-transparent active:bg-background-100',
+		},
+		{
 			variant: 'icon',
 			action: 'primary',
 			size: 'xs',
@@ -115,19 +121,20 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 });
 
 // Button text styles based on button size and variant
-const buttonTextStyles = cva('font-medium', {
+const buttonTextStyles = cva('font-pretendard-medium', {
 	variants: {
 		size: {
 			xs: 'text-xs',
 			sm: 'text-sm',
-			md: 'text-md',
+			md: 'text-base',
 			lg: 'text-lg',
-			xl: 'text-2xl',
+			xl: 'text-xl',
 		},
 		variant: {
 			solid: 'text-white',
 			outline: 'text-primary-500',
-			link: 'text-primary-500 underline',
+			link: 'text-primary-500',
+			text: 'text-primary-500',
 			icon: 'text-primary-500',
 		},
 		action: {
@@ -169,6 +176,11 @@ const buttonTextStyles = cva('font-medium', {
 			class: 'text-primary-500',
 		},
 		{
+			variant: 'text',
+			action: 'primary',
+			class: 'text-primary-500',
+		},
+		{
 			variant: 'icon',
 			action: 'primary',
 			class: 'text-primary-500',
@@ -205,6 +217,7 @@ const buttonIconStyles = cva('', {
 			solid: 'stroke-white',
 			outline: 'stroke-primary-500',
 			link: 'stroke-primary-500',
+			text: 'stroke-primary-500',
 			icon: 'stroke-primary-500',
 		},
 		action: {
@@ -237,6 +250,26 @@ const buttonIconStyles = cva('', {
 		},
 		{
 			variant: 'outline',
+			action: 'negative',
+			class: 'stroke-error-500',
+		},
+		{
+			variant: 'text',
+			action: 'primary',
+			class: 'stroke-primary-500',
+		},
+		{
+			variant: 'text',
+			action: 'secondary',
+			class: 'stroke-secondary-500',
+		},
+		{
+			variant: 'text',
+			action: 'positive',
+			class: 'stroke-success-500',
+		},
+		{
+			variant: 'text',
 			action: 'negative',
 			class: 'stroke-error-500',
 		},
@@ -274,39 +307,15 @@ const buttonIconStyles = cva('', {
 });
 
 export interface ButtonProps
-	extends Omit<ComponentPropsWithoutRef<typeof Pressable>, 'style'>,
+	extends Omit<ComponentPropsWithoutRef<typeof Pressable>, 'children'>,
 		VariantProps<typeof buttonStyles> {
 	children?: ReactNode;
-	/**
-	 * 버튼의 크기
-	 * @default 'md'
-	 */
 	size?: ButtonSize;
-	/**
-	 * 버튼의 스타일 변형
-	 * @default 'solid'
-	 */
-	variant?: 'solid' | 'outline' | 'link' | 'icon';
-	/**
-	 * 버튼의 액션을 결정
-	 * @default 'primary'
-	 */
+	variant?: 'solid' | 'outline' | 'link' | 'text' | 'icon';
 	action?: 'primary' | 'secondary' | 'positive' | 'negative';
 	className?: string;
-	/**
-	 * 버튼이 비활성화 상태인지 여부
-	 * @default false
-	 */
 	disabled?: boolean;
-	/**
-	 * 애니메이션을 사용할지 여부
-	 * @default true
-	 */
 	animation?: boolean;
-	/**
-	 * 중복 클릭 방지 시간 (밀리초)
-	 * @default 300
-	 */
 	throttleTime?: number;
 	innerClassName?: string;
 }
@@ -403,11 +412,10 @@ const Button = React.forwardRef<View, ButtonProps>(
 );
 
 // ButtonText component
-export interface ButtonTextProps
-	extends Omit<ComponentPropsWithoutRef<typeof Text>, 'style'> {
+export interface ButtonTextProps {
 	children?: ReactNode;
 	size?: ButtonSize;
-	variant?: 'solid' | 'outline' | 'link' | 'icon';
+	variant?: 'solid' | 'outline' | 'link' | 'text' | 'icon';
 	action?: 'primary' | 'secondary' | 'positive' | 'negative';
 	className?: string;
 }
@@ -440,7 +448,7 @@ const ButtonText = React.forwardRef<Text, ButtonTextProps>(
 export interface ButtonIconProps {
 	as: React.ElementType;
 	size?: ButtonSize;
-	variant?: 'solid' | 'outline' | 'link' | 'icon';
+	variant?: 'solid' | 'outline' | 'link' | 'text' | 'icon';
 	action?: 'primary' | 'secondary' | 'positive' | 'negative';
 	className?: string;
 	color?: string;

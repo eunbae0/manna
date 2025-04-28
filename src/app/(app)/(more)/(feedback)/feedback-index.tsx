@@ -134,9 +134,8 @@ export default function FeedbackScreen() {
 							</VStack>
 						) : messages.length === 0 ? (
 							<VStack className="flex-1 justify-center items-center">
-								<Heading size="md">채팅 없음</Heading>
 								<Text className="text-typography-500 text-center mt-2">
-									채팅 시작하기
+									메시지를 입력해 채팅을 시작해보세요
 								</Text>
 							</VStack>
 						) : (

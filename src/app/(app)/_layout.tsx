@@ -50,6 +50,7 @@ export default function RootLayout() {
 				<Stack.Screen name="(group)" options={{ headerShown: false }} />
 				<Stack.Screen name="(fellowship)" options={{ headerShown: false }} />
 				<Stack.Screen name="(prayerRequest)" options={{ headerShown: false }} />
+				<Stack.Screen name="(board)" options={{ headerShown: false }} />
 				<Stack.Screen name="(note)" options={{ headerShown: false }} />
 				<Stack.Screen name="(more)" options={{ headerShown: false }} />
 				<Stack.Screen
