@@ -9,21 +9,22 @@ import { VStack } from '#/components/ui/vstack';
 import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
 import { isAndroid } from '@/shared/utils/platform';
+import { goBackOrReplaceHome } from '@/shared/utils/router';
 
 type Props = {
 	label?: string;
 	labelSize?:
-		| 'md'
-		| 'sm'
-		| 'lg'
-		| 'xl'
-		| '2xl'
-		| 'xs'
-		| '3xl'
-		| '4xl'
-		| '2xs'
-		| '5xl'
-		| '6xl';
+	| 'md'
+	| 'sm'
+	| 'lg'
+	| 'xl'
+	| '2xl'
+	| 'xs'
+	| '3xl'
+	| '4xl'
+	| '2xs'
+	| '5xl'
+	| '6xl';
 	onPressBackButton?: () => void;
 	onPressBackButtonWithRouter?: () => void;
 	isLabelCentered?: boolean;
@@ -44,7 +45,7 @@ function Header({
 	...props
 }: Props) {
 	const defaultHandlePressBackButton = () => {
-		router.canGoBack() ? router.back() : router.dismissAll();
+		goBackOrReplaceHome();
 	};
 	const handlePressBackButton = () => {
 		if (onPressBackButtonWithRouter) {
