@@ -6,22 +6,42 @@ import type {
 	CreateFellowshipInput,
 	UpdateFellowshipInput,
 } from './types';
+import type { Timestamp } from '@react-native-firebase/firestore';
 
 /**
- * Fetches all fellowships for a specific group
+ * Fetches fellowships for a specific group with pagination
  * @param groupId ID of the group
- * @returns Array of fellowship data
+ * @param limit Number of items to fetch per page
+ * @param startAfter Timestamp to start fetching after (for pagination)
+ * @returns Paginated response with fellowship data
  */
 export const fetchGroupFellowships = withApiLogging(
-	async ({ groupId }: { groupId: string }): Promise<ClientFellowship[]> => {
+	async ({
+		groupId,
+		limitCount = 10,
+		startAfter,
+	}: {
+		groupId: string;
+		limitCount?: number;
+		startAfter?: Timestamp; // Timestamp from Firestore
+	}): Promise<{
+		items: ClientFellowship[];
+		hasMore: boolean;
+		total: number;
+	}> => {
 		try {
 			const fellowshipService = getFellowshipService();
-			const result = await fellowshipService.getGroupFellowships({ groupId });
+			const result = await fellowshipService.getGroupFellowships({
+				groupId,
+				limitCount,
+				startAfter,
+			});
 
 			// Pass metadata to the withApiLogging wrapper via context
 			const context = {
-				count: result.length,
+				count: result.items.length,
 				groupId,
+				hasMore: result.hasMore,
 			};
 
 			// The withApiLogging wrapper will include this context in the success log

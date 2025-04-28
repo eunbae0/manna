@@ -12,6 +12,7 @@ import {
 	type FirebaseFirestoreTypes,
 	setDoc,
 	type FieldValue,
+	limit,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
@@ -114,22 +115,54 @@ export class FirestoreFellowshipService {
 	}
 
 	/**
-	 * Fetches all fellowships for a specific group
-	 * @returns Array of fellowship data
+	 * Fetches fellowships for a specific group with pagination
+	 * @param groupId ID of the group
+	 * @param limit Number of items to fetch per page
+	 * @param startAfter Timestamp to start fetching after (for pagination)
+	 * @returns Paginated response with fellowship data
 	 */
 	async getGroupFellowships({
 		groupId,
+		limitCount = 10,
+		startAfter,
 	}: {
 		groupId: string;
-	}): Promise<ClientFellowship[]> {
-		const q = query(
-			this.getFellowshipCollectionRef({ groupId }),
-			orderBy('createdAt', 'desc'),
-		);
+		limitCount?: number;
+		startAfter?: Timestamp;
+	}): Promise<{
+		items: ClientFellowship[];
+		hasMore: boolean;
+		total: number;
+	}> {
+		let q: FirebaseFirestoreTypes.Query;
+
+		const _limitCount = limitCount + 1; // Fetch one extra to determine if there are more items
+
+		if (startAfter) {
+			q = query(
+				this.getFellowshipCollectionRef({ groupId }),
+				orderBy('createdAt', 'desc'),
+				where('createdAt', '<', startAfter),
+				limit(_limitCount),
+			);
+		} else {
+			q = query(
+				this.getFellowshipCollectionRef({ groupId }),
+				orderBy('createdAt', 'desc'),
+				limit(_limitCount),
+			);
+		}
+
 		const querySnapshot = await getDocs(q);
+		const hasMore = querySnapshot.docs.length > _limitCount;
+
+		// If we fetched an extra item to check for more, remove it from the results
+		const docs = hasMore
+			? querySnapshot.docs.slice(0, _limitCount)
+			: querySnapshot.docs;
 
 		const fellowships: ClientFellowship[] = [];
-		for (const fellowshipsDoc of querySnapshot.docs) {
+		for (const fellowshipsDoc of docs) {
 			const members: ClientFellowshipMember[] = [];
 			const data = fellowshipsDoc.data() as ServerFellowship;
 			for (const member of data.info.members) {
@@ -165,7 +198,11 @@ export class FirestoreFellowshipService {
 			fellowships.push(this.convertToClientFellowship(data, members));
 		}
 
-		return fellowships;
+		return {
+			items: fellowships,
+			hasMore,
+			total: fellowships.length,
+		};
 	}
 
 	/**
