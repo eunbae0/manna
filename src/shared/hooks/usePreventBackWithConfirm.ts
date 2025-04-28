@@ -80,7 +80,11 @@ export function usePreventBackWithConfirm({
 	}, [handleCloseConfirmModal, onConfirmExit, navigationAction, navigation]);
 
 	usePreventRemove(condition, ({ data }) => {
-		if (data.action.type !== 'GO_BACK' && data.action.type !== 'POP') {
+		if (
+			data.action.type !== 'GO_BACK' &&
+			data.action.type === 'POP' &&
+			!data.action.source
+		) {
 			navigation.dispatch(data.action);
 			return;
 		}
