@@ -48,7 +48,7 @@ Sentry.init({
 });
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
-amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY!);
+if (!__DEV__) amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY!);
 
 function RootLayout() {
 	const colorScheme = useColorScheme();
