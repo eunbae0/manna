@@ -188,14 +188,14 @@ export function usePinnedPost(groupId?: string) {
 		queryKey: boardKeys.pinnedPost(groupId),
 		queryFn: async (): Promise<BoardPost | null> => {
 			if (!groupId) return null;
-			
+
 			// 고정된 게시글 조회
 			const result = await fetchBoardPostsByGroupId({
 				groupId,
 				isPinned: true,
 				limit: 1,
 			});
-			
+
 			// 고정된 게시글이 있으면 첫 번째 게시글 반환
 			return result.items.length > 0 ? result.items[0] : null;
 		},

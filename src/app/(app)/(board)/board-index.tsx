@@ -20,7 +20,11 @@ import { Text } from '#/components/ui/text';
 import { useToastStore } from '@/store/toast';
 
 // 게시판 관련 컴포넌트 및 데이터 import
-import { FilterTag, BoardPostCard, BoardPostSkeletonList } from '@/features/board/components';
+import {
+	FilterTag,
+	BoardPostCard,
+	BoardPostSkeletonList,
+} from '@/features/board/components';
 import { PostCategory, BoardPost } from '@/features/board/types';
 import { useInfiniteBoardPosts } from '@/features/board/hooks';
 import { useAuthStore } from '@/store/auth';
@@ -35,8 +39,6 @@ export default function BoardIndexScreen() {
 	// 스크롤 위치에 따른 버튼 텍스트 표시 여부
 	const scrollY = useRef(new Animated.Value(0)).current;
 	const [showButtonText, setShowButtonText] = useState(true);
-
-
 
 	// 현재 그룹 정보 가져오기
 	const { currentGroup } = useAuthStore();
@@ -233,7 +235,6 @@ export default function BoardIndexScreen() {
 						}
 					/>
 				)}
-
 
 				{/* 글쓰기 버튼 */}
 				<Button

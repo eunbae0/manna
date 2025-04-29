@@ -37,6 +37,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { isAndroid, isIOS } from '@/shared/utils/platform';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import type { AmplitudeLocation } from '@/shared/constants/amplitude';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { openProfile } from '@/shared/utils/router';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
@@ -269,36 +271,44 @@ function HomeHeader({ groups }: Props) {
 							<ScrollView style={{ maxHeight: MAX_INNER_MEMBER_LIST_HEIGHT }}>
 								<VStack space="md">
 									{group.members.map((member) => (
-										<View key={member.id} className="bg-white rounded-xl py-4">
-											<HStack className="items-center justify-between">
-												<HStack space="md" className="items-center">
-													<Avatar
-														size="sm"
-														photoUrl={member.photoUrl ?? undefined}
-													/>
-													<VStack>
-														<Text
-															size="lg"
-															className="font-pretendard-semi-bold"
+										<AnimatedPressable
+											key={member.id}
+											onPress={() => {
+												handleCloseMember();
+												openProfile(member.id);
+											}}
+										>
+											<View className="bg-white rounded-xl py-4">
+												<HStack className="items-center justify-between">
+													<HStack space="md" className="items-center">
+														<Avatar
+															size="sm"
+															photoUrl={member.photoUrl ?? undefined}
+														/>
+														<VStack>
+															<Text
+																size="lg"
+																className="font-pretendard-semi-bold"
+															>
+																{member.displayName || '이름없음'}
+															</Text>
+														</VStack>
+														<Box
+															className={cn(
+																'px-2 rounded-full py-1',
+																member.role === 'leader'
+																	? 'bg-primary-400'
+																	: 'bg-gray-500',
+															)}
 														>
-															{member.displayName || '이름없음'}
-														</Text>
-													</VStack>
-													<Box
-														className={cn(
-															'px-2 rounded-full py-1',
-															member.role === 'leader'
-																? 'bg-primary-400'
-																: 'bg-gray-500',
-														)}
-													>
-														<Text size="xs" className="text-typography-50">
-															{member.role === 'leader' ? '리더' : '그룹원'}
-														</Text>
-													</Box>
+															<Text size="xs" className="text-typography-50">
+																{member.role === 'leader' ? '리더' : '그룹원'}
+															</Text>
+														</Box>
+													</HStack>
 												</HStack>
-											</HStack>
-										</View>
+											</View>
+										</AnimatedPressable>
 									))}
 								</VStack>
 							</ScrollView>

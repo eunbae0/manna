@@ -1,15 +1,6 @@
-import {
-	Alert,
-	Linking,
-	Platform,
-	Pressable,
-	ScrollView,
-	View,
-} from 'react-native';
+import { Alert, Linking, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-
-import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
@@ -17,154 +8,25 @@ import { Text } from '#/components/ui/text';
 
 import { VStack } from '#/components/ui/vstack';
 import { useAuthStore } from '@/store/auth';
-import { useBottomSheet } from '@/hooks/useBottomSheet';
-import {
-	BottomSheetListLayout,
-	BottomSheetListHeader,
-	BottomSheetListItem,
-} from '@/components/common/bottom-sheet';
 import {
 	Bell,
-	Camera,
 	ChevronRight,
-	Edit3Icon,
-	type LucideIcon,
 	MonitorCog,
 	ScrollText,
 	Star,
 	UserPen,
-	User,
-	Image,
 	Info,
 	MessageCircleReply,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
-import { useState, useMemo } from 'react';
 import { APP_STORE_URL, PLAY_STORE_URL } from '@/shared/constants/app';
-import { useToastStore } from '@/store/toast';
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import * as ImagePicker from 'expo-image-picker';
 import { ListItem } from '@/shared/components/ListItem';
-import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RefreshCw } from 'lucide-react-native';
-import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
-import * as ImageManipulator from 'expo-image-manipulator';
 import { getCurrentAppVersion } from '@/shared/utils/app_version';
-import { FELLOWSHIP_QUERY_KEY } from '@/features/fellowship/hooks/useFellowship';
-import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '@/features/prayer-request/hooks/usePrayerRequests';
-import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
+import AnimatedPressable from '@/components/common/animated-pressable';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 export default function TabFourScreen() {
-	const { user, updateUserProfile } = useAuthStore();
-	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
-	const { showToast } = useToastStore();
-
-	const [displayName, setDisplayName] = useState(user?.displayName || '');
-	const [photoUrl, setPhotoUrl] = useState(user?.photoUrl || '');
-
-	// 프로필 정보가 변경되었는지 확인
-	const isDisplayNameChanged = useMemo(() => {
-		return displayName !== (user?.displayName || '');
-	}, [displayName, user?.displayName]);
-
-	const [isPhotoUrlChanged, setIsPhotoUrlChanged] = useState(false);
-	const isProfileChanged = useMemo(() => {
-		return isDisplayNameChanged || isPhotoUrlChanged;
-	}, [isDisplayNameChanged, isPhotoUrlChanged]);
-
-	const pickImage = async () => {
-		// Request permission
-		const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-		if (status !== 'granted') {
-			showToast({
-				message: '사진 선택을 위해 갤러리 접근 권한이 필요해요',
-				type: 'info',
-			});
-			return;
-		}
-
-		// Open image picker
-		const result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ['images'],
-			allowsEditing: true,
-			aspect: [1, 1],
-			quality: 0.5,
-			selectionLimit: 1,
-		});
-
-		if (!result.canceled && result.assets && result.assets.length > 0) {
-			const selectedImageUri = result.assets[0].uri;
-
-			setPhotoUrl(selectedImageUri);
-			setIsPhotoUrlChanged(true);
-		}
-	};
-
-	// React Query를 사용한 프로필 업데이트 mutation 설정
-	const queryClient = useQueryClient();
-	const updateProfileMutation = useMutation({
-		mutationFn: async () => {
-			if (!user?.id) throw new Error('사용자 정보가 없습니다');
-
-			// 변경된 필드만 포함하여 업데이트
-			const updateData: Partial<{
-				displayName: string;
-				photoUrl: string;
-			}> = {};
-
-			if (isDisplayNameChanged) {
-				updateData.displayName = displayName;
-			}
-			if (isPhotoUrlChanged) {
-				updateData.photoUrl = photoUrl;
-			}
-
-			return await updateUserProfile(user.id, updateData);
-		},
-		onSuccess: () => {
-			if (!user?.id) return;
-			// 캐시 무효화 및 사용자 정보 업데이트
-			queryClient.invalidateQueries({ queryKey: ['user', user.id] });
-			queryClient.invalidateQueries({
-				queryKey: [GROUPS_QUERY_KEY],
-				refetchType: 'all',
-			});
-			queryClient.invalidateQueries({
-				queryKey: [FELLOWSHIP_QUERY_KEY],
-				refetchType: 'all',
-			});
-			queryClient.invalidateQueries({
-				queryKey: [PRAYER_REQUESTS_QUERY_KEY],
-				refetchType: 'all',
-			});
-			queryClient.invalidateQueries({
-				queryKey: [ALL_PRAYER_REQUESTS_QUERY_KEY],
-				refetchType: 'all',
-			});
-
-			setIsPhotoUrlChanged(false);
-			handleClose();
-			showToast({
-				message: '프로필이 업데이트되었습니다',
-				type: 'success',
-			});
-		},
-		onError: (error) => {
-			console.error('프로필 업데이트 오류:', error);
-			showToast({
-				message: '프로필 업데이트에 실패했습니다. 다시 시도해주세요',
-				type: 'error',
-			});
-		},
-	});
-
-	const handleupdateUserProfile = () => {
-		if (!user?.id || !isProfileChanged) return;
-		updateProfileMutation.mutate();
-	};
+	const { user } = useAuthStore();
 
 	return (
 		<SafeAreaView>
@@ -172,35 +34,36 @@ export default function TabFourScreen() {
 				<VStack className="gap-14 px-5 py-8">
 					<VStack space="3xl">
 						<Heading size="xl">내 정보</Heading>
-						<HStack className="w-full justify-between items-center">
-							<HStack space="lg" className="items-center flex-1">
-								<Avatar size="lg" photoUrl={user?.photoUrl ?? undefined} />
-								<VStack space="xs" className="flex-1">
-									<Text size="lg" className="font-pretendard-semi-bold">
-										{user?.displayName ?? '이름없음'}
-									</Text>
-									<Text
-										className="flex-1"
-										ellipsizeMode="tail"
-										numberOfLines={1}
-									>
-										{user?.email}
-									</Text>
-								</VStack>
+						<AnimatedPressable
+							onPress={() => {
+								trackAmplitudeEvent('프로필 더보기 클릭', {
+									screen: 'Tab_More',
+								});
+								router.push({
+									pathname: '/(app)/(profile)/profile-index',
+									params: { userId: user?.id },
+								});
+							}}
+						>
+							<HStack className="w-full justify-between items-center">
+								<HStack space="lg" className="items-center flex-1">
+									<Avatar size="lg" photoUrl={user?.photoUrl ?? undefined} />
+									<VStack space="xs" className="flex-1">
+										<Text size="lg" className="font-pretendard-semi-bold">
+											{user?.displayName ?? '이름없음'}
+										</Text>
+										<Text
+											className="flex-1"
+											ellipsizeMode="tail"
+											numberOfLines={1}
+										>
+											{user?.email}
+										</Text>
+									</VStack>
+								</HStack>
+								<Icon as={ChevronRight} />
 							</HStack>
-							<Button
-								size="md"
-								variant="icon"
-								onPress={() => {
-									trackAmplitudeEvent('프로필 수정 클릭', {
-										screen: 'Tab_More',
-									});
-									handleOpen();
-								}}
-							>
-								<ButtonIcon as={Edit3Icon} />
-							</Button>
-						</HStack>
+						</AnimatedPressable>
 					</VStack>
 					<VStack space="2xl">
 						<Heading size="xl">앱 설정</Heading>
@@ -290,85 +153,6 @@ export default function TabFourScreen() {
 					</VStack>
 				</VStack>
 			</ScrollView>
-
-			<BottomSheetContainer>
-				<BottomSheetListLayout>
-					<BottomSheetListHeader label="프로필 수정" onPress={handleClose} />
-
-					<VStack className="gap-12">
-						<VStack space="3xl">
-							<VStack space="lg" className="items-center">
-								<Pressable
-									onPress={() => {
-										// trackAmplitudeEvent('Open Profile Image Picker', {
-										// 	screen: 'Tab_More',
-										// 	location: 'More_Profile_Settings_Bottom_Sheet',
-										// });
-										pickImage();
-									}}
-									className="relative"
-								>
-									<Avatar
-										size="3xl"
-										photoUrl={photoUrl || user?.photoUrl || undefined}
-									/>
-									<View className="absolute -bottom-2 -right-2 bg-background-800 p-1 rounded-full border-2 border-white">
-										<Icon as={Camera} size="sm" color="white" />
-									</View>
-								</Pressable>
-								<VStack space="xs" className="items-center">
-									<Text size="lg" className="font-pretendard-semi-bold">
-										{user?.displayName ?? '이름없음'}
-									</Text>
-									<Text size="sm" className="text-typography-600">
-										{user?.email}
-									</Text>
-								</VStack>
-							</VStack>
-							<VStack space="sm">
-								<Text size="md" className="text-typography-600">
-									이름
-								</Text>
-								<BottomSheetTextInput
-									defaultValue={displayName}
-									onChangeText={setDisplayName}
-									placeholder="이름을 입력하세요"
-									className={TEXT_INPUT_STYLE}
-								/>
-							</VStack>
-						</VStack>
-
-						<VStack space="sm">
-							{updateProfileMutation.isPending && (
-								<Text size="xs" className="text-center text-typography-600">
-									이미지 업데이트는 시간이 소요될 수 있어요. 잠시 기다려주세요
-								</Text>
-							)}
-							<Button
-								size="lg"
-								rounded
-								action="primary"
-								onPress={() => {
-									trackAmplitudeEvent('프로필 업데이트', {
-										screen: 'Tab_More',
-										location: 'More_Profile_Settings_Bottom_Sheet',
-									});
-									handleupdateUserProfile();
-								}}
-								disabled={updateProfileMutation.isPending || !isProfileChanged}
-								animation={true}
-							>
-								{updateProfileMutation.isPending && (
-									<ButtonIcon as={RefreshCw} className="animate-spin mr-1" />
-								)}
-								<ButtonText>
-									{updateProfileMutation.isPending ? '업데이트 중...' : '완료'}
-								</ButtonText>
-							</Button>
-						</VStack>
-					</VStack>
-				</BottomSheetListLayout>
-			</BottomSheetContainer>
 		</SafeAreaView>
 	);
 }

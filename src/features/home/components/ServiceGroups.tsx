@@ -18,10 +18,9 @@ export default function ServiceGroups() {
 	const { currentGroup } = useAuthStore();
 
 	// 고정된 게시글 가져오기
-	const {
-		data: pinnedPost,
-		isLoading: isPinnedPostLoading
-	} = usePinnedPost(currentGroup?.groupId);
+	const { data: pinnedPost, isLoading: isPinnedPostLoading } = usePinnedPost(
+		currentGroup?.groupId,
+	);
 
 	// 로딩 상태 지연 처리
 	const isLoading = useDelayedValue(isPinnedPostLoading);
@@ -130,7 +129,12 @@ export default function ServiceGroups() {
 						className="items-center justify-center rounded-2xl py-3 px-2"
 					>
 						<Icon as={Megaphone} size="xl" className="stroke-primary-400" />
-						<Text size="lg" className="flex-1 text-typography-800 font-pretendard-medium" numberOfLines={1} ellipsizeMode="tail">
+						<Text
+							size="lg"
+							className="flex-1 text-typography-800 font-pretendard-medium"
+							numberOfLines={1}
+							ellipsizeMode="tail"
+						>
 							{pinnedPost.title}
 						</Text>
 					</HStack>

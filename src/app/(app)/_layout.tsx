@@ -47,6 +47,7 @@ export default function RootLayout() {
 			/>
 			<Stack screenOptions={{ contentStyle: { backgroundColor: 'white' } }}>
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+				<Stack.Screen name="(profile)" options={{ headerShown: false }} />
 				<Stack.Screen name="(group)" options={{ headerShown: false }} />
 				<Stack.Screen name="(fellowship)" options={{ headerShown: false }} />
 				<Stack.Screen name="(prayerRequest)" options={{ headerShown: false }} />

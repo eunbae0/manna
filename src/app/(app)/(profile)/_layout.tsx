@@ -1,13 +1,13 @@
 import { Stack } from 'expo-router';
 
-export default function HomeLayout() {
+export default function ProfileLayout() {
 	return (
 		<Stack
 			screenOptions={{
 				headerShown: false,
 			}}
 		>
-			<Stack.Screen name="user-prayer-requests" />
+			<Stack.Screen name="profile-index" />
 		</Stack>
 	);
 }

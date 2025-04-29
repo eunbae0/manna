@@ -131,17 +131,19 @@ function AuthStepScreen() {
 						<Text size="sm" className="text-center">
 							로그인 시
 						</Text>
-						<Pressable onPress={() => router.push('/policy')}>
-							<Text
-								size="sm"
-								className="text-center border-b border-typography-500"
-							>
-								개인정보취급방침과 이용약관
+						<HStack className="items-center">
+							<Pressable onPress={() => router.push('/policy')}>
+								<Text
+									size="sm"
+									className="text-center border-b border-typography-500"
+								>
+									개인정보취급방침과 이용약관
+								</Text>
+							</Pressable>
+							<Text size="sm" className="text-center">
+								에 동의하는 것으로 간주합니다.
 							</Text>
-						</Pressable>
-						<Text size="sm" className="text-center">
-							에 동의하는 것으로 간주합니다.
-						</Text>
+						</HStack>
 					</HStack>
 				</VStack>
 			</VStack>

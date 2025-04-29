@@ -12,6 +12,7 @@ export default function HomeLayout() {
 			<Stack.Screen name="board-index" />
 			<Stack.Screen name="create" />
 			<Stack.Screen name="[id]" />
+			<Stack.Screen name="user-boards" />
 		</Stack>
 	);
 }

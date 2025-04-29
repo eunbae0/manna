@@ -56,6 +56,8 @@ import {
 } from '@/components/common/bottom-sheet';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { Divider } from '#/components/ui/divider';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { openProfile } from '@/shared/utils/router';
 
 interface FellowshipDetailScreenProps {
 	id: string;
@@ -174,12 +176,16 @@ function AdditionalInfo({
 							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 								<HStack space="md" className="itmes-center">
 									{fellowship.info.members.map((member) => (
-										<Avatar
-											key={member.id || Math.random().toString(36).substring(7)}
-											label={member.displayName || ''}
-											photoUrl={member.photoUrl || ''}
-											size="sm"
-										/>
+										<AnimatedPressable
+											key={member.id}
+											onPress={() => !member.isGuest && openProfile(member.id)}
+										>
+											<Avatar
+												label={member.displayName || ''}
+												photoUrl={member.photoUrl || ''}
+												size="sm"
+											/>
+										</AnimatedPressable>
 									))}
 								</HStack>
 							</ScrollView>

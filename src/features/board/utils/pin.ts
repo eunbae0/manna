@@ -37,13 +37,17 @@ export function usePinPostUtils() {
 			// 고정된 게시글 관련 쿼리 무효화
 			// 1. 모든 그룹의 고정 게시글 쿼리 무효화
 			queryClient.invalidateQueries({ queryKey: boardKeys.pinnedPost() });
-			
+
 			// 2. 현재 그룹의 고정 게시글 쿼리 무효화
-			queryClient.invalidateQueries({ queryKey: boardKeys.pinnedPost(groupId) });
-			
+			queryClient.invalidateQueries({
+				queryKey: boardKeys.pinnedPost(groupId),
+			});
+
 			// 3. 게시글 목록 쿼리 무효화 (정렬 순서가 변경될 수 있으므로)
-			queryClient.invalidateQueries({ queryKey: boardKeys.infinitePosts(groupId) });
-			
+			queryClient.invalidateQueries({
+				queryKey: boardKeys.infinitePosts(groupId),
+			});
+
 			if (showToast) {
 				showSuccess(`게시글이 ${isPinned ? '고정' : '고정 해제'}되었어요`);
 			}

@@ -53,6 +53,7 @@ export class FirestoreUserService {
 			id: data.id,
 			email: data.email,
 			displayName: data.displayName,
+			statusMessage: data.statusMessage,
 			photoUrl: data.photoUrl,
 			authType: data.authType,
 			authId: data.authId,

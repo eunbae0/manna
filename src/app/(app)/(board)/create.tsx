@@ -275,7 +275,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'FREE' &&
-										'font-pretendard-bold text-primary-400',
+											'font-pretendard-bold text-primary-400',
 									)}
 								>
 									자유게시판
@@ -298,7 +298,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'NOTICE' &&
-										'font-pretendard-bold text-primary-400',
+											'font-pretendard-bold text-primary-400',
 									)}
 								>
 									공지사항

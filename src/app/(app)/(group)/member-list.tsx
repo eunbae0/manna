@@ -12,6 +12,8 @@ import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
 import { useAuthStore } from '@/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
+import { openProfile } from '@/shared/utils/router';
+import AnimatedPressable from '@/components/common/animated-pressable';
 
 export default function MemberListScreen() {
 	const { currentGroup } = useAuthStore();
@@ -27,36 +29,37 @@ export default function MemberListScreen() {
 					<ScrollView className="px-5 py-2">
 						<VStack space="md">
 							{members.map((member) => (
-								<HStack
+								<AnimatedPressable
 									key={member.id}
-									className="items-center justify-between py-4"
+									onPress={() => openProfile(member.id)}
 								>
-									<HStack space="lg" className="items-center">
-										<HStack space="md" className="items-center">
-											<Avatar
-												size="sm"
-												photoUrl={member.photoUrl ?? undefined}
-											/>
-											<VStack>
-												<Text size="lg" className="font-pretendard-semi-bold">
-													{member.displayName ?? '이름없음'}
+									<HStack className="items-center justify-between py-4">
+										<HStack space="lg" className="items-center">
+											<HStack space="md" className="items-center">
+												<Avatar
+													size="sm"
+													photoUrl={member.photoUrl ?? undefined}
+												/>
+												<VStack>
+													<Text size="lg" className="font-pretendard-semi-bold">
+														{member.displayName ?? '이름없음'}
+													</Text>
+												</VStack>
+											</HStack>
+											<Box
+												className={
+													member.role === 'leader'
+														? 'px-2 rounded-full py-1 bg-primary-400'
+														: 'px-2 rounded-full py-1 bg-gray-500'
+												}
+											>
+												<Text size="xs" className="text-typography-50">
+													{member.role === 'leader' ? '리더' : '그룹원'}
 												</Text>
-											</VStack>
+											</Box>
 										</HStack>
-
-										<Box
-											className={
-												member.role === 'leader'
-													? 'px-2 rounded-full py-1 bg-primary-400'
-													: 'px-2 rounded-full py-1 bg-gray-500'
-											}
-										>
-											<Text size="xs" className="text-typography-50">
-												{member.role === 'leader' ? '리더' : '그룹원'}
-											</Text>
-										</Box>
 									</HStack>
-								</HStack>
+								</AnimatedPressable>
 							))}
 						</VStack>
 					</ScrollView>

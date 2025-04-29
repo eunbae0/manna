@@ -31,7 +31,7 @@ export default function NoteScreen() {
 		isRefetching: refreshing,
 		refetch: refetchNotes,
 	} = useNotes(selectedWorshipType);
-	
+
 	// 로딩 상태를 지연시켜 최소한의 스켈레톤 UI 표시 시간 보장
 	const showSkeleton = useDelayedValue(loading);
 

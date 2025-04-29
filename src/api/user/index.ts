@@ -72,11 +72,13 @@ export const updateUser = withApiLogging(
 
 			const updatedUserData = await userService.updateUser(userId, data);
 
-			if (!data.displayName && !data.photoUrl) return updatedUserData;
+			if (!data.displayName && !data.photoUrl && !data.statusMessage)
+				return updatedUserData;
 			const processedData = Object.assign(
 				{ id: userId },
 				data.displayName ? { displayName: data.displayName } : {},
 				data.photoUrl ? { photoUrl: data.photoUrl } : {},
+				data.statusMessage ? { statusMessage: data.statusMessage } : {},
 			) satisfies UpdateGroupMemberInput;
 
 			const groups = await fetchGroupsByUserId(userId);

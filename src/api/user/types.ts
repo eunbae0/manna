@@ -27,6 +27,7 @@ export interface FirestoreUser {
 	photoUrl?: string | null;
 	authType: AuthType;
 	authId?: string | null;
+	statusMessage?: string | null;
 	createdAt?: FieldValue;
 	lastLogin?: FieldValue;
 	isDeleted?: boolean;

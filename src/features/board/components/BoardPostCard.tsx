@@ -187,11 +187,11 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 
 	const isLiked = reactions
 		? Object.values(reactions).some((reactions) =>
-			reactions.some(
-				(reaction) =>
-					reaction.userId === user?.id && reaction.type === 'like',
-			),
-		)
+				reactions.some(
+					(reaction) =>
+						reaction.userId === user?.id && reaction.type === 'like',
+				),
+			)
 		: false;
 
 	const addReactionMutation = useAddReaction();

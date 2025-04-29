@@ -77,7 +77,7 @@ import {
 	BottomSheetListItem,
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
-import { goBackOrReplaceHome } from '@/shared/utils/router';
+import { goBackOrReplaceHome, openProfile } from '@/shared/utils/router';
 
 /**
  * 로딩 상태 컴포넌트
@@ -176,11 +176,11 @@ export default function BoardPostDetailScreen() {
 	// 현재 사용자가 좋아요를 눌렀는지 확인
 	const isLiked = reactions
 		? Object.values(reactions).some((reactions) =>
-			reactions.some(
-				(reaction) =>
-					reaction.userId === user?.id && reaction.type === 'like',
-			),
-		)
+				reactions.some(
+					(reaction) =>
+						reaction.userId === user?.id && reaction.type === 'like',
+				),
+			)
 		: false;
 
 	// 반응(좋아요) 추가/제거 뮤테이션
@@ -502,15 +502,23 @@ export default function BoardPostDetailScreen() {
 						{/* 작성자 정보 */}
 						<HStack className="mb-4 items-center justify-between">
 							<HStack space="sm" className="items-center">
-								<Avatar size="xs" photoUrl={post.author.photoUrl || ''} />
-								<HStack space="xs" className="items-center">
-									<Text size="sm" className="font-pretendard-bold">
-										{post.author.displayName || '이름없음'}
-									</Text>
-									{post.author.role === 'leader' && (
-										<Icon as={Crown} size="sm" className="text-yellow-500" />
-									)}
-								</HStack>
+								<AnimatedPressable onPress={() => openProfile(post.author.id)}>
+									<HStack space="sm" className="items-center">
+										<Avatar size="xs" photoUrl={post.author.photoUrl || ''} />
+										<HStack space="xs" className="items-center">
+											<Text size="sm" className="font-pretendard-bold">
+												{post.author.displayName || '이름없음'}
+											</Text>
+											{post.author.role === 'leader' && (
+												<Icon
+													as={Crown}
+													size="sm"
+													className="text-yellow-500"
+												/>
+											)}
+										</HStack>
+									</HStack>
+								</AnimatedPressable>
 								<HStack space="xs" className="items-center">
 									<Box className="w-1 h-1 rounded-full bg-gray-300" />
 									<Text className="text-typography-500" size="sm">
@@ -690,11 +698,13 @@ export default function BoardPostDetailScreen() {
 								});
 							}}
 						/>
-						{user?.id && post?.author?.role === UserRole.LEADER && <BottomSheetListItem
-							label={post.isPinned ? '고정 해제하기' : '고정하기'}
-							icon={post.isPinned ? PinOff : Pin}
-							onPress={handleTogglePin}
-						/>}
+						{user?.id && post?.author?.role === UserRole.LEADER && (
+							<BottomSheetListItem
+								label={post.isPinned ? '고정 해제하기' : '고정하기'}
+								icon={post.isPinned ? PinOff : Pin}
+								onPress={handleTogglePin}
+							/>
+						)}
 						<BottomSheetListItem
 							label="삭제하기"
 							icon={Trash}

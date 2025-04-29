@@ -19,6 +19,8 @@ import type {
 } from '@/features/fellowship/api/types';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { openProfile } from '@/shared/utils/router';
 
 type SermonContentItemProps = {
 	index?: number;
@@ -114,18 +116,24 @@ export default function FellowshipContent({
 					{existedAnswers.map((answer) => (
 						<VStack key={answer.member.id}>
 							<VStack space="sm">
-								<HStack space="sm" className="items-center">
-									<Avatar
-										size="2xs"
-										photoUrl={answer.member.photoUrl || undefined}
-									/>
-									<Text
-										size="md"
-										className="font-pretendard-bold text-typography-600"
-									>
-										{answer.member.displayName}
-									</Text>
-								</HStack>
+								<AnimatedPressable
+									onPress={() =>
+										!answer.member.isGuest && openProfile(answer.member.id)
+									}
+								>
+									<HStack space="sm" className="items-center">
+										<Avatar
+											size="2xs"
+											photoUrl={answer.member.photoUrl || undefined}
+										/>
+										<Text
+											size="md"
+											className="font-pretendard-bold text-typography-600"
+										>
+											{answer.member.displayName}
+										</Text>
+									</HStack>
+								</AnimatedPressable>
 								<Text size="lg" className="flex-1 mx-1">
 									{answer.value}
 								</Text>
