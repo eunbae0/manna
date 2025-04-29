@@ -690,11 +690,11 @@ export default function BoardPostDetailScreen() {
 								});
 							}}
 						/>
-						<BottomSheetListItem
+						{user?.id && post?.author?.role === UserRole.LEADER && <BottomSheetListItem
 							label={post.isPinned ? '고정 해제하기' : '고정하기'}
 							icon={post.isPinned ? PinOff : Pin}
 							onPress={handleTogglePin}
-						/>
+						/>}
 						<BottomSheetListItem
 							label="삭제하기"
 							icon={Trash}

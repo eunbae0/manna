@@ -28,10 +28,11 @@ import {
 } from '@/components/common/bottom-sheet';
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
-import type {
-	BoardPost,
-	PostReactionMetadata,
-	ReactionType,
+import {
+	UserRole,
+	type BoardPost,
+	type PostReactionMetadata,
+	type ReactionType,
 } from '@/features/board/types';
 import {
 	useReactions,
@@ -353,11 +354,13 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 							});
 						}}
 					/>
-					<BottomSheetListItem
-						label={post.isPinned ? '고정 해제하기' : '고정하기'}
-						icon={post.isPinned ? PinOff : Pin}
-						onPress={handleTogglePin}
-					/>
+					{user?.id && post?.author?.role === UserRole.LEADER && (
+						<BottomSheetListItem
+							label={post.isPinned ? '고정 해제하기' : '고정하기'}
+							icon={post.isPinned ? PinOff : Pin}
+							onPress={handleTogglePin}
+						/>
+					)}
 					<BottomSheetListItem
 						label="삭제하기"
 						icon={Trash}
