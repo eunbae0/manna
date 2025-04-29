@@ -24,7 +24,7 @@ import { cn } from '@/shared/utils/cn';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Divider } from '#/components/ui/divider';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { } from 'react-native-keyboard-controller';
 import { categoryLabels } from '@/features/board/constants';
 import { PostCategory } from '@/features/board/types';
 import {
@@ -34,6 +34,7 @@ import {
 } from '@/features/board/hooks';
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
+import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 
 /**
  * 게시글 작성 화면
@@ -275,7 +276,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'FREE' &&
-											'font-pretendard-bold text-primary-400',
+										'font-pretendard-bold text-primary-400',
 									)}
 								>
 									자유게시판
@@ -298,7 +299,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'NOTICE' &&
-											'font-pretendard-bold text-primary-400',
+										'font-pretendard-bold text-primary-400',
 									)}
 								>
 									공지사항

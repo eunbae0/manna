@@ -10,7 +10,6 @@ import { Box } from '#/components/ui/box';
 import { Divider } from '#/components/ui/divider';
 import { Button, ButtonText } from '@/components/common/button';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { useState, useEffect } from 'react';
 import {
@@ -28,6 +27,7 @@ import type {
 } from '@/api/worship-types/types';
 import { ModalHeader } from '@/shared/components/modal-header/ModalHeader';
 import { isAndroid } from '@/shared/utils/platform';
+import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 
 export default function selectedWorshipTypeModal() {
 	const isPresented = router.canGoBack();

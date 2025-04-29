@@ -60,7 +60,6 @@ import {
 	useUpdateNote,
 	useDeleteNote,
 } from '@/features/notes/hooks/useNote';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { Keyboard } from 'react-native';
 import Animated, {
 	useSharedValue,
@@ -74,6 +73,7 @@ import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
+import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 
 export default function NoteScreen() {
 	const insets = useSafeAreaInsets();
