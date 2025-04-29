@@ -17,7 +17,8 @@
 			"android/*",
 			"public/*",
 			"eas.json",
-			"gluestack-ui.config.json"
+			"gluestack-ui.config.json",
+			"**/*.json"
 		]
 	},
 	"formatter": {
