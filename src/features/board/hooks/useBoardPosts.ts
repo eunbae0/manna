@@ -26,6 +26,8 @@ export const boardKeys = {
 		[...boardKeys.all, 'post', groupId, postId] as const,
 	infinitePosts: (groupId: string) =>
 		[...boardKeys.all, 'infinite_posts', groupId] as const,
+	pinnedPost: (groupId?: string) =>
+		[...boardKeys.all, 'pinned', groupId] as const,
 };
 
 /**
@@ -171,6 +173,31 @@ export function useInfiniteBoardPosts(
 			// 마지막 아이템의 createdAt을 다음 페이지 파라미터로 사용
 			const lastItem = lastPage.items[lastPage.items.length - 1];
 			return lastItem?.createdAt || undefined;
+		},
+		enabled: !!groupId,
+	});
+}
+
+/**
+ * 그룹 내 고정된 게시글을 가져오는 훅
+ * @param groupId 그룹 ID
+ * @returns 고정된 게시글 정보와 로딩 상태
+ */
+export function usePinnedPost(groupId?: string) {
+	return useQuery({
+		queryKey: boardKeys.pinnedPost(groupId),
+		queryFn: async (): Promise<BoardPost | null> => {
+			if (!groupId) return null;
+			
+			// 고정된 게시글 조회
+			const result = await fetchBoardPostsByGroupId({
+				groupId,
+				isPinned: true,
+				limit: 1,
+			});
+			
+			// 고정된 게시글이 있으면 첫 번째 게시글 반환
+			return result.items.length > 0 ? result.items[0] : null;
 		},
 		enabled: !!groupId,
 	});

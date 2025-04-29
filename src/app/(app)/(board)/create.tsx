@@ -138,7 +138,6 @@ export default function CreateBoardPostScreen() {
 				{
 					onSuccess: () => {
 						showSuccess('게시글이 수정되었어요');
-						// go back시 handleExit() 호출??
 						router.dismiss();
 					},
 					onError: (error) => {

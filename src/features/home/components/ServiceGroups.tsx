@@ -8,10 +8,23 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { Icon } from '#/components/ui/icon';
-import { Calendar, Presentation } from 'lucide-react-native';
+import { Calendar, Megaphone, Presentation } from 'lucide-react-native';
+import { usePinnedPost } from '@/features/board/hooks/useBoardPosts';
+import { useAuthStore } from '@/store/auth';
+import { useDelayedValue } from '@/hooks/useDelayedValue';
 
 export default function ServiceGroups() {
 	const { setType } = useFellowshipStore();
+	const { currentGroup } = useAuthStore();
+
+	// 고정된 게시글 가져오기
+	const {
+		data: pinnedPost,
+		isLoading: isPinnedPostLoading
+	} = usePinnedPost(currentGroup?.groupId);
+
+	// 로딩 상태 지연 처리
+	const isLoading = useDelayedValue(isPinnedPostLoading);
 
 	const handlePressCreateFellowship = () => {
 		trackAmplitudeEvent('나눔 만들기 클릭', { screen: 'Tab_Home' });
@@ -34,6 +47,14 @@ export default function ServiceGroups() {
 	const handlePressBoard = () => {
 		trackAmplitudeEvent('게시판 클릭', { screen: 'Tab_Home' });
 		router.push('/(app)/(board)/board-index');
+	};
+
+	// 고정된 게시글로 이동하는 핸들러
+	const handlePressPinnedPost = () => {
+		if (!pinnedPost) return;
+
+		trackAmplitudeEvent('고정 게시글 클릭', { screen: 'Tab_Home' });
+		router.push(`/(app)/(board)/${pinnedPost.id}`);
 	};
 
 	return (
@@ -101,6 +122,20 @@ export default function ServiceGroups() {
 					</AnimatedPressable>
 				</HStack>
 			</HStack>
+			{/* 고정된 게시글이 있을 때만 표시 */}
+			{!isLoading && pinnedPost && (
+				<AnimatedPressable className="flex-1" onPress={handlePressPinnedPost}>
+					<HStack
+						space="md"
+						className="items-center justify-center rounded-2xl py-3 px-2"
+					>
+						<Icon as={Megaphone} size="xl" className="stroke-primary-400" />
+						<Text size="lg" className="flex-1 text-typography-800 font-pretendard-medium" numberOfLines={1} ellipsizeMode="tail">
+							{pinnedPost.title}
+						</Text>
+					</HStack>
+				</AnimatedPressable>
+			)}
 		</VStack>
 	);
 }

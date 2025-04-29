@@ -166,7 +166,7 @@ function HomeList() {
 		<>
 			<FlatList
 				ListHeaderComponent={
-					<VStack space="2xl" className="pt-2 pb-4">
+					<VStack className="pt-2 pb-4">
 						<VStack space="lg" className="pt-2">
 							{recentFellowshipNotification && (
 								<NotificationBox
@@ -179,9 +179,9 @@ function HomeList() {
 							<ServiceGroups />
 						</VStack>
 
-						<Divider className="h-2 bg-background-100" />
+						<Divider className="mt-3 h-2 bg-background-100" />
 
-						<VStack className="gap-12 py-1">
+						<VStack className="mt-6 gap-12 py-1">
 							<VStack space="lg">
 								<HStack className="justify-between px-4 items-center">
 									<Heading className="text-[20px]">우리의 기도 제목</Heading>

@@ -101,46 +101,6 @@ export const createBoardPost = withApiLogging(
 );
 
 /**
- * 그룹 내 고정된 게시글 확인
- * @param groupId 그룹 ID
- * @param currentPostId 현재 게시글 ID (이 게시글은 제외하고 검색)
- * @returns 고정된 게시글 또는 없으면 null
- */
-export const checkPinnedPost = withApiLogging(
-	async (metadata: {
-		groupId: string;
-		currentPostId?: string;
-	}): Promise<BoardPost | null> => {
-		try {
-			const { groupId, currentPostId } = metadata;
-
-			// 현재 고정된 게시글 조회
-			const result = await fetchBoardPostsByGroupId({
-				groupId,
-				isPinned: true,
-				limit: 1,
-			});
-
-			// 현재 게시글이 아닌 다른 고정된 게시글이 있는지 확인
-			if (currentPostId) {
-				const pinnedPost = result.items.find(
-					(item) => item.id !== currentPostId && item.isPinned,
-				);
-				return pinnedPost || null;
-			}
-
-			// 현재 게시글 ID가 없으면 첫 번째 고정 게시글 반환
-			return result.items.length > 0 ? result.items[0] : null;
-		} catch (error) {
-			console.error('Error checking pinned post:', error);
-			throw handleApiError(error, 'checkPinnedPost', 'board');
-		}
-	},
-	'checkPinnedPost',
-	'board',
-);
-
-/**
  * 게시글 업데이트
  * @param postId 게시글 ID
  * @param postData 업데이트할 게시글 데이터
@@ -175,6 +135,45 @@ export const deleteBoardPost = withApiLogging(
 		}
 	},
 	'deleteBoardPost',
+	'board',
+);
+
+/**
+ * 그룹 내 고정된 게시글이 있는지 확인
+ * @param metadata 그룹 ID와 현재 게시글 ID
+ * @returns 고정된 게시글 또는 null
+ */
+export const checkPinnedPost = withApiLogging(
+	async (metadata: {
+		groupId: string;
+		currentPostId?: string;
+	}): Promise<BoardPost | null> => {
+		try {
+			const { groupId, currentPostId } = metadata;
+
+			// 현재 고정된 게시글 조회
+			const result = await fetchBoardPostsByGroupId({
+				groupId,
+				isPinned: true,
+				limit: 1,
+			});
+
+			// 현재 게시글이 아닌 다른 고정된 게시글이 있는지 확인
+			if (currentPostId) {
+				const pinnedPost = result.items.find(
+					(item) => item.id !== currentPostId && item.isPinned,
+				);
+				return pinnedPost || null;
+			}
+
+			// 현재 게시글 ID가 없으면 첫 번째 고정 게시글 반환
+			return result.items.length > 0 ? result.items[0] : null;
+		} catch (error) {
+			console.error('Error checking pinned post:', error);
+			throw handleApiError(error, 'checkPinnedPost', 'board');
+		}
+	},
+	'checkPinnedPost',
 	'board',
 );
 
