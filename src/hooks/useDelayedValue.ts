@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const DEFAULT_DELAY_MS = 275;
+const DEFAULT_DELAY_MS = 225;
 
 /**
  * 값이 false로 변경될 때 지정된 시간만큼 지연시키는 훅
