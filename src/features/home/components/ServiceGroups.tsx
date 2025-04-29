@@ -8,7 +8,7 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { Icon } from '#/components/ui/icon';
-import { Calendar, Megaphone, Presentation } from 'lucide-react-native';
+import { Calendar, Megaphone, NotebookPen, Presentation } from 'lucide-react-native';
 import { usePinnedPost } from '@/features/board/hooks/useBoardPosts';
 import { useAuthStore } from '@/store/auth';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
@@ -39,7 +39,7 @@ export default function ServiceGroups() {
 	// 일정 화면으로 이동하는 핸들러
 	const handlePressSchedule = () => {
 		trackAmplitudeEvent('일정 클릭', { screen: 'Tab_Home' });
-		router.push('/(app)/(schedule)');
+		router.push('/(app)/(tabs)/note');
 	};
 
 	// 게시판 화면으로 이동하는 핸들러
@@ -115,8 +115,8 @@ export default function ServiceGroups() {
 							space="xs"
 							className="items-center justify-center bg-gray-100 rounded-2xl h-full"
 						>
-							<Icon as={Calendar} size="xl" />
-							<Text>일정</Text>
+							<Icon as={NotebookPen} size="xl" />
+							<Text>설교 노트</Text>
 						</VStack>
 					</AnimatedPressable>
 				</HStack>
