@@ -97,21 +97,23 @@ export default forwardRef<
 			<VStack space="xl" className="pl-2">
 				{existedAnswers.map((answer) => (
 					<VStack key={answer.member.id}>
-						<HStack space="md" className="">
+						<VStack space="sm" className="">
 							<HStack space="sm" className="items-center">
 								<Avatar
-									size="xs"
+									size="2xs"
 									photoUrl={answer.member.photoUrl || undefined}
 								/>
 								<Text
-									size="lg"
+									size="md"
 									className="font-pretendard-bold text-typography-600"
 								>
 									{answer.member.displayName}
 								</Text>
 							</HStack>
-							<Text size="lg">{answer.value}</Text>
-						</HStack>
+							<Text size="lg" className="flex-1 mx-1">
+								{answer.value}
+							</Text>
+						</VStack>
 					</VStack>
 				))}
 			</VStack>

@@ -110,26 +110,26 @@ export default function FellowshipContent({
 						</Button>
 					)}
 				</HStack>
-				<VStack space="md" className="pl-4">
+				<VStack space="xl" className="pl-4">
 					{existedAnswers.map((answer) => (
 						<VStack key={answer.member.id}>
-							<HStack space="lg" className="items-center">
+							<VStack space="sm">
 								<HStack space="sm" className="items-center">
 									<Avatar
-										size="xs"
+										size="2xs"
 										photoUrl={answer.member.photoUrl || undefined}
 									/>
 									<Text
-										size="lg"
+										size="md"
 										className="font-pretendard-bold text-typography-600"
 									>
 										{answer.member.displayName}
 									</Text>
 								</HStack>
-								<Text size="lg" className="flex-1 mr-4">
+								<Text size="lg" className="flex-1 mx-1">
 									{answer.value}
 								</Text>
-							</HStack>
+							</VStack>
 						</VStack>
 					))}
 				</VStack>
