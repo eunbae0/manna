@@ -35,7 +35,6 @@ import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 import DateTimePicker, {
 	DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { useCreateNote } from '@/features/notes/hooks/useCreateNote';
@@ -51,6 +50,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { isAndroid } from '@/shared/utils/platform';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 
 export default function CreateScreen() {
 	const insets = useSafeAreaInsets();
