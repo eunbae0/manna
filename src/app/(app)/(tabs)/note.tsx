@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from 'react';
+import { useDelayedValue } from '@/hooks/useDelayedValue';
 import { RefreshControl, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 
@@ -30,6 +31,9 @@ export default function NoteScreen() {
 		isRefetching: refreshing,
 		refetch: refetchNotes,
 	} = useNotes(selectedWorshipType);
+	
+	// 로딩 상태를 지연시켜 최소한의 스켈레톤 UI 표시 시간 보장
+	const showSkeleton = useDelayedValue(loading);
 
 	const { worshipTypes, refetch: refetchWorshipTypes } = useWorshipTypes();
 
@@ -66,7 +70,7 @@ export default function NoteScreen() {
 					}
 				>
 					<VStack space="lg" className="">
-						{loading ? (
+						{showSkeleton ? (
 							<NoteSkeleton />
 						) : notes.length === 0 ? (
 							<Text className="text-center py-4">노트가 없습니다.</Text>

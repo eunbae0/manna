@@ -20,10 +20,11 @@ import { Text } from '#/components/ui/text';
 import { useToastStore } from '@/store/toast';
 
 // 게시판 관련 컴포넌트 및 데이터 import
-import { FilterTag, BoardPostCard } from '@/features/board/components';
+import { FilterTag, BoardPostCard, BoardPostSkeletonList } from '@/features/board/components';
 import { PostCategory, BoardPost } from '@/features/board/types';
 import { useInfiniteBoardPosts } from '@/features/board/hooks';
 import { useAuthStore } from '@/store/auth';
+import { useDelayedValue } from '@/hooks/useDelayedValue';
 
 export default function BoardIndexScreen() {
 	// 선택된 카테고리 필터 (null이면 '전체')
@@ -34,6 +35,8 @@ export default function BoardIndexScreen() {
 	// 스크롤 위치에 따른 버튼 텍스트 표시 여부
 	const scrollY = useRef(new Animated.Value(0)).current;
 	const [showButtonText, setShowButtonText] = useState(true);
+
+
 
 	// 현재 그룹 정보 가져오기
 	const { currentGroup } = useAuthStore();
@@ -57,6 +60,7 @@ export default function BoardIndexScreen() {
 		hasNextPage,
 		isFetchingNextPage,
 		refetch,
+		isFetched,
 	} = useInfiniteBoardPosts({
 		groupId: currentGroup?.groupId || '',
 		category: selectedCategory || undefined,
@@ -78,6 +82,9 @@ export default function BoardIndexScreen() {
 			},
 		},
 	);
+
+	// 최소 400ms 동안 스켈레톤 UI를 표시하도록 로딩 상태 지연
+	const showSkeleton = useDelayedValue(isLoading);
 
 	// 필터링된 게시글 목록
 	const filteredPosts = useMemo(() => {
@@ -140,26 +147,25 @@ export default function BoardIndexScreen() {
 
 	// 빈 상태 렌더링 함수
 	const renderEmptyState = () => {
+		// 로딩 중일 때는 스켈레톤 UI 표시
 		if (isLoading && !isFetchingNextPage) {
-			return (
-				<VStack className="mt-10 items-center justify-center">
-					<ActivityIndicator size="large" color="#6366f1" />
-					<Text className="mt-4 text-gray-500">게시글을 불러오는 중이에요</Text>
-				</VStack>
-			);
+			return <BoardPostSkeletonList count={5} />;
 		}
 
+		// 에러 발생 시
 		if (isError) {
 			return (
 				<VStack className="mt-10">
 					<EmptyState
 						title="게시글을 불러오지 못했어요"
-						description="잠시 후 다시 시도해주세요"
+						description={error?.message || '잠시 후 다시 시도해주세요'}
+						icon="error"
 					/>
 				</VStack>
 			);
 		}
 
+		// 게시글이 없는 경우
 		return (
 			<VStack className="mt-10">
 				<EmptyState
@@ -198,31 +204,36 @@ export default function BoardIndexScreen() {
 				{renderFilterTags()}
 
 				{/* 게시글 목록 */}
-				<Animated.FlatList
-					data={filteredPosts}
-					renderItem={({ item }) => <BoardPostCard post={item} />}
-					keyExtractor={(item) => item.id}
-					ItemSeparatorComponent={renderSeparator}
-					ListEmptyComponent={renderEmptyState}
-					ListFooterComponent={renderFooter}
-					showsVerticalScrollIndicator={false}
-					contentContainerStyle={{ paddingBottom: 28 }}
-					onScroll={handleScroll}
-					scrollEventThrottle={16}
-					onEndReached={handleLoadMore}
-					onEndReachedThreshold={0.5}
-					refreshControl={
-						<RefreshControl
-							refreshing={isLoading && !isFetchingNextPage}
-							onRefresh={() => {
-								if (currentGroup?.groupId) {
-									refetch();
-								}
-							}}
-							tintColor="#6366f1"
-						/>
-					}
-				/>
+				{(showSkeleton || isLoading) && !isFetchingNextPage ? (
+					<BoardPostSkeletonList count={2} />
+				) : (
+					<Animated.FlatList
+						data={filteredPosts}
+						renderItem={({ item }) => <BoardPostCard post={item} />}
+						keyExtractor={(item) => item.id}
+						ItemSeparatorComponent={renderSeparator}
+						ListEmptyComponent={renderEmptyState}
+						ListFooterComponent={renderFooter}
+						showsVerticalScrollIndicator={false}
+						contentContainerStyle={{ paddingBottom: 28 }}
+						onScroll={handleScroll}
+						scrollEventThrottle={16}
+						onEndReached={handleLoadMore}
+						onEndReachedThreshold={0.5}
+						refreshControl={
+							<RefreshControl
+								refreshing={isLoading && !isFetchingNextPage}
+								onRefresh={() => {
+									if (currentGroup?.groupId) {
+										refetch();
+									}
+								}}
+								tintColor="#6366f1"
+							/>
+						}
+					/>
+				)}
+
 
 				{/* 글쓰기 버튼 */}
 				<Button

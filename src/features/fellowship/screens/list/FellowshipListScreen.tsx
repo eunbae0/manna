@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useDelayedValue } from '@/hooks/useDelayedValue';
 import {
 	ActivityIndicator,
 	FlatList,
@@ -147,9 +148,12 @@ export default function FellowshipListScreen() {
 		);
 	};
 
+	// 로딩 상태를 지연시켜 최소한의 스켈레톤 UI 표시 시간 보장
+	const showSkeleton = useDelayedValue(isLoading);
+
 	// 빈 리스트 렌더링 함수
 	const renderEmptyList = () => {
-		if (isLoading) return <FellowshipSkeleton />;
+		if (showSkeleton) return <FellowshipSkeleton />;
 
 		if (isError) {
 			return (
@@ -180,50 +184,57 @@ export default function FellowshipListScreen() {
 		<SafeAreaView className="flex-1 bg-white">
 			<VStack className="flex-1">
 				<Header />
-				<Box className="flex-1 relative">
-					<FlatList
-						data={fellowships}
-						renderItem={renderFellowshipItem}
-						keyExtractor={(item) => item.id}
-						contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}
-						ListHeaderComponent={
-							<VStack space="md" className="mb-4">
-								<Heading className="text-[24px]">나눔 기록</Heading>
+				<Box className="flex-1">
+					{/* 나눔 기록 목록 */}
+					{showSkeleton && !isFetchingNextPage ? (
+						<Box className="px-5 pt-5">
+							<FellowshipSkeleton />
+						</Box>
+					) : (
+						<FlatList
+							data={fellowships}
+							renderItem={renderFellowshipItem}
+							keyExtractor={(item) => item.id}
+							contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}
+							ListHeaderComponent={
+								<VStack space="md" className="mb-4">
+									<Heading className="text-[24px]">나눔 기록</Heading>
 
-								{/* 나눔장 표시 체크박스 - 오른쪽에 배치 */}
-								<AnimatedPressable
-									onPress={() => setShowLeader(!showLeader)}
-									className="self-end"
-								>
-									<HStack space="sm" className="items-center">
-										<Text className="text-typography-600">나눔장 보기</Text>
-										<Box
-											className={`w-5 h-5 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
-										>
-											{showLeader && (
-												<Icon as={Check} size="xs" className="stroke-white" />
-											)}
-										</Box>
-									</HStack>
-								</AnimatedPressable>
-							</VStack>
-						}
-						ListEmptyComponent={renderEmptyList}
-						ListFooterComponent={renderFooter}
-						onEndReached={handleLoadMore}
-						onEndReachedThreshold={0.5}
-						refreshControl={
-							<RefreshControl
-								refreshing={refreshing}
-								onRefresh={handleRefresh}
-								tintColor="#4F46E5"
-								title="새로고침 중..."
-								titleColor="#4B5563"
-							/>
-						}
-						showsVerticalScrollIndicator={false}
-						className="flex-1"
-					/>
+									{/* 나눔장 표시 체크박스 - 오른쪽에 배치 */}
+									<AnimatedPressable
+										onPress={() => setShowLeader(!showLeader)}
+										className="self-end"
+									>
+										<HStack space="sm" className="items-center">
+											<Text className="text-typography-600">나눔장 보기</Text>
+											<Box
+												className={`w-5 h-5 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
+											>
+												{showLeader && (
+													<Icon as={Check} size="xs" className="stroke-white" />
+												)}
+											</Box>
+										</HStack>
+									</AnimatedPressable>
+								</VStack>
+							}
+							ListEmptyComponent={renderEmptyList}
+							ListFooterComponent={renderFooter}
+							onEndReached={handleLoadMore}
+							onEndReachedThreshold={0.5}
+							refreshControl={
+								<RefreshControl
+									refreshing={refreshing}
+									onRefresh={handleRefresh}
+									tintColor="#6366f1"
+									title="새로고침 중..."
+									titleColor="#4B5563"
+								/>
+							}
+							showsVerticalScrollIndicator={false}
+							className="flex-1"
+						/>
+					)}
 					<Button
 						size="lg"
 						variant="solid"
