@@ -6,7 +6,7 @@ export default {
 		displayName: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
 		slug: 'so-group',
 		scheme: ['sogroup-development', 'sogroup'],
-		version: '1.0.2',
+		version: '1.0.3',
 		orientation: 'portrait',
 		icon: './assets/images/icons/icon.png',
 		userInterfaceStyle: 'automatic',
@@ -22,7 +22,7 @@ export default {
 				CADisableMinimumFrameDurationOnPhone: true,
 				UIBackgroundModes: ['remote-notification'],
 				CFBundleDisplayName: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
-				CFBundleVersion: '1.0.2',
+				CFBundleVersion: '1.0.3',
 			},
 			entitlements: {
 				'com.apple.developer.applesignin': ['Default'],
@@ -33,10 +33,10 @@ export default {
 				? './assets/google/development/GoogleService-Info.plist'
 				: './assets/google/GoogleService-Info.plist',
 			appleTeamId: 'AQ62DT56AM',
-			version: '1.0.2',
+			version: '1.0.3',
 		},
 		android: {
-			versionCode: 10201,
+			versionCode: 10300,
 			adaptiveIcon: {
 				foregroundImage: './assets/images/icons/play_store_icon.png',
 				backgroundColor: '#FEF8EF',
