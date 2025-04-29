@@ -24,7 +24,6 @@ import { cn } from '@/shared/utils/cn';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Divider } from '#/components/ui/divider';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
-import { } from 'react-native-keyboard-controller';
 import { categoryLabels } from '@/features/board/constants';
 import { PostCategory } from '@/features/board/types';
 import {

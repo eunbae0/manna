@@ -23,7 +23,7 @@ export function NotificationScreenHeader() {
 					trackAmplitudeEvent('알림설정 클릭', {
 						screen: 'Tab_Notification',
 					});
-					router.push('/(app)/(more)/notification');
+					router.push('/(app)/(more)/(notification-setting)/setting-index');
 				}}
 			>
 				<ButtonIcon as={Settings} />

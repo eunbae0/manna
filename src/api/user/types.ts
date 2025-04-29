@@ -4,9 +4,13 @@ import type { AuthType } from '../auth/types';
 
 export type UserGroup = {
 	groupId: ClientGroup['id'];
-	notificationPreferences?: {
+	notificationPreferences: {
 		fellowship: boolean;
 		prayerRequest: boolean;
+		board: {
+			activity: boolean;
+			newPost: boolean;
+		};
 	};
 	/**
 	 * 대표 그룹 여부 (true = 대표 그룹)

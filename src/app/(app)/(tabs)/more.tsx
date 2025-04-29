@@ -81,7 +81,7 @@ export default function TabFourScreen() {
 										trackAmplitudeEvent('알림설정 클릭', {
 											screen: 'Tab_More',
 										});
-										router.push('/(app)/(more)/notification');
+										router.push('/(app)/(more)/(notification-setting)/setting-index');
 									}}
 								/>
 								<ListItem

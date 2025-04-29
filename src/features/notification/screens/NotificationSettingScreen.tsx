@@ -15,6 +15,10 @@ import type { UserGroup } from '@/shared/types';
 import { NotificationPermissionBanner } from '../components/NotificationPermissionBanner';
 import { useNotificationPermission } from '../hooks/useNotificationPermission';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { Icon } from '#/components/ui/icon';
+import { ChevronRight } from 'lucide-react-native';
+import { router } from 'expo-router';
 
 type TabType = Pick<ClientGroup, 'id' | 'groupName'>;
 
@@ -95,6 +99,9 @@ export default function NotificationSettingScreen() {
 					type === 'prayerRequest'
 						? value
 						: (userGroup.notificationPreferences?.prayerRequest ?? true),
+				board: {
+					...userGroup.notificationPreferences?.board,
+				},
 			},
 		});
 	};
@@ -165,6 +172,21 @@ export default function NotificationSettingScreen() {
 						)
 					}
 				/>
+				<AnimatedPressable
+					onPress={() =>
+						router.push({
+							pathname: '/(app)/(more)/(notification-setting)/board',
+							params: { groupId: selectedGroup.id },
+						})
+					}
+				>
+					<HStack className="py-2 justify-between items-center">
+						<Text size="xl" className="font-pretendard-bold">
+							게시판 알림 설정
+						</Text>
+						<Icon as={ChevronRight} className="stroke-typography-600" />
+					</HStack>
+				</AnimatedPressable>
 			</VStack>
 		);
 	};
