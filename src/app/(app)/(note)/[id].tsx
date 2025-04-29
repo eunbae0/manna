@@ -72,6 +72,8 @@ import Animated, {
 import { cn } from '@/shared/utils/cn';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
+import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 
 export default function NoteScreen() {
 	const insets = useSafeAreaInsets();
@@ -226,6 +228,11 @@ export default function NoteScreen() {
 			},
 		});
 	};
+
+	// 뒤로가기 방지 및 확인 모달 훅 사용
+	const { bottomSheetProps, handleExit } = usePreventBackWithConfirm({
+		condition: isEditing,
+	});
 
 	const isLoading = isLoadingNote || isUpdating || isDeleting;
 
@@ -511,6 +518,8 @@ export default function NoteScreen() {
 						/>
 					</View>
 				</BottomSheetContainer>
+				{/* 뒤로가기 확인 모달 */}
+				<ExitConfirmModal {...bottomSheetProps} onExit={handleExit} />
 			</SafeAreaView>
 			<KeyboardToolbar />
 		</>
