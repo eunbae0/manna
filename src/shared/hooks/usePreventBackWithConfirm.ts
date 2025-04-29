@@ -80,10 +80,10 @@ export function usePreventBackWithConfirm({
 	}, [handleCloseConfirmModal, onConfirmExit, navigationAction, navigation]);
 
 	usePreventRemove(condition, ({ data }) => {
+		// GO_BACK이 아니면서 POP도 아닌 경우, 또는 POP이면서 source가 없는 경우 early return
 		if (
-			data.action.type !== 'GO_BACK' &&
-			data.action.type === 'POP' &&
-			!data.action.source
+			(data.action.type !== 'GO_BACK' && data.action.type !== 'POP') ||
+			(data.action.type === 'POP' && !data.action.source)
 		) {
 			navigation.dispatch(data.action);
 			return;
