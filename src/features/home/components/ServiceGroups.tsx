@@ -8,7 +8,12 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { Icon } from '#/components/ui/icon';
-import { Calendar, Megaphone, NotebookPen, Presentation } from 'lucide-react-native';
+import {
+	Calendar,
+	Megaphone,
+	NotebookPen,
+	Presentation,
+} from 'lucide-react-native';
 import { usePinnedPost } from '@/features/board/hooks/useBoardPosts';
 import { useAuthStore } from '@/store/auth';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
