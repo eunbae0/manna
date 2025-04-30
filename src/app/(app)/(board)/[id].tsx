@@ -1,16 +1,14 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import {
 	ScrollView,
-	KeyboardAvoidingView as RNKeyboardAvoidingView,
-	Platform,
-	TextInput,
+	type TextInput,
 	Alert,
 	ActivityIndicator,
 	FlatList,
 	RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams, useRouter } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
@@ -20,7 +18,10 @@ import { Icon } from '#/components/ui/icon';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
-import type { BottomSheetModal } from '@gorhom/bottom-sheet';
+import {
+	BottomSheetTextInput,
+	type BottomSheetModal,
+} from '@gorhom/bottom-sheet';
 import { useToastStore } from '@/store/toast';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import {
@@ -108,7 +109,6 @@ function ErrorState({ message }: { message: string }) {
 
 export default function BoardPostDetailScreen() {
 	const { id: postId } = useLocalSearchParams<{ id: string }>();
-	const router = useRouter();
 	const { showSuccess, showError } = useToastStore();
 	const commentInputRef = useRef<TextInput>(null);
 	const [commentText, setCommentText] = useState('');
@@ -657,8 +657,7 @@ export default function BoardPostDetailScreen() {
 					{/* 댓글 입력 영역 */}
 					<Divider />
 					<HStack space="md" className="items-center py-3">
-						<TextInput
-							ref={commentInputRef}
+						<BottomSheetTextInput
 							className="flex-1 bg-gray-100 text-lg rounded-2xl px-4 py-2"
 							placeholder="댓글을 입력해주세요"
 							value={commentText}
