@@ -5,7 +5,7 @@ import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
 import { Text } from '#/components/ui/text';
-import { TextInput } from 'react-native';
+import { Keyboard, TextInput } from 'react-native';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Avatar } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
@@ -82,6 +82,7 @@ export default function CreateBoardPostScreen() {
 
 	// 카테고리 선택 바텀시트 열기
 	const handleOpenCategorySheet = () => {
+		Keyboard.dismiss();
 		handleOpen();
 	};
 
@@ -224,7 +225,6 @@ export default function CreateBoardPostScreen() {
 											value={title}
 											onChangeText={setTitle}
 											className="text-xl font-pretendard-semi-bold p-2"
-											autoFocus
 											maxLength={100}
 										/>
 									</Box>
@@ -275,7 +275,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'FREE' &&
-											'font-pretendard-bold text-primary-400',
+										'font-pretendard-bold text-primary-400',
 									)}
 								>
 									자유게시판
@@ -298,7 +298,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'NOTICE' &&
-											'font-pretendard-bold text-primary-400',
+										'font-pretendard-bold text-primary-400',
 									)}
 								>
 									공지사항
