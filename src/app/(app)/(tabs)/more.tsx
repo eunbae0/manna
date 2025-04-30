@@ -19,7 +19,7 @@ import {
 	MessageCircleReply,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
-import { APP_STORE_URL, PLAY_STORE_URL } from '@/shared/constants/app';
+import { APP_STORE_REVIEW_URL, PLAY_STORE_URL } from '@/shared/constants/app';
 import { ListItem } from '@/shared/components/ListItem';
 import { getCurrentAppVersion } from '@/shared/utils/app_version';
 import AnimatedPressable from '@/components/common/animated-pressable';
@@ -160,7 +160,7 @@ export default function TabFourScreen() {
 }
 
 function openAppStoreReview() {
-	const url = Platform.OS === 'ios' ? APP_STORE_URL : PLAY_STORE_URL;
+	const url = Platform.OS === 'ios' ? APP_STORE_REVIEW_URL : PLAY_STORE_URL;
 
 	Linking.canOpenURL(url).then((supported) => {
 		if (supported) {
