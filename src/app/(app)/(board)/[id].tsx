@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import {
 	ScrollView,
-	type TextInput,
+	TextInput,
 	Alert,
 	ActivityIndicator,
 	FlatList,
@@ -17,11 +17,7 @@ import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
-import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
-import {
-	BottomSheetTextInput,
-	type BottomSheetModal,
-} from '@gorhom/bottom-sheet';
+
 import { useToastStore } from '@/store/toast';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import {
@@ -176,11 +172,11 @@ export default function BoardPostDetailScreen() {
 	// 현재 사용자가 좋아요를 눌렀는지 확인
 	const isLiked = reactions
 		? Object.values(reactions).some((reactions) =>
-				reactions.some(
-					(reaction) =>
-						reaction.userId === user?.id && reaction.type === 'like',
-				),
-			)
+			reactions.some(
+				(reaction) =>
+					reaction.userId === user?.id && reaction.type === 'like',
+			),
+		)
 		: false;
 
 	// 반응(좋아요) 추가/제거 뮤테이션
@@ -657,7 +653,7 @@ export default function BoardPostDetailScreen() {
 					{/* 댓글 입력 영역 */}
 					<Divider />
 					<HStack space="md" className="items-center py-3">
-						<BottomSheetTextInput
+						<TextInput
 							className="flex-1 bg-gray-100 text-lg rounded-2xl px-4 py-2"
 							placeholder="댓글을 입력해주세요"
 							value={commentText}
