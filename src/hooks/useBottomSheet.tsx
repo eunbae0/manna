@@ -50,10 +50,10 @@ const WebContent = ({
 
 type Props =
 	| {
-			variant?: 'modal' | 'bottomSheet';
-			onOpen?: () => void;
-			onClose?: () => void;
-	  }
+		variant?: 'modal' | 'bottomSheet';
+		onOpen?: () => void;
+		onClose?: () => void;
+	}
 	| undefined;
 
 export const useBottomSheet = ({
@@ -125,13 +125,13 @@ export const useBottomSheet = ({
 		() =>
 			Platform.OS === 'web'
 				? {
-						onKeyDown: (e: React.KeyboardEvent) => {
-							if (e.key === 'Escape') {
-								e.preventDefault();
-								handleClose();
-							}
-						},
-					}
+					onKeyDown: (e: React.KeyboardEvent) => {
+						if (e.key === 'Escape') {
+							e.preventDefault();
+							handleClose();
+						}
+					},
+				}
 				: {},
 		[handleClose],
 	);
@@ -149,7 +149,7 @@ export const useBottomSheet = ({
 				ref={bottomSheetModalRef}
 				backdropComponent={BottomSheetBackdropComponent}
 				enablePanDownToClose={!isModal}
-				enableContentPanningGesture={!isModal}
+				enableContentPanningGesture={false} // for Android: enable inner scroll
 				enableBlurKeyboardOnGesture={true}
 				handleIndicatorStyle={{
 					backgroundColor: 'lightgray',
