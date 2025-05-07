@@ -98,6 +98,14 @@ export default {
 					addGeneratedScheme: !!IS_DEVELOPMENT,
 				},
 			],
+			[
+				'react-native-vision-camera',
+				{
+					cameraPermissionText:
+						'$(PRODUCT_NAME)이 카메라에 접근할 수 있도록 허가해 주세요.',
+					enableCodeScanner: true,
+				},
+			],
 		],
 		experiments: {
 			typedRoutes: true,
