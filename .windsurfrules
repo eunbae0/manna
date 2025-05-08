@@ -133,3 +133,14 @@ Example:
 - Icon: `import { Icon } from '#/components/ui/icon';`
 - KeyboardAvoidingView: `import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';`
 - KeyboardDismissView: `import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';`
+- Button: `import { Button } from '@/components/common/button';`
+- VStack: `import { VStack } from '#/components/ui/vstack';`
+  - use `space` prop instead of `className` prop 
+- HStack: `import { HStack } from '#/components/ui/hstack';`
+  - use `space` prop instead of `className` prop
+- Text: `import { Text } from '#/components/ui/text';`
+  - use `font-pretendard-*` instead of `font-*`
+  - use `size` prop instead of `className` prop (`text-lg` -> `size="lg"`)
+- Heading: `import { Heading } from '@/shared/components/heading';`
+  - use `font-pretendard-*` instead of `font-*`
+  - use `size` prop instead of `className` prop (`text-2xl` -> `size="2xl"`)
