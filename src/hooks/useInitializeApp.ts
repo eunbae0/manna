@@ -63,6 +63,8 @@ export function useInitializeApp() {
 }
 
 async function initAnalytics() {
+	if (__DEV__) return;
+
 	try {
 		// Enable analytics collection
 		await getAnalytics().setAnalyticsCollectionEnabled(true);

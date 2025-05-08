@@ -12,6 +12,8 @@ export function useAnalytics() {
 	const segments = useSegments();
 
 	useEffect(() => {
+		if (__DEV__) return;
+
 		if (!pathname) return;
 
 		// Clean up the route for better readability in analytics
