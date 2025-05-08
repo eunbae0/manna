@@ -6,16 +6,13 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
 import { Heading } from '@/shared/components/heading';
 import { Icon } from '#/components/ui/icon';
-import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 import {
 	ChevronDown,
 	MenuIcon,
 	Library,
 	Settings,
 	SettingsIcon,
-	Copy,
 	Users,
-	ChevronRight,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 
@@ -39,6 +36,8 @@ import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import type { AmplitudeLocation } from '@/shared/constants/amplitude';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
+import { shareAsync } from 'expo-sharing';
+import { ShareInviteCode } from '@/shared/components/invite-code';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
@@ -127,7 +126,21 @@ function HomeHeader({ groups }: Props) {
 		router.push('/(app)/(group)/member-list');
 	};
 
-	const { copyInviteCode } = useCopyInviteCode(group?.inviteCode || '');
+	const handlePressQrCode = () => {
+		trackAmplitudeEvent('QR코드 보기 클릭', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location: 'Group_List_Menu',
+		});
+		handleCloseMember();
+		handleCloseMenu();
+		router.push({
+			pathname: '/(app)/inviteQrCodeModal',
+			params: {
+				inviteCode: group?.inviteCode,
+			},
+		});
+	};
 
 	return (
 		<HStack
@@ -194,13 +207,13 @@ function HomeHeader({ groups }: Props) {
 				<AvatarGroup onPress={handlePressMemberGroup} isExpanded={isExpanded}>
 					{group?.members
 						? group.members.map((member) => (
-								<Avatar
-									key={member.id}
-									photoUrl={member.photoUrl ?? undefined}
-									size="sm"
-									className="bg-primary-400"
-								/>
-							))
+							<Avatar
+								key={member.id}
+								photoUrl={member.photoUrl ?? undefined}
+								size="sm"
+								className="bg-primary-400"
+							/>
+						))
 						: []}
 				</AvatarGroup>
 
@@ -311,50 +324,25 @@ function HomeHeader({ groups }: Props) {
 										</AnimatedPressable>
 									))}
 								</VStack>
+								<Button
+									onPress={() =>
+										handlePressGroupMemberList('Group_Member_List_Bottom_Sheet')
+									}
+									variant="text"
+									size="sm"
+								>
+									<ButtonText>더보기</ButtonText>
+									<ButtonIcon as={ChevronDown} />
+								</Button>
 							</ScrollView>
 						) : (
 							<Text className="text-center py-4">그룹원이 없어요.</Text>
 						)}
 					</View>
-					<VStack space="sm" className="py-2">
-						<Text size="sm">
-							아래 코드를 공유하여 새로운 그룹원을 초대해보세요
-						</Text>
-						<HStack className="items-center justify-between bg-gray-100 rounded-lg p-4">
-							<Text size="lg" className="font-pretendard-semi-bold">
-								{group?.inviteCode}
-							</Text>
-							<Box className="flex-row items-center">
-								<Button size="sm" variant="outline" onPress={copyInviteCode}>
-									<Icon as={Copy} size="md" className="stroke-primary-500" />
-								</Button>
-							</Box>
-						</HStack>
-						<HStack space="sm" className="w-full py-2">
-							<Button
-								size="lg"
-								variant="solid"
-								className="flex-1"
-								onPress={copyInviteCode}
-								rounded={!isAndroid}
-							>
-								<ButtonText>초대코드 복사하기</ButtonText>
-							</Button>
-							{isAndroid && (
-								<Button
-									size="lg"
-									variant="outline"
-									className="flex-1"
-									onPress={() =>
-										handlePressGroupMemberList('Group_Member_List_Bottom_Sheet')
-									}
-								>
-									<ButtonText>그룹원 더보기</ButtonText>
-									<ButtonIcon as={ChevronRight} />
-								</Button>
-							)}
-						</HStack>
-					</VStack>
+					<ShareInviteCode
+						inviteCode={group?.inviteCode || ''}
+						handlePressQrCode={handlePressQrCode}
+					/>
 				</VStack>
 			</MemberBottomSheetContainer>
 		</HStack>

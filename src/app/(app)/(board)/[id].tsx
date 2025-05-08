@@ -172,11 +172,11 @@ export default function BoardPostDetailScreen() {
 	// 현재 사용자가 좋아요를 눌렀는지 확인
 	const isLiked = reactions
 		? Object.values(reactions).some((reactions) =>
-			reactions.some(
-				(reaction) =>
-					reaction.userId === user?.id && reaction.type === 'like',
-			),
-		)
+				reactions.some(
+					(reaction) =>
+						reaction.userId === user?.id && reaction.type === 'like',
+				),
+			)
 		: false;
 
 	// 반응(좋아요) 추가/제거 뮤테이션

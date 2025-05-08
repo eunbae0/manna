@@ -1,25 +1,37 @@
 import { ScrollView } from 'react-native';
-import { Button, ButtonText } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
 import { Box } from '#/components/ui/box';
-import { Icon } from '#/components/ui/icon';
-import { Copy } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
-import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
 import { useAuthStore } from '@/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { openProfile } from '@/shared/utils/router';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { ShareInviteCode } from '@/shared/components/invite-code';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { router } from 'expo-router';
 
 export default function MemberListScreen() {
 	const { currentGroup } = useAuthStore();
 	const groupId = currentGroup?.groupId;
 	const { group, members } = useGroupMembers(groupId || '');
-	const { copyInviteCode } = useCopyInviteCode(group?.inviteCode || '');
+
+	const handlePressQrCode = () => {
+		trackAmplitudeEvent('QR코드 보기 클릭', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location: 'Group_List_Menu',
+		});
+		router.push({
+			pathname: '/(app)/inviteQrCodeModal',
+			params: {
+				inviteCode: group?.inviteCode,
+			},
+		});
+	};
 
 	return (
 		<SafeAreaView className="h-full">
@@ -68,32 +80,10 @@ export default function MemberListScreen() {
 				)}
 			</VStack>
 			<VStack space="md" className="mb-8 mx-5">
-				<VStack space="md" className="py-2">
-					<Text size="sm">
-						아래 코드를 공유하여 새로운 그룹원을 초대해보세요
-					</Text>
-					<HStack className="items-center justify-between bg-gray-100 rounded-lg p-4">
-						<Text size="lg" className="font-pretendard-semi-bold">
-							{group?.inviteCode}
-						</Text>
-						<Box className="flex-row items-center">
-							<Button size="sm" variant="outline" onPress={copyInviteCode}>
-								<Icon as={Copy} size="md" className="stroke-primary-500" />
-							</Button>
-						</Box>
-					</HStack>
-				</VStack>
-				<HStack space="md" className="w-full py-2">
-					<Button
-						size="lg"
-						variant="solid"
-						className="flex-1"
-						rounded
-						onPress={copyInviteCode}
-					>
-						<ButtonText>초대코드 복사하기</ButtonText>
-					</Button>
-				</HStack>
+				<ShareInviteCode
+					inviteCode={group?.inviteCode || ''}
+					handlePressQrCode={handlePressQrCode}
+				/>
 			</VStack>
 		</SafeAreaView>
 	);
