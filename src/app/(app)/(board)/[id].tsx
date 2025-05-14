@@ -1,12 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import {
-	ScrollView,
 	TextInput,
 	Alert,
 	ActivityIndicator,
 	FlatList,
 	RefreshControl,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { VStack } from '#/components/ui/vstack';
@@ -172,11 +172,11 @@ export default function BoardPostDetailScreen() {
 	// 현재 사용자가 좋아요를 눌렀는지 확인
 	const isLiked = reactions
 		? Object.values(reactions).some((reactions) =>
-				reactions.some(
-					(reaction) =>
-						reaction.userId === user?.id && reaction.type === 'like',
-				),
-			)
+			reactions.some(
+				(reaction) =>
+					reaction.userId === user?.id && reaction.type === 'like',
+			),
+		)
 		: false;
 
 	// 반응(좋아요) 추가/제거 뮤테이션
@@ -551,7 +551,7 @@ export default function BoardPostDetailScreen() {
 						{reactions?.like && reactions?.like.length > 0 && (
 							<AnimatedPressable onPress={handleLikeMemberListOpen}>
 								<HStack space="sm" className="items-center pb-1">
-									<AvatarGroup max={2}>
+									<AvatarGroup max={2} onPress={handleLikeMemberListOpen}>
 										{reactions?.like?.map((reaction) => (
 											<Avatar
 												key={reaction.userId}
@@ -714,11 +714,9 @@ export default function BoardPostDetailScreen() {
 							label="공감한 멤버"
 							onPress={handleLikeMemberListClose}
 						/>
-						<FlatList
-							data={reactions?.like || []}
-							keyExtractor={(item: ClientReaction) => item.userId}
-							renderItem={({ item }: { item: ClientReaction }) => (
-								<HStack space="md" className="items-center py-3">
+						<ScrollView style={{ maxHeight: 300 }}>
+							{reactions?.like && reactions?.like?.length > 0 ? reactions?.like?.map((item: ClientReaction) => (
+								<HStack key={item.userId} space="md" className="items-center py-3">
 									<Avatar size="lg" photoUrl={item.member.photoUrl} />
 									<VStack>
 										<Text size="lg" className="font-pretendard-semi-bold">
@@ -729,15 +727,14 @@ export default function BoardPostDetailScreen() {
 										</Text>
 									</VStack>
 								</HStack>
-							)}
-							ListEmptyComponent={
+							)) : (
 								<Box className="items-center justify-center py-10">
 									<Text className="text-typography-500">
 										아직 공감한 멤버가 없어요
 									</Text>
 								</Box>
-							}
-						/>
+							)}
+						</ScrollView>
 					</BottomSheetListLayout>
 				</LikeMemberListBottomSheetContainer>
 			</SafeAreaView>
