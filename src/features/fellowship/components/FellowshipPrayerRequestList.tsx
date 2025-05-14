@@ -177,6 +177,7 @@ export default forwardRef<
 										),
 									)
 								}
+								multiline
 								placeholder="기도제목을 입력해주세요..."
 								className={TEXT_INPUT_STYLE}
 							/>

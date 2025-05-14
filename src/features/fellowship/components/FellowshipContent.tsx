@@ -205,6 +205,7 @@ export default function FellowshipContent({
 										),
 									)
 								}
+								multiline
 								placeholder="나눔을 입력해주세요..."
 								className={TEXT_INPUT_STYLE}
 							/>
