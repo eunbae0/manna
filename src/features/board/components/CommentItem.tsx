@@ -1,4 +1,3 @@
-import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
 	BottomSheetListLayout,
@@ -17,6 +16,7 @@ import { Text } from '#/components/ui/text';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import type { Comment } from '../types';
 import { Box } from '#/components/ui/box';
+import { PopupMenu, PopupMenuItem, PopupMenuItemLabel } from '@/shared/components/popup-menu';
 
 type CommentItemProps = {
 	comment: Comment;
@@ -96,8 +96,9 @@ export const CommentItem = ({
 
 					{/* 댓글 작성자인 경우에만 더보기 메뉴 표시 */}
 					{isCurrentUser && (
-						<Menu
+						<PopupMenu
 							placement="bottom left"
+							hasBackdrop={false}
 							trigger={({ ...triggerProps }) => {
 								return (
 									<Button
@@ -111,9 +112,7 @@ export const CommentItem = ({
 								);
 							}}
 						>
-							<MenuItem
-								key="edit"
-								textValue="수정하기"
+							<PopupMenuItem
 								closeOnSelect
 								onPress={() => {
 									setIsMenuOpen(false);
@@ -122,11 +121,9 @@ export const CommentItem = ({
 								}}
 							>
 								<Icon as={Pen} size="sm" className="mr-2 text-typography-700" />
-								<MenuItemLabel size="md">수정하기</MenuItemLabel>
-							</MenuItem>
-							<MenuItem
-								key="delete"
-								textValue="삭제하기"
+								<PopupMenuItemLabel size="md">수정하기</PopupMenuItemLabel>
+							</PopupMenuItem>
+							<PopupMenuItem
 								closeOnSelect
 								onPress={() => {
 									setIsMenuOpen(false);
@@ -134,11 +131,11 @@ export const CommentItem = ({
 								}}
 							>
 								<Icon as={Trash} size="sm" className="mr-2 text-error-500" />
-								<MenuItemLabel size="md" className="text-error-500">
+								<PopupMenuItemLabel size="md" className="text-error-500">
 									삭제하기
-								</MenuItemLabel>
-							</MenuItem>
-						</Menu>
+								</PopupMenuItemLabel>
+							</PopupMenuItem>
+						</PopupMenu>
 					)}
 				</HStack>
 				<Text className="text-typography-700">{comment.content}</Text>
