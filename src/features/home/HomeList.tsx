@@ -19,10 +19,12 @@ import { usePrayerRequests } from '@/features/prayer-request/hooks/usePrayerRequ
 import { useQueryClient } from '@tanstack/react-query';
 import { GROUP_QUERY_KEY, GROUPS_QUERY_KEY } from './group/hooks/useGroups';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { useAuthStore } from '@/store/auth';
 
 function HomeList() {
+	const { currentGroup } = useAuthStore()
+
 	const [refreshing, setRefreshing] = useState(false);
-	const [showNotification, setShowNotification] = useState(false);
 
 	const queryClient = useQueryClient();
 
@@ -78,19 +80,23 @@ function HomeList() {
 	// 최근 나눔 알림 찾기
 	useEffect(() => {
 		const sixHoursAgo = new Date(Date.now() - 6 * 60 * 60 * 1000);
-		const recentFellowshipNotification = notifications?.find(
-			(notification) =>
-				notification.metadata?.fellowshipId &&
-				notification.isRead === false &&
-				notification.timestamp > sixHoursAgo,
-		);
+		const recentFellowshipNotification =
+			currentGroup && notifications
+				.filter(n => n.metadata?.groupId === currentGroup.groupId)
+				.find(
+					(notification) =>
+						notification.metadata?.fellowshipId &&
+						notification.isRead === false &&
+						notification.timestamp > sixHoursAgo,
+				);
+
 		if (recentFellowshipNotification) {
 			setRecentFellowshipNotification({
 				id: recentFellowshipNotification.id,
 				screen: recentFellowshipNotification.screen,
 			});
 		}
-	}, [notifications]);
+	}, [notifications, currentGroup]);
 
 	// 알림 닫기 핸들러
 	const handleDismissNotification = useCallback(() => {
