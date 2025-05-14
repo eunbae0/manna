@@ -6,13 +6,17 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
 import { Heading } from '@/shared/components/heading';
 import { Icon } from '#/components/ui/icon';
+import { useShareInviteCode } from '@/shared/hooks/useShareInviteCode';
 import {
 	ChevronDown,
 	MenuIcon,
 	Library,
 	Settings,
 	SettingsIcon,
+	Copy,
 	Users,
+	ChevronRight,
+	QrCode,
 } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 
@@ -37,7 +41,7 @@ import type { AmplitudeLocation } from '@/shared/constants/amplitude';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
 import { shareAsync } from 'expo-sharing';
-import { ShareInviteCode } from '@/shared/components/invite-code';
+import { PopupMenu, PopupMenuItem, PopupMenuItemLabel } from '@/shared/components/popup-menu';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
@@ -142,6 +146,8 @@ function HomeHeader({ groups }: Props) {
 		});
 	};
 
+	const { shareInviteCode } = useShareInviteCode(group?.inviteCode || '');
+
 	return (
 		<HStack
 			className={cn(
@@ -149,7 +155,7 @@ function HomeHeader({ groups }: Props) {
 				isIOS ? 'pt-2' : 'pt-5',
 			)}
 		>
-			<Menu
+			<PopupMenu
 				placement="bottom left"
 				offset={5}
 				trigger={({ ...triggerProps }) => {
@@ -178,9 +184,9 @@ function HomeHeader({ groups }: Props) {
 			>
 				{groups.length > 0 &&
 					groups.map((group) => (
-						<MenuItem
+						<PopupMenuItem
 							key={group.id}
-							textValue={group.groupName}
+							// textValue={group.groupName}
 							closeOnSelect
 							onPress={() => {
 								trackAmplitudeEvent('소그룹 선택', {
@@ -191,18 +197,18 @@ function HomeHeader({ groups }: Props) {
 								updateCurrentGroup({ groupId: group.id });
 							}}
 						>
-							<MenuItemLabel size="lg">{group.groupName}</MenuItemLabel>
-						</MenuItem>
+							<PopupMenuItemLabel size="lg" disabled={group.id !== currentGroup?.groupId}>{group.groupName}</PopupMenuItemLabel>
+						</PopupMenuItem>
 					))}
-				<MenuItem
+				<PopupMenuItem
 					key="Plugins"
-					textValue="Plugins"
+					// textValue="Plugins"
 					onPress={handlePressManageMyGroup}
 				>
-					<Icon as={SettingsIcon} size="lg" className="mr-2" />
-					<MenuItemLabel size="lg">내 그룹 관리하기</MenuItemLabel>
-				</MenuItem>
-			</Menu>
+					<Icon as={SettingsIcon} size="lg" className="mr-2 opacity-70" />
+					<PopupMenuItemLabel size="lg" disabled>내 그룹 관리하기</PopupMenuItemLabel>
+				</PopupMenuItem>
+			</PopupMenu>
 			<HStack space="xs" className="items-center">
 				<AvatarGroup onPress={handlePressMemberGroup} isExpanded={isExpanded}>
 					{group?.members
@@ -324,25 +330,53 @@ function HomeHeader({ groups }: Props) {
 										</AnimatedPressable>
 									))}
 								</VStack>
-								<Button
-									onPress={() =>
-										handlePressGroupMemberList('Group_Member_List_Bottom_Sheet')
-									}
-									variant="text"
-									size="sm"
-								>
-									<ButtonText>더보기</ButtonText>
-									<ButtonIcon as={ChevronDown} />
-								</Button>
 							</ScrollView>
 						) : (
 							<Text className="text-center py-4">그룹원이 없어요.</Text>
 						)}
 					</View>
-					<ShareInviteCode
-						inviteCode={group?.inviteCode || ''}
-						handlePressQrCode={handlePressQrCode}
-					/>
+					<VStack space="sm" className="py-2">
+						<Text size="sm">
+							아래 코드를 공유하여 새로운 그룹원을 초대해보세요
+						</Text>
+						<HStack className="items-center justify-between bg-gray-100 rounded-lg p-4">
+							<Text size="lg" className="font-pretendard-semi-bold">
+								{group?.inviteCode}
+							</Text>
+							<Button size="sm" variant="outline" onPress={handlePressQrCode}>
+								<ButtonIcon
+									as={QrCode}
+									size="md"
+									className="stroke-primary-500"
+								/>
+								<ButtonText>QR코드 보기</ButtonText>
+							</Button>
+						</HStack>
+						<HStack space="sm" className="w-full py-2">
+							<Button
+								size="lg"
+								variant="solid"
+								className="flex-1"
+								onPress={shareInviteCode}
+								rounded={!isAndroid}
+							>
+								<ButtonText>초대코드 공유하기</ButtonText>
+							</Button>
+							{isAndroid && (
+								<Button
+									size="lg"
+									variant="outline"
+									className="flex-1"
+									onPress={() =>
+										handlePressGroupMemberList('Group_Member_List_Bottom_Sheet')
+									}
+								>
+									<ButtonText>그룹원 더보기</ButtonText>
+									<ButtonIcon as={ChevronRight} />
+								</Button>
+							)}
+						</HStack>
+					</VStack>
 				</VStack>
 			</MemberBottomSheetContainer>
 		</HStack>

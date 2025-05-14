@@ -11,6 +11,7 @@ export default function GroupLayout() {
 			<Stack.Screen name="create-group" />
 			<Stack.Screen name="join-group" />
 			<Stack.Screen name="(manage-group)" />
+			<Stack.Screen name="member-list" />
 		</Stack>
 	);
 }
