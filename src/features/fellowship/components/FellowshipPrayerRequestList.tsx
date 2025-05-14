@@ -1,6 +1,7 @@
 import type React from 'react';
 import { VStack } from '#/components/ui/vstack';
-import { Pressable, ScrollView } from 'react-native';
+import { Pressable } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler'
 import { Avatar } from '@/components/common/avatar';
 import { Divider } from '#/components/ui/divider';
 import { Text } from '#/components/ui/text';
