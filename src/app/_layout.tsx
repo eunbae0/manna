@@ -21,13 +21,13 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import * as SystemUI from 'expo-system-ui';
 import { useNotification } from '@/hooks/useNotification';
 import * as Sentry from '@sentry/react-native';
-import { isRunningInExpoGo } from 'expo';
 import { useSentry } from '@/hooks/useSentry';
 import { SENTRY_DSN } from '@/shared/constants/keys';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useBackAlertOnExit } from '@/shared/hooks/useBackAlertOnExit';
 import { isAndroid } from '@/shared/utils/platform';
 import * as amplitude from '@amplitude/analytics-react-native';
+import { useNotificationGroupChange } from '@/shared/hooks/useNotificationGroupChange';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -64,6 +64,9 @@ function RootLayout() {
 	}
 
 	useSentry(navigationIntegration);
+
+	// 알림을 통해 들어온 경우 그룹 변경 처리
+	useNotificationGroupChange();
 
 	return (
 		<QueryClientProvider client={queryClient}>

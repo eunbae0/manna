@@ -24,9 +24,12 @@ function setupNotificationHandler(): void {
 function handleNotificationClick(
 	response: Notifications.NotificationResponse,
 ): void {
-	const screen = response?.notification?.request?.content?.data?.screen as Href;
+	const data = response?.notification?.request?.content?.data;
+	const screen = data?.screen as Href;
+	const groupId = data?.groupId as string;
+	const groupName = data?.groupName as string;
 	if (screen) {
-		navigateToScreen(screen);
+		navigateToScreen(screen, { groupId, groupName });
 	}
 }
 
@@ -36,7 +39,11 @@ function handleNotificationClick(
 function setupBackgroundOpenHandler(): void {
 	getMessaging().onNotificationOpenedApp((remoteMessage) => {
 		if (remoteMessage?.data?.screen) {
-			navigateToScreen(remoteMessage.data.screen as Href);
+			const { screen, groupId, groupName } = remoteMessage.data;
+			navigateToScreen(screen as Href, {
+				groupId: groupId as string,
+				groupName: groupName as string,
+			});
 		}
 	});
 }
@@ -49,7 +56,11 @@ function checkAppOpenedFromNotification(): void {
 		.getInitialNotification()
 		.then((remoteMessage) => {
 			if (remoteMessage?.data?.screen) {
-				navigateToScreen(remoteMessage.data.screen as Href);
+				const { screen, groupId, groupName } = remoteMessage.data;
+				navigateToScreen(screen as Href, {
+					groupId: groupId as string,
+					groupName: groupName as string,
+				});
 			}
 		});
 }
@@ -93,12 +104,43 @@ function setupBackgroundMessageHandler(): void {
 /**
  * 알림에서 전달받은 화면 경로로 이동하는 함수
  * @param screen 이동할 화면 경로
+ * @param params 추가 라우팅 매개변수
  */
-function navigateToScreen(screen: Href): void {
+function navigateToScreen(
+	screen: Href,
+	params?: { groupId?: string; groupName?: string },
+): void {
+	// 라우팅 매개변수 구성
+	const navigationParams: Record<string, string> = {};
+
+	// 그룹 ID와 이름이 있으면 추가
+	if (params?.groupId) {
+		navigationParams.notificationGroupId = params.groupId;
+	}
+
+	if (params?.groupName) {
+		navigationParams.notificationGroupName = params.groupName;
+	}
+
+	// 매개변수 포함하여 화면 이동
 	if ((screen as string).includes('(tabs)')) {
-		router.replace(screen);
+		const hasParams = Object.keys(navigationParams).length > 0;
+		if (hasParams) {
+			// 매개변수가 있는 경우, 문자열로 수동 구성
+			const queryParams = new URLSearchParams(navigationParams).toString();
+			router.replace(`${screen}?${queryParams}` as Href);
+		} else {
+			router.replace(screen);
+		}
 	} else {
-		router.push(screen);
+		const hasParams = Object.keys(navigationParams).length > 0;
+		if (hasParams) {
+			// 매개변수가 있는 경우, 문자열로 수동 구성
+			const queryParams = new URLSearchParams(navigationParams).toString();
+			router.push(`${screen}?${queryParams}` as Href);
+		} else {
+			router.push(screen);
+		}
 	}
 }
 

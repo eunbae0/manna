@@ -66,6 +66,16 @@ exports.prayerRequestNotification = onDocumentCreated(
 			}
 			const userGroup = userGroups.find((group) => group.groupId === groupId);
 
+			const groupDoc = await firestore()
+				.collection('groups')
+				.doc(groupId)
+				.get();
+			if (!groupDoc.exists) continue;
+
+			const { groupName } = groupDoc.data() as {
+				groupName: string;
+			};
+
 			if (userGroup?.notificationPreferences?.prayerRequest === true) {
 				const tokens = data.fcmTokens;
 				if (!tokens) continue;
@@ -77,6 +87,8 @@ exports.prayerRequestNotification = onDocumentCreated(
 					},
 					data: {
 						screen: '/(app)/(tabs)',
+						groupId,
+						groupName,
 					},
 				};
 
@@ -189,6 +201,16 @@ exports.fellowshipNotification = onDocumentCreated(
 
 			const userGroup = userGroups.find((group) => group.groupId === groupId);
 
+			const groupDoc = await firestore()
+				.collection('groups')
+				.doc(groupId)
+				.get();
+			if (!groupDoc.exists) continue;
+
+			const { groupName } = groupDoc.data() as {
+				groupName: string;
+			};
+
 			if (userGroup?.notificationPreferences?.fellowship === true) {
 				const tokens = user.fcmTokens;
 				if (!tokens) continue;
@@ -200,6 +222,8 @@ exports.fellowshipNotification = onDocumentCreated(
 					},
 					data: {
 						screen: `/(app)/(fellowship)/${fellowshipId}`,
+						groupId,
+						groupName,
 					},
 				};
 
