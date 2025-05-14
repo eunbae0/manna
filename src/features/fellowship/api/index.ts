@@ -1,6 +1,6 @@
 import { handleApiError } from '@/api/errors';
 import { withApiLogging } from '@/api/utils/logger';
-import { FirestoreFellowshipService, getFellowshipService } from './service';
+import { getFellowshipService } from './service';
 import type {
 	ClientFellowship,
 	CreateFellowshipInput,
@@ -51,6 +51,47 @@ export const fetchGroupFellowships = withApiLogging(
 		}
 	},
 	'fetchGroupFellowships',
+	'fellowship',
+);
+export const fetchRecentFellowshipsWhereUserIsLeader = withApiLogging(
+	async ({
+		groupId,
+		userId,
+		limitCount = 5,
+	}: {
+		groupId: string;
+		userId: string;
+		limitCount?: number;
+	}): Promise<{
+		items: ClientFellowship[];
+		total: number;
+	}> => {
+		try {
+			const fellowshipService = getFellowshipService();
+			const result =
+				await fellowshipService.getRecentFellowshipsWhereUserIsLeader({
+					groupId,
+					userId,
+					limitCount,
+				});
+
+			// Pass metadata to the withApiLogging wrapper via context
+			const context = {
+				count: result.items.length,
+				groupId,
+			};
+
+			// The withApiLogging wrapper will include this context in the success log
+			return Object.assign(result, { __logContext: context });
+		} catch (error) {
+			throw handleApiError(
+				error,
+				'fetchRecentFellowshipsWhereUserIsLeader',
+				'fellowship',
+			);
+		}
+	},
+	'fetchRecentFellowshipsWhereUserIsLeader',
 	'fellowship',
 );
 

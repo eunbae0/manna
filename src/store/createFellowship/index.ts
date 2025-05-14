@@ -15,10 +15,14 @@ type FellowShipStoreState = FellowShipStoreData & {
 	currentStep: FellowshipStoreStep;
 	type: FellowshipStoreType;
 	fellowshipId?: string | null;
+	hasShownRecentRecommendSheet: boolean;
 	lastUpdatedId?: string | null;
 	setStep: (step: FellowshipStoreStep) => void;
 	setType: (type: FellowshipStoreType) => void;
 	setFellowshipId: (fellowshipId: string | null) => void;
+	setHasShownRecentRecommendSheet: (
+		hasShownRecentRecommendSheet: boolean,
+	) => void;
 	getLastUpdatedIdAndReset: () => string | null;
 	updateFellowshipInfo: (data: Partial<FellowShipStoreState['info']>) => void;
 	updateFellowshipContent: (
@@ -41,12 +45,14 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	currentStep: FELLOWSHIP_DEFAULT_STEP,
 	type: FELLOWSHIP_DEFAULT_TYPE,
 	fellowshipId: null,
+	hasShownRecentRecommendSheet: false,
 	info: {
 		date: new Date(),
 		preachTitle: '',
 		preacher: { isActive: true, value: '' },
 		preachText: { isActive: true, value: '' },
 		members: [],
+		leaderId: '',
 	},
 	content: {
 		iceBreaking: [],
@@ -83,6 +89,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 			const { photoUrl, ...restMemberField } = member;
 			return restMemberField;
 		});
+		info.leaderId = info.members.find((member) => member.isLeader)?.id ?? '';
 
 		return {
 			info,
@@ -154,18 +161,22 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 			}
 		}
 	},
+	setHasShownRecentRecommendSheet: (hasShownRecentRecommendSheet) =>
+		set({ hasShownRecentRecommendSheet }),
 
 	clearFellowship: () => {
 		set({
 			fellowshipId: null,
 			type: FELLOWSHIP_DEFAULT_TYPE,
 			currentStep: FELLOWSHIP_DEFAULT_STEP,
+			hasShownRecentRecommendSheet: false,
 			info: {
 				date: new Date(),
 				preachTitle: '',
 				preacher: { isActive: true, value: '' },
 				preachText: { isActive: true, value: '' },
 				members: [],
+				leaderId: '',
 			},
 			content: {
 				iceBreaking: [],

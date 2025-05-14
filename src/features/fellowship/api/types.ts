@@ -1,7 +1,4 @@
-import type {
-	ClientGroupMember,
-	ServerGroupMember,
-} from '@/api/prayer-request/types';
+import type { ClientGroupMember } from '@/api/prayer-request/types';
 import type { DeepPartial } from '@/shared/utils/deepPartial';
 import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 
@@ -15,6 +12,7 @@ interface BaseFellowship {
 		preachTitle: string;
 		preacher?: FellowshipInfoField;
 		preachText?: FellowshipInfoField;
+		leaderId: string;
 	};
 	content: {
 		iceBreaking: ServerFellowshipContentField[];
@@ -42,6 +40,7 @@ export interface ServerFellowship extends BaseFellowship {
 		preacher?: FellowshipInfoField;
 		preachText?: FellowshipInfoField;
 		members: ServerFellowshipMember[];
+		leaderId: string;
 	};
 }
 
@@ -56,6 +55,7 @@ export interface ClientFellowship extends BaseFellowship {
 		preacher?: FellowshipInfoField;
 		preachText?: FellowshipInfoField;
 		members: ClientFellowshipMember[];
+		leaderId: string;
 	};
 	content: {
 		iceBreaking: ClientFellowshipContentField[];
@@ -118,5 +118,38 @@ export interface FellowshipUpdateData extends BaseFellowship {
 		preacher?: FellowshipInfoField;
 		preachText?: FellowshipInfoField;
 		members: ServerFellowshipMember[];
+		leaderId: string;
 	};
+}
+
+// Schema V2
+
+export interface BaseFellowshipV2 {
+	id: string;
+	groupId: string;
+	metadata: {
+		schemaVersion: string;
+		createdAt: Timestamp;
+		updatedAt: Timestamp;
+		status: 'draft' | 'published' | 'archived';
+	};
+	info: {
+		title: string;
+		date: Date | Timestamp;
+		preacher?: FellowshipInfoField;
+		preachText?: FellowshipInfoField;
+		participants: ClientFellowshipMember[] | ServerFellowshipMember[];
+	};
+	content: {
+		iceBreaking:
+			| ClientFellowshipContentField[]
+			| ServerFellowshipContentField[];
+		sermonTopic:
+			| ClientFellowshipContentField[]
+			| ServerFellowshipContentField[];
+		prayerRequest:
+			| ClientFellowshipPrayerRequestField
+			| ServerFellowshipPrayerRequestField;
+	};
+	extensions?: Record<string, unknown>;
 }

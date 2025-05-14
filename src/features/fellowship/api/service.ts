@@ -205,6 +205,70 @@ export class FirestoreFellowshipService {
 		};
 	}
 
+	async getRecentFellowshipsWhereUserIsLeader({
+		groupId,
+		userId,
+		limitCount = 5,
+	}: {
+		groupId: string;
+		userId: string;
+		limitCount?: number;
+	}): Promise<{
+		items: ClientFellowship[];
+		total: number;
+	}> {
+		const q = query(
+			this.getFellowshipCollectionRef({ groupId }),
+			orderBy('createdAt', 'desc'),
+			where('info.leaderId', '==', userId),
+			limit(limitCount),
+		);
+
+		const querySnapshot = await getDocs(q);
+
+		const fellowships: ClientFellowship[] = [];
+		for (const fellowshipsDoc of querySnapshot.docs) {
+			const members: ClientFellowshipMember[] = [];
+			const data = fellowshipsDoc.data() as ServerFellowship;
+			for (const member of data.info.members) {
+				const groupMemberDoc = await getDoc(
+					doc(
+						database,
+						this.collectionPath,
+						groupId,
+						this.memberCollectionPath,
+						member.id,
+					),
+				);
+
+				// 탈퇴유저 또는 게스트유저인 경우
+				if (!groupMemberDoc.exists) {
+					const clientMember = {
+						id: member.id,
+						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
+						isLeader: member.isLeader,
+						isGuest: member.isGuest,
+					};
+					members.push(clientMember);
+					continue;
+				}
+
+				const clientMember = groupMemberDoc.data() as ClientGroupMember;
+				members.push({
+					...clientMember,
+					isLeader: member.isLeader,
+					isGuest: member.isGuest,
+				});
+			}
+			fellowships.push(this.convertToClientFellowship(data, members));
+		}
+
+		return {
+			items: fellowships,
+			total: fellowships.length,
+		};
+	}
+
 	/**
 	 * Fetches a specific fellowship by ID
 	 * @param fellowshipId ID of the fellowship to fetch
