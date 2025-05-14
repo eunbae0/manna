@@ -465,8 +465,8 @@ export default function BoardPostDetailScreen() {
 		post.category === 'NOTICE' ? 'text-amber-600' : 'text-indigo-600';
 
 	return (
-		<KeyboardAvoidingView>
-			<SafeAreaView className="flex-1">
+		<SafeAreaView className="flex-1">
+			<KeyboardAvoidingView keyboardVerticalOffset={0}>
 				<Header className="justify-between pr-3">
 					<Button variant="icon" onPress={handlePressMoreButton}>
 						<ButtonIcon as={MoreHorizontal} />
@@ -649,36 +649,38 @@ export default function BoardPostDetailScreen() {
 				</ScrollView>
 
 				{/* 댓글 입력 영역 */}
-				<Box className="p-4 bg-white">
-					{/* 댓글 입력 영역 */}
+				<VStack>
 					<Divider />
-					<HStack space="md" className="items-center py-3">
-						<TextInput
-							className="flex-1 bg-gray-100 text-lg rounded-2xl px-4 py-2"
-							placeholder="댓글을 입력해주세요"
-							value={commentText}
-							onChangeText={setCommentText}
-							multiline
-						/>
-						<Button
-							size="sm"
-							variant="icon"
-							rounded
-							onPress={handleSubmitComment}
-							disabled={!commentText.trim() || createCommentMutation.isPending}
-						>
-							{createCommentMutation.isPending ? (
-								<ActivityIndicator size="small" color="#6366f1" />
-							) : (
-								<ButtonIcon
-									as={SendHorizontal}
-									size="lg"
-									className="stroke-primary-500"
-								/>
-							)}
-						</Button>
-					</HStack>
-				</Box>
+					<Box className="mx-4">
+						{/* 댓글 입력 영역 */}
+						<HStack space="md" className="items-center py-2">
+							<TextInput
+								className="flex-1 bg-gray-100 text-lg rounded-2xl px-4 py-2"
+								placeholder="댓글을 입력해주세요"
+								value={commentText}
+								onChangeText={setCommentText}
+								multiline
+							/>
+							<Button
+								size="sm"
+								variant="icon"
+								rounded
+								onPress={handleSubmitComment}
+								disabled={!commentText.trim() || createCommentMutation.isPending}
+							>
+								{createCommentMutation.isPending ? (
+									<ActivityIndicator size="small" color="#6366f1" />
+								) : (
+									<ButtonIcon
+										as={SendHorizontal}
+										size="lg"
+										className="stroke-primary-500"
+									/>
+								)}
+							</Button>
+						</HStack>
+					</Box>
+				</VStack>
 
 				<PostSettingBottomSheetContainer>
 					<BottomSheetListLayout className="gap-4">
@@ -737,7 +739,7 @@ export default function BoardPostDetailScreen() {
 						</ScrollView>
 					</BottomSheetListLayout>
 				</LikeMemberListBottomSheetContainer>
-			</SafeAreaView>
-		</KeyboardAvoidingView>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
 	);
 }
