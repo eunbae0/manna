@@ -15,7 +15,8 @@
 		"predeploy": "npx expo export --platform web",
 		"deploy-hosting": "yarn run predeploy && firebase deploy --only hosting",
 		"build-production:ios": "npx expo prebuild && eas build --profile production --platform ios --local",
-		"build-production:android": "npx expo prebuild && eas build --profile production --platform android --local"
+		"build-production:android": "npx expo prebuild && eas build --profile production --platform android --local",
+		"build-production:android:local": "cd android && ./gradlew app:bundleRelease --stacktrace"
 	},
 	"jest": {
 		"preset": "jest-expo"
