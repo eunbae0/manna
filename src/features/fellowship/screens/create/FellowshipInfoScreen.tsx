@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, type TextInput } from 'react-native';
+import { Pressable, type TextInput } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { Box } from '#/components/ui/box';
@@ -93,14 +94,14 @@ export default function FellowshipInfoScreen() {
 	const [members, setMembers] = useState<ClientFellowshipMember[]>(
 		info.members.length === 0
 			? [
-					{
-						id: user?.id || '1',
-						displayName: user?.displayName || '',
-						photoUrl: user?.photoUrl || '',
-						isLeader: true,
-						isGuest: false,
-					},
-				]
+				{
+					id: user?.id || '1',
+					displayName: user?.displayName || '',
+					photoUrl: user?.photoUrl || '',
+					isLeader: true,
+					isGuest: false,
+				},
+			]
 			: info.members,
 	);
 	const [memberNameInput, setMemberNameInput] = useState('');
@@ -170,6 +171,11 @@ export default function FellowshipInfoScreen() {
 		setSelectedGroupMembers((prev) => [...prev, newMember]);
 
 		setMemberNameInput('');
+
+		// 다음 렌더링 사이클에서 ScrollView를 맨 아래로 스크롤
+		setTimeout(() => {
+			membersScrollViewRef.current?.scrollToEnd({ animated: true });
+		}, 100);
 	};
 
 	// 그룹 멤버 리스트
@@ -205,6 +211,7 @@ export default function FellowshipInfoScreen() {
 	}, [group, members, selectedGroupMembers]);
 
 	const addMemberInputRef = useRef<TextInput>(null);
+	const membersScrollViewRef = useRef<ScrollView>(null);
 
 	return (
 		<>
@@ -367,7 +374,10 @@ export default function FellowshipInfoScreen() {
 												나눔 인원
 											</Text>
 										</HStack>
-										<ScrollView horizontal className="pl-2">
+										<ScrollView
+											horizontal
+											className="pl-2"
+										>
 											<HStack space="md" className="items-start">
 												{members.map((member) => (
 													<Pressable
@@ -520,7 +530,7 @@ export default function FellowshipInfoScreen() {
 												</Text>
 											</VStack>
 										) : (
-											<ScrollView className="py-3 max-h-60">
+											<ScrollView ref={membersScrollViewRef} className="py-3 max-h-60">
 												{allFellowshipMembers.map((item) => (
 													<VStack key={item.id}>
 														<Pressable
