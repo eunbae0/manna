@@ -6,7 +6,7 @@ import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { VStack } from '#/components/ui/vstack';
-import type { FellowshipContentField } from '@/features/fellowship/api/types';
+import type { ServerFellowshipContentField } from '@/features/fellowship/api/types';
 import Header from '@/components/common/Header';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { Plus, X } from 'lucide-react-native';
@@ -20,7 +20,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FellowshipIcebrakingScreen() {
 	const { setStep, updateFellowshipContent, content } = useFellowshipStore();
-	const [iceBreaking, setIceBreaking] = useState<FellowshipContentField[]>(
+	const [iceBreaking, setIceBreaking] = useState<ServerFellowshipContentField[]>(
 		content.iceBreaking.length === 0
 			? [{ id: uuidv4(), question: '', answers: [] }]
 			: content.iceBreaking,
