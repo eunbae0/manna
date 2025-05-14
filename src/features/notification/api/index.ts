@@ -68,3 +68,24 @@ export const deleteNotification = withApiLogging(
 	'deleteNotification',
 	'notification',
 );
+
+/**
+ * 모든 알림을 읽음 상태로 표시합니다
+ */
+export const markAllNotificationsAsRead = withApiLogging(
+	async (): Promise<void> => {
+		try {
+			const user = auth.currentUser;
+			if (!user) {
+				throw new Error('로그인이 필요해요.');
+			}
+
+			const notificationService = getNotificationService(user.uid);
+			await notificationService.markAllAsRead();
+		} catch (error) {
+			throw handleApiError(error);
+		}
+	},
+	'markAllNotificationsAsRead',
+	'notification',
+);

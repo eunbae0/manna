@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	getNotifications,
 	markNotificationAsRead,
+	markAllNotificationsAsRead,
 	deleteNotification,
 } from '../api';
 import type { ClientNotification } from '../api/types';
@@ -38,6 +39,14 @@ export function useNotifications() {
 		},
 	});
 
+	const markAllAsReadMutation = useMutation({
+		mutationFn: markAllNotificationsAsRead,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: NOTIFICATIONS_QUERY_KEY });
+			setBadgeCountAsync(0);
+		},
+	});
+
 	const deleteMutation = useMutation({
 		mutationFn: deleteNotification,
 		onSuccess: (deletedNotification) => {
@@ -65,10 +74,15 @@ export function useNotifications() {
 			markAsReadMutation.mutate(id);
 			queryClient.invalidateQueries({ queryKey: NOTIFICATIONS_QUERY_KEY });
 		},
+		markAllAsRead: () => {
+			markAllAsReadMutation.mutate();
+			queryClient.invalidateQueries({ queryKey: NOTIFICATIONS_QUERY_KEY });
+		},
 		deleteNotification: (id: string) => {
 			deleteMutation.mutate(id);
 			queryClient.invalidateQueries({ queryKey: NOTIFICATIONS_QUERY_KEY });
 		},
 		isDeleting: deleteMutation.isPending,
+		isMarkingAllAsRead: markAllAsReadMutation.isPending,
 	};
 }

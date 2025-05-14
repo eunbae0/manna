@@ -52,6 +52,11 @@ export interface NotificationService {
 	markAsRead(notificationId: string): Promise<void>;
 
 	/**
+	 * 모든 알림을 읽음 상태로 표시합니다
+	 */
+	markAllAsRead(): Promise<void>;
+
+	/**
 	 * 알림을 삭제합니다
 	 * @param notificationId 알림 ID
 	 */

@@ -113,6 +113,49 @@ export class FirestoreNotificationService implements NotificationService {
 	}
 
 	/**
+	 * 모든 알림을 읽음 상태로 표시합니다
+	 */
+	async markAllAsRead(): Promise<void> {
+		try {
+			const notificationsRef = collection(
+				database,
+				'users',
+				this.userId,
+				'notifications'
+			);
+
+			const q = query(notificationsRef, orderBy('timestamp', 'desc'));
+			const querySnapshot = await getDocs(q);
+
+			// 읽지 않은 알림만 필터링
+			const unreadNotifications = querySnapshot.docs.filter(
+				(doc) => !doc.data().isRead
+			);
+
+			// 각 알림을 읽음 상태로 업데이트
+			const updatePromises = unreadNotifications.map(async (docSnapshot) => {
+				const notificationRef = doc(
+					database,
+					'users',
+					this.userId,
+					'notifications',
+					docSnapshot.id
+				);
+				
+				return updateDoc(notificationRef, {
+					isRead: true,
+				});
+			});
+
+			// 모든 업데이트 요청 동시 실행
+			await Promise.all(updatePromises);
+		} catch (error) {
+			console.error('Error marking all notifications as read:', error);
+			throw new Error('모든 알림을 읽음 상태로 변경하는 중 오류가 발생했어요.');
+		}
+	}
+
+	/**
 	 * 알림을 삭제합니다
 	 * @param notificationId 알림 ID
 	 */

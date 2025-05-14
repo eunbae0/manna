@@ -1,10 +1,10 @@
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
-import { FlatList, RefreshControl, ScrollView, Pressable } from 'react-native';
+import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import { useNotifications } from '../hooks/useNotifications';
 import { type Href, router } from 'expo-router';
-import { Button } from '@/components/common/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { EmptyState } from '@/components/common/empty-state';
 import { NotificationItem } from './NotificationItem';
@@ -22,9 +22,9 @@ import Animated, {
 import { useRefetchOnFocus } from '@/shared/hooks/useRefetchOnFocus';
 import { useGroups } from '@/features/home/group/hooks/useGroups';
 import type { ClientGroup } from '@/api/group/types';
-import type { UserGroup } from '@/api/user/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { cn } from '@/shared/utils/cn';
+import { Check } from 'lucide-react-native';
 
 /**
  * 알림 목록 스켈레톤 UI 컴포넌트
@@ -150,9 +150,11 @@ export function NotificationList() {
 		isError,
 		refetch,
 		markAsRead,
+		markAllAsRead,
 		deleteNotification,
 		unreadCount,
 		isDeleting,
+		isMarkingAllAsRead,
 	} = useNotifications();
 
 	const { user } = useAuthStore();
@@ -219,48 +221,74 @@ export function NotificationList() {
 
 	useRefetchOnFocus(refetch);
 
+	// 모든 알림 읽음 처리 핸들러
+	const handleMarkAllAsRead = () => {
+		markAllAsRead();
+		showToast({
+			message: "모든 알림을 읽음으로 표시했어요.",
+			type: "success",
+		});
+	};
+
 	// 그룹 필터 태그 렌더링 함수
 	const renderGroupFilterTags = () => {
 		return (
 			<Box className="py-2 px-4 h-12 overflow-hidden">
-				<ScrollView
-					horizontal
-					showsHorizontalScrollIndicator={false}
-					className="h-full"
-				>
-					<HStack className="items-center h-full">
-						{/* '전체' 필터 태그 */}
-						<GroupFilterTag
-							label="전체"
-							isSelected={selectedGroupId === null}
-							onPress={() => setSelectedGroupId(null)}
-						/>
+				<HStack className="justify-between">
+					<ScrollView
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						className="h-full flex-1"
+					>
+						<HStack className="items-center h-full">
+							{/* '전체' 필터 태그 */}
+							<GroupFilterTag
+								label="전체"
+								isSelected={selectedGroupId === null}
+								onPress={() => setSelectedGroupId(null)}
+							/>
 
-						{/* 사용자의 소그룹 필터 태그 */}
-						{isGroupsLoading ? (
-							<>
-								{/* 로딩 스켈레톤 태그 */}
-								{[1, 2].map((i) => (
-									<Box
-										key={`skeleton-${i}`}
-										className="px-3 py-1.5 rounded-full mr-2 bg-gray-200 animate-pulse"
-									>
-										<Box className="w-16 h-4" />
-									</Box>
-								))}
-							</>
-						) : (
-							groupFilterItems.map((group) => (
-								<GroupFilterTag
-									key={group.groupId}
-									label={group.groupName}
-									isSelected={selectedGroupId === group.groupId}
-									onPress={() => setSelectedGroupId(group.groupId)}
-								/>
-							))
-						)}
-					</HStack>
-				</ScrollView>
+							{/* 사용자의 소그룹 필터 태그 */}
+							{isGroupsLoading ? (
+								<>
+									{/* 로딩 스켈레톤 태그 */}
+									{[1, 2].map((i) => (
+										<Box
+											key={`skeleton-${i}`}
+											className="px-3 py-1.5 rounded-full mr-2 bg-gray-200 animate-pulse"
+										>
+											<Box className="w-16 h-4" />
+										</Box>
+									))}
+								</>
+							) : (
+								groupFilterItems.map((group) => (
+									<GroupFilterTag
+										key={group.groupId}
+										label={group.groupName}
+										isSelected={selectedGroupId === group.groupId}
+										onPress={() => setSelectedGroupId(group.groupId)}
+									/>
+								))
+							)}
+						</HStack>
+					</ScrollView>
+
+					{/* 모두 읽음 버튼 (읽지 않은 알림이 있을 때만 표시) */}
+					{unreadCount > 0 && (
+						<Button
+							variant="outline"
+							size="sm"
+							rounded
+							onPress={handleMarkAllAsRead}
+							className="ml-2"
+							disabled={isMarkingAllAsRead}
+						>
+							<ButtonText>모두 읽음</ButtonText>
+							<ButtonIcon as={Check} />
+						</Button>
+					)}
+				</HStack>
 			</Box>
 		);
 	};
