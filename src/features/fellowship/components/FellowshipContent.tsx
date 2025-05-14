@@ -27,7 +27,7 @@ type SermonContentItemProps = {
 	members: ClientFellowshipMember[];
 	fellowshipContent: ClientFellowshipContentField;
 	updateContent: (answer: ClientFellowshipContentField) => void;
-	isLeader: boolean;
+	enableReply: boolean;
 };
 
 export default function FellowshipContent({
@@ -35,7 +35,7 @@ export default function FellowshipContent({
 	members,
 	fellowshipContent,
 	updateContent,
-	isLeader,
+	enableReply,
 }: SermonContentItemProps) {
 	const { id, question, answers: existedAnswers } = fellowshipContent;
 	const {
@@ -106,7 +106,7 @@ export default function FellowshipContent({
 						{index !== undefined && `${index + 1}. `}
 						{question}
 					</Text>
-					{isLeader && (
+					{enableReply && (
 						<Button variant="icon" onPress={handleOpenTopic}>
 							<ButtonIcon as={Edit3} />
 						</Button>

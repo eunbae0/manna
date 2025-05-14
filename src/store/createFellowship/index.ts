@@ -17,6 +17,7 @@ type FellowShipStoreState = FellowShipStoreData & {
 	fellowshipId?: string | null;
 	hasShownRecentRecommendSheet: boolean;
 	lastUpdatedId?: string | null;
+
 	setStep: (step: FellowshipStoreStep) => void;
 	setType: (type: FellowshipStoreType) => void;
 	setFellowshipId: (fellowshipId: string | null) => void;
@@ -27,6 +28,9 @@ type FellowShipStoreState = FellowShipStoreData & {
 	updateFellowshipInfo: (data: Partial<FellowShipStoreState['info']>) => void;
 	updateFellowshipContent: (
 		data: Partial<FellowShipStoreState['content']>,
+	) => void;
+	updateFellowshipOptions: (
+		data: Partial<FellowShipStoreState['options']>,
 	) => void;
 	transformFellowshipData: () => FellowShipStoreData;
 	completeFellowship: ({
@@ -59,6 +63,9 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 		sermonTopic: [],
 		prayerRequest: { isActive: true, answers: [] },
 	},
+	options: {
+		enableMemberReply: false,
+	},
 	setStep: (step) => set({ currentStep: step }),
 	setType: (type) => set({ type }),
 	setFellowshipId: (fellowshipId) => set({ fellowshipId }),
@@ -76,13 +83,16 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 		set((state) => ({
 			content: { ...state.content, ...data },
 		})),
-
+	updateFellowshipOptions: (data) =>
+		set((state) => ({
+			options: { ...state.options, ...data },
+		})),
 	/**
 	 * Transforms store data into the format expected by the API
 	 * @returns Fellowship data in the format expected by createFellowship API
 	 */
 	transformFellowshipData: () => {
-		const { info, content } = get();
+		const { info, content, options } = get();
 
 		// change members client to server
 		info.members = info.members.map((member) => {
@@ -94,6 +104,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 		return {
 			info,
 			content,
+			options,
 		};
 	},
 

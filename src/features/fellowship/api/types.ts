@@ -19,6 +19,9 @@ interface BaseFellowship {
 		sermonTopic: ServerFellowshipContentField[];
 		prayerRequest: ServerFellowshipPrayerRequestField;
 	};
+	options: {
+		enableMemberReply: boolean;
+	};
 }
 
 export type ClientFellowshipMember = ClientGroupMember & {

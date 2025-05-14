@@ -62,7 +62,7 @@ export default function FellowshipSermonTopicScreen() {
 			<KeyboardAvoidingView>
 				<Header onPressBackButton={() => setStep('CONTENT')} />
 				<KeyboardAwareScrollView keyboardShouldPersistTaps="handled">
-					<VStack className="px-5 py-6 gap-10 flex-1">
+					<VStack className="px-5 py-6 gap-8 flex-1">
 						<HStack className="items-center justify-between">
 							<Heading className="text-[24px]">설교 나눔</Heading>
 							{/* TODO: 도움말 모달 추가하기 */}

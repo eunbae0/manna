@@ -270,12 +270,16 @@ export default function FellowshipDetailScreen({
 		() =>
 			fellowship
 				? user?.id ===
-					fellowship.info.members.find(
-						(member: ServerFellowshipMember) => member.isLeader,
-					)?.id
+				fellowship.info.members.find(
+					(member: ServerFellowshipMember) => member.isLeader,
+				)?.id
 				: false,
 		[fellowship, user],
 	);
+
+	const enableReply = useMemo(() => {
+		return fellowship?.options?.enableMemberReply ? true : isLeader;
+	}, [fellowship, isLeader]);
 
 	const prayerRequestListRef = useRef<FellowshipPrayerRequestListHandle>(null);
 
@@ -365,7 +369,7 @@ export default function FellowshipDetailScreen({
 											fellowshipContents={fellowship.content.iceBreaking}
 											updateFellowship={updateFellowship}
 											contentType="iceBreaking"
-											isLeader={isLeader}
+											enableReply={enableReply}
 										/>
 									</FellowshipContentLayout>
 								)}
@@ -377,7 +381,7 @@ export default function FellowshipDetailScreen({
 											fellowshipContents={fellowship.content.sermonTopic}
 											updateFellowship={updateFellowship}
 											contentType="sermonTopic"
-											isLeader={isLeader}
+											enableReply={enableReply}
 										/>
 									</FellowshipContentLayout>
 								)}
@@ -385,7 +389,7 @@ export default function FellowshipDetailScreen({
 								<FellowshipContentLayout
 									title="기도 제목"
 									onPressEdit={
-										isLeader
+										enableReply
 											? () => prayerRequestListRef.current?.openTopic()
 											: undefined
 									}

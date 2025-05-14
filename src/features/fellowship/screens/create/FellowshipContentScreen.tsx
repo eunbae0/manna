@@ -24,7 +24,9 @@ export default function FellowshipContentScreen() {
 		fellowshipId,
 		setStep,
 		updateFellowshipContent,
+		updateFellowshipOptions,
 		content,
+		options,
 		completeFellowship,
 		hasShownRecentRecommendSheet,
 		setHasShownRecentRecommendSheet,
@@ -81,7 +83,7 @@ export default function FellowshipContentScreen() {
 					<VStack className="gap-8">
 						<Pressable onPress={() => setStep('CONTENT_ICEBREAKING')}>
 							<HStack className="py-3 items-center justify-between w-full">
-								<Heading size="lg">아이스 브레이킹</Heading>
+								<Heading size="xl">아이스 브레이킹</Heading>
 								<HStack space="md" className="items-center">
 									<Text size="lg" className="text-typography-600">
 										{content.iceBreaking.length}개
@@ -96,7 +98,7 @@ export default function FellowshipContentScreen() {
 						</Pressable>
 						<Pressable onPress={() => setStep('CONTENT_SERMON')}>
 							<HStack className="py-3 items-center justify-between w-full">
-								<Heading size="lg">설교 나눔</Heading>
+								<Heading size="xl">설교 나눔</Heading>
 								<HStack space="md" className="items-center">
 									<Text size="lg" className="text-typography-600">
 										{content.sermonTopic.length}개
@@ -109,10 +111,10 @@ export default function FellowshipContentScreen() {
 								</HStack>
 							</HStack>
 						</Pressable>
-						<Divider />
-						<HStack className="items-center justify-between">
+
+						<HStack className="items-center justify-between mt-2">
 							<VStack space="xs">
-								<Heading>기도 제목</Heading>
+								<Heading size="xl">기도 제목</Heading>
 								<Text className="text-typography-600">
 									소그룹원과 기도 제목을 나눠보세요
 								</Text>
@@ -127,6 +129,26 @@ export default function FellowshipContentScreen() {
 											...content.prayerRequest,
 											isActive: !content.prayerRequest.isActive,
 										},
+									});
+								}}
+							/>
+						</HStack>
+						<Divider />
+
+						<HStack className="items-center justify-between">
+							<VStack space="xs">
+								<Heading size="xl">그룹원도 나눔 답변 작성</Heading>
+								<Text className="text-typography-600">
+									활성화 하면 그룹원도 함께 나눔 답변을 작성할 수 있어요
+								</Text>
+							</VStack>
+							<Switch
+								size="md"
+								isDisabled={false}
+								defaultValue={options.enableMemberReply}
+								onChange={() => {
+									updateFellowshipOptions({
+										enableMemberReply: !options.enableMemberReply,
 									});
 								}}
 							/>

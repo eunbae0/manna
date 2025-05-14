@@ -12,7 +12,7 @@ type SermonContentListProps = {
 	fellowshipContents: ClientFellowshipContentField[];
 	updateFellowship: (updatedFellowship: UpdateFellowshipInput) => void;
 	contentType: Exclude<keyof ClientFellowship['content'], 'prayerRequest'>;
-	isLeader: boolean;
+	enableReply: boolean;
 };
 
 export default function FellowshipContentList({
@@ -20,7 +20,7 @@ export default function FellowshipContentList({
 	fellowshipContents,
 	updateFellowship,
 	contentType,
-	isLeader,
+	enableReply,
 }: SermonContentListProps) {
 	const updateContent = (content: ClientFellowshipContentField) => {
 		const newContents = fellowshipContents.map((topic) =>
@@ -38,7 +38,7 @@ export default function FellowshipContentList({
 					members={members}
 					fellowshipContent={content}
 					updateContent={updateContent}
-					isLeader={isLeader}
+					enableReply={enableReply}
 				/>
 			))}
 		</VStack>
