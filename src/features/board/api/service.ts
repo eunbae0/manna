@@ -367,8 +367,7 @@ export class FirestoreBoardService {
 
 			// 총 개수 가져오기 (실제로는 더 효율적인 방법 사용 필요)
 			const countQueryRef = query(
-				collection(database, this.postsCollectionPath),
-				where('groupId', '==', groupId),
+				collection(database, this.getPostsCollectionPath(groupId)),
 				where('isDeleted', '==', false),
 			);
 			const countSnapshot = await getDocs(countQueryRef);
