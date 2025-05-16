@@ -4,7 +4,7 @@ import { Box } from '#/components/ui/box';
 import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import { useNotifications } from '../hooks/useNotifications';
 import { type Href, router } from 'expo-router';
-import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
+import { Button } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { EmptyState } from '@/components/common/empty-state';
 import { NotificationItem } from './NotificationItem';
@@ -280,9 +280,7 @@ export function NotificationList() {
 						<AnimatedPressable onPress={handleMarkAllAsRead}>
 							<HStack space="xs" className="items-center border border-primary-500 rounded-full px-3 py-1">
 								<Text size="sm">모두 읽음</Text>
-								<Box className={cn(isMarkingAllAsRead && "animate-spin")}>
-									<Icon size="xs" as={isMarkingAllAsRead ? LoaderCircle : Check} />
-								</Box>
+								<Icon size="xs" as={isMarkingAllAsRead ? LoaderCircle : Check} />
 							</HStack>
 						</AnimatedPressable>
 					)}
