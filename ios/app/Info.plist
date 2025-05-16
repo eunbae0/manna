@@ -59,9 +59,11 @@
     <key>NSCameraUsageDescription</key>
     <string>$(PRODUCT_NAME)이 카메라에 접근할 수 있도록 허가해 주세요.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your microphone</string>
+    <string>$(PRODUCT_NAME)이 마이크에 접근할 수 있도록 허가해 주세요.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>소그룹 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>$(PRODUCT_NAME)이 음성을 인식할 수 있도록 허가해 주세요.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

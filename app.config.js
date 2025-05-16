@@ -106,6 +106,18 @@ export default {
 					enableCodeScanner: true,
 				},
 			],
+			[
+				'expo-speech-recognition',
+				{
+					microphonePermission:
+						'$(PRODUCT_NAME)이 마이크에 접근할 수 있도록 허가해 주세요.',
+					speechRecognitionPermission:
+						'$(PRODUCT_NAME)이 음성을 인식할 수 있도록 허가해 주세요.',
+					androidSpeechServicePackages: [
+						'com.google.android.googlequicksearchbox',
+					],
+				},
+			],
 		],
 		experiments: {
 			typedRoutes: true,
