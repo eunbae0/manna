@@ -24,7 +24,8 @@ import { useGroups } from '@/features/home/group/hooks/useGroups';
 import type { ClientGroup } from '@/api/group/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { cn } from '@/shared/utils/cn';
-import { Check } from 'lucide-react-native';
+import { Check, LoaderCircle } from 'lucide-react-native';
+import { Icon } from '#/components/ui/icon';
 
 /**
  * 알림 목록 스켈레톤 UI 컴포넌트
@@ -276,17 +277,14 @@ export function NotificationList() {
 
 					{/* 모두 읽음 버튼 (읽지 않은 알림이 있을 때만 표시) */}
 					{unreadCount > 0 && (
-						<Button
-							variant="outline"
-							size="sm"
-							rounded
-							onPress={handleMarkAllAsRead}
-							className="ml-2"
-							disabled={isMarkingAllAsRead}
-						>
-							<ButtonText>모두 읽음</ButtonText>
-							<ButtonIcon as={Check} />
-						</Button>
+						<AnimatedPressable onPress={handleMarkAllAsRead}>
+							<HStack space="xs" className="items-center border border-primary-500 rounded-full px-3 py-1">
+								<Text size="sm">모두 읽음</Text>
+								<Box className={cn(isMarkingAllAsRead && "animate-spin")}>
+									<Icon size="xs" as={isMarkingAllAsRead ? LoaderCircle : Check} />
+								</Box>
+							</HStack>
+						</AnimatedPressable>
 					)}
 				</HStack>
 			</Box>
