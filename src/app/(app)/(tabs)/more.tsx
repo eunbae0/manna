@@ -17,6 +17,7 @@ import {
 	UserPen,
 	Info,
 	MessageCircleReply,
+	NotepadText,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
 import { APP_STORE_REVIEW_URL, PLAY_STORE_URL } from '@/shared/constants/app';
@@ -103,6 +104,17 @@ export default function TabFourScreen() {
 								link={'/(app)/(more)'}
 							/> */}
 							<VStack space="xs">
+								<ListItem
+									label="업데이트 노트"
+									icon={NotepadText}
+									onPress={() => {
+										trackAmplitudeEvent('업데이트 노트 클릭', {
+											screen: 'Tab_More',
+										});
+										router.push('/(app)/(more)/update-note');
+									}}
+									isNew
+								/>
 								<ListItem
 									label="지원"
 									icon={Info}

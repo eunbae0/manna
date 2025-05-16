@@ -7,3 +7,16 @@ export type AppVersionConfig = {
 	forceUpdate: boolean;
 	updateMessage: string;
 };
+
+export interface UpdateNote {
+	title: string;
+	description: string;
+	imageUrls?: string[];
+}
+
+export interface AppUpdate {
+	version: string;
+	releaseDate: Date;
+	notes: UpdateNote[];
+	isActive: boolean;
+}

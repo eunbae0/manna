@@ -1,4 +1,4 @@
-import type { AppVersionConfig } from './types';
+import type { AppUpdate, AppVersionConfig } from './types';
 import { handleApiError } from '../errors';
 import { withApiLogging } from '../utils/logger';
 import { getAppConfigService } from './service';
@@ -17,5 +17,31 @@ export const fetchAppConfigVersion = withApiLogging(
 		}
 	},
 	'fetchAppConfigVersion',
+	'appConfig',
+);
+
+export const fetchAllUpdateNotes = withApiLogging(
+	async (): Promise<AppUpdate[] | null> => {
+		try {
+			const appConfigService = getAppConfigService();
+			return await appConfigService.getAllUpdateNotes();
+		} catch (error) {
+			throw handleApiError(error, 'fetchAllUpdateNotes', 'appConfig');
+		}
+	},
+	'fetchAllUpdateNotes',
+	'appConfig',
+);
+
+export const fetchLatestUpdateNote = withApiLogging(
+	async (): Promise<AppUpdate | null> => {
+		try {
+			const appConfigService = getAppConfigService();
+			return await appConfigService.getLatestUpdateNote();
+		} catch (error) {
+			throw handleApiError(error, 'fetchLatestUpdateNote', 'appConfig');
+		}
+	},
+	'fetchLatestUpdateNote',
 	'appConfig',
 );

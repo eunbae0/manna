@@ -1,10 +1,11 @@
-import { Redirect, Stack } from 'expo-router';
+import { Redirect, router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
 import { useInitializeApp } from '@/hooks/useInitializeApp';
 import { useAppVersionCheck } from '@/hooks/useAppVersionCheck';
 import { AppUpdateModal } from '@/components/common/app-update-modal';
+import { useAppUpdateStore } from '@/store/app/app-update';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -14,6 +15,8 @@ export default function RootLayout() {
 	const { needsUpdate, forceUpdate, updateMessage, latestVersion } =
 		useAppVersionCheck();
 	const [showUpdateModal, setShowUpdateModal] = useState(false);
+	const { checkShouldShowUpdateSheet } = useAppUpdateStore();
+
 
 	useEffect(() => {
 		if (loaded) {
@@ -23,8 +26,15 @@ export default function RootLayout() {
 			if (needsUpdate) {
 				setShowUpdateModal(true);
 			}
+			// 업데이트 시트를 보여줘야 하는지 확인
+			(async () => {
+				const shouldShowUpdateSheet = await checkShouldShowUpdateSheet();
+				if (shouldShowUpdateSheet) {
+					router.navigate('/(app)/updateInfoModal');
+				}
+			})();
 		}
-	}, [loaded, needsUpdate]);
+	}, [loaded, needsUpdate, checkShouldShowUpdateSheet]);
 
 	if (!loaded) {
 		return null;
@@ -45,6 +55,7 @@ export default function RootLayout() {
 				updateMessage={updateMessage}
 				latestVersion={latestVersion || ''}
 			/>
+
 			<Stack screenOptions={{ contentStyle: { backgroundColor: 'white' } }}>
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 				<Stack.Screen name="(profile)" options={{ headerShown: false }} />
@@ -70,6 +81,13 @@ export default function RootLayout() {
 				/>
 				<Stack.Screen
 					name="inviteQrCodeModal"
+					options={{
+						headerShown: false,
+						presentation: 'modal',
+					}}
+				/>
+				<Stack.Screen
+					name="updateInfoModal"
 					options={{
 						headerShown: false,
 						presentation: 'modal',
