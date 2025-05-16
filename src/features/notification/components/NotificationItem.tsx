@@ -73,6 +73,15 @@ export function NotificationItem({
 	});
 
 	const panGesture = Gesture.Pan()
+		// 수직 스크롤과의 충돌 방지를 위한 설정
+		.activeOffsetX([-10, 10]) // 수평으로 10px 이상 움직여야 활성화
+		.failOffsetY([-20, 20]) // 수직으로 20px 이상 움직이면 제스처 실패 처리
+		.onBegin((event) => {
+			// 수직 방향 스크롤 중에는 스와이프 비활성화
+			if (Math.abs(event.velocityY) > Math.abs(event.velocityX) * 2) {
+				return;
+			}
+		})
 		.onUpdate((event) => {
 			// 왼쪽으로만 스와이프 가능하도록 제한
 			if (event.translationX <= 0) {
