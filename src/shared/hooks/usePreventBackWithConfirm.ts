@@ -1,11 +1,11 @@
-import { useNavigation, router } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useNavigation } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
 	type NavigationAction,
 	usePreventRemove,
 } from '@react-navigation/native';
-import { Keyboard } from 'react-native';
+import { KeyboardController } from 'react-native-keyboard-controller';
 
 interface UsePreventBackWithConfirmProps {
 	/**
@@ -68,7 +68,7 @@ export function usePreventBackWithConfirm({
 		isOpen: isConfirmModalOpen,
 	} = useBottomSheet({ variant: 'modal' });
 
-	const handleExit = useCallback(() => {
+	const handleExit = useCallback(async () => {
 		handleCloseConfirmModal();
 
 		setTimeout(() => {
@@ -79,7 +79,7 @@ export function usePreventBackWithConfirm({
 		}, 100);
 	}, [handleCloseConfirmModal, onConfirmExit, navigationAction, navigation]);
 
-	usePreventRemove(condition, ({ data }) => {
+	usePreventRemove(condition, async ({ data }) => {
 		// GO_BACK이 아니면서 POP도 아닌 경우, 또는 POP이면서 source가 없는 경우 early return
 		if (
 			(data.action.type !== 'GO_BACK' && data.action.type !== 'POP') ||
@@ -88,8 +88,10 @@ export function usePreventBackWithConfirm({
 			navigation.dispatch(data.action);
 			return;
 		}
-		if (Keyboard.isVisible()) {
-			Keyboard.dismiss();
+
+		// TODO: keyboard가 visible이지만, 인식되지 않음
+		if (KeyboardController.isVisible()) {
+			KeyboardController.dismiss();
 		}
 		setNavigationAction(data.action);
 		handleOpenConfirmModal();
