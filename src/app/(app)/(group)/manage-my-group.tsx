@@ -231,6 +231,7 @@ export default function ManageMyGroupScreen() {
 								data={groups}
 								renderItem={renderGroupItem}
 								keyExtractor={(item) => item.id}
+								style={{ height: '100%' }}
 								contentContainerStyle={{ paddingBottom: 20 }}
 								showsVerticalScrollIndicator={false}
 								refreshControl={
