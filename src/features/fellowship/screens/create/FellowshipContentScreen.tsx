@@ -270,8 +270,12 @@ export default function FellowshipContentScreen() {
 										>
 											<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
 												<Text className="flex-1" size="md">{item.question}</Text>
-												{selectedQuestions.iceBreaking.includes(item.question) && (
+												{selectedQuestions.iceBreaking.includes(item.question) ? (
 													<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
+														<Icon as={Check} size="sm" color="white" />
+													</HStack>
+												) : (
+													<HStack className="justify-center items-center w-6 h-6 border border-primary-500 rounded-md">
 														<Icon as={Check} size="sm" color="white" />
 													</HStack>
 												)}
@@ -302,8 +306,12 @@ export default function FellowshipContentScreen() {
 										>
 											<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
 												<Text className="flex-1" size="md">{item.question}</Text>
-												{selectedQuestions.sermonTopic.includes(item.question) && (
+												{selectedQuestions.sermonTopic.includes(item.question) ? (
 													<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
+														<Icon as={Check} size="sm" color="white" />
+													</HStack>
+												) : (
+													<HStack className="justify-center items-center w-6 h-6 border border-primary-500 rounded-md">
 														<Icon as={Check} size="sm" color="white" />
 													</HStack>
 												)}
@@ -346,7 +354,7 @@ export default function FellowshipContentScreen() {
 										className="flex-1"
 										disabled={selectedQuestions.iceBreaking.length === 0 && selectedQuestions.sermonTopic.length === 0}
 									>
-										<ButtonText>추가하기</ButtonText>
+										<ButtonText>{selectedQuestions.iceBreaking.length + selectedQuestions.sermonTopic.length}개 추가하기</ButtonText>
 									</Button>
 								</HStack>
 							</VStack>
