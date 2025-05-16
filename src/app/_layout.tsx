@@ -50,9 +50,16 @@ Sentry.init({
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 if (!__DEV__) amplitude.init(process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY!);
 
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 1000 * 60 * 5, // 5분
+		},
+	},
+});
+
 function RootLayout() {
 	const colorScheme = useColorScheme();
-	const queryClient = new QueryClient();
 
 	useReactQueryDevTools(queryClient);
 
