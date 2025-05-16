@@ -25,7 +25,7 @@ export const BottomSheetListItem = ({
 }: BottomSheetListProps) => {
 	return (
 		<AnimatedPressable {...props} onPress={onPress}>
-			<HStack space="md" className="items-center py-2">
+			<HStack space="md" className="items-center py-3">
 				<Icon
 					size="xl"
 					className={cn(
@@ -50,7 +50,7 @@ export const BottomSheetListHeader = ({
 	onPress,
 }: { label: string; onPress: () => void }) => {
 	return (
-		<HStack className="justify-between items-center mb-3">
+		<HStack className="justify-between items-center mb-2">
 			<Heading size="xl">{label}</Heading>
 			<Button size="xl" variant="icon" onPress={onPress}>
 				<ButtonIcon as={X} />

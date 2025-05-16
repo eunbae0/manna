@@ -140,7 +140,7 @@ export default function FellowshipContentScreen() {
 							<VStack space="xs">
 								<Heading size="xl">그룹원도 나눔 답변 작성</Heading>
 								<Text className="text-typography-600">
-									활성화 하면 그룹원도 함께 나눔 답변을 작성할 수 있어요
+									활성화하면 그룹원도 함께 나눔 답변을 작성할 수 있어요
 								</Text>
 							</VStack>
 							<Switch
