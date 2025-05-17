@@ -278,7 +278,7 @@ function HomeHeader({ groups }: Props) {
 
 			{/* Group Members Bottom Sheet */}
 			<MemberBottomSheetContainer>
-				<VStack space="md" className="px-6 py-2">
+				<VStack className="px-6 py-2">
 					<BottomSheetListHeader
 						label="그룹원 목록"
 						onPress={handleCloseMember}

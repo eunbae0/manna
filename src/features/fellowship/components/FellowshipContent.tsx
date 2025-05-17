@@ -22,23 +22,36 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
+import { useFellowship } from '../hooks/useFellowship';
 
 type SermonContentItemProps = {
+	fellowshipId: string;
 	index?: number;
-	members: ClientFellowshipMember[];
 	fellowshipContent: ClientFellowshipContentField;
 	updateContent: (answer: ClientFellowshipContentField) => void;
 	enableReply: boolean;
 };
 
 export default function FellowshipContent({
+	fellowshipId,
 	index,
-	members,
 	fellowshipContent,
 	updateContent,
 	enableReply,
 }: SermonContentItemProps) {
 	const { id, question, answers: existedAnswers } = fellowshipContent;
+
+	const {
+		fellowship,
+	} = useFellowship(fellowshipId);
+
+	if (!fellowship) {
+		return null;
+	}
+	const members = fellowship?.info.members;
+
+	const textInputRef = useRef<RNTextInput>();
+
 	const {
 		handleOpen: handleOpenTopic,
 		handleClose: handleCloseTopic,
@@ -83,9 +96,6 @@ export default function FellowshipContent({
 	// 	setAnswers(initialContent);
 	// }, [fellowshipContent]);
 
-	// auto focus
-	const textInputRef = useRef<RNTextInput>();
-
 	const handlePressMember = (memberId: ClientFellowshipMember['id']) => {
 		setAnswers((prev) =>
 			prev.map((answer) =>
@@ -98,6 +108,15 @@ export default function FellowshipContent({
 			textInputRef.current?.focus();
 		}, 50);
 	};
+
+	// const handlePressSummaryButton = () => {
+	// 	// id가 content id
+	// 	router.push({
+	// 		pathname: `/(app)/(fellowship)/${fellowshipId}/answer`,
+	// 		params: { id, contentType: 'sermonTopic', index: index?.toString() || undefined }
+	// 	});
+	// 	handleCloseTopic();
+	// }
 
 	return (
 		<>
@@ -146,20 +165,23 @@ export default function FellowshipContent({
 
 			{/* bottom sheet */}
 			<BottomSheetAnswerContainer>
-				<VStack space="sm" className="px-6 py-2">
+				<VStack space="sm" className="px-4 py-2">
 					<BottomSheetListHeader
 						label="나눔 답변 작성하기"
 						onPress={() => handleCloseTopic()}
 					/>
-					<VStack className="gap-14">
-						<VStack space="2xl">
-							<Text
-								size="xl"
-								className="font-pretendard-semi-bold p-4 border border-background-400 rounded-xl"
+					<VStack className="gap-8">
+						<VStack space="lg">
+							<VStack
+								space="xs"
+								className="font-pretendard-semi-bold border border-background-400 py-2 px-3 rounded-xl"
 							>
-								{index !== undefined && `${index + 1}. `}
-								{question}
-							</Text>
+								<Text size="lg" className="font-pretendard-bold">질문</Text>
+								<HStack space="xs">
+									<Text size="lg">{index !== undefined && `${index + 1}.`}</Text>
+									<Text size="lg">{question}</Text>
+								</HStack>
+							</VStack>
 
 							<VStack>
 								<HStack className="items-center justify-between">
@@ -202,7 +224,7 @@ export default function FellowshipContent({
 								onChangeText={(value) =>
 									setAnswers((prev) =>
 										prev.map((answer) =>
-											answer.selected ? { ...answer, value } : answer,
+											answer.selected ? { ...answer, value: value.trim() } : answer,
 										),
 									)
 								}
@@ -211,9 +233,15 @@ export default function FellowshipContent({
 								className={TEXT_INPUT_STYLE}
 							/>
 						</VStack>
-						<Button size="lg" rounded onPress={handlePressSaveButton}>
-							<ButtonText>저장하기</ButtonText>
-						</Button>
+						<HStack space="sm">
+							{/* TODO: AI 요약 기능 구현 */}
+							{/* <Button size="lg" variant="outline" onPress={handlePressSummaryButton} className="flex-1">
+								<ButtonText>AI로 요약하기</ButtonText>
+							</Button> */}
+							<Button size="lg" onPress={handlePressSaveButton} className="flex-1">
+								<ButtonText>저장하기</ButtonText>
+							</Button>
+						</HStack>
 					</VStack>
 				</VStack>
 			</BottomSheetAnswerContainer>
