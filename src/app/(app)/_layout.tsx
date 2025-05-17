@@ -26,6 +26,8 @@ export default function RootLayout() {
 			if (needsUpdate) {
 				setShowUpdateModal(true);
 			}
+
+			if (!isAuthenticated) return;
 			// 업데이트 시트를 보여줘야 하는지 확인
 			(async () => {
 				const shouldShowUpdateSheet = await checkShouldShowUpdateSheet();
@@ -34,7 +36,7 @@ export default function RootLayout() {
 				}
 			})();
 		}
-	}, [loaded, needsUpdate, checkShouldShowUpdateSheet]);
+	}, [loaded, needsUpdate, isAuthenticated, checkShouldShowUpdateSheet]);
 
 	if (!loaded) {
 		return null;
