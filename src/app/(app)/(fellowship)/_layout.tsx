@@ -10,6 +10,7 @@ export default function HomeLayout() {
 		>
 			<Stack.Screen name="create" />
 			<Stack.Screen name="[id]" />
+			<Stack.Screen name="[id]/answer" />
 			<Stack.Screen name="list" />
 			<Stack.Screen name="user-fellowships" />
 		</Stack>
