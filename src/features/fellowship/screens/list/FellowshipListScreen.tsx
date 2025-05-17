@@ -187,7 +187,7 @@ export default function FellowshipListScreen() {
 				<Box className="flex-1">
 					{/* 나눔 기록 목록 */}
 					{showSkeleton && !isFetchingNextPage ? (
-						<Box className="px-5 pt-5">
+						<Box className="pt-5">
 							<FellowshipSkeleton />
 						</Box>
 					) : (
