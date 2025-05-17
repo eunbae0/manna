@@ -365,9 +365,7 @@ export default function FellowshipDetailScreen({
 								fellowship?.content.iceBreaking.length > 0 && (
 									<FellowshipContentLayout title="아이스 브레이킹">
 										<FellowshipContentList
-											members={fellowship.info.members}
-											fellowshipContents={fellowship.content.iceBreaking}
-											updateFellowship={updateFellowship}
+											fellowshipId={id}
 											contentType="iceBreaking"
 											enableReply={enableReply}
 										/>
@@ -377,9 +375,7 @@ export default function FellowshipDetailScreen({
 								fellowship?.content.sermonTopic.length > 0 && (
 									<FellowshipContentLayout title="설교 나눔">
 										<FellowshipContentList
-											members={fellowship.info.members}
-											fellowshipContents={fellowship.content.sermonTopic}
-											updateFellowship={updateFellowship}
+											fellowshipId={id}
 											contentType="sermonTopic"
 											enableReply={enableReply}
 										/>

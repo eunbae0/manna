@@ -6,24 +6,28 @@ import type {
 	UpdateFellowshipInput,
 } from '@/features/fellowship/api/types';
 import FellowshipContent from './FellowshipContent';
+import { useFellowship } from '../hooks/useFellowship';
 
 type SermonContentListProps = {
-	members: ClientFellowshipMember[];
-	fellowshipContents: ClientFellowshipContentField[];
-	updateFellowship: (updatedFellowship: UpdateFellowshipInput) => void;
+	fellowshipId: string;
 	contentType: Exclude<keyof ClientFellowship['content'], 'prayerRequest'>;
 	enableReply: boolean;
 };
 
 export default function FellowshipContentList({
-	members,
-	fellowshipContents,
-	updateFellowship,
+	fellowshipId,
 	contentType,
 	enableReply,
 }: SermonContentListProps) {
+	const {
+		fellowship,
+		updateFellowship,
+	} = useFellowship(fellowshipId);
+
+	const fellowshipContents = fellowship?.content[contentType];
+
 	const updateContent = (content: ClientFellowshipContentField) => {
-		const newContents = fellowshipContents.map((topic) =>
+		const newContents = fellowshipContents?.map((topic) =>
 			topic.id === content.id ? content : topic,
 		);
 		updateFellowship({ content: { [contentType]: newContents } });
@@ -31,11 +35,11 @@ export default function FellowshipContentList({
 
 	return (
 		<VStack className="gap-12">
-			{fellowshipContents.map((content, index) => (
+			{fellowshipContents?.map((content, index) => (
 				<FellowshipContent
 					key={content.id}
 					index={index}
-					members={members}
+					fellowshipId={fellowshipId}
 					fellowshipContent={content}
 					updateContent={updateContent}
 					enableReply={enableReply}
