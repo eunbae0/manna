@@ -205,7 +205,6 @@ export default function FellowshipDetailScreen({
 }: FellowshipDetailScreenProps) {
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 	const { user } = useAuthStore();
-	console.log(id)
 
 	const {
 		setType,
