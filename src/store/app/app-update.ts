@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getCurrentAppVersion } from '@/shared/utils/app_version';
+import { getCurrentAppVersion } from '@/shared/utils/app/app_version';
 
 interface AppUpdateState {
 	lastShownVersion: string | null;

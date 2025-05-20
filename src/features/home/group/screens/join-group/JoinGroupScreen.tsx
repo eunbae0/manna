@@ -27,6 +27,7 @@ import {
 } from 'react-native-vision-camera';
 
 import { View, Linking, Platform } from 'react-native';
+import { openAppSettings } from '@/shared/utils/app/open_app_settings';
 
 export default function JoinGroupScreen() {
 	const { user, addUserGroupProfile } = useAuthStore();
@@ -89,15 +90,6 @@ export default function JoinGroupScreen() {
 		setJoinError(false);
 	};
 
-	const openSettings = async () => {
-		// iOS에서는 설정 앱으로 이동
-		if (Platform.OS === 'ios') {
-			await Linking.openURL('app-settings:');
-		} else {
-			// Android에서는 앱 설정으로 이동
-			await Linking.openSettings();
-		}
-	};
 
 	const handleRetry = () => {
 		// 스캔 재시도를 위해 상태 초기화
@@ -186,7 +178,7 @@ export default function JoinGroupScreen() {
 								<Text size="md" className="text-center text-gray-500 mb-4">
 									설정에서 카메라 권한을 허용해주세요
 								</Text>
-								<Button size="lg" onPress={openSettings}>
+								<Button size="lg" onPress={openAppSettings}>
 									<ButtonText>설정으로 이동하기</ButtonText>
 								</Button>
 							</VStack>

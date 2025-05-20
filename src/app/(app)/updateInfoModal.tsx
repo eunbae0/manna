@@ -8,7 +8,7 @@ import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { useAppUpdateStore } from '@/store/app/app-update';
 import { fetchLatestUpdateNote } from '@/api/app_config';
-import { getCurrentAppVersion } from '@/shared/utils/app_version';
+import { getCurrentAppVersion } from '@/shared/utils/app/app_version';
 import {
   ActivityIndicator,
   Animated,

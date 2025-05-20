@@ -6,7 +6,7 @@ import { fetchAppConfigVersion } from '@/api/app_config';
 import {
 	compareVersions,
 	getCurrentAppVersion,
-} from '@/shared/utils/app_version';
+} from '@/shared/utils/app/app_version';
 import { logEvent, AnalyticsEvents } from '@/utils/analytics';
 
 const APP_VERSION_QUERY_KEY = ['app-version'];
