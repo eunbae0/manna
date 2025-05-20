@@ -1,14 +1,19 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
 import {
 	ActivityIndicator,
 	FlatList,
-	Pressable,
 	RefreshControl,
+	TouchableOpacity,
+	View,
+	StyleSheet,
+	Dimensions,
+	Pressable,
+	ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
-import { ChevronRight, Plus, Check } from 'lucide-react-native';
+import { ChevronRight, Plus, Check, Rows3, Calendar, ChevronLeft } from 'lucide-react-native';
 
 import Header from '@/components/common/Header';
 import { useToastStore } from '@/store/toast';
@@ -20,7 +25,7 @@ import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '#/components/ui/text';
 import { VStack } from '#/components/ui/vstack';
-import { Avatar } from '@/components/common/avatar';
+import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import AnimatedPressable from '@/components/common/animated-pressable';
 
 import { FellowshipSkeleton } from '../../components/FellowshipSkeleton';
@@ -28,10 +33,64 @@ import { useInfiniteFellowships } from '../../hooks/useInfiniteFellowships';
 import type { ClientFellowship, ClientFellowshipMember } from '../../api/types';
 import { useFellowshipStore } from '@/store/createFellowship';
 
+type ViewMode = 'list' | 'calendar';
+
+// 화면 너비를 캘린더에 맞게 계산하기 위한 크기 정의
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CALENDER_WIDTH = SCREEN_WIDTH - 14;
+const DAY_CELL_WIDTH = Math.floor(CALENDER_WIDTH / 7);
+
+// 스타일 정의
+const styles = StyleSheet.create({
+	calendarGrid: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		width: '100%',
+	},
+	dayCell: {
+		width: DAY_CELL_WIDTH,
+		height: 44,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	weekdayHeader: {
+		width: DAY_CELL_WIDTH,
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingVertical: 8,
+	}
+});
+
 export default function FellowshipListScreen() {
-	const [refreshing, setRefreshing] = useState(false);
+	const { showSuccess, showError } = useToastStore();
+	const [viewMode, setViewMode] = useState<ViewMode>('list');
 	const [showLeader, setShowLeader] = useState(true);
-	const { showError } = useToastStore();
+	const [refreshing, setRefreshing] = useState(false);
+	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+	const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+
+	// 뷰 모드 전환 함수
+	const toggleViewMode = () => {
+		setViewMode((prev) => (prev === 'list' ? 'calendar' : 'list'));
+	};
+
+	// 이전 달로 이동
+	const goToPreviousMonth = () => {
+		setCurrentMonth((prevMonth) => {
+			const newMonth = new Date(prevMonth);
+			newMonth.setMonth(newMonth.getMonth() - 1);
+			return newMonth;
+		});
+	};
+
+	// 다음 달로 이동
+	const goToNextMonth = () => {
+		setCurrentMonth((prevMonth) => {
+			const newMonth = new Date(prevMonth);
+			newMonth.setMonth(newMonth.getMonth() + 1);
+			return newMonth;
+		});
+	};
 	const { setType } = useFellowshipStore();
 
 	const {
@@ -46,6 +105,38 @@ export default function FellowshipListScreen() {
 
 	// 모든 페이지의 나눔 기록을 하나의 배열로 합치기
 	const fellowships = data?.pages.flatMap((page) => page.items) || [];
+
+	// 특정 날짜에 해당하는 소그룹 나눔 찾기
+	const getFellowshipsByDate = (date: Date) => {
+		return fellowships.filter((fellowship) => {
+			const fellowshipDate = fellowship.info.date;
+			return (
+				date.getDate() === fellowshipDate.getDate() &&
+				date.getMonth() === fellowshipDate.getMonth() &&
+				date.getFullYear() === fellowshipDate.getFullYear()
+			);
+		});
+	};
+
+	// 특정 월에 나눔이 있는 날짜 목록 가져오기
+	const getFellowshipDatesInMonth = (year: number, month: number) => {
+		return fellowships.reduce<number[]>((dates, fellowship) => {
+			const fellowshipDate = fellowship.info.date;
+			if (
+				fellowshipDate.getFullYear() === year &&
+				fellowshipDate.getMonth() === month
+			) {
+				const day = fellowshipDate.getDate();
+				if (!dates.includes(day)) {
+					dates.push(day);
+				}
+			}
+			return dates;
+		}, []);
+	};
+
+	// 선택된 날짜에 해당하는 소그룹 나눔 목록
+	const selectedDateFellowships = selectedDate ? getFellowshipsByDate(selectedDate) : [];
 
 	useFocusEffect(
 		useCallback(() => {
@@ -92,48 +183,50 @@ export default function FellowshipListScreen() {
 		const leader = findLeader(item.info.members);
 
 		return (
-			<Pressable
+			<AnimatedPressable
 				key={item.id}
 				onPress={() => handlePressFellowship(item.id)}
-				className="mb-4"
+				className="mb-3 mx-4"
 			>
-				<Box className="bg-background-100 rounded-2xl px-4 py-5">
+				<Box className="border border-gray-300 rounded-2xl px-4 py-4">
 					{/* 상단 영역: 날짜와 나눔장 정보 */}
-					<HStack className="justify-between items-center mb-2">
-						<Text size="md" className="text-typography-400">
-							{item.info.date
-								.toLocaleDateString('ko-KR', {
-									year: 'numeric',
-									month: '2-digit',
-									day: '2-digit',
-								})
-								.replace(/\. /g, '.')
-								.replace(/\.$/, '')}
-						</Text>
-
-						{/* 나눔장(리더) 정보 표시 - 오른쪽 위에 배치 */}
-						{showLeader && leader && (
-							<HStack space="xs" className="items-center">
-								<Text
-									size="sm"
-									className="text-typography-500 font-pretendard-medium"
-								>
-									{leader.displayName}
-								</Text>
-								<Avatar size="2xs" photoUrl={leader.photoUrl || ''} />
-							</HStack>
-						)}
-					</HStack>
-
-					{/* 하단 영역: 제목과 화살표 */}
 					<HStack className="justify-between items-center">
-						<Text size="xl" className="flex-1">
-							{item.info.preachTitle}
-						</Text>
+						<VStack space="xs">
+							<VStack space="xs">
+								<Text size="xl" className="font-pretendard-semi-bold">
+									{item.info.preachTitle}
+								</Text>
+								<Text size="md" className="text-typography-400">
+									{item.info.date
+										.toLocaleDateString('ko-KR', {
+											year: 'numeric',
+											month: '2-digit',
+											day: '2-digit',
+										})
+										.replace(/\. /g, '.')
+										.replace(/\.$/, '')}
+								</Text>
+							</VStack>
+							{showLeader && leader ? (
+								<HStack space="xs" className="items-center">
+									<Avatar size="2xs" photoUrl={leader.photoUrl || ''} />
+									<Text
+										size="sm"
+										className="text-typography-500 font-pretendard-semi-bold"
+									>
+										{leader.displayName}
+									</Text>
+								</HStack>
+							) : <HStack className="items-center gap-[1px]">
+								{item.info.members.map((member) => (
+									<Avatar key={member.id} photoUrl={member.photoUrl || ''} size='2xs' />
+								))}
+							</HStack>}
+						</VStack>
 						<Icon as={ChevronRight} className="color-typography-400" />
 					</HStack>
 				</Box>
-			</Pressable>
+			</AnimatedPressable>
 		);
 	};
 
@@ -180,48 +273,286 @@ export default function FellowshipListScreen() {
 		);
 	};
 
+	// 캘린더 헤더 렌더링 함수
+	const renderCalendarHeader = () => {
+		const year = currentMonth.getFullYear();
+		const month = currentMonth.getMonth() + 1; // getMonth()는 0-11 반환
+
+		return (
+			<HStack className="justify-between items-center pl-4 pr-2">
+				<HStack space="lg" className="items-center">
+					<Heading size="xl">{`${year}년 ${month}월`}</Heading>
+				</HStack>
+				<HStack>
+					<Button variant="icon" onPress={goToPreviousMonth}>
+						<ButtonIcon as={ChevronLeft} />
+					</Button>
+					<Button variant="icon" onPress={goToNextMonth}>
+						<ButtonIcon as={ChevronRight} />
+					</Button>
+				</HStack>
+			</HStack>
+		);
+	};
+
+	// 달력 렌더링 함수
+	const renderCalendar = () => {
+		const year = currentMonth.getFullYear();
+		const month = currentMonth.getMonth();
+
+		// 현재 월의 시작일과 마지막일 가져오기
+		const firstDayOfMonth = new Date(year, month, 1);
+		const lastDayOfMonth = new Date(year, month + 1, 0);
+
+		// 이번 달의 첫째 요일(0: 일요일 ~ 6: 토요일)
+		const firstDayOfWeek = firstDayOfMonth.getDay();
+
+		// 캘린더 데이터 배열 생성
+		const calendarDays: (number | null)[] = [];
+
+		// 이전 달의 날짜를 null로 채움
+		for (let i = 0; i < firstDayOfWeek; i++) {
+			calendarDays.push(null);
+		}
+
+		// 현재 달의 날짜 추가
+		for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
+			calendarDays.push(i);
+		}
+
+		// 나눔이 있는 날짜 목록
+		const datesWithFellowships = getFellowshipDatesInMonth(year, month);
+
+		// 요일 표시
+		const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+
+		return (
+			<VStack>
+				{/* 요일 해더 */}
+				<View style={styles.calendarGrid}>
+					{weekdays.map((day) => {
+						// 요일은 고유하기 때문에 요일 이름을 키로 사용
+						const isSunday = day === '일';
+						return (
+							<View
+								key={`weekday-${day}`}
+								style={styles.weekdayHeader}
+							>
+								<Text
+									size="md"
+									className={`font-pretendard-medium ${isSunday ? 'text-danger-500' : 'text-typography-900'}`}
+								>
+									{day}
+								</Text>
+							</View>
+						);
+					})}
+				</View>
+
+				{/* 달력 그리드 */}
+				<View style={styles.calendarGrid}>
+					{calendarDays.map((day, index) => {
+						// null이면 비어있는 셀 표시
+						if (day === null) {
+							// 경고를 피하기 위해 절대 위치(1일보다 앞에 있는 비어있는 칸의 위치)를 계산
+							const emptyDayPosition = -Math.abs(firstDayOfWeek - index);
+							return <View key={`empty-${year}-${month}-position-${emptyDayPosition}`} style={styles.dayCell} />;
+						}
+
+						// 해당 날짜에 나눔이 있는지 확인
+						const hasFellowship = datesWithFellowships.includes(day);
+
+						// 오늘 날짜 확인
+						const today = new Date();
+						const isToday =
+							day === today.getDate() &&
+							month === today.getMonth() &&
+							year === today.getFullYear();
+
+						// 선택된 날짜 확인
+						const isSelected = selectedDate &&
+							day === selectedDate.getDate() &&
+							month === selectedDate.getMonth() &&
+							year === selectedDate.getFullYear();
+
+						// 요일 인덱스 계산 (0: 일요일)
+						const dayOfWeek = (index + 7 - firstDayOfWeek) % 7;
+						const isSunday = dayOfWeek === 0;
+
+						return (
+							<AnimatedPressable
+								key={`day-${year}-${month}-${day}`}
+								style={styles.dayCell}
+								onPress={() => {
+									if (hasFellowship) {
+										const newSelectedDate = new Date(year, month, day);
+										setSelectedDate(isSelected ? null : newSelectedDate);
+									}
+								}}
+							>
+								<View style={[styles.dayCell, { justifyContent: "flex-start" }]}>
+									<View className={`
+										w-8 h-8 rounded-full items-center justify-center
+										${isSelected ? 'bg-primary-500' : isToday ? 'bg-primary-100' : ''}
+									`}>
+										<Text
+											size="lg"
+											className={`font-pretendard-medium
+												${isSelected ? 'text-white' : isSunday ? 'text-danger-500' : 'text-typography-900'}
+												${!hasFellowship ? 'opacity-40' : ''}
+											`}
+										>
+											{day}
+										</Text>
+									</View>
+									{/* 나눔 표시 점 */}
+									{hasFellowship && (
+										<View className="w-1 h-1 rounded-full bg-primary-500 mt-1" />
+									)}
+								</View>
+							</AnimatedPressable>
+						);
+					})}
+				</View>
+			</VStack>
+		);
+	};
+
+	// 선택된 날짜의 나눔 목록 렌더링
+	const renderSelectedDateFellowships = () => {
+		if (!selectedDate || selectedDateFellowships.length === 0) return null;
+
+		return (
+			<VStack space="md" className="mt-4 px-4">
+				<HStack className="items-center justify-between">
+					<HStack className="items-center">
+						<View className="w-1 h-1 rounded-full bg-primary-500 mr-2" />
+						<Text size="lg" className="font-pretendard-semi-bold">
+							{selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일 나눔
+						</Text>
+					</HStack>
+					<AnimatedPressable
+						onPress={() => setShowLeader(!showLeader)}
+						className="self-end"
+					>
+						<HStack space="sm" className="items-center mr-2">
+							<Text size="md" className="text-typography-600">나눔장 보기</Text>
+							<Box
+								className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
+							>
+								{showLeader && (
+									<Icon as={Check} size="xs" className="stroke-white" />
+								)}
+							</Box>
+						</HStack>
+					</AnimatedPressable>
+				</HStack>
+
+				<VStack space="sm">
+					{selectedDateFellowships.map((fellowship) => {
+						const leader = findLeader(fellowship.info.members);
+						return (
+							<AnimatedPressable
+								key={fellowship.id}
+								onPress={() => handlePressFellowship(fellowship.id)}
+							>
+								<Box
+									className="p-4 border border-gray-300 rounded-xl">
+									<HStack className="justify-between items-center">
+										<VStack space="xs">
+											<Text size="lg" className="flex-1">
+												{fellowship.info.preachTitle}
+											</Text>
+											{showLeader && leader ? (
+												<HStack space="xs" className="items-center">
+													<Avatar size="2xs" photoUrl={leader.photoUrl || ''} />
+													<Text
+														size="sm"
+														className="text-typography-500 font-pretendard-semi-bold"
+													>
+														{leader.displayName}
+													</Text>
+												</HStack>
+											) : <HStack className="items-center gap-[1px]">
+												{fellowship.info.members.map((member) => (
+													<Avatar key={member.id} photoUrl={member.photoUrl || ''} size='2xs' />
+												))}
+											</HStack>}
+										</VStack>
+										<Icon as={ChevronRight} className="color-typography-400" />
+									</HStack>
+								</Box>
+							</AnimatedPressable>
+						)
+					})}
+				</VStack>
+			</VStack>
+		);
+	};
+
 	return (
 		<SafeAreaView className="flex-1 bg-white">
 			<VStack className="flex-1">
 				<Header />
 				<Box className="flex-1">
-					{/* 나눔 기록 목록 */}
-					{showSkeleton && !isFetchingNextPage ? (
-						<Box className="pt-5">
-							<FellowshipSkeleton />
-						</Box>
-					) : (
-						<FlatList
-							data={fellowships}
-							renderItem={renderFellowshipItem}
-							keyExtractor={(item) => item.id}
-							contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20 }}
-							ListHeaderComponent={
-								<VStack space="md" className="mb-4">
-									<Heading className="text-[24px]">나눔 기록</Heading>
-
-									{/* 나눔장 표시 체크박스 - 오른쪽에 배치 */}
-									<AnimatedPressable
-										onPress={() => setShowLeader(!showLeader)}
-										className="self-end"
-									>
-										<HStack space="sm" className="items-center">
-											<Text className="text-typography-600">나눔장 보기</Text>
-											<Box
-												className={`w-5 h-5 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
-											>
-												{showLeader && (
-													<Icon as={Check} size="xs" className="stroke-white" />
-												)}
-											</Box>
+					{viewMode === 'list' ? (
+						// 리스트 뷰
+						showSkeleton && !isFetchingNextPage ? (
+							<Box className="pt-5">
+								<FellowshipSkeleton />
+							</Box>
+						) : (
+							<FlatList
+								data={fellowships}
+								renderItem={renderFellowshipItem}
+								keyExtractor={(item) => item.id}
+								ListHeaderComponent={
+									<VStack space="xl" className="px-4 py-2">
+										<HStack className="justify-between items-center">
+											<Heading className="text-[24px]">나눔 기록</Heading>
+											<Button variant="icon" size="lg" onPress={toggleViewMode}>
+												<ButtonIcon as={Calendar} />
+											</Button>
 										</HStack>
-									</AnimatedPressable>
-								</VStack>
-							}
-							ListEmptyComponent={renderEmptyList}
-							ListFooterComponent={renderFooter}
-							onEndReached={handleLoadMore}
-							onEndReachedThreshold={0.5}
+										{/* 나눔장 표시 체크박스 */}
+										<AnimatedPressable
+											onPress={() => setShowLeader(!showLeader)}
+											className="self-end"
+										>
+											<HStack space="sm" className="items-center mr-2">
+												<Text size="md" className="text-typography-600">나눔장 보기</Text>
+												<Box
+													className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
+												>
+													{showLeader && (
+														<Icon as={Check} size="xs" className="stroke-white" />
+													)}
+												</Box>
+											</HStack>
+										</AnimatedPressable>
+									</VStack>
+								}
+								ListEmptyComponent={renderEmptyList}
+								ListFooterComponent={renderFooter}
+								onEndReached={handleLoadMore}
+								onEndReachedThreshold={0.5}
+								refreshControl={
+									<RefreshControl
+										refreshing={refreshing}
+										onRefresh={handleRefresh}
+										tintColor="#6366f1"
+										title="새로고침 중..."
+										titleColor="#4B5563"
+									/>
+								}
+								showsVerticalScrollIndicator={false}
+								className="flex-1"
+							/>
+						)
+					) : (
+						// 캘린더 뷰
+						<ScrollView
+							showsVerticalScrollIndicator={false}
 							refreshControl={
 								<RefreshControl
 									refreshing={refreshing}
@@ -231,9 +562,28 @@ export default function FellowshipListScreen() {
 									titleColor="#4B5563"
 								/>
 							}
-							showsVerticalScrollIndicator={false}
-							className="flex-1"
-						/>
+							contentContainerStyle={{ paddingBottom: 60 }} // 하단 여백을 더 늘려서 스크롤 범위 확보
+						>
+							<VStack className="pb-4">
+								<HStack className="px-4 py-2 justify-between items-center">
+									<Heading className="text-[24px]">나눔 기록</Heading>
+									<Button variant="icon" size="lg" onPress={toggleViewMode}>
+										<ButtonIcon as={Rows3} />
+									</Button>
+								</HStack>
+								<VStack>
+									{/* 캘린더 헤더 */}
+									{renderCalendarHeader()}
+
+									{/* 캘린더 그리드 */}
+									<Box style={{ paddingHorizontal: 7 }}>
+										{renderCalendar()}
+									</Box>
+									{/* 선택된 날짜의 나눔 목록 */}
+									{renderSelectedDateFellowships()}
+								</VStack>
+							</VStack>
+						</ScrollView>
 					)}
 					<Button
 						size="lg"

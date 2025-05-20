@@ -61,23 +61,23 @@ export default function FellowshipContent({
 				</HStack>
 				<VStack space="xl" className="pl-4">
 					{existedAnswers.map((answer) => (
-						<VStack key={answer.member.id}>
+						<VStack key={answer.member?.id}>
 							<VStack space="sm">
 								<AnimatedPressable
 									onPress={() =>
-										!answer.member.isGuest && openProfile(answer.member.id)
+										!answer.member?.isGuest && openProfile(answer.member?.id)
 									}
 								>
 									<HStack space="sm" className="items-center">
 										<Avatar
 											size="2xs"
-											photoUrl={answer.member.photoUrl || undefined}
+											photoUrl={answer.member?.photoUrl || undefined}
 										/>
 										<Text
 											size="md"
 											className="font-pretendard-bold text-typography-600"
 										>
-											{answer.member.displayName}
+											{answer.member?.displayName}
 										</Text>
 									</HStack>
 								</AnimatedPressable>
