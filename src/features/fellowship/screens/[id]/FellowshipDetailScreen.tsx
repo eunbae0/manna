@@ -384,17 +384,18 @@ export default function FellowshipDetailScreen({
 							{fellowship?.content.prayerRequest.isActive && (
 								<FellowshipContentLayout
 									title="기도 제목"
-									onPressEdit={
-										enableReply
-											? () => prayerRequestListRef.current?.openTopic()
-											: undefined
+									enableReply={enableReply}
+									onPressEdit={() => {
+										// id가 content id
+										router.push({
+											pathname: `/(app)/(fellowship)/${id}/answer`,
+											params: { contentType: "prayerRequest", index: "-1" }
+										});
+									}
 									}
 								>
 									<FellowshipPrayerRequestList
-										ref={prayerRequestListRef}
-										members={fellowship.info.members}
 										answers={fellowship.content.prayerRequest.answers}
-										updateFellowship={updateFellowship}
 									/>
 								</FellowshipContentLayout>
 							)}

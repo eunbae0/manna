@@ -1,9 +1,6 @@
 import { VStack } from '#/components/ui/vstack';
 import type {
 	ClientFellowship,
-	ClientFellowshipContentField,
-	ClientFellowshipMember,
-	UpdateFellowshipInput,
 } from '@/features/fellowship/api/types';
 import FellowshipContent from './FellowshipContent';
 import { useFellowship } from '../hooks/useFellowship';
@@ -21,17 +18,9 @@ export default function FellowshipContentList({
 }: SermonContentListProps) {
 	const {
 		fellowship,
-		updateFellowship,
 	} = useFellowship(fellowshipId);
 
 	const fellowshipContents = fellowship?.content[contentType];
-
-	const updateContent = (content: ClientFellowshipContentField) => {
-		const newContents = fellowshipContents?.map((topic) =>
-			topic.id === content.id ? content : topic,
-		);
-		updateFellowship({ content: { [contentType]: newContents } });
-	};
 
 	return (
 		<VStack className="gap-12">
@@ -39,9 +28,9 @@ export default function FellowshipContentList({
 				<FellowshipContent
 					key={content.id}
 					index={index}
+					contentType={contentType}
 					fellowshipId={fellowshipId}
 					fellowshipContent={content}
-					updateContent={updateContent}
 					enableReply={enableReply}
 				/>
 			))}

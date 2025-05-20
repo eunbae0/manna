@@ -8,11 +8,13 @@ import { HStack } from '#/components/ui/hstack';
 type Props = ViewProps & {
 	title: string;
 	onPressEdit?: () => void;
+	enableReply?: boolean;
 };
 
 export default function FellowshipContentLayout({
 	title,
 	children,
+	enableReply,
 	onPressEdit,
 	...props
 }: Props) {
@@ -22,7 +24,7 @@ export default function FellowshipContentLayout({
 				<Heading size="xl" className="text-typography-900">
 					{title}
 				</Heading>
-				{onPressEdit && (
+				{enableReply && (
 					<Button variant="icon" onPress={onPressEdit}>
 						<ButtonIcon as={Edit3} />
 					</Button>

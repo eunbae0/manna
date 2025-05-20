@@ -22,7 +22,7 @@ import {
 import { Avatar } from '@/components/common/avatar';
 import { APP_STORE_REVIEW_URL, PLAY_STORE_URL } from '@/shared/constants/app';
 import { ListItem } from '@/shared/components/ListItem';
-import { getCurrentAppVersion } from '@/shared/utils/app_version';
+import { getCurrentAppVersion } from '@/shared/utils/app/app_version';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 

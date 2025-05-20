@@ -46,8 +46,10 @@ interface UsePreventBackWithConfirmProps {
  * 확인 모달을 표시합니다.
  *
  * @description
- * 이 hook은 action.type === 'GO_BACK'일 때만 실행됩니다.
- * 따라서 action.type이 'GO_BACK'가 아닌 경우는 뒤로가기 방지 기능이 적용되지 않습니다.
+ * 이 hook은 action.type === 'GO_BACK' || 'POP'일 때만 실행됩니다.
+ * 따라서 action.type이 'GO_BACK' 또는 'POP'가 아닌 경우는 뒤로가기 방지 기능이 적용되지 않습니다.
+ *
+ * router.dismissTo()를 사용하면 preventRemove가 실행되지 않습니다.
  */
 export function usePreventBackWithConfirm({
 	condition,
