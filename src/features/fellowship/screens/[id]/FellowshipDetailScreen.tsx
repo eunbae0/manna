@@ -46,7 +46,6 @@ import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
 import { FellowshipSkeleton } from './FellowshipSkeleton';
 import FellowshipContentList from '../../components/FellowshipContentList';
 import FellowshipPrayerRequestList, {
-	type FellowshipPrayerRequestListHandle,
 } from '../../components/FellowshipPrayerRequestList';
 import FellowshipContentLayout from '../../components/FellowshipContentLayout';
 import {
@@ -206,6 +205,7 @@ export default function FellowshipDetailScreen({
 }: FellowshipDetailScreenProps) {
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 	const { user } = useAuthStore();
+	console.log(id)
 
 	const {
 		setType,
@@ -280,8 +280,6 @@ export default function FellowshipDetailScreen({
 	const enableReply = useMemo(() => {
 		return fellowship?.options?.enableMemberReply ? true : isLeader;
 	}, [fellowship, isLeader]);
-
-	const prayerRequestListRef = useRef<FellowshipPrayerRequestListHandle>(null);
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
