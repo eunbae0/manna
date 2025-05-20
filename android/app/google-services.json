@@ -39,6 +39,14 @@
           }
         },
         {
+          "client_id": "892340902140-s966prtthhb2285jdunajubl3q3mj8s5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eunbae.sogroup",
+            "certificate_hash": "c648b95853b7dda8e003b560e4998e7f91b8e927"
+          }
+        },
+        {
           "client_id": "892340902140-k8nh6l58cbfv5k9jotjk8v3ncc2k36cr.apps.googleusercontent.com",
           "client_type": 3
         }

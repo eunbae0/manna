@@ -93,7 +93,7 @@ android {
         applicationId 'com.eunbae.sogroup'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 10600
+        versionCode 10601
         versionName "1.0.6"
     }
     signingConfigs {

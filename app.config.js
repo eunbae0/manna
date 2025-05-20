@@ -36,7 +36,7 @@ export default {
 			version: '1.0.6',
 		},
 		android: {
-			versionCode: 10600,
+			versionCode: 10601,
 			adaptiveIcon: {
 				foregroundImage: './assets/images/icons/play_store_icon.png',
 				backgroundColor: '#FEF8EF',
@@ -118,6 +118,7 @@ export default {
 					],
 				},
 			],
+			['expo-font'],
 		],
 		experiments: {
 			typedRoutes: true,
