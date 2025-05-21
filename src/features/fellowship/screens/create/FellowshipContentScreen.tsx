@@ -13,6 +13,7 @@ import { ChevronRight, Check } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { useEffect, useState } from 'react';
+import { useBackHandler } from '@/shared/hooks/useBackHandler';
 import { useRecentFellowshipsWhereUserIsLeader } from '../../hooks/useRecentFellowshipsWhereUserIsLeader';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -72,6 +73,11 @@ export default function FellowshipContentScreen() {
 			handleOpen();
 		}
 	}, [type, fellowships, handleOpen, hasShownRecentRecommendSheet]);
+
+	useBackHandler(() => {
+		setStep('INFO');
+		return true;
+	});
 
 	return (
 		<>

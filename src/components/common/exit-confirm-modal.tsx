@@ -5,6 +5,7 @@ import { Icon } from '#/components/ui/icon';
 import { AlertCircle } from 'lucide-react-native';
 import { Button, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
+import { useBackHandler } from '@/shared/hooks/useBackHandler';
 
 interface ExitConfirmModalProps {
 	BottomSheetContainer: React.FC<{
@@ -13,6 +14,7 @@ interface ExitConfirmModalProps {
 	}>;
 	handleClose: () => void;
 	onExit: () => void;
+	isOpen: boolean;
 	title?: string;
 	message?: string;
 	continueText?: string;
@@ -29,46 +31,58 @@ export function ExitConfirmModal({
 	BottomSheetContainer,
 	handleClose,
 	onExit,
+	isOpen,
 	title = '작성 중인 내용이 있어요',
 	message = '지금 나가면 작성 중인 내용이 모두 사라져요. 계속할까요?',
 	continueText = '계속 작성하기',
 	exitText = '나가기',
 }: ExitConfirmModalProps) {
+
+	useBackHandler(() => {
+		if (!isOpen) {
+			return false;
+		}
+		handleClose();
+		return true;
+	});
+
 	return (
 		<BottomSheetContainer>
-			<VStack className="items-center justify-center pt-6 pb-5 px-4 gap-10">
-				<VStack className="items-center justify-center" space="lg">
-					<Icon as={AlertCircle} size="xl" className="text-red-500" />
-					<VStack className="items-start" space="sm">
-						<Heading size="xl" className="text-start font-pretendard-bold">
-							{title}
-						</Heading>
-						<Text size="lg" className="text-start text-typography-500">
-							{message}
-						</Text>
+			<VStack space="xl" className="items-start justify-center pt-6 pb-5 px-4">
+				<Icon as={AlertCircle} size="xl" className="text-red-500 mx-auto w-full" />
+				<VStack className="items-start justify-center gap-10">
+					<VStack className="items-center justify-center" space="lg">
+						<VStack className="items-start" space="sm">
+							<Heading size="xl" className="text-start font-pretendard-bold">
+								{title}
+							</Heading>
+							<Text size="lg" className="text-start text-typography-500">
+								{message}
+							</Text>
+						</VStack>
 					</VStack>
+					<HStack className="w-full" space="sm">
+						<Button
+							variant="outline"
+							onPress={onExit}
+							fullWidth
+							animation
+							size="lg"
+							className="flex-1"
+						>
+							<ButtonText>{exitText}</ButtonText>
+						</Button>
+						<Button
+							onPress={handleClose}
+							fullWidth
+							animation
+							size="lg"
+							className="flex-1"
+						>
+							<ButtonText>{continueText}</ButtonText>
+						</Button>
+					</HStack>
 				</VStack>
-				<HStack className="w-full" space="sm">
-					<Button
-						variant="outline"
-						onPress={onExit}
-						fullWidth
-						animation
-						size="lg"
-						className="flex-1"
-					>
-						<ButtonText>{exitText}</ButtonText>
-					</Button>
-					<Button
-						onPress={handleClose}
-						fullWidth
-						animation
-						size="lg"
-						className="flex-1"
-					>
-						<ButtonText>{continueText}</ButtonText>
-					</Button>
-				</HStack>
 			</VStack>
 		</BottomSheetContainer>
 	);
