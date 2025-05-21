@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Button, ButtonText } from '@/components/common/button';
 import Header from '@/components/common/Header';
 import { useOnboardingStore } from '@/store/onboarding';

@@ -1,6 +1,6 @@
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Icon } from '#/components/ui/icon';
 import { AlertCircle } from 'lucide-react-native';
 import { Button, ButtonText } from '@/components/common/button';

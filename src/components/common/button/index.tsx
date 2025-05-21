@@ -7,7 +7,7 @@ import { cn } from '@/shared/utils/cn';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
 import { Icon as UIIcon } from '#/components/ui/icon';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 
 // Define button size type
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

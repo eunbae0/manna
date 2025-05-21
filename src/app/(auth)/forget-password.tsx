@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useRef, useState, useEffect } from 'react';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Button, ButtonText } from '@/components/common/button';
 import Header from '@/components/common/Header';
 import { Heading } from '@/shared/components/heading';

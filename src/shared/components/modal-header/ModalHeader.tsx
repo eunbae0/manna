@@ -1,7 +1,7 @@
 import { HStack } from '#/components/ui/hstack';
 import { cn } from '@/shared/utils/cn';
 import { Button, ButtonIcon } from '@/components/common/button';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { X, ChevronLeft } from 'lucide-react-native';
 import { isAndroid } from '@/shared/utils/platform';
 

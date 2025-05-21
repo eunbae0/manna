@@ -2,7 +2,7 @@ import { View, Dimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import QRCode from 'react-qr-code';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { useShareInviteCode } from '@/shared/hooks/useShareInviteCode';

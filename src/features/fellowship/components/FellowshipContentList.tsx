@@ -23,7 +23,7 @@ export default function FellowshipContentList({
 	const fellowshipContents = fellowship?.content[contentType];
 
 	return (
-		<VStack className="gap-12">
+		<VStack className="gap-12" >
 			{fellowshipContents?.map((content, index) => (
 				<FellowshipContent
 					key={content.id}

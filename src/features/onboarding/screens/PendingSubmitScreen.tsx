@@ -8,7 +8,7 @@ import Animated, {
 import { useOnboardingStore } from '@/store/onboarding';
 import { VStack } from '#/components/ui/vstack';
 import { Heading } from '@/shared/components/heading';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import LottieView from 'lottie-react-native';
 
 import { runOnJS } from 'react-native-reanimated';

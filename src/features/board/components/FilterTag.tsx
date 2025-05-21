@@ -1,5 +1,5 @@
 import { Box } from '#/components/ui/box';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { cn } from '@/shared/utils/cn';
 

@@ -1,6 +1,6 @@
 import { Button, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import { Link, router, Stack } from 'expo-router';
 

@@ -11,7 +11,7 @@ import Header from '@/components/common/Header';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Edit3Icon, Trash2 } from 'lucide-react-native';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import {

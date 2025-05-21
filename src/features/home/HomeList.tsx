@@ -13,7 +13,7 @@ import ServiceGroups from './components/ServiceGroups';
 import { useNotifications } from '@/features/notification/hooks/useNotifications';
 import type { ClientPrayerRequest } from '@/api/prayer-request/types';
 import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { PrayerRequestSkeleton } from '@/features/prayer-request/components/PrayerRequestSkeleton';
 import { usePrayerRequests } from '@/features/prayer-request/hooks/usePrayerRequests';
 import { useQueryClient } from '@tanstack/react-query';

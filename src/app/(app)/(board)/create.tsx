@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Keyboard, TextInput } from 'react-native';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Avatar } from '@/components/common/avatar';

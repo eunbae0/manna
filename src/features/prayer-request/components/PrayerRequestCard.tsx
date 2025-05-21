@@ -8,7 +8,7 @@ import type {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Heart, MoreHorizontal, Pen, Trash } from 'lucide-react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Icon } from '#/components/ui/icon';
 import type { YYYYMMDD } from '@/shared/types/date';
 import { useAuthStore } from '@/store/auth';

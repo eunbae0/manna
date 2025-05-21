@@ -23,7 +23,7 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import AnimatedPressable from '@/components/common/animated-pressable';

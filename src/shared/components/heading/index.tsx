@@ -2,7 +2,7 @@ import React from 'react';
 import type { ComponentPropsWithoutRef } from 'react';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { cn } from '@/shared/utils/cn';
 
 // Define heading size type
@@ -43,7 +43,7 @@ const headingStyles = cva('font-pretendard-bold', {
 
 export interface HeadingProps
 	extends ComponentPropsWithoutRef<typeof Text>,
-		VariantProps<typeof headingStyles> {
+	VariantProps<typeof headingStyles> {
 	size?: HeadingSize;
 }
 

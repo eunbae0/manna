@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { Card } from '#/components/ui/card';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import type { Note } from '@/api/notes/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
 

@@ -1,7 +1,7 @@
 import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 import { Heading } from '@/shared/components/heading';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Box } from '#/components/ui/box';
 import { useOnboardingStore } from '@/store/onboarding';

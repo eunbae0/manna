@@ -2,7 +2,7 @@ import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { useState } from 'react';
 import { Switch } from 'react-native';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 
 interface Props {
 	title: string;

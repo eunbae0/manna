@@ -1,7 +1,7 @@
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/auth';
 import { Alert } from 'react-native';

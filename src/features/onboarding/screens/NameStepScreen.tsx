@@ -7,7 +7,7 @@ import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '@/shared/components/heading';
 import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 
 export default function NameStepScreen() {
 	const { setStep, updateUserData, userData } = useOnboardingStore();

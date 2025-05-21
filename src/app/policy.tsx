@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Divider } from '#/components/ui/divider';
 import { Heading } from '@/shared/components/heading';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 

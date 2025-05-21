@@ -11,7 +11,7 @@ import type { FeedbackMessage, ChatRoom } from '@/api/feedback/types';
 import { MessageBubble, ChatRoomItem } from '@/features/feedback/components';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import Header from '@/components/common/Header';
 import { Heading } from '@/shared/components/heading';
 import { Button, ButtonIcon } from '@/components/common/button';

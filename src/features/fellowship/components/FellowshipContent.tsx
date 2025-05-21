@@ -1,7 +1,7 @@
 import type React from 'react';
 import { VStack } from '#/components/ui/vstack';
 import { Avatar } from '@/components/common/avatar';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import { Edit3 } from 'lucide-react-native';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';

@@ -5,7 +5,7 @@ import { useAnswerDataStore } from '@/store/fellowship/answer-data';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Avatar } from '@/components/common/avatar';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { TextInput, Pressable } from 'react-native';
 import { useToastStore } from '@/store/toast';
 import { VolumeMeteringButton } from './VolumeMeteringButton';

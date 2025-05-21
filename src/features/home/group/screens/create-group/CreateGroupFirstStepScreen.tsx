@@ -17,7 +17,7 @@ import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { HStack } from '#/components/ui/hstack';
 import { AlertCircle } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 
 type Props = {
 	setStep: Dispatch<SetStateAction<CreateGroupStep>>;

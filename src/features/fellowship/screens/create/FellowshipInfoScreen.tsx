@@ -16,7 +16,7 @@ import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Input, InputField } from '#/components/ui/input';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import Header from '@/components/common/Header';

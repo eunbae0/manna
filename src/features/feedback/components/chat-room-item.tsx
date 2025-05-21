@@ -1,5 +1,5 @@
 import { TouchableOpacity, View } from 'react-native';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Avatar } from '@/components/common/avatar';
 import type { ChatRoom } from '@/api/feedback/types';
 

@@ -4,7 +4,7 @@ import { Pressable } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Divider } from '#/components/ui/divider';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 
 import type { YYYYMMDD } from '@/shared/types/date';
 import { cn } from '@/shared/utils/cn';

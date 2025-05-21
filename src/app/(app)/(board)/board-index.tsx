@@ -16,7 +16,7 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { EmptyState } from '@/components/common/empty-state';
 import Header from '@/components/common/Header';
 import { Pen } from 'lucide-react-native';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { useToastStore } from '@/store/toast';
 
 // 게시판 관련 컴포넌트 및 데이터 import

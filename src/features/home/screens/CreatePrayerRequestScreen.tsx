@@ -1,5 +1,5 @@
 import { VStack } from '#/components/ui/vstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { View, type TextInput } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';

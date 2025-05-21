@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import Header from '@/components/common/Header';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 
 import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '@/shared/components/heading';

@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Avatar } from '@/components/common/avatar';
 import type { FeedbackMessage } from '@/api/feedback/types';
 import { APP_ICON_IMAGE_URL } from '@/shared/constants/app';
@@ -38,11 +38,10 @@ export function MessageBubble({
 					</Text>
 				)}
 				<View
-					className={`rounded-2xl p-3 ${
-						isSentByCurrentUser
+					className={`rounded-2xl p-3 ${isSentByCurrentUser
 							? 'bg-primary-500 rounded-tr-none'
 							: 'bg-gray-200 rounded-tl-none'
-					}`}
+						}`}
 				>
 					<Text
 						className={`text-sm ${isSentByCurrentUser ? 'text-white' : 'text-gray-800'}`}

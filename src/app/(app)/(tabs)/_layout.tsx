@@ -18,7 +18,7 @@ import {
 import * as Haptics from 'expo-haptics';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import { Pressable, type View } from 'react-native';
 import { cn } from '@/shared/utils/cn';

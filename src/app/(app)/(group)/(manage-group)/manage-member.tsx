@@ -4,7 +4,7 @@ import { View, ScrollView, Pressable, Alert } from 'react-native';
 import { Avatar } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import {

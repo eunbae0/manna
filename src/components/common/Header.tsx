@@ -1,7 +1,7 @@
 import type { ViewProps } from 'react-native';
 import { IconSymbol } from './ui/IconSymbol';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { ChevronLeft } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';

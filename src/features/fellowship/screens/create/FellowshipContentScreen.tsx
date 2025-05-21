@@ -4,7 +4,7 @@ import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Switch } from '#/components/ui/switch';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/auth';

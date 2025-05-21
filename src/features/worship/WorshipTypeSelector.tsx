@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Icon } from '#/components/ui/icon';
 import { PlusIcon } from 'lucide-react-native';
 import { useWorshipStore } from '@/store/worship';
@@ -46,11 +46,10 @@ export function WorshipTypeSelector() {
 					>
 						<Text
 							size="md"
-							className={`px-3 py-1 rounded-full ${
-								selectedWorshipType?.name === type.name
+							className={`px-3 py-1 rounded-full ${selectedWorshipType?.name === type.name
 									? 'border border-primary-200 bg-primary-100 text-primary-700'
 									: 'border border-background-0 bg-background-0 text-typography-700'
-							}`}
+								}`}
 						>
 							{type.name}
 						</Text>

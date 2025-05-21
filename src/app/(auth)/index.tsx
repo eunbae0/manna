@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { useOnboardingStore } from '@/store/onboarding';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';

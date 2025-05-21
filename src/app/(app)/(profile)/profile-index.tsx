@@ -2,7 +2,7 @@ import { ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Box } from '#/components/ui/box';
 import { Divider } from '#/components/ui/divider';
 import { Avatar } from '@/components/common/avatar';

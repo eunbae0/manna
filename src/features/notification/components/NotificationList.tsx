@@ -8,9 +8,8 @@ import { Button } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { EmptyState } from '@/components/common/empty-state';
 import { NotificationItem } from './NotificationItem';
-import type { ClientNotification } from '../api/types';
 import { useAuthStore } from '@/store/auth';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { useState, useMemo } from 'react';
 import Animated, {
 	useSharedValue,
@@ -100,13 +99,14 @@ function GroupFilterTag({
 	return (
 		<AnimatedPressable onPress={onPress}>
 			<Box
-				className={cn('px-3 py-1.5 rounded-full mr-2', {
+				className={cn('px-3 py-1.5 rounded-full items-center justify-center mr-2', {
 					'bg-primary-500': isSelected,
 					'bg-gray-200': !isSelected,
 				})}
 			>
 				<Text
-					className={cn('text-sm font-pretendard-Medium', {
+					size="xs"
+					className={cn('font-pretendard-Medium', {
 						'text-white': isSelected,
 						'text-gray-700': !isSelected,
 					})}

@@ -11,7 +11,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Crown, MoreHorizontal, Pen, Trash } from 'lucide-react-native';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Icon } from '#/components/ui/icon';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import type { Comment } from '../types';

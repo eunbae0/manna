@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Image } from 'react-native';
 import { VStack } from '#/components/ui/vstack';
 import { Heading } from '@/shared/components/heading';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useOnboardingStore } from '@/store/onboarding';
 import { Box } from '#/components/ui/box';

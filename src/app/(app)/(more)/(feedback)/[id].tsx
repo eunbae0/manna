@@ -12,7 +12,7 @@ import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import Header from '@/components/common/Header';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { ChevronLeft, ArrowUp, Send } from 'lucide-react-native';

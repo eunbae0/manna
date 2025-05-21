@@ -51,7 +51,7 @@ export default function ExampleScreens() {
 - gluestack/ui components from /components/ui.
 ```tsx
 import { Button } from '@/components/common/button';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 ```
 - `lucide-react-native` packages for icons.
 ```tsx
@@ -138,7 +138,7 @@ Example:
   - use `space` prop instead of `className` prop 
 - HStack: `import { HStack } from '#/components/ui/hstack';`
   - use `space` prop instead of `className` prop
-- Text: `import { Text } from '#/components/ui/text';`
+- Text: `import { Text } from '@/shared/components/text';`
   - use `font-pretendard-*` instead of `font-*`
   - use `size` prop instead of `className` prop (`text-lg` -> `size="lg"`)
 - Heading: `import { Heading } from '@/shared/components/heading';`

@@ -8,7 +8,7 @@ import {
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Icon } from '#/components/ui/icon';
 import { Heading } from '@/shared/components/heading';
 import Header from '@/components/common/Header';
@@ -120,13 +120,13 @@ export default function UserFellowshipsScreen() {
 											<Text size="sm" className="text-typography-500">
 												{item.info.date
 													? item.info.date
-															.toLocaleDateString('ko-KR', {
-																year: 'numeric',
-																month: '2-digit',
-																day: '2-digit',
-															})
-															.replace(/\. /g, '.')
-															.replace(/\.$/, '')
+														.toLocaleDateString('ko-KR', {
+															year: 'numeric',
+															month: '2-digit',
+															day: '2-digit',
+														})
+														.replace(/\. /g, '.')
+														.replace(/\.$/, '')
 													: ''}
 											</Text>
 										</VStack>

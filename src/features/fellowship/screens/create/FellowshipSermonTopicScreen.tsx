@@ -3,7 +3,7 @@ import { Button, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Textarea, TextareaInput } from '#/components/ui/textarea';
 import { VStack } from '#/components/ui/vstack';
 import type { ServerFellowshipContentField } from '@/features/fellowship/api/types';

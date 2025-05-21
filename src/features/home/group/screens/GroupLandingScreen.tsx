@@ -6,7 +6,7 @@ import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Heading } from '@/shared/components/heading';
 import { cn } from '@/shared/utils/cn';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Icon } from '#/components/ui/icon';
 import { useOnboardingStore } from '@/store/onboarding';
 import Header from '@/components/common/Header';

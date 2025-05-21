@@ -12,7 +12,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';

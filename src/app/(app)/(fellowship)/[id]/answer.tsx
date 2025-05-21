@@ -3,7 +3,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Heading } from '@/shared/components/heading';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import { useFellowship } from '@/features/fellowship/hooks/useFellowship';

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from 'react-native';
 import { VStack } from '#/components/ui/vstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { NotificationSettingItem } from '../components/NotificationSettingItem';
 import { useToastStore } from '@/store/toast';
 import type { ClientGroup } from '@/api/group/types';

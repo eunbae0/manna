@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Box } from '#/components/ui/box';
 import { Avatar } from '@/components/common/avatar';
 import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';

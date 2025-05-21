@@ -1,7 +1,7 @@
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Box } from '#/components/ui/box';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Avatar } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
 import {

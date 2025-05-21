@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { VStack } from '#/components/ui/vstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Heading } from '@/shared/components/heading';
 import { Button } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';

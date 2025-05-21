@@ -1,5 +1,5 @@
 import { VStack } from '#/components/ui/vstack';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { QrCode } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';

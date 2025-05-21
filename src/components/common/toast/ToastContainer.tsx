@@ -14,7 +14,7 @@ import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AlertCircle, CheckCircle, Info } from 'lucide-react-native';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { cn } from '@/shared/utils/cn';
 
 const TOAST_DURATION = 2 * 1000;

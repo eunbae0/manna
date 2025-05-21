@@ -8,7 +8,7 @@ import { VStack } from '#/components/ui/vstack';
 import * as ImageManipulator from 'expo-image-manipulator';
 import Header from '@/components/common/Header';
 import { PlusCircle, UserRoundPen, X } from 'lucide-react-native';
-import { Text } from '#/components/ui/text';
+import { Text } from '@/shared/components/text';
 import { Box } from '#/components/ui/box';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Icon } from '#/components/ui/icon';
