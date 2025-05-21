@@ -10,8 +10,7 @@ import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/auth';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { ChevronRight, Check } from 'lucide-react-native';
-import { Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Pressable, View } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { useEffect, useState } from 'react';
 import { useRecentFellowshipsWhereUserIsLeader } from '../../hooks/useRecentFellowshipsWhereUserIsLeader';
@@ -75,7 +74,7 @@ export default function FellowshipContentScreen() {
 	}, [type, fellowships, handleOpen, hasShownRecentRecommendSheet]);
 
 	return (
-		<SafeAreaView className="h-full">
+		<>
 			<VStack className="flex-1">
 				<Header onPressBackButton={() => setStep('INFO')} />
 				<VStack className="px-5 py-6 gap-12 flex-1">
@@ -169,7 +168,6 @@ export default function FellowshipContentScreen() {
 					<Button
 						size="lg"
 						variant="outline"
-						rounded
 						className="flex-1"
 						onPress={() => {
 							setStep('INFO');
@@ -180,7 +178,6 @@ export default function FellowshipContentScreen() {
 					<Button
 						size="lg"
 						variant="solid"
-						rounded
 						className="flex-1"
 						onPress={async () => {
 							await completeFellowship({
@@ -427,6 +424,6 @@ export default function FellowshipContentScreen() {
 					)}
 				</VStack>
 			</BottomSheetContainer>
-		</SafeAreaView >
+		</>
 	);
 }

@@ -497,6 +497,12 @@ export default function FellowshipListScreen() {
 			<VStack className="flex-1">
 				<Header />
 				<Box className="flex-1">
+					<HStack className="justify-between items-center pt-2 pl-5 pr-3">
+						<Heading className="text-[24px]">나눔 기록</Heading>
+						<Button variant="icon" size="lg" onPress={toggleViewMode}>
+							<ButtonIcon as={viewMode === 'list' ? Calendar : Rows3} />
+						</Button>
+					</HStack>
 					{viewMode === 'list' ? (
 						// 리스트 뷰
 						showSkeleton && !isFetchingNextPage ? (
@@ -509,30 +515,21 @@ export default function FellowshipListScreen() {
 								renderItem={renderFellowshipItem}
 								keyExtractor={(item) => item.id}
 								ListHeaderComponent={
-									<VStack space="xl" className="px-4 py-2">
-										<HStack className="justify-between items-center">
-											<Heading className="text-[24px]">나눔 기록</Heading>
-											<Button variant="icon" size="lg" onPress={toggleViewMode}>
-												<ButtonIcon as={Calendar} />
-											</Button>
+									<AnimatedPressable
+										onPress={() => setShowLeader(!showLeader)}
+										className="self-end"
+									>
+										<HStack space="sm" className="items-center mr-5 py-2">
+											<Text size="md" className="text-typography-600">나눔장 보기</Text>
+											<Box
+												className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
+											>
+												{showLeader && (
+													<Icon as={Check} size="xs" className="text-white" />
+												)}
+											</Box>
 										</HStack>
-										{/* 나눔장 표시 체크박스 */}
-										<AnimatedPressable
-											onPress={() => setShowLeader(!showLeader)}
-											className="self-end"
-										>
-											<HStack space="sm" className="items-center mr-2">
-												<Text size="md" className="text-typography-600">나눔장 보기</Text>
-												<Box
-													className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
-												>
-													{showLeader && (
-														<Icon as={Check} size="xs" className="text-white" />
-													)}
-												</Box>
-											</HStack>
-										</AnimatedPressable>
-									</VStack>
+									</AnimatedPressable>
 								}
 								ListEmptyComponent={renderEmptyList}
 								ListFooterComponent={renderFooter}
@@ -567,23 +564,15 @@ export default function FellowshipListScreen() {
 							contentContainerStyle={{ paddingBottom: 60 }} // 하단 여백을 더 늘려서 스크롤 범위 확보
 						>
 							<VStack className="pb-4">
-								<HStack className="px-4 py-2 justify-between items-center">
-									<Heading className="text-[24px]">나눔 기록</Heading>
-									<Button variant="icon" size="lg" onPress={toggleViewMode}>
-										<ButtonIcon as={Rows3} />
-									</Button>
-								</HStack>
-								<VStack>
-									{/* 캘린더 헤더 */}
-									{renderCalendarHeader()}
+								{/* 캘린더 헤더 */}
+								{renderCalendarHeader()}
 
-									{/* 캘린더 그리드 */}
-									<Box style={{ paddingHorizontal: 7 }}>
-										{renderCalendar()}
-									</Box>
-									{/* 선택된 날짜의 나눔 목록 */}
-									{renderSelectedDateFellowships()}
-								</VStack>
+								{/* 캘린더 그리드 */}
+								<Box style={{ paddingHorizontal: 7 }}>
+									{renderCalendar()}
+								</Box>
+								{/* 선택된 날짜의 나눔 목록 */}
+								{renderSelectedDateFellowships()}
 							</VStack>
 						</ScrollView>
 					)}
