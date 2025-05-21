@@ -1426,7 +1426,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ExpoAdapterGoogleSignIn (13.2.0):
+  - ExpoAdapterGoogleSignIn (13.3.1):
     - ExpoModulesCore
     - GoogleSignIn (~> 7.1)
     - React-Core
@@ -3541,8 +3541,6 @@ PODS:
     - React-logger
     - React-perflogger
     - React-utils (= 0.76.9)
-  - ReactNativePerformance (4.1.2):
-    - React-Core
   - RecaptchaInterop (101.0.0)
   - RNCAsyncStorage (1.23.1):
     - DoubleConversion
@@ -3615,7 +3613,7 @@ PODS:
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
-  - RNFBPerf (22.2.0):
+  - RNFBPerf (21.14.0):
     - Firebase/Performance (= 11.11.0)
     - React-Core
     - RNFBApp
@@ -3665,7 +3663,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGoogleSignin (13.2.0):
+  - RNGoogleSignin (13.3.1):
     - DoubleConversion
     - glog
     - GoogleSignIn (~> 7.1)
@@ -3687,7 +3685,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (3.16.7):
+  - RNReanimated (3.17.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3699,7 +3697,9 @@ PODS:
     - React-Fabric
     - React-featureflags
     - React-graphics
+    - React-hermes
     - React-ImageManager
+    - React-jsi
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -3707,10 +3707,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.16.7)
-    - RNReanimated/worklets (= 3.16.7)
+    - RNReanimated/reanimated (= 3.17.5)
+    - RNReanimated/worklets (= 3.17.5)
     - Yoga
-  - RNReanimated/reanimated (3.16.7):
+  - RNReanimated/reanimated (3.17.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3722,7 +3722,9 @@ PODS:
     - React-Fabric
     - React-featureflags
     - React-graphics
+    - React-hermes
     - React-ImageManager
+    - React-jsi
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -3730,9 +3732,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.16.7)
+    - RNReanimated/reanimated/apple (= 3.17.5)
     - Yoga
-  - RNReanimated/reanimated/apple (3.16.7):
+  - RNReanimated/reanimated/apple (3.17.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3744,7 +3746,9 @@ PODS:
     - React-Fabric
     - React-featureflags
     - React-graphics
+    - React-hermes
     - React-ImageManager
+    - React-jsi
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -3753,7 +3757,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.16.7):
+  - RNReanimated/worklets (3.17.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3765,7 +3769,33 @@ PODS:
     - React-Fabric
     - React-featureflags
     - React-graphics
+    - React-hermes
     - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNReanimated/worklets/apple (= 3.17.5)
+    - Yoga
+  - RNReanimated/worklets/apple (3.17.5):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.10.14.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -4012,7 +4042,6 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - "ReactNativePerformance (from `../node_modules/@shopify/react-native-performance`)"
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
@@ -4292,8 +4321,6 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
-  ReactNativePerformance:
-    :path: "../node_modules/@shopify/react-native-performance"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNDateTimePicker:
@@ -4353,7 +4380,7 @@ SPEC CHECKSUMS:
   expo-dev-launcher: 995b3e7bcfba6aa2d2674b9317a42e695ca1a151
   expo-dev-menu: 37deb5996d7f971abbb79be82ba412fafec7b859
   expo-dev-menu-interface: 00dc42302a72722fdecec3fa048de84a9133bcc4
-  ExpoAdapterGoogleSignIn: 2b9d8c002ae5d09042b2fc87448dfc070d0e7a08
+  ExpoAdapterGoogleSignIn: c9eabd7a2986aeb9eb269620cbebbf0d81bae1e4
   ExpoAppleAuthentication: ee61704f441b3ef10a3d1280acbb6b9e2e04a38d
   ExpoAsset: 0687fe05f5d051c4a34dd1f9440bd00858413cfe
   ExpoBlur: 567af66164e3043a9a30069594aed1ddf0a88d97
@@ -4479,7 +4506,6 @@ SPEC CHECKSUMS:
   React-utils: 52cb73e127a39fc2d9f02f503b2a7b3b0abd23dd
   ReactCodegen: 31fcff227d0035956575be0c013a2edcc687a53c
   ReactCommon: 78c49c7cf7df16983ebc3c646b4f47398437f2ec
-  ReactNativePerformance: ab7dee4c4862623d72c1530a9fc71b55458edf71
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
   RNCAsyncStorage: dab4d79eff1537daf3ca0fe7b419cd6f5b27f12d
   RNDateTimePicker: 02886d3adc59e7540df029e710bd84bb2dedbc34
@@ -4490,12 +4516,12 @@ SPEC CHECKSUMS:
   RNFBDatabase: 403420baabdf69d9baaeb7fa675423147bedaf8c
   RNFBFirestore: e7d4a2ce01acb435daaeece54a36e28252a681ee
   RNFBMessaging: 7202ad4c49bdcdc7fd3634d85827a6305049c148
-  RNFBPerf: c13140495f4769bb806e9fc144cf50c13b4f0a20
+  RNFBPerf: 619487563bc71278341ad12c985e5c67eaa1171c
   RNFBStorage: 7e75d62c4620a73acdd160c565b051436a2947fe
   RNFlashList: a567e58b3aa9c4eba40f4495a6417a8e8b3c37cf
   RNGestureHandler: e7ed303cb2f818d7c3481b588f49b7c66d3f3d6c
-  RNGoogleSignin: bf07f6a9a93bbd482c09f5d151eef87b07891735
-  RNReanimated: 3db30c743775821c4cae7bc5b76cad3642630236
+  RNGoogleSignin: db450d7802e4c3c4a91d5d795341b21f696bcd96
+  RNReanimated: 3ccf2050e3592359fd85dc68a59972012bb2c2a6
   RNScreens: a09a20dc045ca372549fccd0537e2ced95e90aea
   RNSentry: d7b1b8cc96f848f8f6ab6bab9dcbd49a82dcbb62
   RNSVG: f23ad0ec7cee08be673201be50e423df7b81fc3a
