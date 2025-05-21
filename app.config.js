@@ -77,6 +77,7 @@ export default {
 			'@react-native-firebase/app',
 			'@react-native-firebase/auth',
 			'@react-native-firebase/crashlytics',
+			'@react-native-firebase/perf',
 			[
 				'expo-build-properties',
 				{
