@@ -80,7 +80,7 @@ export default function TabLayout() {
 
 interface CustomTabButtonProps
 	extends React.PropsWithChildren,
-		TabTriggerSlotProps {
+	TabTriggerSlotProps {
 	icon: LucideIcon;
 }
 
@@ -117,6 +117,9 @@ export const CustomTabButton = React.forwardRef<View, CustomTabButtonProps>(
 
 					if (process.env.EXPO_OS === 'ios') {
 						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+					} else {
+						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+
 					}
 					props.onPressIn?.(ev);
 				}}
