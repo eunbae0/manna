@@ -39,3 +39,7 @@ app-example
 
 # Sentry
 .sentryclirc
+
+# Android keystore
+
+**/sogroup.keystore
