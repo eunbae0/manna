@@ -279,7 +279,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 											<Icon
 												as={Pin}
 												size="xs"
-												className="stroke-typography-700"
+												className="text-typography-700"
 											/>
 										</HStack>
 									)}
@@ -311,8 +311,8 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 											size="xl"
 											className={
 												isLiked
-													? 'stroke-primary-500 fill-primary-500'
-													: 'stroke-typography-900'
+													? 'text-primary-500 fill-primary-500'
+													: 'text-typography-900'
 											}
 										/>
 										<Text

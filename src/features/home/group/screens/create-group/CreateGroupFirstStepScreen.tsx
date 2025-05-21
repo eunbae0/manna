@@ -129,7 +129,7 @@ export default function CreateGroupFirstStepScreen({
 			<BottomSheetContainer>
 				<VStack className="items-center justify-center pt-6 pb-5 px-4 gap-10">
 					<VStack className="items-center justify-center" space="lg">
-						<Icon as={AlertCircle} size="xl" className="stroke-yellow-500" />
+						<Icon as={AlertCircle} size="xl" className="text-yellow-500" />
 						<VStack className="items-start" space="sm">
 							<Heading size="xl" className="text-start font-pretendard-bold">
 								아래 정보로 소그룹을 생성할게요

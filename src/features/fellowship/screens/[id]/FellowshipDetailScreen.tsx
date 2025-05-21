@@ -115,14 +115,14 @@ function AdditionalInfo({
 						{isFolded ? '펼치기' : '접기'}
 					</Text>
 					<Animated.View style={iconStyle}>
-						<Icon as={ChevronUp} size="md" className="stroke-typography-600" />
+						<Icon as={ChevronUp} size="md" className="text-typography-600" />
 					</Animated.View>
 				</HStack>
 			</Pressable>
 
 			<VStack space="xs">
 				<HStack space="sm" className="items-center">
-					<Icon as={TextIcon} size="sm" className="stroke-typography-600" />
+					<Icon as={TextIcon} size="sm" className="text-typography-600" />
 					<Text size="md" className="text-typography-600">
 						설교 제목
 					</Text>
@@ -136,7 +136,7 @@ function AdditionalInfo({
 				{fellowship?.info.preachText?.isActive && (
 					<VStack space="xs">
 						<HStack space="sm" className="items-center">
-							<Icon as={BookText} size="sm" className="stroke-typography-600" />
+							<Icon as={BookText} size="sm" className="text-typography-600" />
 							<Text size="md" className="text-typography-600">
 								설교 본문
 							</Text>
@@ -152,7 +152,7 @@ function AdditionalInfo({
 							<Icon
 								as={Megaphone}
 								size="sm"
-								className="stroke-typography-600"
+								className="text-typography-600"
 							/>
 							<Text size="md" className="text-typography-600">
 								설교자
@@ -165,7 +165,7 @@ function AdditionalInfo({
 				)}
 				<VStack space="xs">
 					<HStack space="sm" className="items-center">
-						<Icon as={Users} size="sm" className="stroke-typography-600" />
+						<Icon as={Users} size="sm" className="text-typography-600" />
 						<Text size="md" className="text-typography-600">
 							참여자
 						</Text>

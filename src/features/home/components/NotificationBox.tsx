@@ -6,7 +6,7 @@ import { HStack } from '#/components/ui/hstack';
 import { Pressable, type PressableProps } from 'react-native';
 import { X } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
-import Animated, {} from 'react-native-reanimated';
+import Animated, { } from 'react-native-reanimated';
 
 type Props = {
 	title: string;
@@ -49,7 +49,7 @@ export default function NotificationBox({
 						</VStack>
 					</HStack>
 					<Pressable className="p-4" onPress={handleDismiss}>
-						<Icon as={X} size="lg" className="stroke-typography-600" />
+						<Icon as={X} size="lg" className="text-typography-600" />
 					</Pressable>
 				</HStack>
 			</Pressable>

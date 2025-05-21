@@ -347,7 +347,7 @@ function HomeHeader({ groups }: Props) {
 								<ButtonIcon
 									as={QrCode}
 									size="md"
-									className="stroke-primary-500"
+									className="text-primary-500"
 								/>
 								<ButtonText>QR코드 보기</ButtonText>
 							</Button>

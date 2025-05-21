@@ -112,7 +112,7 @@ const PrayerRequestList = ({
 							<Icon
 								as={ChevronRight}
 								size="md"
-								className="stroke-primary-500"
+								className="text-primary-500"
 							/>
 						</HStack>
 					</Pressable>
@@ -152,7 +152,7 @@ const PrayerRequestList = ({
 										</HStack>
 									</ScrollView>
 									<Pressable className="p-2">
-										<Icon as={Plus} size="md" className="stroke-primary-500" />
+										<Icon as={Plus} size="md" className="text-primary-500" />
 									</Pressable>
 								</HStack>
 								<Divider />

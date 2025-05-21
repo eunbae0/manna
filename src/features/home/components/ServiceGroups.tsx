@@ -133,7 +133,7 @@ export default function ServiceGroups() {
 						space="md"
 						className="items-center justify-center rounded-2xl py-3 px-2"
 					>
-						<Icon as={Megaphone} size="xl" className="stroke-primary-400" />
+						<Icon as={Megaphone} size="xl" className="text-primary-400" />
 						<Text
 							size="lg"
 							className="flex-1 text-typography-800 font-pretendard-Medium"

@@ -76,7 +76,7 @@ function AuthStepScreen() {
 								// 	<ButtonIcon
 								// 		as={AppleIcon}
 								// 		size="sm"
-								// 		className="fill-white stroke-white text-typography-black"
+								// 		className="fill-white text-white text-typography-black"
 								// 	/>
 								// 	<ButtonText size="lg" className="text-white">
 								// 		Apple로 계속하기

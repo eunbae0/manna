@@ -111,7 +111,7 @@ export function VolumeMeteringButton({
           />
         </View>
         <View className="justify-center items-center">
-          <Icon as={isRecording ? CircleStop : Mic} className="stroke-primary-400" />
+          <Icon as={isRecording ? CircleStop : Mic} className="text-primary-400" />
         </View>
       </View>
     </AnimatedPressable>

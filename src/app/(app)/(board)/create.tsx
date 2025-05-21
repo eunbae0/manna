@@ -281,7 +281,7 @@ export default function CreateBoardPostScreen() {
 									자유게시판
 								</Text>
 								{selectedCategory === 'FREE' && (
-									<Icon as={Check} size="xl" className="stroke-primary-400" />
+									<Icon as={Check} size="xl" className="text-primary-400" />
 								)}
 							</HStack>
 						</AnimatedPressable>
@@ -304,7 +304,7 @@ export default function CreateBoardPostScreen() {
 									공지사항
 								</Text>
 								{selectedCategory === 'NOTICE' && (
-									<Icon as={Check} size="xl" className="stroke-primary-400" />
+									<Icon as={Check} size="xl" className="text-primary-400" />
 								)}
 							</HStack>
 						</AnimatedPressable>

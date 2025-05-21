@@ -3,7 +3,7 @@ import { IconSymbol } from './ui/IconSymbol';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '#/components/ui/text';
 import { Button, ButtonIcon } from '@/components/common/button';
-import { ChevronLeftIcon } from '#/components/ui/icon';
+import { ChevronLeft } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import { VStack } from '#/components/ui/vstack';
 import { cn } from '@/shared/utils/cn';
@@ -14,17 +14,17 @@ import { goBackOrReplaceHome } from '@/shared/utils/router';
 type Props = {
 	label?: string;
 	labelSize?:
-		| 'md'
-		| 'sm'
-		| 'lg'
-		| 'xl'
-		| '2xl'
-		| 'xs'
-		| '3xl'
-		| '4xl'
-		| '2xs'
-		| '5xl'
-		| '6xl';
+	| 'md'
+	| 'sm'
+	| 'lg'
+	| 'xl'
+	| '2xl'
+	| 'xs'
+	| '3xl'
+	| '4xl'
+	| '2xs'
+	| '5xl'
+	| '6xl';
 	onPressBackButton?: () => void;
 	onPressBackButtonWithRouter?: () => void;
 	isLabelCentered?: boolean;
@@ -78,7 +78,7 @@ function Header({
 							onPress={handlePressBackButton}
 							className="ml-1"
 						>
-							<ButtonIcon as={ChevronLeftIcon} />
+							<ButtonIcon as={ChevronLeft} />
 						</Button>
 					)}
 					<Text

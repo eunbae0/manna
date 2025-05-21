@@ -30,8 +30,8 @@ export const BottomSheetListItem = ({
 				<Icon
 					size="xl"
 					className={cn(
-						'stroke-background-700',
-						variant === 'destructive' && 'stroke-red-500',
+						'text-background-700',
+						variant === 'destructive' && 'text-red-500',
 					)}
 					as={icon}
 				/>

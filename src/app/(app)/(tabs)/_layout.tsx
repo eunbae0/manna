@@ -141,8 +141,8 @@ export const CustomTabButton = React.forwardRef<View, CustomTabButtonProps>(
 							as={props.icon}
 							className={cn(
 								props.isFocused
-									? 'stroke-primary-500'
-									: 'stroke-typography-500',
+									? 'text-primary-500'
+									: 'text-typography-500',
 							)}
 						/>
 						<Text

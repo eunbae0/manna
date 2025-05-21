@@ -277,7 +277,7 @@ export default function FellowshipInfoScreen() {
 												<Icon
 													as={Calendar}
 													size="lg"
-													className="stroke-primary-500"
+													className="text-primary-500"
 												/>
 											</HStack>
 										</Pressable>
@@ -468,7 +468,7 @@ export default function FellowshipInfoScreen() {
 						<VStack space="md" className="px-5 py-6">
 							<HStack space="md" className="items-center">
 								<Avatar size="sm" className="bg-primary-400">
-									<Icon as={UserRound} size="sm" className="stroke-white" />
+									<Icon as={UserRound} size="sm" className="text-white" />
 								</Avatar>
 								<Heading size="xl">{selectedMember?.displayName}</Heading>
 								{selectedMember?.isLeader && (
@@ -497,7 +497,7 @@ export default function FellowshipInfoScreen() {
 									<HStack space="md" className="items-center py-2">
 										<Icon
 											size="xl"
-											className="stroke-background-700"
+											className="text-background-700"
 											as={Star}
 										/>
 										<Text size="lg">나눔 인도자 만들기</Text>
@@ -519,7 +519,7 @@ export default function FellowshipInfoScreen() {
 									<HStack space="md" className="items-center py-2">
 										<Icon
 											size="xl"
-											className="stroke-background-700"
+											className="text-background-700"
 											as={Trash}
 										/>
 										<Text size="lg">삭제하기</Text>

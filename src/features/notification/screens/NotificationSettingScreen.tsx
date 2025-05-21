@@ -184,7 +184,7 @@ export default function NotificationSettingScreen() {
 						<Text size="xl" className="font-pretendard-bold">
 							게시판 알림 설정
 						</Text>
-						<Icon as={ChevronRight} className="stroke-typography-600" />
+						<Icon as={ChevronRight} className="text-typography-600" />
 					</HStack>
 				</AnimatedPressable>
 			</VStack>

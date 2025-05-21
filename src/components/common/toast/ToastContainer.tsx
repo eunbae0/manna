@@ -25,28 +25,28 @@ const getToastIconAndColor = (type: ToastType) => {
 		case 'success':
 			return {
 				icon: CheckCircle,
-				color: 'stroke-emerald-500',
+				color: 'text-emerald-500',
 				bgColor: 'bg-emerald-100/95',
 				borderColor: 'border-emerald-500/20',
 			};
 		case 'error':
 			return {
 				icon: AlertCircle,
-				color: 'stroke-red-500',
+				color: 'text-red-500',
 				bgColor: 'bg-red-100/95',
 				borderColor: 'border-red-500/20',
 			};
 		case 'info':
 			return {
 				icon: Info,
-				color: 'stroke-blue-500',
+				color: 'text-blue-500',
 				bgColor: 'bg-blue-100/95',
 				borderColor: 'border-blue-500/20',
 			};
 		default:
 			return {
 				icon: Info,
-				color: 'stroke-blue-500',
+				color: 'text-blue-500',
 				bgColor: 'bg-blue-100/95',
 				borderColor: 'border-blue-500/20',
 			};

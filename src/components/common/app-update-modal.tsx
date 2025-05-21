@@ -58,7 +58,7 @@ export function AppUpdateModal({
 			<Box className="border rounded-2xl bg-white w-4/5">
 				<VStack className="items-center justify-center pt-9 pb-4 px-4 gap-10">
 					<VStack className="items-center" space="3xl">
-						<Icon as={AlertCircle} size="xl" className="stroke-primary-500" />
+						<Icon as={AlertCircle} size="xl" className="text-primary-500" />
 
 						<VStack className="items-center" space="xs">
 							<Heading size="xl" className="text-center">

@@ -441,7 +441,7 @@ export default function FellowshipListScreen() {
 								className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
 							>
 								{showLeader && (
-									<Icon as={Check} size="xs" className="stroke-white" />
+									<Icon as={Check} size="xs" className="text-white" />
 								)}
 							</Box>
 						</HStack>
@@ -525,7 +525,7 @@ export default function FellowshipListScreen() {
 													className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
 												>
 													{showLeader && (
-														<Icon as={Check} size="xs" className="stroke-white" />
+														<Icon as={Check} size="xs" className="text-white" />
 													)}
 												</Box>
 											</HStack>

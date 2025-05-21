@@ -99,7 +99,7 @@ export default function ImageStepScreen() {
 										accessibilityRole="button"
 										accessibilityLabel="이미지 삭제"
 									>
-										<Icon as={X} size="lg" className="stroke-red-600" />
+										<Icon as={X} size="lg" className="text-red-600" />
 									</Box>
 								</AnimatedPressable>
 							)}

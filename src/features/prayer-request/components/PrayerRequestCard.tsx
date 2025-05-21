@@ -231,7 +231,7 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 										as={Heart}
 										className={
 											hasLiked
-												? 'stroke-primary-500 fill-primary-500'
+												? 'text-primary-500 fill-primary-500'
 												: 'color-black'
 										}
 									/>

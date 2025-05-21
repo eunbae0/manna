@@ -262,7 +262,7 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
                       </Text>
                       {selectedSummaryIndex === index ? (
                         <Box className='w-6 h-6 border border-primary-500 rounded-xl bg-primary-500 items-center justify-center'>
-                          <Icon as={Check} size="sm" className="stroke-primary-50" />
+                          <Icon as={Check} size="sm" className="text-primary-50" />
                         </Box>
                       ) : (
                         <Box className='w-6 h-6 border border-primary-500 rounded-xl' />

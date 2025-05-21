@@ -222,7 +222,7 @@ export default function CreateScreen() {
 												<Icon
 													as={ChevronUp}
 													size="md"
-													className="stroke-typography-600"
+													className="text-typography-600"
 												/>
 											</Animated.View>
 										</HStack>
@@ -232,7 +232,7 @@ export default function CreateScreen() {
 											<Icon
 												as={BookText}
 												size="sm"
-												className="stroke-typography-600"
+												className="text-typography-600"
 											/>
 											<Text size="md" className="text-typography-600">
 												설교 본문
@@ -251,7 +251,7 @@ export default function CreateScreen() {
 												<Icon
 													as={AlignJustify}
 													size="sm"
-													className="stroke-typography-600"
+													className="text-typography-600"
 												/>
 												<Text size="md" className="text-typography-600">
 													예배 종류
@@ -282,7 +282,7 @@ export default function CreateScreen() {
 																	<Icon
 																		as={Check}
 																		size="xs"
-																		className="stroke-typography-700"
+																		className="text-typography-700"
 																	/>
 																)}
 															</HStack>
@@ -307,7 +307,7 @@ export default function CreateScreen() {
 												<Icon
 													as={Megaphone}
 													size="sm"
-													className="stroke-typography-600"
+													className="text-typography-600"
 												/>
 												<Text size="md" className="text-typography-600">
 													설교자

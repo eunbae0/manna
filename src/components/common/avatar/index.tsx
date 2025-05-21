@@ -58,7 +58,7 @@ const Avatar = forwardRef<View, AvatarProps>(
 							as={UserRound}
 							// TODO: Change to Custom Icon Component
 							size={size === '3xl' || size === '2xl' ? 'xl' : size}
-							className="stroke-white"
+							className="text-white"
 						/>
 					)}
 					{type === 'leader' && (

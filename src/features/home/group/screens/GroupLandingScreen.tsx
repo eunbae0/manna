@@ -77,7 +77,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 											<Icon
 												as={Crown}
 												size={'sm'}
-												className="stroke-primary-400"
+												className="text-primary-400"
 											/>
 										</VStack>
 										<Heading size="md">소그룹장</Heading>
@@ -112,7 +112,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 											<Icon
 												as={Users}
 												size={'sm'}
-												className="stroke-primary-900"
+												className="text-primary-900"
 											/>
 										</VStack>
 										<Heading size="md">소그룹원</Heading>
