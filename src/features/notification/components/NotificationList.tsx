@@ -100,15 +100,15 @@ function GroupFilterTag({
 		<AnimatedPressable onPress={onPress}>
 			<Box
 				className={cn('px-3 py-1.5 rounded-full items-center justify-center mr-2', {
-					'bg-primary-500': isSelected,
-					'bg-gray-200': !isSelected,
+					'bg-primary-500 border border-primary-500': isSelected,
+					'bg-primary-50 border border-primary-200': !isSelected,
 				})}
 			>
 				<Text
 					size="xs"
 					className={cn('font-pretendard-Medium', {
 						'text-white': isSelected,
-						'text-gray-700': !isSelected,
+						'text-typography-700': !isSelected,
 					})}
 				>
 					{label}

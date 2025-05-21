@@ -656,7 +656,7 @@ export default function BoardPostDetailScreen() {
 						{/* 댓글 입력 영역 */}
 						<HStack space="md" className="items-center py-2">
 							<TextInput
-								className="flex-1 bg-gray-100 text-lg rounded-2xl px-4 py-2"
+								className="flex-1 bg-gray-100 text-lg rounded-2xl px-4 py-2 font-pretendard-Regular"
 								placeholder="댓글을 입력해주세요"
 								value={commentText}
 								onChangeText={setCommentText}

@@ -150,7 +150,7 @@ export const CommentItem = ({
 					/>
 					<VStack space="md">
 						<TextInput
-							className="text-lg bg-gray-100 rounded-md p-3 text-typography-700 min-h-[100px]"
+							className="text-lg bg-gray-100 rounded-md p-3 text-typography-700 min-h-[100px] font-pretendard-Regular"
 							placeholder="댓글을 입력하세요"
 							value={editContent}
 							onChangeText={setEditContent}
