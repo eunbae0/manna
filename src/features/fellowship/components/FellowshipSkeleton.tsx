@@ -9,6 +9,8 @@ import Animated, {
 import { Box } from '#/components/ui/box';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
+import { FlashList } from '@shopify/flash-list';
+import { View } from 'react-native';
 
 /**
  * Skeleton UI component for the FellowshipListScreen
@@ -39,25 +41,37 @@ export function FellowshipSkeleton() {
 			<Box className={className} />
 		</Animated.View>
 	);
+	const renderSkeletonItem = ({ item }: { item: { id: string } }) => (
+		<HStack
+			key={`fellowship-skeleton-${item.id}`}
+			className="bg-background-100 rounded-2xl justify-between items-center px-4 py-5 mb-2"
+		>
+			<VStack>
+				<SkeletonItem className="h-4 w-24 bg-background-200 rounded-md mb-2" />
+				<SkeletonItem className="h-6 w-48 bg-background-200 rounded-md" />
+			</VStack>
+			<SkeletonItem className="h-6 w-6 bg-background-200 rounded-md" />
+		</HStack>
+	);
+
+	const skeletonData: { id: string }[] = Array(5)
+		.fill(null)
+		.map((_, index) => ({ id: `item${index + 1}` }));
 
 	return (
 		<VStack className="px-5 gap-8">
 			<SkeletonItem className="h-8 w-48 bg-background-200 rounded-md" />
-			<VStack space="md">
-				{/* Fellowship item skeletons */}
-				{['item1', 'item2', 'item3', 'item4', 'item5'].map((itemId) => (
-					<HStack
-						key={`fellowship-skeleton-${itemId}`}
-						className="bg-background-100 rounded-2xl justify-between items-center px-4 py-5"
-					>
-						<VStack>
-							<SkeletonItem className="h-4 w-24 bg-background-200 rounded-md mb-2" />
-							<SkeletonItem className="h-6 w-48 bg-background-200 rounded-md" />
-						</VStack>
-						<SkeletonItem className="h-6 w-6 bg-background-200 rounded-md" />
-					</HStack>
-				))}
-			</VStack>
+			<View className="flex-1 min-h-[500px]">
+				<FlashList
+					data={skeletonData}
+					renderItem={renderSkeletonItem}
+					estimatedItemSize={80}
+					keyExtractor={(item) => item.id}
+					showsVerticalScrollIndicator={false}
+					scrollEnabled={false}
+					ItemSeparatorComponent={() => <View className="h-4" />}
+				/>
+			</View>
 		</VStack>
 	);
 }

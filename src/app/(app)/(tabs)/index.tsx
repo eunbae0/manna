@@ -1,7 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { VStack } from '#/components/ui/vstack';
-
 import { useAuthStore } from '@/store/auth';
 import GroupHomeScreen from '@/features/home/screens/GroupHomeScreen';
 import EmptyGroupHomeScreen from '@/features/home/screens/EmptyGroupHomeScreen';

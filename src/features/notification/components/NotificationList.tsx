@@ -1,7 +1,7 @@
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Box } from '#/components/ui/box';
-import { FlatList, RefreshControl, ScrollView } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { useNotifications } from '../hooks/useNotifications';
 import { type Href, router } from 'expo-router';
 import { Button } from '@/components/common/button';
@@ -26,6 +26,7 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { cn } from '@/shared/utils/cn';
 import { Check, LoaderCircle } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
+import { FlashList } from '@shopify/flash-list';
 
 /**
  * 알림 목록 스켈레톤 UI 컴포넌트
@@ -57,49 +58,30 @@ function NotificationSkeleton() {
 		</Animated.View>
 	);
 
-	return (
-		<VStack space="md" className="p-4">
-			{/* 알림 아이템 스켈레톤 - 정적 요소 사용 */}
-			<VStack space="sm" className="p-4 bg-white rounded-lg">
-				<HStack className="justify-between items-center">
-					<SkeletonItem className="h-5 w-32 bg-background-200 rounded-md" />
-					<SkeletonItem className="h-4 w-20 bg-background-200 rounded-md" />
-				</HStack>
-				<SkeletonItem className="h-6 w-full bg-background-200 rounded-md" />
-			</VStack>
-
-			<VStack space="sm" className="p-4 bg-white rounded-lg">
-				<HStack className="justify-between items-center">
-					<SkeletonItem className="h-5 w-32 bg-background-200 rounded-md" />
-					<SkeletonItem className="h-4 w-20 bg-background-200 rounded-md" />
-				</HStack>
-				<SkeletonItem className="h-6 w-full bg-background-200 rounded-md" />
-			</VStack>
-
-			<VStack space="sm" className="p-4 bg-white rounded-lg">
-				<HStack className="justify-between items-center">
-					<SkeletonItem className="h-5 w-32 bg-background-200 rounded-md" />
-					<SkeletonItem className="h-4 w-20 bg-background-200 rounded-md" />
-				</HStack>
-				<SkeletonItem className="h-6 w-full bg-background-200 rounded-md" />
-			</VStack>
-
-			<VStack space="sm" className="p-4 bg-white rounded-lg">
-				<HStack className="justify-between items-center">
-					<SkeletonItem className="h-5 w-32 bg-background-200 rounded-md" />
-					<SkeletonItem className="h-4 w-20 bg-background-200 rounded-md" />
-				</HStack>
-				<SkeletonItem className="h-6 w-full bg-background-200 rounded-md" />
-			</VStack>
-
-			<VStack space="sm" className="p-4 bg-white rounded-lg">
-				<HStack className="justify-between items-center">
-					<SkeletonItem className="h-5 w-32 bg-background-200 rounded-md" />
-					<SkeletonItem className="h-4 w-20 bg-background-200 rounded-md" />
-				</HStack>
-				<SkeletonItem className="h-6 w-full bg-background-200 rounded-md" />
-			</VStack>
+	const renderSkeletonItem = () => (
+		<VStack space="sm" className="p-4 bg-white rounded-lg mb-3">
+			<HStack className="justify-between items-center">
+				<SkeletonItem className="h-5 w-32 bg-background-200 rounded-md" />
+				<SkeletonItem className="h-4 w-20 bg-background-200 rounded-md" />
+			</HStack>
+			<SkeletonItem className="h-6 w-full bg-background-200 rounded-md" />
 		</VStack>
+	);
+
+	const skeletonData = Array(5).fill({ id: null });
+
+
+	return (
+		<View className="flex-1">
+			<FlashList
+				data={skeletonData}
+				renderItem={renderSkeletonItem}
+				estimatedItemSize={120} // 각 아이템의 대략적인 높이 (px)
+				keyExtractor={(_, index) => `skeleton-${index}`}
+				showsVerticalScrollIndicator={false}
+				scrollEnabled={false} // 스켈레톤이 스크롤되지 않도록 설정
+			/>
+		</View>
 	);
 }
 
@@ -338,13 +320,13 @@ export function NotificationList() {
 	return (
 		<VStack className="flex-1">
 			{renderGroupFilterTags()}
-			<FlatList
+			<FlashList
 				data={filteredNotifications}
-				keyExtractor={(item: { id: string }) => item.id}
+				keyExtractor={(item) => item.id}
 				refreshControl={
 					<RefreshControl refreshing={isLoading} onRefresh={refetch} />
 				}
-				renderItem={({ item }: { item: ClientNotification }) => (
+				renderItem={({ item }) => (
 					<NotificationItem
 						item={item}
 						onPress={handleNotificationPress}
@@ -352,6 +334,7 @@ export function NotificationList() {
 						isDeleting={isDeleting}
 					/>
 				)}
+				estimatedItemSize={85}
 				ListEmptyComponent={
 					isFilteredEmpty ? (
 						<VStack className="flex-1 items-center justify-center py-20">

@@ -1,4 +1,4 @@
-import { ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
@@ -13,6 +13,7 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { ShareInviteCode } from '@/shared/components/invite-code';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { router } from 'expo-router';
+import { FlashList } from '@shopify/flash-list';
 
 export default function MemberListScreen() {
 	const { currentGroup } = useAuthStore();
@@ -38,12 +39,14 @@ export default function MemberListScreen() {
 			<VStack space="lg" className="flex-1">
 				<Header label="그룹원 목록" />
 				{members && members.length > 0 ? (
-					<ScrollView className="px-5 py-2">
-						<VStack space="md">
-							{members.map((member) => (
+					<View className="flex-1 px-5">
+						<FlashList
+							data={members}
+							renderItem={({ item: member }) => (
 								<AnimatedPressable
-									key={member.id}
-									onPress={() => openProfile(member.id)}
+									onPress={() => {
+										openProfile(member.id);
+									}}
 								>
 									<HStack className="items-center justify-between py-4">
 										<HStack space="lg" className="items-center">
@@ -72,9 +75,14 @@ export default function MemberListScreen() {
 										</HStack>
 									</HStack>
 								</AnimatedPressable>
-							))}
-						</VStack>
-					</ScrollView>
+							)}
+							keyExtractor={(member) => member.id}
+							estimatedItemSize={70}
+							showsVerticalScrollIndicator={false}
+							contentContainerStyle={{ paddingVertical: 8 }}
+							ItemSeparatorComponent={() => <View className="h-2" />}
+						/>
+					</View>
 				) : (
 					<Text className="text-center py-4">그룹원이 없어요.</Text>
 				)}
