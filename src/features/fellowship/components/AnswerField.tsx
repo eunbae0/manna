@@ -176,6 +176,7 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
             placeholder="답변을 입력해주세요"
             onChangeText={(text) => updateAnswer(member.id, text)}
             multiline
+            textAlignVertical="top"
             className={cn(
               'flex-1 min-h-20',
               TEXT_INPUT_STYLE
@@ -206,7 +207,7 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
         {/* Real-time transcription display */}
         {isRecordingMode && transcript && (
           <VStack space="sm" className="mt-2 p-2 bg-background-50 rounded-md">
-            <Text size="md" className="italic">
+            <Text size="md">
               {transcript}
             </Text>
           </VStack>
@@ -232,12 +233,13 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
             label="녹음 적용하기"
             onPress={handleCloseSummarizeSheet}
           />
-          <VStack space="xs" className="pt-2 pb-4">
-            <Text className="font-pretendard-Medium">녹음 내용</Text>
+          <VStack space="sm" className="pt-2 pb-4">
+            <Text weight="medium">녹음 내용</Text>
             <BottomSheetTextInput
               defaultValue={summarizeText}
               onChangeText={setSummarizeText}
               multiline
+              textAlignVertical="top"
               className={`${TEXT_INPUT_STYLE} min-h-24`}
             />
           </VStack>
@@ -245,7 +247,7 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
           {/* AI 요약 결과 */}
           {aiSummaries.length > 0 && (
             <VStack space="sm" className="pb-4">
-              <Text className="font-pretendard-Medium">AI 요약 결과</Text>
+              <Text weight="medium">AI 요약 결과</Text>
               <VStack space="xs">
                 {aiSummaries.map((summary, index) => (
                   <Pressable
