@@ -94,7 +94,7 @@ function LoadingState() {
 function ErrorState({ message }: { message: string }) {
 	return (
 		<VStack space="xl" className="flex-1 items-center justify-center">
-			<Icon as={MessageCircle} size="xl" className="stroke-gray-400" />
+			<Icon as={MessageCircle} size="xl" className="text-gray-400" />
 			<Text className="text-gray-500">{message}</Text>
 			<Button variant="outline" onPress={goBackOrReplaceHome}>
 				<ButtonText>게시글 목록으로 돌아가기</ButtonText>
@@ -530,7 +530,7 @@ export default function BoardPostDetailScreen() {
 									>
 										고정됨
 									</Text>
-									<Icon as={Pin} size="xs" className="stroke-typography-700" />
+									<Icon as={Pin} size="xs" className="text-typography-700" />
 								</HStack>
 							)}
 						</HStack>
@@ -575,8 +575,8 @@ export default function BoardPostDetailScreen() {
 											size="xl"
 											className={
 												isLiked
-													? 'stroke-primary-500 fill-primary-500'
-													: 'stroke-typography-900'
+													? 'text-primary-500 fill-primary-500'
+													: 'text-typography-900'
 											}
 										/>
 										<Text
@@ -674,7 +674,7 @@ export default function BoardPostDetailScreen() {
 									<ButtonIcon
 										as={SendHorizontal}
 										size="lg"
-										className="stroke-primary-500"
+										className="text-primary-500"
 									/>
 								)}
 							</Button>

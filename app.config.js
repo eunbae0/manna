@@ -36,9 +36,9 @@ export default {
 			version: '1.0.6',
 		},
 		android: {
-			versionCode: 10601,
+			versionCode: 10602,
 			adaptiveIcon: {
-				foregroundImage: './assets/images/icons/play_store_icon.png',
+				foregroundImage: './assets/images/icons/android_app_icon.png',
 				backgroundColor: '#FEF8EF',
 			},
 			package: 'com.eunbae.sogroup',

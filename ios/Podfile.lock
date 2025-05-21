@@ -3182,7 +3182,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context (4.12.0):
+  - react-native-safe-area-context (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3195,8 +3195,8 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-safe-area-context/common (= 4.12.0)
-    - react-native-safe-area-context/fabric (= 4.12.0)
+    - react-native-safe-area-context/common (= 5.4.0)
+    - react-native-safe-area-context/fabric (= 5.4.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -3205,7 +3205,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/common (4.12.0):
+  - react-native-safe-area-context/common (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3226,7 +3226,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-safe-area-context/fabric (4.12.0):
+  - react-native-safe-area-context/fabric (5.4.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3642,7 +3642,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGestureHandler (2.20.2):
+  - RNGestureHandler (2.25.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3652,6 +3652,7 @@ PODS:
     - React-Core
     - React-debug
     - React-Fabric
+    - React-FabricComponents
     - React-featureflags
     - React-graphics
     - React-ImageManager
@@ -3872,7 +3873,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Sentry/HybridSDK (= 8.48.0)
     - Yoga
-  - RNSVG (15.8.0):
+  - RNSVG (15.12.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3892,9 +3893,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNSVG/common (= 15.8.0)
+    - RNSVG/common (= 15.12.0)
     - Yoga
-  - RNSVG/common (15.8.0):
+  - RNSVG/common (15.12.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -4477,7 +4478,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: b5151a6d754fbf52292e758c4bb93b7c0d2f0b92
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-keyboard-controller: 637a3f20d783f55e3282777b996d6d01abc0b439
-  react-native-safe-area-context: 1d6729449d40a99af12ca1ddd88d65c18e2ffa2d
+  react-native-safe-area-context: dceb4ded0e78236d4dc85e59d4f7427a18ee7e77
   react-native-webview: a2382d7bf7ed34e98ab8075ff176a4c9959329d6
   React-nativeconfig: 415626a63057638759bcc75e0a96e2e07771a479
   React-NativeModulesApple: bffc60f55895c2723b1e5472fa40567fe3df4923
@@ -4519,12 +4520,12 @@ SPEC CHECKSUMS:
   RNFBPerf: 619487563bc71278341ad12c985e5c67eaa1171c
   RNFBStorage: 7e75d62c4620a73acdd160c565b051436a2947fe
   RNFlashList: a567e58b3aa9c4eba40f4495a6417a8e8b3c37cf
-  RNGestureHandler: e7ed303cb2f818d7c3481b588f49b7c66d3f3d6c
+  RNGestureHandler: c74975e16bc27971316465bde1a7523af5a6a256
   RNGoogleSignin: db450d7802e4c3c4a91d5d795341b21f696bcd96
   RNReanimated: 3ccf2050e3592359fd85dc68a59972012bb2c2a6
   RNScreens: a09a20dc045ca372549fccd0537e2ced95e90aea
   RNSentry: d7b1b8cc96f848f8f6ab6bab9dcbd49a82dcbb62
-  RNSVG: f23ad0ec7cee08be673201be50e423df7b81fc3a
+  RNSVG: da256d265c17ca95aa37356825ee54d7ea15071b
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
