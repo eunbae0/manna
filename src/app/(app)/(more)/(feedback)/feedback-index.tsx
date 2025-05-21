@@ -2,8 +2,6 @@ import { useRef, useState } from 'react';
 import {
 	ActivityIndicator,
 	FlatList,
-	KeyboardAvoidingView,
-	Platform,
 	TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +17,7 @@ import { Heading } from '@/shared/components/heading';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { ArrowUp } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 
 export default function FeedbackScreen() {
 	const { showToast } = useToastStore();
@@ -115,7 +114,6 @@ export default function FeedbackScreen() {
 	return (
 		<SafeAreaView className="flex-1">
 			<KeyboardAvoidingView
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 				className="flex-1"
 			>
 				<VStack className="flex-1">
@@ -172,7 +170,9 @@ export default function FeedbackScreen() {
 								borderRadius: 8,
 								padding: 10,
 							}}
+							className="font-pretendard-Regular"
 							returnKeyType="send"
+							multiline
 							onSubmitEditing={handleSendMessage}
 						/>
 						<Button

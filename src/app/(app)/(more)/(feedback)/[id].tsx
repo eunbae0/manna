@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	ActivityIndicator,
 	FlatList,
-	KeyboardAvoidingView,
 	Platform,
 	TextInput,
 	View,
@@ -23,6 +22,7 @@ import {
 	sendFeedbackMessage,
 } from '@/api/feedback/service';
 import { MessageBubble } from '@/features/feedback/components';
+import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 
 export default function FeedbackChatScreen() {
 	const { id: chatRoomId } = useLocalSearchParams<{ id: string }>();
@@ -88,7 +88,6 @@ export default function FeedbackChatScreen() {
 	return (
 		<SafeAreaView className="flex-1">
 			<KeyboardAvoidingView
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 				className="flex-1"
 			>
 				<VStack className="flex-1">
@@ -124,12 +123,12 @@ export default function FeedbackChatScreen() {
 							/>
 						)}
 					</VStack>
-
 					<HStack className="p-2 bg-background-100 border-t border-background-200">
 						<TextInput
 							value={inputMessage}
 							onChangeText={setInputMessage}
 							placeholder="메시지를 입력하세요..."
+							className="font-pretendard-Regular"
 							style={{
 								flex: 1,
 								marginRight: 8,
@@ -138,6 +137,7 @@ export default function FeedbackChatScreen() {
 								padding: 10,
 							}}
 							returnKeyType="send"
+							multiline
 							onSubmitEditing={handleSendMessage}
 						/>
 						<Button
