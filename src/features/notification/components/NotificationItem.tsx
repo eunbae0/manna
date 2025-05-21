@@ -3,7 +3,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
-import { Trash2Icon } from 'lucide-react-native';
+import { Bell, HandHeart, MessageCircle, MessageSquareText, NotebookPen, Trash2Icon } from 'lucide-react-native';
 import type { ClientNotification } from '../api/types';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import { Dimensions, StyleSheet, View, Pressable } from 'react-native';
@@ -23,6 +23,7 @@ import { cn } from '@/shared/utils/cn';
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { Box } from '#/components/ui/box';
 
 /**
  * 알림 아이템 컴포넌트 Props
@@ -202,6 +203,22 @@ export function NotificationItem({
 		);
 	}, [item.id, onDelete, translateX]);
 
+	const titleToIcon = useCallback((title: string) => {
+		if (title.includes('새 나눔')) {
+			return MessageSquareText;
+		}
+		if (title.includes('댓글')) {
+			return MessageCircle;
+		}
+		if (title.includes('기도제목')) {
+			return HandHeart;
+		}
+		if (title.includes('새 게시글')) {
+			return NotebookPen;
+		}
+		return Bell;
+	}, []);
+
 	return (
 		<GestureHandlerRootView style={styles.container}>
 			<View style={styles.itemContainer}>
@@ -223,31 +240,41 @@ export function NotificationItem({
 						className={cn('w-full', item.isRead ? '' : 'bg-primary-100')}
 					>
 						<Pressable onPress={onItemPress} className="w-full">
-							<VStack space="xs" className="p-5">
-								<VStack space="xs">
-									<HStack className="justify-between items-center">
-										<HStack space="sm" className="items-center flex-wrap">
+							<HStack space="md" className="px-6 py-5 justify-start">
+								<Icon
+									as={titleToIcon(item.title)}
+									size="sm"
+									className="mt-1 text-primary-400"
+								/>
+								<VStack space="xs" className="flex-1">
+									<VStack space="xs">
+										<HStack className="justify-between items-center">
+											<HStack space="sm" className="items-center flex-wrap">
+												{item.metadata?.groupName && (
+													<HStack space="sm" className="items-center">
+														<Text
+															size="sm"
+															weight="light"
+															className="text-typography-800"
+														>
+															{item.metadata.groupName}
+														</Text>
+														<Box className="w-[2px] h-[2px] bg-typography-800 rounded-full" />
+													</HStack>
+												)}
+
+												<Text size="sm" weight="light" className="text-typography-800">
+													{item.title}
+												</Text>
+											</HStack>
 											<Text size="sm" className="text-typography-500">
-												{item.title}
+												{formatRelativeTime(item.timestamp)}
 											</Text>
-											{item.metadata?.groupName && (
-												<View className="bg-primary-100 border border-primary-200 px-2 py-0.5 rounded-2xl">
-													<Text
-														size="xs"
-														className="text-primary-700 font-semibold"
-													>
-														{item.metadata.groupName}
-													</Text>
-												</View>
-											)}
 										</HStack>
-										<Text size="sm" className="text-gray-500">
-											{formatRelativeTime(item.timestamp)}
-										</Text>
-									</HStack>
+									</VStack>
+									<Text size="lg">{item.body}</Text>
 								</VStack>
-								<Text size="lg">{item.body}</Text>
-							</VStack>
+							</HStack>
 						</Pressable>
 					</Animated.View>
 				</GestureDetector>

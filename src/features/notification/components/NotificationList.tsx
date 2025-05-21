@@ -216,7 +216,7 @@ export function NotificationList() {
 	// 그룹 필터 태그 렌더링 함수
 	const renderGroupFilterTags = () => {
 		return (
-			<Box className="py-2 px-4 h-12 overflow-hidden">
+			<Box className="py-2 px-5 h-12 overflow-hidden">
 				<HStack className="justify-between">
 					<ScrollView
 						horizontal

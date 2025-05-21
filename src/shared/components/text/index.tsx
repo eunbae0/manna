@@ -7,7 +7,7 @@ import { cn } from '@/shared/utils/cn';
 
 // Define text size type
 type TextSize = '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
-type FontWeight = 'regular' | 'medium' | 'semi-bold' | 'bold';
+type FontWeight = 'light' | 'regular' | 'medium' | 'semi-bold' | 'bold';
 
 // Text base component with variants
 const textStyles = cva('font-pretendard-regular', {
@@ -23,6 +23,7 @@ const textStyles = cva('font-pretendard-regular', {
       '3xl': 'text-3xl',
     },
     weight: {
+      light: 'font-pretendard-light',
       regular: 'font-pretendard-Regular',
       medium: 'font-pretendard-Medium',
       'semi-bold': 'font-pretendard-semi-bold',
