@@ -111,6 +111,7 @@ export default function CreateGroupFirstStepScreen({
 								value={groupName}
 								onChangeText={setGroupName}
 								placeholder="ex. OO 순, OO 사랑방"
+								className="font-pretendard-Medium"
 							/>
 						</Input>
 					</VStack>

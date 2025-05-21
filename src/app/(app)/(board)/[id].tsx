@@ -489,7 +489,7 @@ export default function BoardPostDetailScreen() {
 						{/* 카테고리 태그 */}
 						<Box className="mb-3">
 							<Text
-								className={`text-sm font-pretendard-medium px-3 py-1 rounded-full bg-gray-100 self-start ${categoryColor}`}
+								className={`text-sm font-pretendard-Medium px-3 py-1 rounded-full bg-gray-100 self-start ${categoryColor}`}
 							>
 								{categoryLabel}
 							</Text>
@@ -526,7 +526,7 @@ export default function BoardPostDetailScreen() {
 								<HStack space="xs" className="items-center">
 									<Text
 										size="xs"
-										className="text-typography-700 font-pretendard-medium"
+										className="text-typography-700 font-pretendard-Medium"
 									>
 										고정됨
 									</Text>

@@ -28,7 +28,7 @@ export function NotificationPermissionBanner() {
 					<Text className="text-red-800 font-pretendard-bold">
 						OS 설정에서 알림을 켜주세요.
 					</Text>
-					<Text className="text-red-800 font-pretendard-medium">
+					<Text className="text-red-800 font-pretendard-Medium">
 						알림을 켜면 다양한 소식을 실시간으로 받을 수 있어요.
 					</Text>
 				</VStack>

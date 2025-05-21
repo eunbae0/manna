@@ -340,7 +340,7 @@ export default function FellowshipListScreen() {
 							>
 								<Text
 									size="md"
-									className={`font-pretendard-medium ${isSunday ? 'text-danger-500' : 'text-typography-900'}`}
+									className={`font-pretendard-Medium ${isSunday ? 'text-danger-500' : 'text-typography-900'}`}
 								>
 									{day}
 								</Text>
@@ -397,7 +397,7 @@ export default function FellowshipListScreen() {
 									`}>
 										<Text
 											size="lg"
-											className={`font-pretendard-medium
+											className={`font-pretendard-Medium
 												${isSelected ? 'text-white' : isSunday ? 'text-danger-500' : 'text-typography-900'}
 												${!hasFellowship ? 'opacity-40' : ''}
 											`}

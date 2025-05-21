@@ -136,7 +136,7 @@ export default function ServiceGroups() {
 						<Icon as={Megaphone} size="xl" className="stroke-primary-400" />
 						<Text
 							size="lg"
-							className="flex-1 text-typography-800 font-pretendard-medium"
+							className="flex-1 text-typography-800 font-pretendard-Medium"
 							numberOfLines={1}
 							ellipsizeMode="tail"
 						>

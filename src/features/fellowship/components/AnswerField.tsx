@@ -233,7 +233,7 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
             onPress={handleCloseSummarizeSheet}
           />
           <VStack space="xs" className="pt-2 pb-4">
-            <Text className="font-pretendard-medium">녹음 내용</Text>
+            <Text className="font-pretendard-Medium">녹음 내용</Text>
             <BottomSheetTextInput
               defaultValue={summarizeText}
               onChangeText={setSummarizeText}
@@ -245,7 +245,7 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
           {/* AI 요약 결과 */}
           {aiSummaries.length > 0 && (
             <VStack space="sm" className="pb-4">
-              <Text className="font-pretendard-medium">AI 요약 결과</Text>
+              <Text className="font-pretendard-Medium">AI 요약 결과</Text>
               <VStack space="xs">
                 {aiSummaries.map((summary, index) => (
                   <Pressable

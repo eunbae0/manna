@@ -124,7 +124,7 @@ function GroupFilterTag({
 				})}
 			>
 				<Text
-					className={cn('text-sm font-pretendard-medium', {
+					className={cn('text-sm font-pretendard-Medium', {
 						'text-white': isSelected,
 						'text-gray-700': !isSelected,
 					})}

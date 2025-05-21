@@ -316,7 +316,7 @@ export default function CreateScreen() {
 
 											<TextInput
 												placeholder="비어 있음"
-												className="w-full text-xl ml-6"
+												className="w-full text-xl ml-6 font-pretendard-Regular"
 												value={preacher}
 												onChangeText={setPreacher}
 											/>
@@ -325,7 +325,7 @@ export default function CreateScreen() {
 								</VStack>
 								<TextInput
 									placeholder="설교 노트를 적어보세요 ..."
-									className="text-xl flex-1 min-h-80"
+									className="text-xl flex-1 min-h-80 font-pretendard-Regular"
 									multiline={true}
 									textAlignVertical="top"
 									value={content}

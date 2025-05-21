@@ -187,11 +187,11 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 
 	const isLiked = reactions
 		? Object.values(reactions).some((reactions) =>
-				reactions.some(
-					(reaction) =>
-						reaction.userId === user?.id && reaction.type === 'like',
-				),
-			)
+			reactions.some(
+				(reaction) =>
+					reaction.userId === user?.id && reaction.type === 'like',
+			),
+		)
 		: false;
 
 	const addReactionMutation = useAddReaction();
@@ -260,7 +260,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 									</HStack>
 									<Text
 										className={cn(
-											'text-xs font-pretendard-medium',
+											'text-xs font-pretendard-Medium',
 											categoryColor,
 										)}
 									>
@@ -272,7 +272,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 										<HStack space="xs" className="items-center">
 											<Text
 												size="xs"
-												className="text-typography-700 font-pretendard-medium"
+												className="text-typography-700 font-pretendard-Medium"
 											>
 												고정됨
 											</Text>
@@ -291,7 +291,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 								</HStack>
 							</HStack>
 							<VStack>
-								<Text size="lg" className="pr-12 font-pretendard-medium">
+								<Text size="lg" className="pr-12 font-pretendard-Medium">
 									{post.title}
 								</Text>
 								<Text

@@ -203,7 +203,7 @@ export default function CreateBoardPostScreen() {
 											<AnimatedPressable onPress={handleOpenCategorySheet}>
 												<HStack className="px-2 py-1 bg-gray-100 rounded-md items-center justify-between">
 													<Text
-														className={cn('text-sm font-pretendard-medium')}
+														className={cn('text-sm font-pretendard-Medium')}
 													>
 														{categoryLabels[selectedCategory]}
 													</Text>
@@ -238,7 +238,7 @@ export default function CreateBoardPostScreen() {
 											placeholder="신앙 나눔이나 이야기를 남겨보세요."
 											value={content}
 											onChangeText={setContent}
-											className="text-lg font-pretendard-medium flex-1 min-h-[200px] p-2"
+											className="text-lg font-pretendard-Medium flex-1 min-h-[200px] p-2"
 											multiline
 											textAlignVertical="top"
 										/>
@@ -275,7 +275,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'FREE' &&
-											'font-pretendard-bold text-primary-400',
+										'font-pretendard-bold text-primary-400',
 									)}
 								>
 									자유게시판
@@ -298,7 +298,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'NOTICE' &&
-											'font-pretendard-bold text-primary-400',
+										'font-pretendard-bold text-primary-400',
 									)}
 								>
 									공지사항

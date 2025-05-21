@@ -121,7 +121,7 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 });
 
 // Button text styles based on button size and variant
-const buttonTextStyles = cva('font-pretendard-medium', {
+const buttonTextStyles = cva('font-pretendard-Medium', {
 	variants: {
 		size: {
 			xs: 'text-xs',
@@ -308,7 +308,7 @@ const buttonIconStyles = cva('', {
 
 export interface ButtonProps
 	extends Omit<ComponentPropsWithoutRef<typeof Pressable>, 'children'>,
-		VariantProps<typeof buttonStyles> {
+	VariantProps<typeof buttonStyles> {
 	children?: ReactNode;
 	size?: ButtonSize;
 	variant?: 'solid' | 'outline' | 'link' | 'text' | 'icon';
@@ -435,7 +435,7 @@ const ButtonText = React.forwardRef<Text, ButtonTextProps>(
 		return (
 			<Text
 				ref={ref}
-				className={cn(buttonTextStyles({ size, variant, action }), className)}
+				className={cn(buttonTextStyles({ size, variant, action }), 'font-pretendard-Medium', className)}
 				{...props}
 			>
 				{children}

@@ -1,4 +1,4 @@
-import { Button, ButtonText } from '@/components/common/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '#/components/ui/text';
@@ -89,7 +89,7 @@ export default function AccountSettingScreen() {
 							className="justify-start border-primary-500"
 							rounded
 						>
-							<LogOutIcon className="mr-2" size={18} />
+							<ButtonIcon as={LogOutIcon} />
 							<ButtonText>로그아웃</ButtonText>
 						</Button>
 						<Button
@@ -100,7 +100,7 @@ export default function AccountSettingScreen() {
 							className="justify-start"
 							rounded
 						>
-							<UserMinusIcon className="mr-2" size={18} />
+							<ButtonIcon as={UserMinusIcon} />
 							<ButtonText>계정 탈퇴하기</ButtonText>
 						</Button>
 					</VStack>

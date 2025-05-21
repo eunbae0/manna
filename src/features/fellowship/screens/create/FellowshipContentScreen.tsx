@@ -224,7 +224,7 @@ export default function FellowshipContentScreen() {
 									>
 										<HStack className="w-full justify-between items-center p-4 border border-neutral-200 rounded-lg">
 											<VStack space="xs">
-												<Text size="md" className="font-pretendard-medium">
+												<Text size="md" className="font-pretendard-Medium">
 													{new Date(fellowship.info.date).toLocaleDateString(
 														'ko-KR',
 														{

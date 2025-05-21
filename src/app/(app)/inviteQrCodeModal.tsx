@@ -54,8 +54,8 @@ export default function InviteQrCodeModal() {
 					)}
 
 					<HStack space="sm" className="items-center">
-						<Text className="text-center text-lg font-semibold">초대코드</Text>
-						<Text className="text-center text-2xl font-bold">{inviteCode}</Text>
+						<Text className="text-center text-lg font-pretendard-semi-bold">초대코드</Text>
+						<Text className="text-center text-2xl font-pretendard-bold">{inviteCode}</Text>
 					</HStack>
 				</VStack>
 

@@ -32,11 +32,8 @@ import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
 	BottomSheetListLayout,
 	BottomSheetListHeader,
-	BottomSheetListItem,
 } from '@/components/common/bottom-sheet';
-import {} from 'lucide-react-native';
 import { useState, useMemo } from 'react';
-import { APP_STORE_URL, PLAY_STORE_URL } from '@/shared/constants/app';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
@@ -62,7 +59,7 @@ function ActivityItem({ icon, title, count, onPress }: ActivityItemProps) {
 					<Box className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center">
 						<Icon as={icon} size="md" className="text-primary-500" />
 					</Box>
-					<Text className="text-typography-700 font-pretendard-medium">
+					<Text className="text-typography-700 font-pretendard-Medium">
 						{title}
 					</Text>
 				</HStack>
@@ -306,7 +303,7 @@ export default function ProfileScreen() {
 								<Box className="px-3 py-1 bg-primary-100 rounded-full">
 									<Text
 										size="xs"
-										className="text-primary-700 font-pretendard-medium"
+										className="text-primary-700 font-pretendard-Medium"
 									>
 										리더
 									</Text>
@@ -315,7 +312,7 @@ export default function ProfileScreen() {
 								<Box className="px-3 py-1 bg-gray-100 rounded-full">
 									<Text
 										size="xs"
-										className="text-gray-700 font-pretendard-medium"
+										className="text-gray-700 font-pretendard-Medium"
 									>
 										그룹원
 									</Text>
