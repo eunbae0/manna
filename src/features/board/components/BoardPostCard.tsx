@@ -309,9 +309,10 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 										<Icon
 											as={ThumbsUp}
 											size="xl"
+											fill={isLiked ? '#362303' : undefined}
 											className={
 												isLiked
-													? 'text-primary-500 fill-primary-500'
+													? 'text-primary-500'
 													: 'text-typography-900'
 											}
 										/>

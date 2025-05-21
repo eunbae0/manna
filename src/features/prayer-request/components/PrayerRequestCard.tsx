@@ -229,9 +229,10 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 									<Icon
 										size="lg"
 										as={Heart}
+										fill={hasLiked ? '#362303' : undefined}
 										className={
 											hasLiked
-												? 'text-primary-500 fill-primary-500'
+												? 'text-primary-500'
 												: 'color-black'
 										}
 									/>

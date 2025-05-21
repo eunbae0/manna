@@ -549,7 +549,7 @@ export default function BoardPostDetailScreen() {
 
 						{/* 게시글 통계 */}
 						{reactions?.like && reactions?.like.length > 0 && (
-							<AnimatedPressable onPress={handleLikeMemberListOpen}>
+							<AnimatedPressable scale={0.98} onPress={handleLikeMemberListOpen}>
 								<HStack space="sm" className="items-center pb-1">
 									<AvatarGroup max={2} onPress={handleLikeMemberListOpen}>
 										{reactions?.like?.map((reaction) => (
@@ -573,9 +573,10 @@ export default function BoardPostDetailScreen() {
 										<Icon
 											as={ThumbsUp}
 											size="xl"
+											fill={isLiked ? '#362303' : undefined}
 											className={
 												isLiked
-													? 'text-primary-500 fill-primary-500'
+													? 'text-primary-500'
 													: 'text-typography-900'
 											}
 										/>
