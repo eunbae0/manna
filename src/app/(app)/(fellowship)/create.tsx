@@ -6,7 +6,7 @@ import type { FellowshipStoreStep } from '@/store/createFellowship/types';
 
 import FellowshipInfoScreen from '@/features/fellowship/screens/create/FellowshipInfoScreen';
 import FellowshipContentScreen from '@/features/fellowship/screens/create/FellowshipContentScreen';
-import FellowshipIcebrakingScreen from '@/features/fellowship/screens/create/FellowshipIcebrakingScreen';
+import FellowshipIcebrakingScreen from '@/features/fellowship/screens/create/IceBreakingScreen';
 import FellowshipSermonTopicScreen from '@/features/fellowship/screens/create/FellowshipSermonTopicScreen';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';

@@ -17,13 +17,14 @@ type FellowShipStoreState = FellowShipStoreData & {
 	fellowshipId?: string | null;
 	hasShownRecentRecommendSheet: boolean;
 	lastUpdatedId?: string | null;
-
+	isFirstRender: boolean;
 	setStep: (step: FellowshipStoreStep) => void;
 	setType: (type: FellowshipStoreType) => void;
 	setFellowshipId: (fellowshipId: string | null) => void;
 	setHasShownRecentRecommendSheet: (
 		hasShownRecentRecommendSheet: boolean,
 	) => void;
+	setIsFirstRender: (isFirstRender: boolean) => void;
 	getLastUpdatedIdAndReset: () => string | null;
 	updateFellowshipInfo: (data: Partial<FellowShipStoreState['info']>) => void;
 	updateFellowshipContent: (
@@ -50,6 +51,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	type: FELLOWSHIP_DEFAULT_TYPE,
 	fellowshipId: null,
 	hasShownRecentRecommendSheet: false,
+	isFirstRender: true,
 	info: {
 		date: new Date(),
 		preachTitle: '',
@@ -174,13 +176,14 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	},
 	setHasShownRecentRecommendSheet: (hasShownRecentRecommendSheet) =>
 		set({ hasShownRecentRecommendSheet }),
-
+	setIsFirstRender: (isFirstRender) => set({ isFirstRender }),
 	clearFellowship: () => {
 		set({
 			fellowshipId: null,
 			type: FELLOWSHIP_DEFAULT_TYPE,
 			currentStep: FELLOWSHIP_DEFAULT_STEP,
 			hasShownRecentRecommendSheet: false,
+			isFirstRender: true,
 			info: {
 				date: new Date(),
 				preachTitle: '',

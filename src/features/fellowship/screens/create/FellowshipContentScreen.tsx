@@ -10,7 +10,7 @@ import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/auth';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { ChevronRight, Check } from 'lucide-react-native';
-import { Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { useEffect, useState } from 'react';
 import { useBackHandler } from '@/shared/hooks/useBackHandler';

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, TextInput } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
@@ -64,7 +64,7 @@ export default function FellowshipInfoScreen() {
 	const preachTextRef = useRef<TextInput>(null);
 	const preacherRef = useRef<TextInput>(null);
 
-	const { info, setStep, updateFellowshipInfo, clearFellowship } =
+	const { info, setStep, updateFellowshipInfo, clearFellowship, isFirstRender, setIsFirstRender } =
 		useFellowshipStore();
 	const [selectedDate, setSelectedDate] = useState(info.date || new Date());
 	const [preachTitle, setPreachTitle] = useState(info.preachTitle || '');
@@ -249,6 +249,16 @@ export default function FellowshipInfoScreen() {
 	const addMemberInputRef = useRef<TextInput>(null);
 	const membersScrollViewRef = useRef<ScrollView>(null);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (isFirstRender) {
+			setTimeout(() => {
+				preachTitleRef.current?.focus();
+				setIsFirstRender(false);
+			}, 300);
+		}
+	}, [setIsFirstRender]);
+
 	return (
 		<KeyboardDismissView style={{ flex: 1 }}>
 			<VStack className="flex-1">
@@ -261,7 +271,6 @@ export default function FellowshipInfoScreen() {
 								placeholder="나눔 또는 설교 제목을 입력해주세요."
 								value={preachTitle}
 								onChangeText={(value) => setPreachTitle(value)}
-								autoFocus
 								returnKeyType="next"
 								onSubmitEditing={() => {
 									if (!preachTextExpanded) {
