@@ -255,7 +255,7 @@ export default function selectedWorshipTypeModal() {
 										<Box className="rounded-full w-2 h-2 bg-background-400" />
 										<TextInput
 											placeholder={'예배 종류 추가하기'}
-											className="flex-1 text-[18px] border-b-[1px] border-background-300 pb-2"
+											className="flex-1 text-[18px] border-b-[1px] border-background-300 pb-2 text-typography-500 font-pretendard-Medium"
 											value={newWorshipTypeName}
 											onChangeText={setNewWorshipTypeName}
 										/>
