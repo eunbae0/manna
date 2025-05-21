@@ -32,6 +32,7 @@ import { FellowshipSkeleton } from '../../components/FellowshipSkeleton';
 import { useInfiniteFellowships } from '../../hooks/useInfiniteFellowships';
 import type { ClientFellowship, ClientFellowshipMember } from '../../api/types';
 import { useFellowshipStore } from '@/store/createFellowship';
+import { cn } from '@/shared/utils/cn';
 
 type ViewMode = 'list' | 'calendar';
 
@@ -333,6 +334,7 @@ export default function FellowshipListScreen() {
 					{weekdays.map((day) => {
 						// 요일은 고유하기 때문에 요일 이름을 키로 사용
 						const isSunday = day === '일';
+						const isSaturday = day === '토';
 						return (
 							<View
 								key={`weekday-${day}`}
@@ -340,7 +342,7 @@ export default function FellowshipListScreen() {
 							>
 								<Text
 									size="md"
-									className={`font-pretendard-medium ${isSunday ? 'text-danger-500' : 'text-typography-900'}`}
+									className={cn(isSunday ? 'text-red-500' : isSaturday ? 'text-blue-500' : 'text-typography-900')}
 								>
 									{day}
 								</Text>
@@ -397,7 +399,7 @@ export default function FellowshipListScreen() {
 									`}>
 										<Text
 											size="lg"
-											className={`font-pretendard-medium
+											className={`font-pretendard-Medium
 												${isSelected ? 'text-white' : isSunday ? 'text-danger-500' : 'text-typography-900'}
 												${!hasFellowship ? 'opacity-40' : ''}
 											`}
