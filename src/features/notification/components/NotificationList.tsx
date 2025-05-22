@@ -192,11 +192,12 @@ export function NotificationList() {
 						showsHorizontalScrollIndicator={false}
 						className="h-full flex-1"
 					>
-						<HStack className="items-center h-full">
+						<HStack space="sm" className="items-center h-full">
 							{/* '전체' 필터 태그 */}
 							<FilterTag
 								label="전체"
 								isSelected={selectedGroupId === null}
+								size="sm"
 								onPress={() => setSelectedGroupId(null)}
 								withHaptic
 							/>
@@ -220,6 +221,7 @@ export function NotificationList() {
 										key={group.groupId}
 										label={group.groupName}
 										isSelected={selectedGroupId === group.groupId}
+										size="sm"
 										onPress={() => setSelectedGroupId(group.groupId)}
 										withHaptic
 									/>

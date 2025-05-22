@@ -9,6 +9,7 @@ import type { ClientWorshipType } from '@/api/worship-types/types';
 import { router } from 'expo-router';
 import { WorshipTypeSelectorSkeleton } from './WorshipTypeSelectorSkeleton';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import FilterTag from '@/shared/components/filter-tag';
 
 export function WorshipTypeSelector() {
 	const {
@@ -26,6 +27,10 @@ export function WorshipTypeSelector() {
 		}
 	};
 
+	const handlePressPlusButton = () => {
+		router.push('/(app)/selectWorshipTypeModal');
+	}
+
 	if (isLoading) {
 		return <WorshipTypeSelectorSkeleton />;
 	}
@@ -39,33 +44,18 @@ export function WorshipTypeSelector() {
 		>
 			<HStack space="sm" className="py-1 items-center">
 				{worshipTypes.map((type) => (
-					<TouchableOpacity
+					<FilterTag
 						key={type.name}
+						label={type.name}
 						onPress={() => handlePressItem(type)}
-						className="mr-1"
-					>
-						<Text
-							size="md"
-							className={`px-3 py-1 rounded-full ${selectedWorshipType?.name === type.name
-									? 'border border-primary-200 bg-primary-100 text-primary-700'
-									: 'border border-background-0 bg-background-0 text-typography-700'
-								}`}
-						>
-							{type.name}
-						</Text>
-					</TouchableOpacity>
+						isSelected={selectedWorshipType?.name === type.name}
+					/>
 				))}
-				<TouchableOpacity
-					onPress={() => {
-						// trackAmplitudeEvent('Open Manage Worship Type', {
-						// 	screen: 'Tab_Note',
-						// });
-						router.push('/(app)/selectWorshipTypeModal');
-					}}
-					className="mr-1 px-2 py-1 rounded-full bg-background-0 text-typography-700"
-				>
-					<Icon as={PlusIcon} size="md" />
-				</TouchableOpacity>
+				<FilterTag
+					onPress={handlePressPlusButton}
+					label="+"
+					isSelected={false}
+				/>
 			</HStack>
 		</ScrollView>
 	);

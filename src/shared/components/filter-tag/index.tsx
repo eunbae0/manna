@@ -7,15 +7,23 @@ import { Text } from '@/shared/components/text';
 import AnimatedPressable from '@/components/common/animated-pressable';
 
 // Define filter tag variants
-const filterTagStyles = cva('px-3 py-1.5 rounded-full items-center justify-center mr-2', {
+const filterTagStyles = cva('px-3 py-1.5 rounded-full items-center justify-center', {
   variants: {
     variant: {
       selected: 'bg-primary-500 border border-primary-500',
       unselected: 'bg-primary-50 border border-primary-200',
     },
+    size: {
+      xs: 'px-2 py-[2px]',
+      sm: 'px-3 py-1',
+      md: 'px-3 py-1',
+      lg: 'px-3 py-1.5',
+      xl: 'px-4 py-2',
+    },
   },
   defaultVariants: {
     variant: 'unselected',
+    size: 'md',
   },
 });
 
@@ -26,22 +34,35 @@ const filterTagTextStyles = cva('font-pretendard-Medium', {
       selected: 'text-white',
       unselected: 'text-typography-700',
     },
+    size: {
+      xs: 'text-xs',
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg',
+      xl: 'text-xl',
+    },
   },
   defaultVariants: {
     variant: 'unselected',
+    size: 'md',
   },
 });
+
+// Define size type
+type FilterTagSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface FilterTagProps extends Omit<ComponentPropsWithoutRef<typeof AnimatedPressable>, 'children'> {
   label: string;
   isSelected?: boolean;
   withHaptic?: boolean;
+  size?: FilterTagSize;
 }
 
 export function FilterTag({
   label,
   isSelected = false,
   withHaptic = false,
+  size = 'md',
   onPress,
   className,
   ...props
@@ -54,10 +75,9 @@ export function FilterTag({
       withHaptic={withHaptic}
       {...props}
     >
-      <Box className={cn(filterTagStyles({ variant }), className)}>
+      <Box className={cn(filterTagStyles({ variant, size }), className)}>
         <Text
-          size="xs"
-          className={filterTagTextStyles({ variant })}
+          className={filterTagTextStyles({ variant, size })}
         >
           {label}
         </Text>

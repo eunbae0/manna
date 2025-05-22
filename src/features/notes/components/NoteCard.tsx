@@ -16,7 +16,7 @@ export const NoteCard = ({
 }: Omit<Note, 'worshipType' | 'sermon' | 'preacher'>) => {
 	return (
 		<AnimatedPressable onPress={() => router.push(`/(app)/(note)/${id}`)}>
-			<Card className="bg-white rounded-2xl">
+			<Card className="border border-primary-500 rounded-3xl">
 				<VStack space="xs">
 					<Text size="xl" className="font-pretendard-semi-bold">
 						{title}
