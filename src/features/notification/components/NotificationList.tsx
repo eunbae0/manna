@@ -18,6 +18,7 @@ import Animated, {
 	withTiming,
 	Easing,
 } from 'react-native-reanimated';
+import { FilterTag } from '@/shared/components/filter-tag';
 import { useRefetchOnFocus } from '@/shared/hooks/useRefetchOnFocus';
 import { useGroups } from '@/features/home/group/hooks/useGroups';
 import type { ClientGroup } from '@/api/group/types';
@@ -84,39 +85,7 @@ function NotificationSkeleton() {
 	);
 }
 
-/**
- * 그룹 필터 태그 컴포넌트
- */
-function GroupFilterTag({
-	label,
-	isSelected,
-	onPress,
-}: {
-	label: string;
-	isSelected: boolean;
-	onPress: () => void;
-}) {
-	return (
-		<AnimatedPressable onPress={onPress}>
-			<Box
-				className={cn('px-3 py-1.5 rounded-full items-center justify-center mr-2', {
-					'bg-primary-500 border border-primary-500': isSelected,
-					'bg-primary-50 border border-primary-200': !isSelected,
-				})}
-			>
-				<Text
-					size="xs"
-					className={cn('font-pretendard-Medium', {
-						'text-white': isSelected,
-						'text-typography-700': !isSelected,
-					})}
-				>
-					{label}
-				</Text>
-			</Box>
-		</AnimatedPressable>
-	);
-}
+
 
 /**
  * 그룹 정보를 포함한 필터 아이템 타입
@@ -225,10 +194,11 @@ export function NotificationList() {
 					>
 						<HStack className="items-center h-full">
 							{/* '전체' 필터 태그 */}
-							<GroupFilterTag
+							<FilterTag
 								label="전체"
 								isSelected={selectedGroupId === null}
 								onPress={() => setSelectedGroupId(null)}
+								withHaptic
 							/>
 
 							{/* 사용자의 소그룹 필터 태그 */}
@@ -246,11 +216,12 @@ export function NotificationList() {
 								</>
 							) : (
 								groupFilterItems.map((group) => (
-									<GroupFilterTag
+									<FilterTag
 										key={group.groupId}
 										label={group.groupName}
 										isSelected={selectedGroupId === group.groupId}
 										onPress={() => setSelectedGroupId(group.groupId)}
+										withHaptic
 									/>
 								))
 							)}
