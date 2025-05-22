@@ -1,19 +1,16 @@
 import { View } from 'react-native';
-import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
-import { Box } from '#/components/ui/box';
-import { Avatar } from '@/components/common/avatar';
 import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
 import { useAuthStore } from '@/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { openProfile } from '@/shared/utils/router';
-import AnimatedPressable from '@/components/common/animated-pressable';
 import { ShareInviteCode } from '@/shared/components/invite-code';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { router } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
+import { MemberListItem } from '@/features/profile/components/MemberListItem';
 
 export default function MemberListScreen() {
 	const { currentGroup } = useAuthStore();
@@ -43,38 +40,7 @@ export default function MemberListScreen() {
 						<FlashList
 							data={members}
 							renderItem={({ item: member }) => (
-								<AnimatedPressable
-									onPress={() => {
-										openProfile(member.id);
-									}}
-								>
-									<HStack className="items-center justify-between py-4">
-										<HStack space="lg" className="items-center">
-											<HStack space="md" className="items-center">
-												<Avatar
-													size="sm"
-													photoUrl={member.photoUrl ?? undefined}
-												/>
-												<VStack>
-													<Text size="lg" className="font-pretendard-semi-bold">
-														{member.displayName ?? '이름없음'}
-													</Text>
-												</VStack>
-											</HStack>
-											<Box
-												className={
-													member.role === 'leader'
-														? 'px-2 rounded-full py-1 bg-primary-400'
-														: 'px-2 rounded-full py-1 bg-gray-500'
-												}
-											>
-												<Text size="xs" className="text-typography-50">
-													{member.role === 'leader' ? '리더' : '그룹원'}
-												</Text>
-											</Box>
-										</HStack>
-									</HStack>
-								</AnimatedPressable>
+								<MemberListItem member={member} onPress={() => openProfile(member.id)} />
 							)}
 							keyExtractor={(member) => member.id}
 							estimatedItemSize={70}
@@ -85,14 +51,15 @@ export default function MemberListScreen() {
 					</View>
 				) : (
 					<Text className="text-center py-4">그룹원이 없어요.</Text>
-				)}
-			</VStack>
+				)
+				}
+			</VStack >
 			<VStack space="md" className="mb-8 mx-5">
 				<ShareInviteCode
 					inviteCode={group?.inviteCode || ''}
 					handlePressQrCode={handlePressQrCode}
 				/>
 			</VStack>
-		</SafeAreaView>
+		</SafeAreaView >
 	);
 }

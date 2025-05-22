@@ -13,7 +13,6 @@ import {
 	Library,
 	Settings,
 	SettingsIcon,
-	Copy,
 	Users,
 	ChevronRight,
 	QrCode,
@@ -26,22 +25,18 @@ import {
 	BottomSheetListItem,
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
-import { Menu, MenuItem, MenuItemLabel } from '#/components/ui/menu';
 import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import type { ClientGroup } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
-import { useToastStore } from '@/store/toast';
 import { router } from 'expo-router';
-import { Box } from '#/components/ui/box';
 import { cn } from '@/shared/utils/cn';
 import { ScrollView } from 'react-native-gesture-handler';
 import { isAndroid, isIOS } from '@/shared/utils/platform';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import type { AmplitudeLocation } from '@/shared/constants/amplitude';
-import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
-import { shareAsync } from 'expo-sharing';
 import { PopupMenu, PopupMenuItem, PopupMenuItemLabel } from '@/shared/components/popup-menu';
+import { MemberListItem } from '../profile/components/MemberListItem';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
@@ -290,44 +285,14 @@ function HomeHeader({ groups }: Props) {
 							<ScrollView style={{ maxHeight: MAX_INNER_MEMBER_LIST_HEIGHT }}>
 								<VStack space="md">
 									{group.members.map((member) => (
-										<AnimatedPressable
+										<MemberListItem
 											key={member.id}
+											member={member}
 											onPress={() => {
 												handleCloseMember();
 												openProfile(member.id);
 											}}
-										>
-											<View className="bg-white rounded-xl py-4">
-												<HStack className="items-center justify-between">
-													<HStack space="md" className="items-center">
-														<Avatar
-															size="sm"
-															photoUrl={member.photoUrl ?? undefined}
-														/>
-														<VStack>
-															<Text
-																size="lg"
-																className="font-pretendard-semi-bold"
-															>
-																{member.displayName || '이름없음'}
-															</Text>
-														</VStack>
-														<Box
-															className={cn(
-																'px-2 rounded-full py-1',
-																member.role === 'leader'
-																	? 'bg-primary-400'
-																	: 'bg-gray-500',
-															)}
-														>
-															<Text size="xs" className="text-typography-50">
-																{member.role === 'leader' ? '리더' : '그룹원'}
-															</Text>
-														</Box>
-													</HStack>
-												</HStack>
-											</View>
-										</AnimatedPressable>
+										/>
 									))}
 								</VStack>
 							</ScrollView>
