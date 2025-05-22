@@ -24,6 +24,7 @@ import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { Box } from '#/components/ui/box';
+import AnimatedPressable from '@/components/common/animated-pressable';
 
 /**
  * 알림 아이템 컴포넌트 Props
@@ -239,7 +240,7 @@ export function NotificationItem({
 						style={animatedContentStyle}
 						className={cn('w-full', item.isRead ? '' : 'bg-primary-100')}
 					>
-						<Pressable onPress={onItemPress} className="w-full">
+						<AnimatedPressable onPress={onItemPress} className="w-full">
 							<HStack space="md" className="px-6 py-5 justify-start">
 								<Icon
 									as={titleToIcon(item.title)}
@@ -275,7 +276,7 @@ export function NotificationItem({
 									<Text size="lg">{item.body}</Text>
 								</VStack>
 							</HStack>
-						</Pressable>
+						</AnimatedPressable>
 					</Animated.View>
 				</GestureDetector>
 			</View>
