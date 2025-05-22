@@ -67,7 +67,7 @@ function useScaleAnimation({
 	const handlePressIn = useCallback(() => {
 		if (enabled) {
 			if (withHaptic) {
-				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
 			}
 			scaleValue.value = withSpring(scale, {
 				damping,
