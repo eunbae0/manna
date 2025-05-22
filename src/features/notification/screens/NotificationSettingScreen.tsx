@@ -14,7 +14,6 @@ import { cn } from '@/shared/utils/cn';
 import type { UserGroup } from '@/shared/types';
 import { NotificationPermissionBanner } from '../components/NotificationPermissionBanner';
 import { useNotificationPermission } from '../hooks/useNotificationPermission';
-import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Icon } from '#/components/ui/icon';
 import { ChevronRight } from 'lucide-react-native';
@@ -24,7 +23,7 @@ type TabType = Pick<ClientGroup, 'id' | 'groupName'>;
 
 export default function NotificationSettingScreen() {
 	const { user, updateUserGroupProfile } = useAuthStore();
-	const { hasPermission } = useNotificationPermission();
+	const hasPermission = useNotificationPermission();
 
 	const { groups, isLoading, error } = useGroups(user?.groups ?? []);
 

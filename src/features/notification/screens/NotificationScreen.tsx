@@ -10,7 +10,7 @@ import { useNotificationPermission } from '../hooks/useNotificationPermission';
  * 알림 화면 레이아웃 컴포넌트
  */
 export function NotificationScreen() {
-	const { hasPermission } = useNotificationPermission();
+	const hasPermission = useNotificationPermission();
 
 	return (
 		<VStack className="flex-1">
