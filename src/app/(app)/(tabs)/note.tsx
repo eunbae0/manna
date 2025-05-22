@@ -49,22 +49,22 @@ export default function NoteScreen() {
 	}, [worshipTypes, setWorshipTypes]);
 
 	return (
-		<View className="relative bg-background-100">
-			<VStack space="xl" className="px-4 h-full">
+		<View className="relative">
+			<VStack space="xl" className="h-full">
 				<VStack space="sm">
 					<VStack space="xl">
-						<Heading size="2xl" className={cn(isIOS ? 'pt-5' : 'pt-6')}>
+						<Heading size="2xl" className={cn(isIOS ? 'pt-7' : 'pt-8', 'px-4')}>
 							설교 노트
 						</Heading>
-						<HStack space="lg" className="pl-2 items-center">
-							<Icon as={Filter} size="lg" className="text-typography-600" />
+						<HStack space="md" className="pl-4 items-center">
+							<Icon as={Filter} size="lg" className="text-primary-500" />
 							<WorshipTypeSelector />
 						</HStack>
 					</VStack>
 					<Divider />
 				</VStack>
 				<ScrollView
-					className="flex-1 h-full"
+					className="flex-1 h-full px-4"
 					refreshControl={
 						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 					}
