@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
-import { RefreshControl, ScrollView } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 
 import { VStack } from '#/components/ui/vstack';
@@ -49,7 +49,7 @@ export default function NoteScreen() {
 	}, [worshipTypes, setWorshipTypes]);
 
 	return (
-		<SafeAreaView className="relative bg-background-100">
+		<View className="relative bg-background-100">
 			<VStack space="xl" className="px-4 h-full">
 				<VStack space="sm">
 					<VStack space="xl">
@@ -106,6 +106,6 @@ export default function NoteScreen() {
 				<ButtonText>노트 추가하기</ButtonText>
 				<ButtonIcon as={PlusIcon} />
 			</Button>
-		</SafeAreaView>
+		</View>
 	);
 }

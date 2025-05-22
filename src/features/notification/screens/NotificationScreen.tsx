@@ -13,12 +13,10 @@ export function NotificationScreen() {
 	const { hasPermission } = useNotificationPermission();
 
 	return (
-		<SafeAreaView className="flex-1">
-			<VStack className="flex-1">
-				<NotificationScreenHeader />
-				{hasPermission === false && <NotificationPermissionBanner />}
-				<NotificationList />
-			</VStack>
-		</SafeAreaView>
+		<VStack className="flex-1">
+			<NotificationScreenHeader />
+			{hasPermission === false && <NotificationPermissionBanner />}
+			<NotificationList />
+		</VStack>
 	);
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Keyboard, TextInput } from 'react-native';
+import { Keyboard, TextInput, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
@@ -529,7 +529,7 @@ export default function FellowshipInfoScreen() {
 															<VStack key={member.id}>
 																<AnimatedPressable
 																	scale={isMe ? 1 : 0.98}
-																	onPress={() => !isMe && toggleSelectGroupMember(member)}
+																	onPress={() => !isMe ? toggleSelectGroupMember(member) : null}
 																	className="py-4"
 																>
 																	<HStack className="items-center justify-between">
@@ -541,15 +541,15 @@ export default function FellowshipInfoScreen() {
 																			<Text size="md">{member.displayName}</Text>
 																		</HStack>
 																		{isSelected ? (
-																			<Box className={cn("bg-primary-500 rounded-full p-1 w-6 h-6 mr-2", isMe && "bg-background-400")}>
+																			<View pointerEvents='none' className={cn("bg-primary-500 rounded-full p-1 w-6 h-6 mr-2", isMe && "bg-background-400")}>
 																				<Icon
 																					as={CheckIcon}
 																					size="sm"
 																					color="white"
 																				/>
-																			</Box>
+																			</View>
 																		) : (
-																			<Box className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
+																			<View pointerEvents='none' className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
 																		)}
 																	</HStack>
 																</AnimatedPressable>

@@ -8,15 +8,9 @@ export default function HomeScreen() {
 	const { user } = useAuthStore();
 	const isGroup = (user?.groups?.length ?? 0) > 0;
 
-	return (
-		<SafeAreaView className="h-full">
-			{isGroup ? (
-				<>
-					<GroupHomeScreen />
-				</>
-			) : (
-				<EmptyGroupHomeScreen />
-			)}
-		</SafeAreaView>
-	);
+	return isGroup ? (
+		<GroupHomeScreen />
+	) : (
+		<EmptyGroupHomeScreen />
+	)
 }

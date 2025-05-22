@@ -28,7 +28,7 @@ import Animated, {
 	withTiming,
 	Easing,
 } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -36,7 +36,9 @@ export default function TabLayout() {
 	const insets = useSafeAreaInsets();
 	return (
 		<Tabs>
-			<TabSlot />
+			<SafeAreaView className="flex-1">
+				<TabSlot />
+			</SafeAreaView>
 			<TabList
 				style={{ marginBottom: insets.bottom }}
 				className="px-3 border-t border-gray-200 items-center justify-center"
