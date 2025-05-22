@@ -128,6 +128,11 @@ function HomeList() {
 		router.push('/(app)/(prayerRequest)/list');
 	}, []);
 
+	const handleViewMoreBoardPosts = useCallback(() => {
+		trackAmplitudeEvent('게시판 더보기 클릭', { screen: 'Tab_Home' });
+		router.push('/(app)/(board)/board-index');
+	}, []);
+
 	const recentPrayerRequests = useMemo(() => {
 		return prayerRequests?.slice(0, 3) || [];
 	}, [prayerRequests]);
@@ -218,7 +223,7 @@ function HomeList() {
 				<VStack space="md" className="pt-8 pb-14">
 					<HStack className="justify-between pl-5 pr-2 items-center">
 						<Heading size="xl">게시판 최근 글</Heading>
-						<Button variant="text" size='sm' onPress={handleViewMorePrayerRequests}>
+						<Button variant="text" size='sm' onPress={handleViewMoreBoardPosts}>
 							<ButtonText>더보기</ButtonText>
 							<ButtonIcon as={ChevronRight} />
 						</Button>

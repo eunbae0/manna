@@ -283,7 +283,7 @@ function HomeHeader({ groups }: Props) {
 					<View className="pb-5">
 						{group?.members && group.members.length > 0 ? (
 							<ScrollView style={{ maxHeight: MAX_INNER_MEMBER_LIST_HEIGHT }}>
-								<VStack space="md">
+								<VStack space="sm">
 									{group.members.map((member) => (
 										<MemberListItem
 											key={member.id}

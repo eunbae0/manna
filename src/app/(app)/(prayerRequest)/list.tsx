@@ -1,21 +1,18 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { VStack } from '#/components/ui/vstack';
-import { HStack } from '#/components/ui/hstack';
 import { Divider } from '#/components/ui/divider';
 import { Text } from '@/shared/components/text';
-import { Heading } from '@/shared/components/heading';
-import { Icon } from '#/components/ui/icon';
-import { ChevronLeft } from 'lucide-react-native';
 import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
 import { PrayerRequestSkeleton } from '@/features/prayer-request/components/PrayerRequestSkeleton';
 import { usePrayerRequests } from '@/features/prayer-request/hooks/usePrayerRequests';
-import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
-import AnimatedPressable from '@/components/common/animated-pressable';
-import { isAndroid, isIOS } from '@/shared/utils/platform';
 import Header from '@/components/common/Header';
+import type { ClientPrayerRequest } from '@/api/prayer-request/types';
 
 export default function PrayerRequestList() {
   const [refreshing, setRefreshing] = useState(false);
@@ -33,7 +30,6 @@ export default function PrayerRequestList() {
 
   // 새로고침 핸들러
   const onRefresh = useCallback(async () => {
-    trackAmplitudeEvent('기도 제목 목록 새로고침', { screen: 'PrayerRequestList' });
     setRefreshing(true);
     try {
       await refetchPrayerRequests();
@@ -43,11 +39,6 @@ export default function PrayerRequestList() {
       setRefreshing(false);
     }
   }, [refetchPrayerRequests]);
-
-  // 뒤로가기 핸들러
-  const handleGoBack = useCallback(() => {
-    router.back();
-  }, []);
 
   // 다음 페이지 로드 함수
   const loadMorePrayerRequests = useCallback(() => {
@@ -83,7 +74,7 @@ export default function PrayerRequestList() {
 
   // 기도제목 카드 렌더링 함수
   const renderPrayerRequestItem = useCallback(
-    ({ item }) => {
+    ({ item }: { item: ClientPrayerRequest }) => {
       if (isLoading) {
         return <PrayerRequestSkeleton />;
       }
@@ -104,9 +95,7 @@ export default function PrayerRequestList() {
     }
 
     return (
-      <Text className="text-center py-8 text-gray-500">
-        기도 제목이 없어요
-      </Text>
+      <Text className="text-center py-8 text-gray-500">기도 제목이 없어요</Text>
     );
   }, [isLoading]);
 
