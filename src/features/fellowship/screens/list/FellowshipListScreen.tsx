@@ -496,12 +496,39 @@ export default function FellowshipListScreen() {
 		<SafeAreaView className="flex-1 bg-white">
 			<VStack className="flex-1">
 				<Header />
-				<Box className="flex-1">
-					<HStack className="justify-between items-center pt-2 pl-5 pr-3">
+				<VStack space="md" className="flex-1">
+					<HStack className="pt-2 px-5 gap-4 items-center justify-between">
 						<Heading className="text-[24px]">나눔 기록</Heading>
-						<Button variant="icon" size="lg" onPress={toggleViewMode}>
-							<ButtonIcon as={viewMode === 'list' ? Calendar : Rows3} />
-						</Button>
+						<HStack className="bg-background-200 rounded-2xl p-1">
+							<AnimatedPressable
+								onPress={() => setViewMode('list')}
+								withHaptic
+								className={cn(
+									"px-3 py-2 rounded-xl",
+									viewMode === 'list' ? "bg-white" : "bg-transparent"
+								)}
+							>
+								<Icon
+									as={Rows3}
+									size="lg"
+									className={viewMode === 'list' ? "text-primary-500" : "text-white"}
+								/>
+							</AnimatedPressable>
+							<AnimatedPressable
+								onPress={() => setViewMode('calendar')}
+								withHaptic
+								className={cn(
+									"px-3 py-2 rounded-xl",
+									viewMode === 'calendar' ? "bg-white" : "bg-transparent"
+								)}
+							>
+								<Icon
+									as={Calendar}
+									size="lg"
+									className={viewMode === 'calendar' ? "text-primary-500" : "text-white"}
+								/>
+							</AnimatedPressable>
+						</HStack>
 					</HStack>
 					{viewMode === 'list' ? (
 						// 리스트 뷰
@@ -586,7 +613,7 @@ export default function FellowshipListScreen() {
 						<ButtonText>나눔 만들기</ButtonText>
 						<ButtonIcon as={Plus} />
 					</Button>
-				</Box>
+				</VStack>
 			</VStack>
 		</SafeAreaView>
 	);

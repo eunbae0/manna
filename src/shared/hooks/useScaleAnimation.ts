@@ -4,6 +4,7 @@ import {
 	useAnimatedStyle,
 	withSpring,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
 interface UseScaleAnimationProps {
 	/**
@@ -26,6 +27,11 @@ interface UseScaleAnimationProps {
 	 * @default 100
 	 */
 	stiffness?: number;
+	/**
+	 * 터치 시 햅틱 피드백
+	 * @default false
+	 */
+	withHaptic?: boolean;
 }
 
 /**
@@ -52,6 +58,7 @@ function useScaleAnimation({
 	scale = 0.96,
 	damping = 8,
 	stiffness = 100,
+	withHaptic = false,
 }: UseScaleAnimationProps = {}) {
 	// 애니메이션 값 생성
 	const scaleValue = useSharedValue(1);
@@ -59,12 +66,15 @@ function useScaleAnimation({
 	// 버튼 눌림 애니메이션
 	const handlePressIn = useCallback(() => {
 		if (enabled) {
+			if (withHaptic) {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+			}
 			scaleValue.value = withSpring(scale, {
 				damping,
 				stiffness,
 			});
 		}
-	}, [enabled, scale, damping, stiffness, scaleValue]);
+	}, [enabled, scale, damping, stiffness, scaleValue, withHaptic]);
 
 	// 버튼 떼기 애니메이션
 	const handlePressOut = useCallback(() => {

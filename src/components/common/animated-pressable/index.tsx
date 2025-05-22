@@ -35,6 +35,10 @@ interface AnimatedPressableProps extends PressableProps {
 	 */
 	containerStyle?: ViewStyle;
 	/**
+	 * 터치 시 햅틱 피드백
+	 */
+	withHaptic?: boolean;
+	/**
 	 * 클래스명
 	 */
 	className?: string;
@@ -57,6 +61,7 @@ function AnimatedPressable({
 	damping = 8,
 	stiffness = 100,
 	containerStyle,
+	withHaptic = false,
 	className,
 	style,
 	...props
@@ -67,6 +72,7 @@ function AnimatedPressable({
 		scale,
 		damping,
 		stiffness,
+		withHaptic,
 	});
 
 	return (
