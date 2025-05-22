@@ -7,7 +7,7 @@ import { cn } from '@/shared/utils/cn';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
 import { Icon as UIIcon } from '#/components/ui/icon';
-import { Text } from '@/shared/components/text';
+import { Text, type TextProps } from '@/shared/components/text';
 
 // Define button size type
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -60,7 +60,7 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 		{
 			variant: 'outline',
 			action: 'secondary',
-			class: 'bg-transparent border-background-500 active:bg-background-50',
+			class: 'bg-transparent border-background-300 active:bg-background-50',
 		},
 		{
 			variant: 'outline',
@@ -158,7 +158,7 @@ const buttonTextStyles = cva('font-pretendard-Medium', {
 		{
 			variant: 'outline',
 			action: 'secondary',
-			class: 'text-background-500',
+			class: 'text-typography-700',
 		},
 		{
 			variant: 'outline',
@@ -241,7 +241,7 @@ const buttonIconStyles = cva('', {
 		{
 			variant: 'outline',
 			action: 'secondary',
-			class: 'text-secondary-500',
+			class: 'text-typography-700',
 		},
 		{
 			variant: 'outline',
@@ -412,7 +412,7 @@ const Button = React.forwardRef<View, ButtonProps>(
 );
 
 // ButtonText component
-export interface ButtonTextProps {
+export interface ButtonTextProps extends TextProps {
 	children?: ReactNode;
 	size?: ButtonSize;
 	variant?: 'solid' | 'outline' | 'link' | 'text' | 'icon';
@@ -435,7 +435,11 @@ const ButtonText = React.forwardRef<Text, ButtonTextProps>(
 		return (
 			<Text
 				ref={ref}
-				className={cn(buttonTextStyles({ size, variant, action }), 'font-pretendard-Medium', className)}
+				className={cn(
+					buttonTextStyles({ size, variant, action }),
+					'font-pretendard-Medium',
+					className,
+				)}
 				{...props}
 			>
 				{children}

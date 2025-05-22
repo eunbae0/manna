@@ -30,7 +30,7 @@ export default function NotificationBox({
 	return (
 		<Animated.View>
 			<Pressable onPress={onPress}>
-				<HStack className="items-center justify-between mx-4 px-2 py-5 border-[1px] border-background-400 rounded-2xl">
+				<HStack className="items-center justify-between mx-5 px-2 py-3 border-[1px] border-background-300 rounded-2xl">
 					<HStack space="xs" className="items-center">
 						<LottieView
 							source={require('../../../../assets/lotties/messages.json')}

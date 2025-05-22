@@ -49,18 +49,13 @@ export function PrayerRequestSkeleton() {
 			</HStack>
 			<SkeletonItem className="h-4 w-full bg-background-200 rounded-md" />
 			<SkeletonItem className="h-4 w-3/4 bg-background-200 rounded-md" />
-			<HStack className="justify-between mt-2">
-				<SkeletonItem className="h-4 w-20 bg-background-200 rounded-md" />
-				<HStack space="sm">
-					<SkeletonItem className="h-6 w-6 bg-background-200 rounded-full" />
-					<SkeletonItem className="h-4 w-16 bg-background-200 rounded-md" />
-				</HStack>
-			</HStack>
 		</VStack>
 	);
 
 	return (
-		<VStack>
+		<VStack className="w-full">
+			<PrayerRequestCardSkeleton />
+			<Divider className="bg-background-100 h-[1px]" />
 			<PrayerRequestCardSkeleton />
 			<Divider className="bg-background-100 h-[1px]" />
 			<PrayerRequestCardSkeleton />

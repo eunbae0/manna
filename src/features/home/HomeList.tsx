@@ -1,17 +1,15 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { FlatList, ActivityIndicator } from 'react-native';
 import { RefreshControl } from 'react-native';
 import { type Href, router } from 'expo-router';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Pen } from 'lucide-react-native';
+import { Pen, ChevronRight } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import NotificationBox from './components/NotificationBox';
 import ServiceGroups from './components/ServiceGroups';
 import { useNotifications } from '@/features/notification/hooks/useNotifications';
-import type { ClientPrayerRequest } from '@/api/prayer-request/types';
 import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
 import { Text } from '@/shared/components/text';
 import { PrayerRequestSkeleton } from '@/features/prayer-request/components/PrayerRequestSkeleton';
@@ -20,6 +18,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { GROUP_QUERY_KEY, GROUPS_QUERY_KEY } from './group/hooks/useGroups';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { useAuthStore } from '@/store/auth';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useInfiniteBoardPosts } from '../board/hooks';
+import { HomeBoardPostCard } from '../board/components/HomeBoardPostCard';
+import { HomeBoardPostSkeleton } from '../board/components/HomeBoardPostSkeleton';
 
 function HomeList() {
 	const { currentGroup } = useAuthStore()
@@ -31,10 +33,6 @@ function HomeList() {
 	const {
 		prayerRequests,
 		isLoading,
-		isError,
-		fetchNextPage,
-		hasNextPage,
-		isFetchingNextPage,
 		refetch: refetchPrayerRequests,
 	} = usePrayerRequests();
 
@@ -123,79 +121,40 @@ function HomeList() {
 		}
 	}, [recentFellowshipNotification, markAsRead]);
 
-	// 다음 페이지 로드 함수
-	const loadMorePrayerRequests = useCallback(() => {
-		if (hasNextPage && !isFetchingNextPage) {
-			fetchNextPage();
-		}
-	}, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-	// 하단 로딩 인디케이터 렌더링 함수
-	const renderFooter = useCallback(() => {
-		if (!isFetchingNextPage) return null;
-
-		// 오류 상태
-		if (isError) {
-			return (
-				<Text className="text-center py-8 text-danger-500">
-					기도 제목을 불러오는 중 오류가 발생했어요
-				</Text>
-			);
-		}
-		return (
-			<VStack className="py-4 items-center">
-				<ActivityIndicator size="small" color="#362303" />
-				<Text className="text-gray-500 text-sm mt-1">더 불러오는 중...</Text>
-			</VStack>
-		);
-	}, [isFetchingNextPage, isError]);
-
-	// 구분선 렌더링 함수
-	const renderSeparator = useCallback(() => {
-		return <Divider className="bg-background-100 h-[1px]" />;
+	// 기도 제목
+	const handleViewMorePrayerRequests = useCallback(() => {
+		trackAmplitudeEvent('기도 제목 더보기 클릭', { screen: 'Tab_Home' });
+		router.push('/(app)/(prayerRequest)/list');
 	}, []);
 
-	// 기도제목 카드 렌더링 함수
-	const renderPrayerRequestItem = useCallback(
-		({ item }: { item: ClientPrayerRequest }) => {
-			// 초기 로딩 상태
-			if (isLoading) {
-				return <PrayerRequestSkeleton />;
-			}
+	const recentPrayerRequests = useMemo(() => {
+		return prayerRequests?.slice(0, 3) || [];
+	}, [prayerRequests]);
 
-			return <PrayerRequestCard prayerRequest={item} />;
-		},
-		[isLoading],
-	);
+	// 게시판
+	const {
+		data: boardPosts,
+		isLoading: isBoardLoading,
+		isError: isBoardError,
+		error: boardError,
+		refetch,
+	} = useInfiniteBoardPosts({
+		groupId: currentGroup?.groupId || '',
+		limit: 10, // 한 페이지에 표시할 게시글 수
+	});
+
+	const allPosts = boardPosts?.pages.flatMap((page) => page.items);
+	const recentPosts = useMemo(() => {
+		return allPosts?.slice(0, 3) || [];
+	}, [allPosts]);
+
 
 	return (
 		<>
-			<FlatList
-				ListHeaderComponent={
-					<VStack className="pt-2 pb-4">
-						<VStack space="lg" className="pt-2">
-							{recentFellowshipNotification && (
-								<NotificationBox
-									title="새 나눔이 등록되었어요"
-									description="클릭해서 나눔에 참여해보세요"
-									onPress={handlePressNotification}
-									onDismiss={handleDismissNotification}
-								/>
-							)}
-							<ServiceGroups />
-						</VStack>
-
-						<Divider className="mt-3 h-2 bg-background-100" />
-
-						<VStack className="mt-6 gap-12 py-1">
-							<VStack space="lg">
-								<HStack className="justify-between px-4 items-center">
-									<Heading className="text-[20px]">우리의 기도 제목</Heading>
-								</HStack>
-							</VStack>
-						</VStack>
-					</VStack>
-				}
+			<ScrollView
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{ paddingBottom: 28 }}
 				refreshControl={
 					<RefreshControl
 						refreshing={refreshing}
@@ -205,31 +164,84 @@ function HomeList() {
 						titleColor="#362303"
 					/>
 				}
-				data={prayerRequests}
-				renderItem={renderPrayerRequestItem}
-				ListEmptyComponent={
-					<Text className="text-center py-8 text-gray-500">
-						기도 제목이 없어요
-					</Text>
-				}
-				keyExtractor={(item) => item.id}
-				ItemSeparatorComponent={renderSeparator}
-				ListFooterComponent={renderFooter}
-				onEndReached={loadMorePrayerRequests}
-				onEndReachedThreshold={0.3}
-				showsVerticalScrollIndicator={false}
-				contentContainerStyle={{ paddingBottom: 28 }}
-			/>
-			<Button
-				size="lg"
-				variant="solid"
-				className="absolute bottom-5 right-4"
-				rounded
-				onPress={handlePressAddButton}
 			>
-				<ButtonText>작성하기</ButtonText>
-				<ButtonIcon as={Pen} />
-			</Button>
+				<VStack className="pt-2 pb-4">
+					<VStack space="lg" className="pt-2">
+						{recentFellowshipNotification && (
+							<NotificationBox
+								title="새 나눔이 등록되었어요"
+								description="클릭해서 나눔에 참여해보세요"
+								onPress={handlePressNotification}
+								onDismiss={handleDismissNotification}
+							/>
+						)}
+						<ServiceGroups />
+					</VStack>
+
+					{/* 기도 제목 */}
+					<VStack className="mt-6 py-1 items-center justify-center">
+						<HStack className="justify-between pl-5 pr-2 items-center w-full">
+							<Heading size="xl">우리의 기도 제목</Heading>
+							<Button variant="text" size='sm' onPress={handleViewMorePrayerRequests}>
+								<ButtonText>더보기</ButtonText>
+								<ButtonIcon as={ChevronRight} />
+							</Button>
+						</HStack>
+						{isLoading ? (
+							<PrayerRequestSkeleton />
+						) : recentPrayerRequests.length === 0 ? (
+							<VStack space="xs" className="px-5 py-10 text-typography-500">
+								<Text className="text-center">
+									첫 기도 제목을 작성해보세요.
+								</Text>
+							</VStack>
+						) : (
+							<VStack className="w-full">
+								{recentPrayerRequests.map((item, index) => (
+									<React.Fragment key={item.id}>
+										<PrayerRequestCard prayerRequest={item} />
+										{index < recentPrayerRequests.length - 1 && (
+											<Divider className="bg-background-100 h-[1px]" />
+										)}
+									</React.Fragment>
+								))}
+							</VStack>
+						)}
+						<Button variant="outline" action="secondary" onPress={handlePressAddButton}>
+							<ButtonText className="font-pretendard-semi-bold">기도 제목 작성하기</ButtonText>
+							<ButtonIcon as={Pen} />
+						</Button>
+					</VStack>
+				</VStack>
+
+				{/* 게시판 최근 글 */}
+				<VStack space="md" className="pt-8 pb-14">
+					<HStack className="justify-between pl-5 pr-2 items-center">
+						<Heading size="xl">게시판 최근 글</Heading>
+						<Button variant="text" size='sm' onPress={handleViewMorePrayerRequests}>
+							<ButtonText>더보기</ButtonText>
+							<ButtonIcon as={ChevronRight} />
+						</Button>
+					</HStack>
+					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+						<HStack space="md" className="px-5">
+							{isBoardLoading ? (
+								<HomeBoardPostSkeleton />
+							) : recentPosts.length === 0 ? (
+								<VStack space="xs" className="px-5 py-10 text-typography-500">
+									<Text className="text-center">
+										게시글이 없습니다.
+									</Text>
+								</VStack>
+							) : (
+								recentPosts.map((post) => (
+									<HomeBoardPostCard key={post.id} post={post} />
+								))
+							)}
+						</HStack>
+					</ScrollView>
+				</VStack>
+			</ScrollView>
 		</>
 	);
 }

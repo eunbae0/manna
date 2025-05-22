@@ -7,6 +7,7 @@ export default function HomeLayout() {
 				headerShown: false,
 			}}
 		>
+			<Stack.Screen name="list" />
 			<Stack.Screen name="user-prayer-requests" />
 		</Stack>
 	);

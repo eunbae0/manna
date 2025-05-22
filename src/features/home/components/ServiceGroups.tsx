@@ -1,7 +1,5 @@
-import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '@/shared/components/text';
-import LottieView from 'lottie-react-native';
 import { VStack } from '#/components/ui/vstack';
 import { router } from 'expo-router';
 import AnimatedPressable from '@/components/common/animated-pressable';
@@ -9,14 +7,17 @@ import { useFellowshipStore } from '@/store/createFellowship';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { Icon } from '#/components/ui/icon';
 import {
-	Calendar,
 	Megaphone,
 	NotebookPen,
 	Presentation,
+	History,
+	ChevronRight,
 } from 'lucide-react-native';
 import { usePinnedPost } from '@/features/board/hooks/useBoardPosts';
 import { useAuthStore } from '@/store/auth';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
+import LottieView from 'lottie-react-native';
+import { shadowStyle } from '@/shared/styles/shadow';
 
 export default function ServiceGroups() {
 	const { setType } = useFellowshipStore();
@@ -62,76 +63,60 @@ export default function ServiceGroups() {
 	};
 
 	return (
-		<VStack space="lg" className="px-4">
-			<AnimatedPressable
-				className="flex-1"
-				onPress={handlePressCreateFellowship}
-			>
-				<HStack className="bg-primary-500 rounded-2xl justify-between px-6 py-5">
-					<VStack space="xs">
-						<Heading size="lg" className="text-white">
-							나눔 만들기
-						</Heading>
-						<Text size="sm" className="text-typography-200">
-							나눔을 만들고 그룹원들과 소통해보세요
-						</Text>
-					</VStack>
-					<LottieView
-						source={require('../../../../assets/lotties/write.json')}
-						autoPlay
-						loop
-						style={{
-							width: 50,
-							height: 50,
-							marginTop: 4,
-						}}
-					/>
-				</HStack>
-			</AnimatedPressable>
-			<HStack space="sm" className="h-20">
-				<AnimatedPressable className="flex-1" onPress={handlePressFellowships}>
-					<HStack className="bg-gray-100 pl-6 rounded-2xl items-start justify-between py-2 h-full">
-						<Heading size="lg" className="pt-2 font-pretendard-semi-bold">
-							나눔 기록
-						</Heading>
+		<VStack space="lg" className="px-5">
+			<HStack space="md" className="h-40">
+				<AnimatedPressable className="flex-1" onPress={handlePressCreateFellowship}>
+					<VStack space="md" className="items-center justify-center px-5 bg-primary-500 border border-background-200 rounded-xl h-full">
 						<LottieView
-							source={require('../../../../assets/lotties/fellowships.json')}
+							source={require('../../../../assets/lotties/write.json')}
 							autoPlay
 							loop
 							style={{
-								width: 60,
-								height: 60,
+								width: 48,
+								height: 48,
 							}}
 						/>
+						<Text size="md" weight="bold" className="text-typography-0">나눔 만들기</Text>
+					</VStack>
+				</AnimatedPressable>
+				<VStack space="md" className="flex-1">
+					<AnimatedPressable className="flex-1" onPress={handlePressFellowships}>
+						<HStack style={shadowStyle.shadow} space="md" className="items-center px-5 bg-gray-100 border border-background-200 rounded-xl h-full">
+							<Icon as={History} size="xl" className="text-primary-500" />
+							<Text size="md" weight="bold">나눔 기록</Text>
+						</HStack>
+					</AnimatedPressable>
+					<AnimatedPressable className="flex-1" onPress={handlePressBoard}>
+						<HStack style={shadowStyle.shadow} space="md" className="items-center px-5 bg-gray-100 border border-background-200 rounded-xl h-full">
+							<Icon as={Presentation} size="xl" className="text-primary-500" />
+							<Text size="md" weight="bold">게시판</Text>
+						</HStack>
+					</AnimatedPressable>
+				</VStack>
+			</HStack>
+			<HStack space="md" className="h-20">
+				<AnimatedPressable className="flex-1" onPress={handlePressSchedule}>
+					<HStack style={shadowStyle.shadow} className="items-center justify-between px-6 bg-white border border-background-200 rounded-xl h-full">
+						<HStack space="lg" className="items-center">
+							<Icon as={NotebookPen} size="2xl" className="text-primary-500" />
+							<VStack>
+								<Text size="md" weight="bold">설교 노트</Text>
+								<Text size="sm" className="text-typography-500">
+									설교 말씀을 노트로 남겨보세요.
+								</Text>
+							</VStack>
+						</HStack>
+						<Icon as={ChevronRight} className="text-typography-600" />
 					</HStack>
 				</AnimatedPressable>
-				<HStack space="sm" className="h-full flex-1">
-					<AnimatedPressable className="flex-1" onPress={handlePressBoard}>
-						<VStack
-							space="xs"
-							className="items-center justify-center bg-gray-100 rounded-2xl h-full"
-						>
-							<Icon as={Presentation} size="xl" />
-							<Text>게시판</Text>
-						</VStack>
-					</AnimatedPressable>
-					<AnimatedPressable className="flex-1" onPress={handlePressSchedule}>
-						<VStack
-							space="xs"
-							className="items-center justify-center bg-gray-100 rounded-2xl h-full"
-						>
-							<Icon as={NotebookPen} size="xl" />
-							<Text>설교 노트</Text>
-						</VStack>
-					</AnimatedPressable>
-				</HStack>
 			</HStack>
 			{/* 고정된 게시글이 있을 때만 표시 */}
 			{!isLoading && pinnedPost && (
 				<AnimatedPressable className="flex-1" onPress={handlePressPinnedPost}>
 					<HStack
+						style={shadowStyle.shadow}
 						space="md"
-						className="items-center justify-center rounded-2xl py-3 px-2"
+						className="items-center justify-center rounded-xl py-3 px-2"
 					>
 						<Icon as={Megaphone} size="xl" className="text-primary-400" />
 						<Text
@@ -148,3 +133,4 @@ export default function ServiceGroups() {
 		</VStack>
 	);
 }
+
