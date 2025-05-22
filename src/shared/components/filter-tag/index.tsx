@@ -6,12 +6,11 @@ import { Box } from '#/components/ui/box';
 import { Text } from '@/shared/components/text';
 import AnimatedPressable from '@/components/common/animated-pressable';
 
-// Define filter tag variants
 const filterTagStyles = cva('px-3 py-1.5 rounded-full items-center justify-center', {
   variants: {
     variant: {
       selected: 'bg-primary-500 border border-primary-500',
-      unselected: 'bg-primary-50 border border-primary-200',
+      unselected: 'bg-gray-50 border border-gray-300',
     },
     size: {
       xs: 'px-2 py-[2px]',
@@ -27,12 +26,11 @@ const filterTagStyles = cva('px-3 py-1.5 rounded-full items-center justify-cente
   },
 });
 
-// Define text styles for filter tag
 const filterTagTextStyles = cva('font-pretendard-Medium', {
   variants: {
     variant: {
       selected: 'text-white',
-      unselected: 'text-typography-700',
+      unselected: 'text-gray-700',
     },
     size: {
       xs: 'text-xs',
@@ -48,7 +46,6 @@ const filterTagTextStyles = cva('font-pretendard-Medium', {
   },
 });
 
-// Define size type
 type FilterTagSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface FilterTagProps extends Omit<ComponentPropsWithoutRef<typeof AnimatedPressable>, 'children'> {

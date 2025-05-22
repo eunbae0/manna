@@ -16,19 +16,18 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { EmptyState } from '@/components/common/empty-state';
 import Header from '@/components/common/Header';
 import { Pen } from 'lucide-react-native';
-import { Text } from '@/shared/components/text';
 import { useToastStore } from '@/store/toast';
 
 // 게시판 관련 컴포넌트 및 데이터 import
 import {
-	FilterTag,
 	BoardPostCard,
 	BoardPostSkeletonList,
 } from '@/features/board/components';
-import { PostCategory, BoardPost } from '@/features/board/types';
+import { PostCategory } from '@/features/board/types';
 import { useInfiniteBoardPosts } from '@/features/board/hooks';
 import { useAuthStore } from '@/store/auth';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
+import FilterTag from '@/shared/components/filter-tag';
 
 export default function BoardIndexScreen() {
 	// 선택된 카테고리 필터 (null이면 '전체')
@@ -117,7 +116,7 @@ export default function BoardIndexScreen() {
 					showsHorizontalScrollIndicator={false}
 					className="h-full"
 				>
-					<HStack className="items-center h-full">
+					<HStack space="sm" className="items-center h-full">
 						{/* '전체' 필터 태그 */}
 						<FilterTag
 							label="전체"
