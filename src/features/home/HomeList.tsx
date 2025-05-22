@@ -186,7 +186,7 @@ function HomeList() {
 					{/* 기도 제목 */}
 					<VStack className="mt-6 py-1 items-center justify-center">
 						<HStack className="justify-between pl-5 pr-2 items-center w-full">
-							<Heading size="xl">우리의 기도 제목</Heading>
+							<Heading size="xl">최근 기도 제목</Heading>
 							<Button variant="text" size='sm' onPress={handleViewMorePrayerRequests}>
 								<ButtonText>더보기</ButtonText>
 								<ButtonIcon as={ChevronRight} />

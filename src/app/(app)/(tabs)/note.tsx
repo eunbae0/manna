@@ -8,7 +8,7 @@ import { Text } from '@/shared/components/text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Heading } from '@/shared/components/heading';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { Filter, PlusIcon } from 'lucide-react-native';
+import { Filter, ListFilter, PlusIcon } from 'lucide-react-native';
 import { NoteCard } from '@/features/notes/components/NoteCard';
 import { NoteSkeleton } from '@/features/notes/components/NoteSkeleton';
 import { HStack } from '#/components/ui/hstack';
@@ -57,7 +57,7 @@ export default function NoteScreen() {
 							설교 노트
 						</Heading>
 						<HStack space="md" className="pl-4 items-center">
-							<Icon as={Filter} size="lg" className="text-primary-500" />
+							<Icon as={ListFilter} size="lg" className="text-primary-500" />
 							<WorshipTypeSelector />
 						</HStack>
 					</VStack>
@@ -73,7 +73,7 @@ export default function NoteScreen() {
 						{showSkeleton ? (
 							<NoteSkeleton />
 						) : notes.length === 0 ? (
-							<Text className="text-center py-4">노트가 없습니다.</Text>
+							<Text className="text-center py-4">노트가 없어요.</Text>
 						) : (
 							Object.entries(notesByMonth).map(([month, monthNotes]) => (
 								<VStack key={month} space="md" className="mb-4">
@@ -84,10 +84,7 @@ export default function NoteScreen() {
 										{monthNotes.map((note) => (
 											<NoteCard
 												key={note.id}
-												id={note.id}
-												title={note.title}
-												date={note.date}
-												content={note.content}
+												note={note}
 											/>
 										))}
 									</VStack>

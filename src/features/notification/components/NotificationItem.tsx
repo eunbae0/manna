@@ -241,12 +241,14 @@ export function NotificationItem({
 						className={cn('w-full', item.isRead ? '' : 'bg-primary-100')}
 					>
 						<AnimatedPressable onPress={onItemPress} className="w-full">
-							<HStack space="md" className="px-6 py-5 justify-start">
-								<Icon
-									as={titleToIcon(item.title)}
-									size="sm"
-									className="mt-1 text-primary-400"
-								/>
+							<HStack space="sm" className="px-6 py-5 justify-start">
+								<Box className="w-6 h-6 bg-primary-100 rounded-full items-center justify-center">
+									<Icon
+										as={titleToIcon(item.title)}
+										size="sm"
+										className="text-primary-500"
+									/>
+								</Box>
 								<VStack space="xs" className="flex-1">
 									<VStack space="xs">
 										<HStack className="justify-between items-center">

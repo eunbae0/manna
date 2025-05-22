@@ -33,7 +33,7 @@ export default function MemberListScreen() {
 
 	return (
 		<SafeAreaView className="h-full">
-			<VStack space="lg" className="flex-1">
+			<VStack space="sm" className="flex-1">
 				<Header label="그룹원 목록" />
 				{members && members.length > 0 ? (
 					<View className="flex-1 px-5">

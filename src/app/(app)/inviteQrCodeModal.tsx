@@ -42,7 +42,7 @@ export default function InviteQrCodeModal() {
 
 				<VStack space="4xl" className="items-center justify-center">
 					{inviteCode ? (
-						<View className="items-center justify-center rounded-xl bg-white p-6 shadow-md">
+						<View style={{ elevation: 5 }} className="items-center justify-center rounded-xl bg-white p-6 shadow-md">
 							<QRCode value={inviteCode} size={QR_SIZE} color="#000" />
 						</View>
 					) : (

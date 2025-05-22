@@ -1,23 +1,21 @@
-import type { FC } from 'react';
-import { Pressable } from 'react-native';
 import { router } from 'expo-router';
-import { Card } from '#/components/ui/card';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Text } from '@/shared/components/text';
 import type { Note } from '@/api/notes/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { Icon } from '#/components/ui/icon';
+import { ChevronRight } from 'lucide-react-native';
 import { shadowStyle } from '@/shared/styles/shadow';
 
-export const NoteCard = ({
-	id,
-	title,
-	date,
-	content,
-}: Omit<Note, 'worshipType' | 'sermon' | 'preacher'>) => {
+export const NoteCard = ({ note }: { note: Note }) => {
+	const { id, title, date, content, worshipType } = note;
 	return (
-		<AnimatedPressable style={shadowStyle.shadow} onPress={() => router.push(`/(app)/(note)/${id}`)}>
-			<Card className="bg-white border border-gray-300 rounded-2xl">
+		<AnimatedPressable onPress={() => router.push(`/(app)/(note)/${id}`)}>
+			<HStack
+				style={shadowStyle.shadow}
+				className="pl-4 pr-3 py-3 bg-background-50 rounded-2xl items-center justify-between"
+			>
 				<VStack space="xs">
 					<Text size="xl" className="font-pretendard-semi-bold">
 						{title}
@@ -49,7 +47,8 @@ export const NoteCard = ({
 						</Text>
 					</HStack>
 				</VStack>
-			</Card>
+				<Icon as={ChevronRight} size="xl" />
+			</HStack>
 		</AnimatedPressable>
 	);
 };

@@ -192,14 +192,13 @@ export default function ManageMyGroupScreen() {
 				<Header label="내 그룹 관리" />
 				<VStack space="xl" className="flex-1 px-4 py-4">
 					{/* 그룹 생성 및 참여 버튼 */}
-					<HStack space="md" className="mb-4">
+					<HStack space="sm" className="mb-4">
 						<Button
 							variant="solid"
 							action="primary"
 							size="md"
 							onPress={handleCreateGroup}
 							className="flex-1"
-							rounded
 						>
 							<ButtonIcon as={Users} />
 							<ButtonText>새 그룹 생성하기</ButtonText>
@@ -211,7 +210,6 @@ export default function ManageMyGroupScreen() {
 							size="md"
 							onPress={handleJoinGroup}
 							className="flex-1"
-							rounded
 						>
 							<ButtonIcon as={UserPlus} />
 							<ButtonText>새 그룹 참여하기</ButtonText>
@@ -219,7 +217,7 @@ export default function ManageMyGroupScreen() {
 					</HStack>
 
 					<VStack space="xl">
-						<Heading size="lg">내 그룹 목록</Heading>
+						<Heading size="xl">내 그룹 목록</Heading>
 						{groups.length === 0 ? (
 							<VStack className="items-center justify-center flex-1">
 								<Text className="text-typography-500">

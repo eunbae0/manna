@@ -96,7 +96,7 @@ export default function ServiceGroups() {
 			</HStack>
 			<HStack space="md" className="h-20">
 				<AnimatedPressable className="flex-1" onPress={handlePressSchedule}>
-					<HStack style={shadowStyle.shadow} className="items-center justify-between px-6 bg-white border border-background-200 rounded-xl h-full">
+					<HStack style={shadowStyle.shadow} className="items-center justify-between pl-6 pr-5 bg-white border border-background-200 rounded-xl h-full">
 						<HStack space="lg" className="items-center">
 							<Icon as={NotebookPen} size="2xl" className="text-primary-500" />
 							<VStack>
