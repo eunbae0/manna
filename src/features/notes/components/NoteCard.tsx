@@ -7,6 +7,7 @@ import { HStack } from '#/components/ui/hstack';
 import { Text } from '@/shared/components/text';
 import type { Note } from '@/api/notes/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { shadowStyle } from '@/shared/styles/shadow';
 
 export const NoteCard = ({
 	id,
@@ -15,8 +16,8 @@ export const NoteCard = ({
 	content,
 }: Omit<Note, 'worshipType' | 'sermon' | 'preacher'>) => {
 	return (
-		<AnimatedPressable onPress={() => router.push(`/(app)/(note)/${id}`)}>
-			<Card className="border border-primary-500 rounded-3xl">
+		<AnimatedPressable style={shadowStyle.shadow} onPress={() => router.push(`/(app)/(note)/${id}`)}>
+			<Card className="bg-white border border-gray-300 rounded-2xl">
 				<VStack space="xs">
 					<Text size="xl" className="font-pretendard-semi-bold">
 						{title}
