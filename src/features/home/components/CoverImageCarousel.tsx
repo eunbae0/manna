@@ -24,7 +24,7 @@ export function CoverImageCarousel() {
     router.push('/(app)/(group)/cover-images-management')
   }
 
-  const coverImages = group?.coverImages?.sort((a, b) => b.order - a.order) || [];
+  const coverImages = group?.coverImages?.sort((a, b) => a.order - b.order) || [];
 
   const isLeader = group?.members.find((member) => member.id === user?.id)?.role === 'leader';
 
