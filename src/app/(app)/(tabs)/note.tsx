@@ -80,7 +80,7 @@ export default function NoteScreen() {
 									<Heading size="xl" className="font-pretendard-semi-bold">
 										{month}
 									</Heading>
-									<VStack space="md">
+									<VStack space="lg">
 										{monthNotes.map((note) => (
 											<NoteCard
 												key={note.id}
