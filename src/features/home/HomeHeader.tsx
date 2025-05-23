@@ -146,7 +146,7 @@ function HomeHeader({ groups }: Props) {
 	return (
 		<HStack
 			className={cn(
-				'items-center justify-between pl-5 pr-3',
+				'items-center justify-between pl-4 pr-2',
 				isIOS ? 'pt-2' : 'pt-5',
 			)}
 		>

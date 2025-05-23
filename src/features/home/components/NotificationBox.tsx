@@ -30,26 +30,26 @@ export default function NotificationBox({
 	return (
 		<Animated.View>
 			<Pressable onPress={onPress}>
-				<HStack className="items-center justify-between mx-5 px-2 py-3 border-[1px] border-background-300 rounded-2xl">
-					<HStack space="xs" className="items-center">
+				<HStack className="items-center justify-between bg-primary-50 pl-2 py-2">
+					<HStack className="items-center">
 						<LottieView
 							source={require('../../../../assets/lotties/messages.json')}
 							autoPlay
 							loop
 							style={{
-								width: 64,
-								height: 64,
+								width: 50,
+								height: 50,
 							}}
 						/>
-						<VStack className="gap-[2px]">
-							<Heading size="lg">{title}</Heading>
-							<Text size="md" className="text-typography-500">
+						<VStack>
+							<Text weight="semi-bold" size="md" className="text-primary-500">{title}</Text>
+							<Text size="sm" weight="light" className="text-primary-500">
 								{description}
 							</Text>
 						</VStack>
 					</HStack>
 					<Pressable className="p-4" onPress={handleDismiss}>
-						<Icon as={X} size="lg" className="text-typography-600" />
+						<Icon as={X} size="lg" className="text-primary-400" />
 					</Pressable>
 				</HStack>
 			</Pressable>

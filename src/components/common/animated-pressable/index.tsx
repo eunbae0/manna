@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Pressable } from 'react-native';
 import type { PressableProps, ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { useScaleAnimation } from '@/shared/hooks';
+import { cn } from '@/shared/utils/cn';
+
+type ScaleSize = 'xs' | 'sm' | 'md' | 'lg';
 
 interface AnimatedPressableProps extends PressableProps {
 	/**
@@ -16,10 +19,14 @@ interface AnimatedPressableProps extends PressableProps {
 	 */
 	animation?: boolean;
 	/**
-	 * 눌렀을 때 축소 비율 (0-1 사이 값)
-	 * @default 0.96
+	 * 눌렀을 때 축소 크기
+	 * - xs: 0.99
+	 * - sm: 0.98
+	 * - md: 0.96 (기본값)
+	 * - lg: 0.94
+	 * @default 'md'
 	 */
-	scale?: number;
+	scale?: ScaleSize | number;
 	/**
 	 * 스프링 애니메이션 감쇠 계수
 	 * @default 8
@@ -42,6 +49,16 @@ interface AnimatedPressableProps extends PressableProps {
 	 * 클래스명
 	 */
 	className?: string;
+	/**
+	 * 클릭 시 배경색 변경 활성화 여부
+	 * @default false
+	 */
+	withBackground?: boolean;
+	/**
+	 * 클릭 시 적용할 배경색 클래스명
+	 * @default 'bg-background-50'
+	 */
+	pressedBackgroundClass?: string;
 }
 
 /**
@@ -54,31 +71,68 @@ interface AnimatedPressableProps extends PressableProps {
  * </AnimatedPressable>
  * ```
  */
+/**
+ * 크기에 따른 스케일 값 매핑
+ */
+const scaleValues: Record<ScaleSize, number> = {
+	xs: 0.99,
+	sm: 0.98,
+	md: 0.96,
+	lg: 0.94,
+};
+
 function AnimatedPressable({
 	children,
 	animation = true,
-	scale = 0.96,
+	scale = 'md',
 	damping = 8,
 	stiffness = 100,
 	containerStyle,
 	withHaptic = false,
 	className,
 	style,
+	withBackground = false,
+	pressedBackgroundClass = 'bg-background-50',
 	...props
 }: AnimatedPressableProps) {
+	// 배경색 상태 관리
+	const [isPressed, setIsPressed] = useState(false);
+
+	// 스케일 값 계산
+	const scaleValue = typeof scale === 'string' ? scaleValues[scale] : scale;
+
 	// useScaleAnimation 훅을 사용하여 애니메이션 로직 구현
-	const { animatedStyle, handlePressIn, handlePressOut } = useScaleAnimation({
+	const { animatedStyle, handlePressIn: scaleHandlePressIn, handlePressOut: scaleHandlePressOut } = useScaleAnimation({
 		enabled: animation,
-		scale,
+		scale: scaleValue,
 		damping,
 		stiffness,
 		withHaptic,
 	});
 
+	// 버튼 눌림 핸들러 (스케일 + 배경색)
+	const handlePressIn = () => {
+		scaleHandlePressIn();
+		if (withBackground) {
+			setIsPressed(true);
+		}
+	};
+
+	// 버튼 떼기 핸들러 (스케일 + 배경색)
+	const handlePressOut = () => {
+		scaleHandlePressOut();
+		if (withBackground) {
+			setIsPressed(false);
+		}
+	};
+
 	return (
 		<Animated.View
 			style={[animatedStyle, containerStyle]}
-			className={className}
+			className={cn(
+				className,
+				withBackground && isPressed ? pressedBackgroundClass : ''
+			)}
 		>
 			<Pressable
 				onPressIn={handlePressIn}

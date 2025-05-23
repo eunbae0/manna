@@ -22,6 +22,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useInfiniteBoardPosts } from '../board/hooks';
 import { HomeBoardPostCard } from '../board/components/HomeBoardPostCard';
 import { HomeBoardPostSkeleton } from '../board/components/HomeBoardPostSkeleton';
+import { CoverImageCarousel } from './components/CoverImageCarousel';
 
 function HomeList() {
 	const { currentGroup } = useAuthStore()
@@ -170,8 +171,9 @@ function HomeList() {
 					/>
 				}
 			>
-				<VStack className="pt-2 pb-4">
-					<VStack space="lg" className="pt-2">
+				<VStack className="pt-1 pb-4">
+					<CoverImageCarousel />
+					<VStack className="">
 						{recentFellowshipNotification && (
 							<NotificationBox
 								title="새 나눔이 등록되었어요"
@@ -184,8 +186,8 @@ function HomeList() {
 					</VStack>
 
 					{/* 기도 제목 */}
-					<VStack className="mt-6 py-1 items-center justify-center">
-						<HStack className="justify-between pl-5 pr-2 items-center w-full">
+					<VStack className="mt-3 py-1 items-center justify-center">
+						<HStack className="justify-between pl-4 pr-1 items-center w-full">
 							<Heading size="xl">최근 기도 제목</Heading>
 							<Button variant="text" size='sm' onPress={handleViewMorePrayerRequests}>
 								<ButtonText>더보기</ButtonText>
@@ -195,7 +197,7 @@ function HomeList() {
 						{isLoading ? (
 							<PrayerRequestSkeleton />
 						) : recentPrayerRequests.length === 0 ? (
-							<VStack space="xs" className="px-5 py-10 text-typography-500">
+							<VStack space="xs" className="px-4 py-10 text-typography-500">
 								<Text className="text-center">
 									첫 기도 제목을 작성해보세요.
 								</Text>
@@ -221,7 +223,7 @@ function HomeList() {
 
 				{/* 게시판 최근 글 */}
 				<VStack space="md" className="pt-8 pb-14">
-					<HStack className="justify-between pl-5 pr-2 items-center">
+					<HStack className="justify-between pl-4 pr-1 items-center">
 						<Heading size="xl">게시판 최근 글</Heading>
 						<Button variant="text" size='sm' onPress={handleViewMoreBoardPosts}>
 							<ButtonText>더보기</ButtonText>
@@ -229,13 +231,13 @@ function HomeList() {
 						</Button>
 					</HStack>
 					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-						<HStack space="md" className="px-5">
+						<HStack space="md" className="px-4">
 							{isBoardLoading ? (
 								<HomeBoardPostSkeleton />
 							) : recentPosts.length === 0 ? (
-								<VStack space="xs" className="px-5 py-10 text-typography-500">
+								<VStack space="xs" className="py-10 items-center justify-center w-full text-typography-500">
 									<Text className="text-center">
-										게시글이 없습니다.
+										게시글이 없어요.
 									</Text>
 								</VStack>
 							) : (

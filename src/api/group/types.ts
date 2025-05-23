@@ -18,6 +18,8 @@ export type GroupMember = GroupUser & {
 	role: GroupMemberRole;
 };
 
+export type CoverImage = { order: number; uri: string };
+
 /**
  * Server-side Group with Firestore specific fields
  * Used for Firestore storage and retrieval
@@ -28,6 +30,7 @@ export interface Group {
 	inviteCode: string;
 	createdAt: FieldValue;
 	updatedAt: FieldValue;
+	coverImages: CoverImage[];
 }
 
 /**
@@ -39,6 +42,7 @@ export interface ClientGroup {
 	groupName: string;
 	inviteCode: string;
 	members: GroupMember[];
+	coverImages: CoverImage[];
 }
 
 /**

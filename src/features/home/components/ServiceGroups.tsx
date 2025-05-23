@@ -7,16 +7,16 @@ import { useFellowshipStore } from '@/store/createFellowship';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { Icon } from '#/components/ui/icon';
 import {
-	Megaphone,
+	MessageSquare,
 	NotebookPen,
 	Presentation,
 	History,
 	ChevronRight,
+	Megaphone,
 } from 'lucide-react-native';
 import { usePinnedPost } from '@/features/board/hooks/useBoardPosts';
 import { useAuthStore } from '@/store/auth';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
-import LottieView from 'lottie-react-native';
 import { shadowStyle } from '@/shared/styles/shadow';
 
 export default function ServiceGroups() {
@@ -63,70 +63,80 @@ export default function ServiceGroups() {
 	};
 
 	return (
-		<VStack space="lg" className="px-5">
-			<HStack space="md" className="h-40">
-				<AnimatedPressable className="flex-1" onPress={handlePressCreateFellowship}>
-					<VStack space="md" className="items-center justify-center px-5 bg-primary-500 border border-background-200 rounded-xl h-full">
-						<LottieView
-							source={require('../../../../assets/lotties/write.json')}
-							autoPlay
-							loop
-							style={{
-								width: 48,
-								height: 48,
-							}}
-						/>
-						<Text size="md" weight="bold" className="text-typography-0">나눔 만들기</Text>
-					</VStack>
+		<VStack space="xs" className="mt-1 px-4">
+			<HStack className="h-24">
+				<AnimatedPressable
+					withBackground
+					className="flex-1 rounded-2xl"
+					onPress={handlePressCreateFellowship}
+				>
+					<VStack
+						space="sm"
+						className="items-center justify-center px-2 py-3 h-full"
+					>
+						<Icon as={MessageSquare} size="2xl" className="text-primary-400" />
+						<Text size="sm" weight="medium" className="text-primary-500">나눔 만들기</Text>
+					</VStack >
 				</AnimatedPressable>
-				<VStack space="md" className="flex-1">
-					<AnimatedPressable className="flex-1" onPress={handlePressFellowships}>
-						<HStack style={shadowStyle.shadow} space="md" className="items-center px-5 bg-gray-100 border border-background-200 rounded-xl h-full">
-							<Icon as={History} size="xl" className="text-primary-500" />
-							<Text size="md" weight="bold">나눔 기록</Text>
-						</HStack>
-					</AnimatedPressable>
-					<AnimatedPressable className="flex-1" onPress={handlePressBoard}>
-						<HStack style={shadowStyle.shadow} space="md" className="items-center px-5 bg-gray-100 border border-background-200 rounded-xl h-full">
-							<Icon as={Presentation} size="xl" className="text-primary-500" />
-							<Text size="md" weight="bold">게시판</Text>
-						</HStack>
-					</AnimatedPressable>
-				</VStack>
-			</HStack>
-			<HStack space="md" className="h-20">
-				<AnimatedPressable className="flex-1" onPress={handlePressSchedule}>
-					<HStack style={shadowStyle.shadow} className="items-center justify-between pl-6 pr-5 bg-white border border-background-200 rounded-xl h-full">
-						<HStack space="lg" className="items-center">
-							<Icon as={NotebookPen} size="2xl" className="text-primary-500" />
-							<VStack>
-								<Text size="md" weight="bold">설교 노트</Text>
-								<Text size="sm" className="text-typography-500">
-									설교 말씀을 노트로 남겨보세요.
-								</Text>
-							</VStack>
-						</HStack>
-						<Icon as={ChevronRight} className="text-typography-600" />
-					</HStack>
+				<AnimatedPressable
+					withBackground
+					className="flex-1 rounded-2xl"
+					onPress={handlePressFellowships}
+				>
+					<VStack
+						space="sm"
+						className="items-center justify-center px-2 py-3 h-full"
+					>
+						<Icon as={History} size="2xl" className="text-primary-400" />
+						<Text size="sm" weight="medium" className="text-primary-500">나눔 기록</Text>
+					</VStack>
+				</AnimatedPressable >
+
+				<AnimatedPressable
+					withBackground
+					className="flex-1 rounded-2xl"
+					onPress={handlePressBoard}
+				>
+					<VStack
+						space="sm"
+						className="items-center justify-center px-2 py-3 h-full"
+					>
+						<Icon as={Presentation} size="2xl" className="text-primary-400" />
+						<Text size="sm" weight="medium" className="text-primary-500">게시판</Text>
+					</VStack>
+				</AnimatedPressable >
+
+				<AnimatedPressable
+					withBackground
+					className="flex-1 rounded-2xl"
+					onPress={handlePressSchedule}
+				>
+					<VStack
+						space="sm"
+						className="items-center justify-center px-2 py-3 h-full"
+					>
+						<Icon as={NotebookPen} size="2xl" className="text-primary-400" />
+						<Text size="sm" weight="medium" className="text-primary-500">설교 노트</Text>
+					</VStack>
 				</AnimatedPressable>
 			</HStack>
 			{/* 고정된 게시글이 있을 때만 표시 */}
 			{!isLoading && pinnedPost && (
-				<AnimatedPressable className="flex-1" onPress={handlePressPinnedPost}>
+				<AnimatedPressable scale="sm" className="flex-1 rounded-2xl" onPress={handlePressPinnedPost}>
 					<HStack
-						style={shadowStyle.shadow}
-						space="md"
-						className="items-center justify-center rounded-xl py-3 px-2"
+						space="sm"
+						className="my-1 items-center justify-center py-3 pl-1"
 					>
 						<Icon as={Megaphone} size="xl" className="text-primary-400" />
-						<Text
-							size="lg"
-							className="flex-1 text-typography-800 font-pretendard-Medium"
-							numberOfLines={1}
-							ellipsizeMode="tail"
-						>
-							{pinnedPost.title}
-						</Text>
+						<HStack space="sm" className="items-center flex-1">
+							<Text size="sm" className="text-typography-500">
+								공지
+							</Text>
+							<Text size="md" weight="medium" className="text-primary-500">
+								{pinnedPost.title}
+							</Text>
+						</HStack>
+						<Icon as={ChevronRight} size="lg" className="text-typography-400" />
 					</HStack>
 				</AnimatedPressable>
 			)}

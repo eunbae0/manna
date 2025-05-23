@@ -9,8 +9,6 @@ import {
 	serverTimestamp,
 	query,
 	where,
-	orderBy,
-	type FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
@@ -21,12 +19,14 @@ import type {
 	GroupMember,
 	AddGroupMemberInput,
 	JoinGroupInput,
-	GroupMemberRole,
-	GroupUser,
 	UpdateGroupMemberInput,
+	CoverImage,
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { getUserGroups } from '../user';
+import { FIREBASE_STORAGE_IMAGE_BASE_URL } from '@/shared/constants/firebase';
+import { changeImageFormat } from '@/shared/utils/resize_image';
+import { uploadImageAsync } from '@/shared/utils/firebase';
 
 /**
  * Firestore service for group operations
@@ -64,6 +64,7 @@ export class FirestoreGroupService {
 			groupName: group.groupName,
 			inviteCode: group.inviteCode,
 			members: groupMembers,
+			coverImages: group.coverImages,
 		};
 	}
 
@@ -184,7 +185,8 @@ export class FirestoreGroupService {
 		// Generate a unique 6-character invite code
 		const inviteCode = this.generateInviteCode();
 
-		const data: Group = {
+		// TODO: coverImage 포함하도록 수정
+		const data: Omit<Group, 'coverImages'> = {
 			groupName,
 			id,
 			inviteCode,
@@ -193,7 +195,10 @@ export class FirestoreGroupService {
 		};
 
 		await setDoc(groupRef, data);
-		return data;
+		return {
+			...data,
+			coverImages: [],
+		};
 	}
 
 	/**
@@ -206,6 +211,21 @@ export class FirestoreGroupService {
 		groupData: UpdateGroupInput,
 	): Promise<void> {
 		const groupRef = doc(database, this.collectionPath, groupId);
+
+		if (groupData.coverImages) {
+			const path = `${FIREBASE_STORAGE_IMAGE_BASE_URL}/groups/${groupId}/coverImage`;
+
+			const coverImages: CoverImage[] = [];
+			for (const image of groupData.coverImages) {
+				const resizedPhotoUrl = await changeImageFormat(image.uri);
+				const photoUrl = await uploadImageAsync(resizedPhotoUrl, path);
+				coverImages.push({
+					...image,
+					uri: photoUrl,
+				});
+			}
+			groupData.coverImages = coverImages;
+		}
 
 		const data: Record<string, any> = {
 			...groupData,
@@ -260,7 +280,6 @@ export class FirestoreGroupService {
 		if (!groupMemberDoc.exists) {
 			return null;
 		}
-
 		return groupMemberDoc.data() as GroupMember;
 	}
 

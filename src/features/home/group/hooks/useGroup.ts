@@ -84,17 +84,23 @@ export function useGroup(groupId: string | undefined) {
 		staleTime: GROUP_STALE_TIME,
 	});
 
-	const updateGroupMutation = useMutation({
+	interface UpdateGroupResult {
+		successMessage?: string;
+	}
+
+	const updateGroupMutation = useMutation<UpdateGroupResult, Error, { groupId: string; data: UpdateGroupInput; successMessage?: string }>({
 		mutationFn: async ({
 			groupId,
 			data,
-		}: { groupId: string; data: UpdateGroupInput }): Promise<void> => {
+			successMessage,
+		}) => {
 			await updateGroup(groupId, data);
+			return { successMessage };
 		},
-		onSuccess: (_, variables) => {
+		onSuccess: (result, variables) => {
 			showToast({
 				type: 'success',
-				message: '그룹명이 변경되었어요',
+				message: result?.successMessage || '그룹 정보가 업데이트되었어요',
 			});
 
 			// 그룹 데이터 다시 가져오기
@@ -108,7 +114,7 @@ export function useGroup(groupId: string | undefined) {
 		onError: () => {
 			showToast({
 				type: 'error',
-				message: '그룹명 변경에 실패했어요',
+				message: '그룹 정보 업데이트에 실패했어요',
 			});
 		},
 	});
@@ -163,7 +169,7 @@ export function useGroup(groupId: string | undefined) {
 		isLoading,
 		error,
 		refetch,
-		updateGroup: (data: UpdateGroupInput) => {
+		updateGroup: (data: UpdateGroupInput, successMessage?: string) => {
 			if (!groupId) {
 				showToast({
 					type: 'error',
@@ -171,7 +177,7 @@ export function useGroup(groupId: string | undefined) {
 				});
 				return;
 			}
-			return updateGroupMutation.mutate({ groupId, data });
+			return updateGroupMutation.mutate({ groupId, data, successMessage });
 		},
 		deleteGroup: () => {
 			if (!group) {
