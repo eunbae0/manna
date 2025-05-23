@@ -217,6 +217,10 @@ export class FirestoreGroupService {
 
 			const coverImages: CoverImage[] = [];
 			for (const image of groupData.coverImages) {
+				if (image.uri.includes('firebasestorage')) {
+					coverImages.push(image);
+					continue;
+				}
 				const resizedPhotoUrl = await changeImageFormat(image.uri);
 				const photoUrl = await uploadImageAsync(resizedPhotoUrl, path);
 				coverImages.push({
