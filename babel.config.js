@@ -25,7 +25,7 @@ module.exports = (api) => {
 					},
 				},
 			],
-			["transform-remove-console"]
+			// ["transform-remove-console", { "exclude": [process.env.APP_VARIANT === 'development' ? "warn" : ""] }]
 		],
 	};
 };

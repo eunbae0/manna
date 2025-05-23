@@ -46,27 +46,27 @@ export default function UpdateNoteScreen() {
             showsVerticalScrollIndicator={false}
             className="flex-1"
           >
-            <VStack space="xl" className="py-4">
+            <VStack space="xl" className="py-2">
               {(!updateNotes || updateNotes.length === 0) ? (
                 <Text className="text-center py-4 text-typography-500">
                   업데이트 내역이 없어요.
                 </Text>
               ) : (
                 updateNotes.map((update, index) => (
-                  <VStack key={update.version} space="md" className="mb-6">
-                    <Heading size="xl">버전 {update.version}</Heading>
+                  <VStack key={update.version} space="xl" className="mb-2">
+                    <Heading size="2xl">버전 {update.version}</Heading>
 
-                    <VStack className="pl-2">
+                    <VStack className="pl-1">
                       {update.notes.map((note) => (
                         <VStack key={`${update.version}-${note.title}`} space="md" className="mb-4">
-                          <VStack space="xs">
+                          <VStack space="md">
                             <HStack space="sm" className="items-center">
-                              <Icon as={CheckCircle} size="xs" />
-                              <Text size="lg" className="font-pretendard-semi-bold">
+                              <Icon as={CheckCircle} size="sm" className="text-primary-400" />
+                              <Text size="xl" className="font-pretendard-semi-bold">
                                 {note.title}
                               </Text>
                             </HStack>
-                            <Text size="md" className="pl-2 text-typography-600">
+                            <Text size="lg" className="text-typography-600">
                               {note.description}
                             </Text>
                           </VStack>
@@ -82,9 +82,9 @@ export default function UpdateNoteScreen() {
                                       source={{ uri: imageUrl }}
                                       alt={note.title}
                                       style={{
-                                        width: 160,
+                                        width: 168,
                                         height: 320,
-                                        borderRadius: 12,
+                                        borderRadius: 8,
                                         borderWidth: 1,
                                         borderColor: 'lightgray',
                                       }}
@@ -98,8 +98,6 @@ export default function UpdateNoteScreen() {
                         </VStack>
                       ))}
                     </VStack>
-
-
                     {index < updateNotes.length - 1 && (
                       <Divider className="my-2" />
                     )}

@@ -323,7 +323,6 @@ function HomeHeader({ groups }: Props) {
 								variant="solid"
 								className="flex-1"
 								onPress={shareInviteCode}
-								rounded={!isAndroid}
 							>
 								<ButtonText>초대코드 공유하기</ButtonText>
 							</Button>

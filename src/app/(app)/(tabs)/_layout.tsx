@@ -20,7 +20,7 @@ import * as Haptics from 'expo-haptics';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
-import { Pressable, type View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 import Animated, {
 	useSharedValue,
@@ -28,7 +28,7 @@ import Animated, {
 	withTiming,
 	Easing,
 } from 'react-native-reanimated';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -36,9 +36,9 @@ export default function TabLayout() {
 	const insets = useSafeAreaInsets();
 	return (
 		<Tabs>
-			<SafeAreaView className="flex-1">
+			<View className="flex-1" style={{ paddingTop: insets.top }}>
 				<TabSlot />
-			</SafeAreaView>
+			</View>
 			<TabList
 				style={{ marginBottom: insets.bottom }}
 				className="px-3 border-t border-gray-200 items-center justify-center"

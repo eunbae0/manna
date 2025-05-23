@@ -68,8 +68,9 @@ export default function NoteScreen() {
 					refreshControl={
 						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
 					}
+					showsVerticalScrollIndicator={false}
 				>
-					<VStack space="lg" className="">
+					<VStack space="lg" className="pb-20">
 						{showSkeleton ? (
 							<NoteSkeleton />
 						) : notes.length === 0 ? (

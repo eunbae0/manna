@@ -63,8 +63,8 @@ export default function ServiceGroups() {
 	};
 
 	return (
-		<VStack space="xs" className="mt-1 px-4">
-			<HStack className="h-24">
+		<VStack space="xs" className="mt-1">
+			<HStack className="h-24 px-4">
 				<AnimatedPressable
 					withBackground
 					className="flex-1 rounded-2xl"
@@ -122,10 +122,10 @@ export default function ServiceGroups() {
 			</HStack>
 			{/* 고정된 게시글이 있을 때만 표시 */}
 			{!isLoading && pinnedPost && (
-				<AnimatedPressable scale="sm" className="flex-1 rounded-2xl" onPress={handlePressPinnedPost}>
+				<AnimatedPressable scale="sm" withBackground className="flex-1 rounded-2xl" onPress={handlePressPinnedPost}>
 					<HStack
 						space="sm"
-						className="my-1 items-center justify-center py-3 pl-1"
+						className="my-1 items-center justify-center py-3 pl-5 pr-4"
 					>
 						<Icon as={Megaphone} size="xl" className="text-primary-400" />
 						<HStack space="sm" className="items-center flex-1">
@@ -136,7 +136,7 @@ export default function ServiceGroups() {
 								{pinnedPost.title}
 							</Text>
 						</HStack>
-						<Icon as={ChevronRight} size="lg" className="text-typography-400" />
+						{/* <Icon as={ChevronRight} size="lg" className="text-typography-400" /> */}
 					</HStack>
 				</AnimatedPressable>
 			)}

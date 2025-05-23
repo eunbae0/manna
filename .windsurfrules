@@ -140,7 +140,26 @@ Example:
   - use `space` prop instead of `className` prop
 - Text: `import { Text } from '@/shared/components/text';`
   - use `font-pretendard-*` instead of `font-*`
+  - use `weight` prop instead of `className` prop (`font-bold` -> `weight="bold"`)
   - use `size` prop instead of `className` prop (`text-lg` -> `size="lg"`)
 - Heading: `import { Heading } from '@/shared/components/heading';`
   - use `font-pretendard-*` instead of `font-*`
   - use `size` prop instead of `className` prop (`text-2xl` -> `size="2xl"`)
+
+# 
+
+- If use Button component, Button Text should be use `ButtonText` component.
+Example:
+```tsx
+<Button>
+  <ButtonText>이미지 추가</ButtonText>
+</Button>
+```
+- If use Button component, Button Icon should be use `ButtonIcon` component.
+Example:
+```tsx
+<Button>
+  <ButtonIcon as={PlusIcon} />
+  <ButtonText>이미지 추가</ButtonText>
+</Button>
+```
