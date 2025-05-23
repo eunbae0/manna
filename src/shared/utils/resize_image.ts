@@ -28,7 +28,7 @@ export const resizeImage = async (
  */
 export const changeImageFormat = async (
 	uri: string,
-	quality = 0.8,
+	quality = 0.7,
 	format: ImageManipulator.SaveFormat = ImageManipulator.SaveFormat.WEBP,
 ) => {
 	try {
