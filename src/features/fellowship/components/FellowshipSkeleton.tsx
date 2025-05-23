@@ -60,7 +60,6 @@ export function FellowshipSkeleton() {
 
 	return (
 		<VStack className="px-5 gap-8">
-			<SkeletonItem className="h-8 w-48 bg-background-200 rounded-md" />
 			<View className="flex-1 min-h-[500px]">
 				<FlashList
 					data={skeletonData}
