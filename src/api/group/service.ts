@@ -221,8 +221,12 @@ export class FirestoreGroupService {
 					coverImages.push(image);
 					continue;
 				}
+				const imageId = uuidv4();
 				const resizedPhotoUrl = await changeImageFormat(image.uri);
-				const photoUrl = await uploadImageAsync(resizedPhotoUrl, path);
+				const photoUrl = await uploadImageAsync(
+					resizedPhotoUrl,
+					`${path}/${imageId}`,
+				);
 				coverImages.push({
 					...image,
 					uri: photoUrl,
