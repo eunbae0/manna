@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Alert, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
@@ -28,6 +29,8 @@ export default function CoverImagesManagement() {
   const [images, setImages] = useState<CoverImage[]>([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState<{ uri: string; loading: boolean }[]>([]);
+  const loadingProgress = useSharedValue(0);
 
   // Initialize images state from group data when loaded
   useEffect(() => {
@@ -64,6 +67,19 @@ export default function CoverImagesManagement() {
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  // Start loading animation
+  const startLoadingAnimation = () => {
+    loadingProgress.value = 0;
+    loadingProgress.value = withRepeat(
+      withTiming(1, {
+        duration: 2000,
+        easing: Easing.linear
+      }),
+      -1, // -1 for infinite repetitions
+      false // 순환하지 않고 다시 0부터 시작
+    );
   };
 
   const handleAddImage = async () => {
@@ -105,6 +121,22 @@ export default function CoverImagesManagement() {
           ? Math.max(...images.map(img => img.order))
           : -1;
 
+        // Create temporary placeholder image
+        const tempImageId = `temp-${Date.now()}`;
+        const tempImage: CoverImage = {
+          uri: tempImageId, // Temporary ID for tracking
+          order: maxOrder + 1,
+        };
+
+        // Add placeholder to images list
+        setImages([...images, tempImage]);
+
+        // Start loading animation
+        startLoadingAnimation();
+
+        // Add to loading images list
+        setUploadingImages([...uploadingImages, { uri: tempImageId, loading: true }]);
+
         // Create new image
         const newImage: CoverImage = {
           uri: selectedImageUri,
@@ -112,8 +144,11 @@ export default function CoverImagesManagement() {
         };
 
         // Add to current images and update
-        const updatedImages = [...images, newImage];
-        await updateCoverImages(updatedImages, 'add');
+        const updatedImagesWithoutTemp = [...images.filter(img => img.uri !== tempImageId), newImage];
+        await updateCoverImages(updatedImagesWithoutTemp, 'add');
+
+        // Remove from loading images
+        setUploadingImages(prev => prev.filter(img => img.uri !== tempImageId));
       }
     } catch (error) {
       console.error('Error selecting image:', error);
@@ -122,6 +157,10 @@ export default function CoverImagesManagement() {
         title: '오류',
         message: '이미지 선택 중 오류가 발생했어요.',
       });
+
+      // Remove any temporary images on error
+      setImages(images.filter(img => !img.uri.startsWith('temp-')));
+      setUploadingImages([]);
     }
   };
 
@@ -188,6 +227,28 @@ export default function CoverImagesManagement() {
     setIsReordering(!isReordering);
   };
 
+  // 로딩 애니메이션 스타일 정의
+  const loadingBarStyle = useAnimatedStyle(() => {
+    // 0-0.5: 왼쪽에서 오른쪽으로 늘어남, 0.5-1: 오른쪽을 기준으로 줄어듬
+    const progress = loadingProgress.value;
+
+    if (progress <= 0.5) {
+      // 왼쪽에서 오른쪽으로 늘어나는 과정 (0-0.5 구간을 0-1로 변환)
+      const expandProgress = progress * 2;
+      return {
+        width: `${expandProgress * 100}%`,
+        left: 0,
+      };
+    }
+    // 오른쪽을 기준으로 줄어드는 과정 (0.5-1 구간을 1-0으로 변환)
+    const shrinkProgress = (1 - progress) * 2;
+    return {
+      width: `${shrinkProgress * 100}%`,
+      right: 0,
+      left: 'auto',
+    };
+  });
+
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-white">
@@ -251,12 +312,29 @@ export default function CoverImagesManagement() {
               keyExtractor={(item: CoverImage) => item.uri}
               renderItem={({ item, index }: { item: CoverImage; index: number }) => (
                 <View className="mb-3 rounded-lg overflow-hidden">
-                  <Image
-                    source={{ uri: item.uri }}
-                    style={{ width: '100%', height: 160 }}
-                    contentFit="cover"
-                  />
-                  {index > 0 && (
+                  {item.uri.startsWith('temp-') ? (
+                    <View className="bg-gray-100 h-[160px] justify-center items-center rounded-lg">
+                      <Text size="lg" className="text-typography-600 mt-4">
+                        이미지를 추가 중이에요
+                      </Text>
+                      <Text size="sm" className="text-typography-600 mt-2 px-4 text-center">
+                        이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
+                      </Text>
+                      <View className="h-1 w-[80%] bg-gray-300 mt-4 overflow-hidden">
+                        <Animated.View
+                          className="h-1 bg-primary-500 absolute left-0"
+                          style={loadingBarStyle}
+                        />
+                      </View>
+                    </View>
+                  ) : (
+                    <Image
+                      source={{ uri: item.uri }}
+                      style={{ width: '100%', height: 160 }}
+                      contentFit="cover"
+                    />
+                  )}
+                  {index > 0 && !item.uri.startsWith('temp-') && (
                     <AnimatedPressable
                       className="absolute top-2 right-2 bg-black/50 rounded-md px-2 py-1"
                       onPress={() => moveImage(item.uri, 'up')}
@@ -265,7 +343,7 @@ export default function CoverImagesManagement() {
                       <Text className="text-white">↑</Text>
                     </AnimatedPressable>
                   )}
-                  {index < images.length - 1 && (
+                  {index < images.length - 1 && !item.uri.startsWith('temp-') && (
                     <AnimatedPressable
                       className="absolute top-2 right-2 bg-black/50 rounded-md px-2 py-1"
                       onPress={() => moveImage(item.uri, 'down')}
@@ -284,19 +362,38 @@ export default function CoverImagesManagement() {
               keyExtractor={(item: CoverImage) => item.uri}
               renderItem={({ item }: { item: CoverImage }) => (
                 <View className="mb-3 relative">
-                  <Image
-                    source={{ uri: item.uri }}
-                    style={{ width: '100%', height: 160 }}
-                    contentFit="cover"
-                    className="rounded-lg"
-                  />
-                  <TouchableOpacity
-                    className="absolute top-2 right-2 bg-black/50 rounded-full p-2"
-                    onPress={() => handleRemoveImage(item.uri)}
-                    disabled={isUpdating}
-                  >
-                    <TrashIcon size={16} color="white" />
-                  </TouchableOpacity>
+                  {item.uri.startsWith('temp-') ? (
+                    <View className="bg-gray-100 h-[160px] justify-center items-center rounded-lg">
+                      <Text size="lg" className="text-typography-600 mt-4">
+                        이미지를 추가 중이에요
+                      </Text>
+                      <Text size="sm" className="text-typography-600 mt-2 px-4 text-center">
+                        이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
+                      </Text>
+                      <View className="h-1 w-[80%] bg-gray-300 mt-4 overflow-hidden">
+                        <Animated.View
+                          className="h-1 bg-primary-500 absolute left-0"
+                          style={loadingBarStyle}
+                        />
+                      </View>
+                    </View>
+                  ) : (
+                    <>
+                      <Image
+                        source={{ uri: item.uri }}
+                        style={{ width: '100%', height: 160 }}
+                        contentFit="cover"
+                        className="rounded-lg"
+                      />
+                      <TouchableOpacity
+                        className="absolute top-2 right-2 bg-black/50 rounded-full p-2"
+                        onPress={() => handleRemoveImage(item.uri)}
+                        disabled={isUpdating}
+                      >
+                        <TrashIcon size={16} color="white" />
+                      </TouchableOpacity>
+                    </>
+                  )}
                 </View>
               )}
               showsVerticalScrollIndicator={false}
