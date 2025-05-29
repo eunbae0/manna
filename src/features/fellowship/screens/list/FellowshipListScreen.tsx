@@ -603,16 +603,18 @@ export default function FellowshipListScreen() {
 							</VStack>
 						</ScrollView>
 					)}
-					<Button
-						size="lg"
-						variant="solid"
-						className="absolute bottom-6 right-4"
-						rounded
-						onPress={handlePressCreateFellowship}
-					>
-						<ButtonText>나눔 만들기</ButtonText>
-						<ButtonIcon as={Plus} />
-					</Button>
+					<Box className="absolute bottom-6 left-0 w-full">
+						<Button
+							size="lg"
+							variant="solid"
+							className="w-full items-center justify-center"
+							rounded
+							onPress={handlePressCreateFellowship}
+						>
+							<ButtonText>나눔 만들기</ButtonText>
+							<ButtonIcon as={Plus} />
+						</Button>
+					</Box>
 				</VStack>
 			</VStack>
 		</SafeAreaView>
