@@ -19,5 +19,15 @@ export const formatRelativeTime = (date: Date | string): string => {
 	}
 
 	const diffDays = Math.floor(diffHours / 24);
-	return `${diffDays}일 전`;
+	if (diffDays < 30) {
+		return `${diffDays}일 전`;
+	}
+
+	const diffMonths = Math.floor(diffDays / 30);
+	if (diffMonths < 12) {
+		return `${diffMonths}달 전`;
+	}
+
+	const diffYears = Math.floor(diffMonths / 12);
+	return `${diffYears}년 전`;
 };
