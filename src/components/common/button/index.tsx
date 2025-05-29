@@ -17,7 +17,7 @@ const buttonStyles = cva('flex-row items-center justify-center', {
 	variants: {
 		rounded: {
 			true: 'rounded-full',
-			false: 'rounded-md',
+			false: 'rounded-xl',
 		},
 		fullWidth: {
 			true: 'w-full',
