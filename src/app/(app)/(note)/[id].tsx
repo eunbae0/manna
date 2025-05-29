@@ -29,7 +29,6 @@ import {
 	Pressable,
 	ScrollView,
 	TextInput,
-	TouchableOpacity,
 	View,
 } from 'react-native';
 import { Icon } from '#/components/ui/icon';
@@ -40,10 +39,8 @@ import {
 	CalendarCog,
 	Check,
 	ChevronUp,
-	Delete,
 	Edit,
 	Megaphone,
-	Plus,
 	Trash,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
@@ -70,10 +67,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import { cn } from '@/shared/utils/cn';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
-import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
+import FilterTag from '@/shared/components/filter-tag';
 
 export default function NoteScreen() {
 	const insets = useSafeAreaInsets();
@@ -379,52 +376,28 @@ export default function NoteScreen() {
 												>
 													<HStack space="sm" className="py-1 items-center">
 														{worshipTypes.map((type) => (
-															<TouchableOpacity
+															<FilterTag
 																key={type.id.toString()}
 																onPress={() => setSelectedWorshipType(type)}
-																className={cn(
-																	'mr-1 px-3 py-1 rounded-full',
-																	selectedWorshipType?.id === type.id
-																		? 'border border-primary-200 bg-primary-100 text-primary-700'
-																		: 'border border-primary-200 text-typography-700',
-																)}
-															>
-																<HStack space="xs" className="items-center">
-																	<Text size="md">{type.name}</Text>
-																	{selectedWorshipType?.id === type.id && (
-																		<Icon
-																			as={Check}
-																			size="xs"
-																			className="text-typography-700"
-																		/>
-																	)}
-																</HStack>
-															</TouchableOpacity>
+																label={type.name}
+																size="sm"
+																isSelected={selectedWorshipType?.id === type.id}
+															/>
 														))}
-														<TouchableOpacity
-															onPress={() => {
-																// trackAmplitudeEvent(
-																// 	'Open Manage Worship Type',
-																// 	{
-																// 		screen: 'Note_Detail',
-																// 	},
-																// );
-																router.push('/(app)/selectWorshipTypeModal');
-															}}
-															className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"
-														>
-															<Icon as={Plus} size="sm" className="" />
-														</TouchableOpacity>
+														<FilterTag
+															label="+"
+															size="sm"
+															onPress={() => router.push('/(app)/selectWorshipTypeModal')}
+														/>
 													</HStack>
 												</ScrollView>
 											) : (
 												<HStack space="sm" className="ml-4 py-1">
-													<Text
-														size="md"
-														className="px-3 py-1 rounded-full bg-primary-100 border border-primary-200 text-primary-700"
-													>
-														{selectedWorshipType?.name || '예배 종류 없음'}
-													</Text>
+													<FilterTag
+														isSelected={true}
+														label={selectedWorshipType?.name || '예배 종류 없음'}
+														size="sm"
+													/>
 												</HStack>
 											)}
 										</VStack>
