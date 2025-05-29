@@ -163,10 +163,10 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
 
   return (
     <>
-      <VStack space="sm">
+      <VStack space="md">
         <HStack space="sm" className="items-center">
-          <Avatar size="xs" photoUrl={member.photoUrl || undefined} />
-          <Text size="lg" className="font-pretendard-semi-bold">
+          <Avatar size="2xs" photoUrl={member.photoUrl || undefined} />
+          <Text size="md" className="font-pretendard-semi-bold">
             {member.displayName}
           </Text>
         </HStack>
@@ -178,8 +178,8 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
             multiline
             textAlignVertical="top"
             className={cn(
-              'flex-1 min-h-20',
-              TEXT_INPUT_STYLE
+              TEXT_INPUT_STYLE,
+              'flex-1 min-h-28 text-lg py-2 rounded-lg',
             )}
           />
           {isRecordingMode && (

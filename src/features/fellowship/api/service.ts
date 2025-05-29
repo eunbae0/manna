@@ -13,14 +13,19 @@ import {
 	setDoc,
 	type FieldValue,
 	limit,
+	onSnapshot,
 } from '@react-native-firebase/firestore';
 import { database } from '@/firebase/config';
 import type {
-	ClientFellowship,
-	UpdateFellowshipInput,
-	CreateFellowshipInput,
-	ServerFellowship,
-	ClientFellowshipMember,
+	CreateFellowshipInputV2,
+	ServerFellowshipV2,
+	UpdateFellowshipInputV2,
+	ClientFellowshipV2,
+	ClientFellowshipParticipantV2,
+	ClientFellowshipCategoryV2,
+	ServerFellowshipCategoryV2,
+	ClientFellowshipContentItemV2,
+	CompactClientFellowshipV2,
 } from '@/features/fellowship/api/types';
 import { serverTimestamp } from '@/firebase/firestore';
 import { flattenObject } from '@/shared/utils/flattenObject';
@@ -44,6 +49,10 @@ export class FirestoreFellowshipService {
 	private readonly collectionPath: string = 'groups';
 	private readonly subCollectionPath: string = 'fellowship';
 	private readonly memberCollectionPath: string = 'members';
+
+	// 멤버 정보 캐시
+	private memberCache: Map<string, Map<string, ClientFellowshipParticipantV2>> =
+		new Map();
 
 	/**
 	 * Gets the fellowship collection reference for a specific group
@@ -83,33 +92,71 @@ export class FirestoreFellowshipService {
 	}
 
 	private convertToClientFellowship(
-		data: ServerFellowship,
-		members: ClientFellowshipMember[],
-	): ClientFellowship {
+		data: ServerFellowshipV2,
+		participants: ClientFellowshipParticipantV2[],
+	): ClientFellowshipV2 {
+		// 카테고리 변환 함수
+		const transformCategories = (
+			categories: Record<string, ServerFellowshipCategoryV2>,
+		): Record<string, ClientFellowshipCategoryV2> => {
+			const result: Record<string, ClientFellowshipCategoryV2> = {};
+
+			// 각 카테고리 순회
+			for (const [categoryId, category] of Object.entries(categories)) {
+				// 각 아이템 순회하며 answers 변환
+				const transformedItems: Record<string, ClientFellowshipContentItemV2> =
+					{};
+
+				for (const [itemId, item] of Object.entries(category.items)) {
+					// Record<participantId, answerContent> 형태를
+					// { participant: ClientFellowshipParticipantV2, content: string }[] 형태로 변환
+					const transformedAnswers = Object.entries(item.answers).map(
+						([participantId, content]) => ({
+							participant: participants.find((p) => p.id === participantId) || {
+								id: participantId,
+								displayName: DELETED_MEMBER_DISPLAY_NAME,
+								isGuest: true,
+							},
+							content,
+						}),
+					);
+
+					transformedItems[itemId] = {
+						...item,
+						answers: transformedAnswers,
+					};
+				}
+
+				result[categoryId] = {
+					...category,
+					items: transformedItems,
+				};
+			}
+
+			return result;
+		};
+
 		return {
 			...data,
 			info: {
 				...data.info,
 				date: data.info.date.toDate(),
-				members,
+				participants,
 			},
 			content: {
 				...data.content,
-				iceBreaking: data.content.iceBreaking.map((field) => ({
-					...field,
-					answers: field.answers.map((answer) => ({
-						...answer,
-						member: members.find((m) => m.id === answer.member.id)!,
-					})),
-				})),
-				sermonTopic: data.content.sermonTopic.map((field) => ({
-					...field,
-					answers: field.answers.map((answer) => ({
-						...answer,
-						member: members.find((m) => m.id === answer.member.id)!,
-					})),
-				})),
-				prayerRequest: data.content.prayerRequest,
+				categories: transformCategories(data.content.categories),
+			},
+		};
+	}
+	private convertToCompactClientFellowship(
+		data: ServerFellowshipV2,
+	): CompactClientFellowshipV2 {
+		return {
+			...data,
+			info: {
+				...data.info,
+				date: data.info.date.toDate(),
 			},
 		};
 	}
@@ -123,14 +170,14 @@ export class FirestoreFellowshipService {
 	 */
 	async getGroupFellowships({
 		groupId,
-		limitCount = 10,
+		limitCount = 8,
 		startAfter,
 	}: {
 		groupId: string;
 		limitCount?: number;
 		startAfter?: Timestamp;
 	}): Promise<{
-		items: ClientFellowship[];
+		items: ClientFellowshipV2[];
 		hasMore: boolean;
 		total: number;
 	}> {
@@ -161,41 +208,22 @@ export class FirestoreFellowshipService {
 			? querySnapshot.docs.slice(0, _limitCount)
 			: querySnapshot.docs;
 
-		const fellowships: ClientFellowship[] = [];
+		const fellowships: ClientFellowshipV2[] = [];
 		for (const fellowshipsDoc of docs) {
-			const members: ClientFellowshipMember[] = [];
-			const data = fellowshipsDoc.data() as ServerFellowship;
-			for (const member of data.info.members) {
-				const groupMemberDoc = await getDoc(
-					doc(
-						database,
-						this.collectionPath,
-						groupId,
-						this.memberCollectionPath,
-						member.id,
-					),
-				);
+			const members: ClientFellowshipParticipantV2[] = [];
+			const data = fellowshipsDoc.data() as ServerFellowshipV2;
+			const memberPromises = data.info.participants.map((member) =>
+				this.getParticipantWithCache(groupId, member.id, {
+					displayName: member.displayName,
+				}),
+			);
 
-				// 탈퇴유저 또는 게스트유저인 경우
-				if (!groupMemberDoc.exists) {
-					const clientMember = {
-						id: member.id,
-						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
-						isLeader: member.isLeader,
-						isGuest: member.isGuest,
-					};
-					members.push(clientMember);
-					continue;
-				}
+			// 병렬로 멤버 정보 조회
+			const memberResults = await Promise.all(memberPromises);
+			members.push(...memberResults);
 
-				const clientMember = groupMemberDoc.data() as ClientGroupMember;
-				members.push({
-					...clientMember,
-					isLeader: member.isLeader,
-					isGuest: member.isGuest,
-				});
-			}
-			fellowships.push(this.convertToClientFellowship(data, members));
+			const fellowship = this.convertToClientFellowship(data, members);
+			fellowships.push(fellowship);
 		}
 
 		return {
@@ -214,57 +242,93 @@ export class FirestoreFellowshipService {
 		userId: string;
 		limitCount?: number;
 	}): Promise<{
-		items: ClientFellowship[];
+		items: CompactClientFellowshipV2[];
 		total: number;
 	}> {
 		const q = query(
 			this.getFellowshipCollectionRef({ groupId }),
 			orderBy('createdAt', 'desc'),
-			where('info.leaderId', '==', userId),
+			where('roles.leaderId', '==', userId),
 			limit(limitCount),
 		);
 
 		const querySnapshot = await getDocs(q);
 
-		const fellowships: ClientFellowship[] = [];
+		const fellowships: CompactClientFellowshipV2[] = [];
 		for (const fellowshipsDoc of querySnapshot.docs) {
-			const members: ClientFellowshipMember[] = [];
-			const data = fellowshipsDoc.data() as ServerFellowship;
-			for (const member of data.info.members) {
-				const groupMemberDoc = await getDoc(
-					doc(
-						database,
-						this.collectionPath,
-						groupId,
-						this.memberCollectionPath,
-						member.id,
-					),
-				);
-
-				// 탈퇴유저 또는 게스트유저인 경우
-				if (!groupMemberDoc.exists) {
-					const clientMember = {
-						id: member.id,
-						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
-						isLeader: member.isLeader,
-						isGuest: member.isGuest,
-					};
-					members.push(clientMember);
-					continue;
-				}
-
-				const clientMember = groupMemberDoc.data() as ClientGroupMember;
-				members.push({
-					...clientMember,
-					isLeader: member.isLeader,
-					isGuest: member.isGuest,
-				});
-			}
-			fellowships.push(this.convertToClientFellowship(data, members));
+			const data = fellowshipsDoc.data() as ServerFellowshipV2;
+			fellowships.push(this.convertToCompactClientFellowship(data));
 		}
 
 		return {
 			items: fellowships,
+			total: fellowships.length,
+		};
+	}
+
+	/**
+	 * 특정 사용자가 참여한 나눔을 가져옵니다
+	 * @param groupId 그룹 ID
+	 * @param userId 사용자 ID
+	 * @param limitCount 가져올 항목 수
+	 * @param startAfter 페이지네이션을 위한 시작점
+	 * @returns 페이지네이션된 나눔 데이터
+	 */
+	async getUserFellowships({
+		groupId,
+		userId,
+		limitCount = 8,
+		startAfter,
+	}: {
+		groupId: string;
+		userId: string;
+		limitCount?: number;
+		startAfter?: Timestamp;
+	}): Promise<{
+		items: ClientFellowshipV2[];
+		hasMore: boolean;
+		total: number;
+	}> {
+		// 서버에서 특정 사용자가 참여한 나눔만 필터링하기 위한 쿼리
+		// Firestore에서는 배열 내 특정 값을 포함하는 문서를 찾기 위해 array-contains 연산자를 사용
+		const q = query(
+			this.getFellowshipCollectionRef({ groupId }),
+			orderBy('metadata.createdAt', 'desc'),
+			where('info.participants', 'array-contains', { id: userId }),
+			...(startAfter ? [startAfter] : []),
+			limit(limitCount + 1), // 추가 항목을 가져와서 더 있는지 확인
+		);
+
+		const querySnapshot = await getDocs(q);
+		const _limitCount = limitCount || 10;
+		const hasMore = querySnapshot.docs.length > _limitCount;
+
+		// 추가 항목이 있으면 결과에서 제외
+		const docs = hasMore
+			? querySnapshot.docs.slice(0, _limitCount)
+			: querySnapshot.docs;
+
+		const fellowships: ClientFellowshipV2[] = [];
+		for (const fellowshipsDoc of docs) {
+			const members: ClientFellowshipParticipantV2[] = [];
+			const data = fellowshipsDoc.data() as ServerFellowshipV2;
+			const memberPromises = data.info.participants.map((member) =>
+				this.getParticipantWithCache(groupId, member.id, {
+					displayName: member.displayName,
+				}),
+			);
+
+			// 병렬로 멤버 정보 조회
+			const memberResults = await Promise.all(memberPromises);
+			members.push(...memberResults);
+
+			const fellowship = this.convertToClientFellowship(data, members);
+			fellowships.push(fellowship);
+		}
+
+		return {
+			items: fellowships,
+			hasMore,
 			total: fellowships.length,
 		};
 	}
@@ -280,43 +344,22 @@ export class FirestoreFellowshipService {
 	}: {
 		groupId: string;
 		fellowshipId: string;
-	}): Promise<ClientFellowship | null> {
+	}): Promise<ClientFellowshipV2 | null> {
 		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
 		const docSnap = await getDoc(docRef);
 
 		if (docSnap.exists) {
-			const data = docSnap.data() as ServerFellowship;
-			const members: ClientFellowshipMember[] = [];
-			for (const member of data.info.members) {
-				const groupMemberDoc = await getDoc(
-					doc(
-						database,
-						this.collectionPath,
-						groupId,
-						this.memberCollectionPath,
-						member.id,
-					),
-				);
+			const data = docSnap.data() as ServerFellowshipV2;
+			const members: ClientFellowshipParticipantV2[] = [];
+			const memberPromises = data.info.participants.map((member) =>
+				this.getParticipantWithCache(groupId, member.id, {
+					displayName: member.displayName,
+				}),
+			);
 
-				// 탈퇴유저 또는 게스트유저인 경우
-				if (!groupMemberDoc.exists) {
-					const clientMember = {
-						id: member.id,
-						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
-						isLeader: member.isLeader,
-						isGuest: member.isGuest,
-					};
-					members.push(clientMember);
-					continue;
-				}
-
-				const clientMember = groupMemberDoc.data() as ClientGroupMember;
-				members.push({
-					...clientMember,
-					isLeader: member.isLeader,
-					isGuest: member.isGuest,
-				});
-			}
+			// 병렬로 멤버 정보 조회
+			const memberResults = await Promise.all(memberPromises);
+			members.push(...memberResults);
 
 			return this.convertToClientFellowship(data, members);
 		}
@@ -325,32 +368,169 @@ export class FirestoreFellowshipService {
 	}
 
 	/**
+	 * Sets up a real-time listener for a specific fellowship document
+	 * @param groupId ID of the group
+	 * @param fellowshipId ID of the fellowship to listen to
+	 * @param onNext Callback function when data changes
+	 * @param onError Callback function when an error occurs
+	 * @returns Unsubscribe function to stop listening
+	 */
+	/**
+	 * 그룹 멤버 정보를 가져오거나 캐시에서 조회
+	 * @param groupId 그룹 ID
+	 * @param memberId 멤버 ID
+	 * @param memberInfo 멤버 기본 정보
+	 * @returns 멤버 정보
+	 */
+	private async getParticipantWithCache(
+		groupId: string,
+		memberId: string,
+		additionalInfo?: Pick<ClientFellowshipParticipantV2, 'displayName'>,
+	): Promise<ClientFellowshipParticipantV2> {
+		// 그룹 캐시가 없으면 초기화
+		if (!this.memberCache.has(groupId)) {
+			this.memberCache.set(groupId, new Map());
+		}
+
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		const groupCache = this.memberCache.get(groupId)!;
+
+		// 캐시에 멤버 정보가 있으면 반환
+		if (groupCache.has(memberId)) {
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			const cachedMember = groupCache.get(memberId)!;
+			// 리더 상태와 게스트 상태는 최신 정보로 업데이트
+			return {
+				...cachedMember,
+				displayName: additionalInfo?.displayName,
+			};
+		}
+
+		// 캐시에 없으면 DB에서 조회
+		const groupMemberDoc = await getDoc(
+			doc(
+				database,
+				this.collectionPath,
+				groupId,
+				this.memberCollectionPath,
+				memberId,
+			),
+		);
+
+		let memberData: ClientFellowshipParticipantV2;
+
+		// 탈퇴유저 또는 게스트유저인 경우
+		if (!groupMemberDoc.exists) {
+			memberData = {
+				id: memberId,
+				displayName: additionalInfo?.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
+				isGuest: true,
+			};
+		} else {
+			const clientMember = groupMemberDoc.data() as ClientGroupMember;
+			memberData = {
+				...clientMember,
+				photoUrl: clientMember.photoUrl || undefined,
+				displayName: clientMember.displayName || undefined,
+				isGuest: false,
+			};
+		}
+
+		// 캐시에 저장
+		groupCache.set(memberId, memberData);
+		return memberData;
+	}
+
+	/**
+	 * 캐시 무효화 - 그룹 또는 특정 멤버의 캐시 삭제
+	 * @param groupId 그룹 ID
+	 * @param memberId 멤버 ID (선택적)
+	 */
+	private invalidateCache(groupId: string, memberId?: string): void {
+		if (memberId && this.memberCache.has(groupId)) {
+			// 특정 멤버 캐시만 삭제
+			this.memberCache.get(groupId)?.delete(memberId);
+		} else {
+			// 그룹 전체 캐시 삭제
+			this.memberCache.delete(groupId);
+		}
+	}
+
+	onFellowshipSnapshot(
+		{ groupId, fellowshipId }: { groupId: string; fellowshipId: string },
+		onNext: (fellowship: ClientFellowshipV2 | null) => void,
+		onError: (error: Error) => void,
+	): () => void {
+		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
+
+		return onSnapshot(
+			docRef,
+			async (docSnap) => {
+				try {
+					if (docSnap.exists) {
+						const data = docSnap.data() as ServerFellowshipV2;
+						const members: ClientFellowshipParticipantV2[] = [];
+
+						// 멤버 정보 가져오기 (캐시 활용)
+						const memberPromises = data.info.participants.map((member) =>
+							this.getParticipantWithCache(groupId, member.id, {
+								displayName: member.displayName,
+							}),
+						);
+
+						// 병렬로 멤버 정보 조회
+						const memberResults = await Promise.all(memberPromises);
+						members.push(...memberResults);
+
+						const fellowship = this.convertToClientFellowship(data, members);
+						onNext(fellowship);
+					} else {
+						onNext(null);
+					}
+				} catch (error) {
+					console.error('Error in onFellowshipSnapshot:', error);
+					onError(error as Error);
+				}
+			},
+			(error) => {
+				console.error('Firestore snapshot error:', error);
+				onError(error);
+			},
+		);
+	}
+
+	/**
 	 * Creates a new fellowship for a group
 	 * @param fellowshipData Fellowship data to be saved
 	 * @returns ID of the created fellowship
 	 */
 	async createFellowship(
-		{ groupId }: { groupId: string },
-		fellowshipData: CreateFellowshipInput,
+		fellowshipData: CreateFellowshipInputV2,
 	): Promise<string> {
 		const fellowshipId = uuidv4();
+		const docRef = this.getFellowshipDocRef({
+			groupId: fellowshipData.identifiers.groupId,
+			fellowshipId,
+		});
+
 		const processedData = {
 			...fellowshipData,
-			id: fellowshipId,
-			groupId,
+			identifiers: {
+				...fellowshipData.identifiers,
+				id: fellowshipId,
+			},
 			info: {
 				...fellowshipData.info,
 				date: Timestamp.fromDate(fellowshipData.info.date),
-				preachTitle: fellowshipData.info.preachTitle || '',
 			},
-			createdAt: serverTimestamp(),
-			updatedAt: serverTimestamp(),
-		} satisfies ServerFellowship;
+			metadata: {
+				schemaVersion: '2',
+				createdAt: serverTimestamp() as Timestamp,
+				updatedAt: serverTimestamp() as Timestamp,
+			},
+		} satisfies ServerFellowshipV2;
 
-		await setDoc(
-			this.getFellowshipDocRef({ groupId, fellowshipId }),
-			processedData,
-		);
+		await setDoc(docRef, processedData);
 		return fellowshipId;
 	}
 
@@ -361,15 +541,19 @@ export class FirestoreFellowshipService {
 	 */
 	async updateFellowship(
 		{ groupId, fellowshipId }: { groupId: string; fellowshipId: string },
-		fellowshipData: UpdateFellowshipInput,
+		fellowshipData: UpdateFellowshipInputV2,
 	): Promise<void> {
 		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
 
-		// 중첩된 객체를 Firestore의 dot notation으로 변환
 		const flattenedData = flattenObject(fellowshipData);
 
 		// updatedAt 필드 추가
 		flattenedData.updatedAt = serverTimestamp();
+
+		// 멤버 정보가 변경되었다면 캐시 무효화
+		if (fellowshipData.info?.participants) {
+			this.invalidateCache(groupId);
+		}
 
 		// info.date가 Date 객체인 경우 Timestamp로 변환
 		if (flattenedData['info.date'] instanceof Date) {
@@ -401,69 +585,6 @@ export class FirestoreFellowshipService {
 	}: { groupId: string; fellowshipId: string }): Promise<void> {
 		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
 		await deleteDoc(docRef);
-	}
-
-	/**
-	 * Fetches fellowships by date range
-	 * @param startDate Start date of the range
-	 * @param endDate End date of the range
-	 * @returns Array of fellowship data within the date range
-	 */
-	async getFellowshipsByDateRange(
-		{ groupId }: { groupId: string },
-		startDate: Date,
-		endDate: Date,
-	): Promise<ClientFellowship[]> {
-		const startTimestamp = Timestamp.fromDate(startDate);
-		const endTimestamp = Timestamp.fromDate(endDate);
-
-		const q = query(
-			this.getFellowshipCollectionRef({ groupId }),
-			where('info.date', '>=', startTimestamp),
-			where('info.date', '<=', endTimestamp),
-			orderBy('info.date', 'desc'),
-		);
-
-		const querySnapshot = await getDocs(q);
-
-		const fellowships: ClientFellowship[] = [];
-		for (const fellowshipDoc of querySnapshot.docs) {
-			const data = fellowshipDoc.data() as ServerFellowship;
-			const members: ClientFellowshipMember[] = [];
-			for (const member of data.info.members) {
-				const groupMemberDoc = await getDoc(
-					doc(
-						database,
-						this.collectionPath,
-						groupId,
-						this.memberCollectionPath,
-						member.id,
-					),
-				);
-
-				// 탈퇴유저 또는 게스트유저인 경우
-				if (!groupMemberDoc.exists) {
-					const clientMember = {
-						id: member.id,
-						displayName: member.displayName ?? DELETED_MEMBER_DISPLAY_NAME,
-						isLeader: member.isLeader,
-						isGuest: member.isGuest,
-					};
-					members.push(clientMember);
-					continue;
-				}
-
-				const clientMember = groupMemberDoc.data() as ClientGroupMember;
-				members.push({
-					...clientMember,
-					isLeader: member.isLeader,
-					isGuest: member.isGuest,
-				});
-			}
-			fellowships.push(this.convertToClientFellowship(data, members));
-		}
-
-		return fellowships;
 	}
 }
 

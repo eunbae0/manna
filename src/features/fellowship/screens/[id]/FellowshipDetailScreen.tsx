@@ -214,7 +214,7 @@ export default function FellowshipDetailScreen({
 		getLastUpdatedIdAndReset,
 	} = useFellowshipStore();
 
-	// React Query를 사용한 데이터 페칭
+	// 실시간 데이터 페칭
 	const {
 		fellowship,
 		isLoading,
@@ -223,26 +223,28 @@ export default function FellowshipDetailScreen({
 		updateFellowship,
 		deleteFellowship,
 	} = useFellowship(id);
+	
+	// null을 undefined로 변환하여 타입 호환성 유지
+	const fellowshipData = fellowship || undefined;
 
-	// 수정 후 네비게이션 시 데이터 갱신
+	// 실시간 업데이트를 사용하민로 화면 포커스 시 리페치는 불필요
+	// 단, 스토어 상태 초기화는 유지
 	useFocusEffect(
 		useCallback(() => {
-			const lastUpdatedId = getLastUpdatedIdAndReset();
-
-			if (lastUpdatedId && lastUpdatedId === id) {
-				refetch();
-			}
-		}, [id, refetch, getLastUpdatedIdAndReset]),
+			getLastUpdatedIdAndReset();
+		}, [getLastUpdatedIdAndReset]),
 	);
 
 	const handlePressEditButton = () => {
+		if (!fellowshipData) return;
+		
 		setType('EDIT');
-		setFellowshipId(fellowship?.id || '');
+		setFellowshipId(fellowshipData.id);
 		updateFellowshipInfo({
-			...fellowship?.info,
+			...fellowshipData.info,
 		});
 		updateFellowshipContent({
-			...fellowship?.content,
+			...fellowshipData.content,
 		});
 		handleClose();
 		router.push('/(app)/(fellowship)/create');
@@ -267,22 +269,23 @@ export default function FellowshipDetailScreen({
 
 	const isLeader = useMemo(
 		() =>
-			fellowship
+			fellowshipData
 				? user?.id ===
-				fellowship.info.members.find(
+				fellowshipData.info.members.find(
 					(member: ServerFellowshipMember) => member.isLeader,
 				)?.id
 				: false,
-		[fellowship, user],
+		[fellowshipData, user],
 	);
 
 	const enableReply = useMemo(() => {
-		return fellowship?.options?.enableMemberReply ? true : isLeader;
-	}, [fellowship, isLeader]);
+		return fellowshipData?.options?.enableMemberReply ? true : isLeader;
+	}, [fellowshipData, isLeader]);
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
 	const handleRefresh = useCallback(async () => {
+		// 실시간 업데이트를 사용하지만 사용자가 수동 새로고침할 수 있도록 유지
 		setIsRefreshing(true);
 		try {
 			await refetch();
@@ -341,9 +344,9 @@ export default function FellowshipDetailScreen({
 					<VStack space="2xl" className="px-5 flex-1 pb-8">
 						{/* 나눔 노트 제목 및 정보 */}
 						<VStack space="md">
-							<Heading size="3xl">{fellowship?.info.preachTitle}</Heading>
+							<Heading size="3xl">{fellowshipData?.info.preachTitle}</Heading>
 							<Text size="lg" className="text-typography-500">
-								{fellowship?.info.date?.toLocaleDateString('ko-KR', {
+								{fellowshipData?.info.date?.toLocaleDateString('ko-KR', {
 									year: 'numeric',
 									month: 'long',
 									day: 'numeric',
@@ -354,12 +357,12 @@ export default function FellowshipDetailScreen({
 						</VStack>
 
 						{/* 추가 정보 */}
-						<AdditionalInfo fellowship={fellowship} />
+						<AdditionalInfo fellowship={fellowshipData} />
 
 						{/* 말씀 내용 */}
 						<VStack className="gap-8 pb-10">
-							{fellowship?.content.iceBreaking &&
-								fellowship?.content.iceBreaking.length > 0 && (
+							{fellowshipData?.content.iceBreaking &&
+								fellowshipData?.content.iceBreaking.length > 0 && (
 									<FellowshipContentLayout title="아이스 브레이킹">
 										<FellowshipContentList
 											fellowshipId={id}
@@ -368,8 +371,8 @@ export default function FellowshipDetailScreen({
 										/>
 									</FellowshipContentLayout>
 								)}
-							{fellowship?.content.sermonTopic &&
-								fellowship?.content.sermonTopic.length > 0 && (
+							{fellowshipData?.content.sermonTopic &&
+								fellowshipData?.content.sermonTopic.length > 0 && (
 									<FellowshipContentLayout title="설교 나눔">
 										<FellowshipContentList
 											fellowshipId={id}
@@ -378,7 +381,7 @@ export default function FellowshipDetailScreen({
 										/>
 									</FellowshipContentLayout>
 								)}
-							{fellowship?.content.prayerRequest.isActive && (
+							{fellowshipData?.content.prayerRequest.isActive && (
 								<FellowshipContentLayout
 									title="기도 제목"
 									enableReply={enableReply}
@@ -392,7 +395,7 @@ export default function FellowshipDetailScreen({
 									}
 								>
 									<FellowshipPrayerRequestList
-										answers={fellowship.content.prayerRequest.answers}
+										answers={fellowshipData?.content.prayerRequest.answers}
 									/>
 								</FellowshipContentLayout>
 							)}

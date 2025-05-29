@@ -19,10 +19,10 @@ import { useAuthStore } from '@/store/auth';
 import { useState, useEffect } from 'react';
 import { useToastStore } from '@/store/toast';
 import { useUserProfile } from '@/features/profile/hooks/hooks';
-import { useUserFellowships } from '@/features/fellowship/hooks';
 import { Avatar } from '@/components/common/avatar';
 import { ChevronRight } from 'lucide-react-native';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { useUserFellowships } from '@/features/fellowship/hooks/useUserFellowships';
 
 export default function UserFellowshipsScreen() {
 	// URL 파라미터에서 userId 가져오기

@@ -28,7 +28,7 @@ import {
 } from 'lucide-react-native';
 import { useToastStore } from '@/store/toast';
 import type {
-	ClientFellowshipMember,
+	ClientFellowshipParticipantV2,
 } from '@/features/fellowship/api/types';
 import { Avatar } from '@/components/common/avatar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
@@ -40,6 +40,8 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { cn } from '@/shared/utils/cn';
 import { isAndroid } from '@/shared/utils/platform';
+import { v4 as uuidv4 } from 'uuid';
+import { useExpandAnimation } from '@/shared/hooks/animation/useExpandAnimation';
 
 export default function FellowshipInfoScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -60,92 +62,52 @@ export default function FellowshipInfoScreen() {
 
 	const { showInfo } = useToastStore();
 
-	const preachTitleRef = useRef<TextInput>(null);
+	const titleRef = useRef<TextInput>(null);
 	const preachTextRef = useRef<TextInput>(null);
 	const preacherRef = useRef<TextInput>(null);
 
-	const { info, setStep, updateFellowshipInfo, clearFellowship, isFirstRender, setIsFirstRender } =
+	const { info, setStep, updateFellowshipInfo, updateFellowshipRoles, clearFellowship, isFirstRender, setIsFirstRender } =
 		useFellowshipStore();
 	const [selectedDate, setSelectedDate] = useState(info.date || new Date());
-	const [preachTitle, setPreachTitle] = useState(info.preachTitle || '');
-	const [preachTextExpanded, setPreachTextExpanded] = useState(false);
-	const [preacherExpanded, setPreacherExpanded] = useState(false);
-	const [membersExpanded, setMembersExpanded] = useState(false);
+	const [title, setTitle] = useState(info.title || '');
 
-	// 애니메이션 값
-	const preachTextHeight = useSharedValue(0);
-	const preachTextRotate = useSharedValue(0);
-	const preacherHeight = useSharedValue(0);
-	const preacherRotate = useSharedValue(0);
-	const membersHeight = useSharedValue(0);
-	const membersRotate = useSharedValue(0);
+	const {
+		toggle: togglePreachText,
+		isExpanded: preachTextExpanded,
+		containerStyle: preachTextContainerStyle,
+		iconStyle: preachTextIconStyle,
+		onContentLayout: onPreachTextContentLayout
+	} = useExpandAnimation();
+	const {
+		toggle: togglePreacher,
+		isExpanded: preacherExpanded,
+		containerStyle: preacherContainerStyle,
+		iconStyle: preacherIconStyle,
+		onContentLayout: onPreacherContentLayout
+	} = useExpandAnimation();
+	const {
+		toggle: toggleMembers,
+		containerStyle: membersContainerStyle,
+		iconStyle: membersIconStyle,
+	} = useExpandAnimation(
+		{
+			expandedHeight: 400,
+		}
+	);
 
-	// 애니메이션 스타일
-	const preachTextContainerStyle = useAnimatedStyle(() => {
-		return {
-			height: preachTextHeight.value,
-			overflow: 'hidden',
-		};
-	});
-
-	const preachTextIconStyle = useAnimatedStyle(() => {
-		return {
-			transform: [
-				{
-					rotate: `${preachTextRotate.value * 180}deg`,
-				},
-			],
-		};
-	});
-
-	const preacherContainerStyle = useAnimatedStyle(() => {
-		return {
-			height: preacherHeight.value,
-			overflow: 'hidden',
-		};
-	});
-
-	const preacherIconStyle = useAnimatedStyle(() => {
-		return {
-			transform: [
-				{
-					rotate: `${preacherRotate.value * 180}deg`,
-				},
-			],
-		};
-	});
-
-	const membersContainerStyle = useAnimatedStyle(() => {
-		return {
-			height: membersHeight.value,
-			overflow: 'hidden',
-		};
-	});
-
-	const membersIconStyle = useAnimatedStyle(() => {
-		return {
-			transform: [
-				{
-					rotate: `${membersRotate.value * 180}deg`,
-				},
-			],
-		};
-	});
-
-	const [preachText, setPreachText] = useState<string>(info.preachText?.value || '');
-	const [preacher, setPreacher] = useState<string>(info.preacher?.value || '');
-	const [members, setMembers] = useState<ClientFellowshipMember[]>(
-		info.members.length === 0
+	const [preachText, setPreachText] = useState<string>(info.preachText || '');
+	const [preacher, setPreacher] = useState<string>(info.preacher || '');
+	const [participants, setParticipants] = useState<ClientFellowshipParticipantV2[]>(
+		info.participants.length === 0
 			? [
 				{
 					id: user?.id || '1',
 					displayName: user?.displayName || '',
 					photoUrl: user?.photoUrl || '',
-					isLeader: true,
 					isGuest: false,
 				},
 			]
-			: info.members,
+			: info.participants,
 	);
 	const [memberNameInput, setMemberNameInput] = useState('');
 
@@ -177,18 +139,18 @@ export default function FellowshipInfoScreen() {
 	};
 
 	// 그룹 멤버를 선택하거나 선택 해제하는 함수
-	const toggleSelectGroupMember = (member: ClientFellowshipMember) => {
+	const toggleSelectGroupMember = (member: ClientFellowshipParticipantV2) => {
 		// 멤버가 이미 선택되어 있는지 확인
-		const isAlreadySelected = members.some((m) => m.id === member.id);
+		const isAlreadySelected = participants.some((m) => m.id === member.id);
 
 		if (isAlreadySelected) {
 			// 이미 선택된 멤버라면 제거 (리더는 제거 불가)
-			if (!member.isLeader) {
-				setMembers((prev) => prev.filter((m) => m.id !== member.id));
+			if (member.id !== user?.id) {
+				setParticipants((prev) => prev.filter((m) => m.id !== member.id));
 			}
 		} else {
 			// 선택되지 않은 멤버라면 추가
-			setMembers((prev) => [...prev, member]);
+			setParticipants((prev) => [...prev, member]);
 		}
 	};
 
@@ -197,15 +159,14 @@ export default function FellowshipInfoScreen() {
 		if (!memberNameInput.trim()) return;
 
 		// 새로운 멤버 생성
-		const newMember: ClientFellowshipMember = {
-			id: `custom-${Date.now()}`,
+		const newMember: ClientFellowshipParticipantV2 = {
+			id: uuidv4(),
 			displayName: memberNameInput.trim(),
-			isLeader: false,
 			isGuest: true,
 		};
 
 		// 선택된 멤버로 추가 (리스트에 표시되도록)
-		setMembers((prev) => [...prev, newMember]);
+		setParticipants((prev) => [...prev, newMember]);
 
 		setMemberNameInput('');
 
@@ -218,7 +179,7 @@ export default function FellowshipInfoScreen() {
 	};
 
 	// 그룹 멤버 리스트
-	const allFellowshipMembers = useMemo<ClientFellowshipMember[]>(() => {
+	const allFellowshipMembers = useMemo<ClientFellowshipParticipantV2[]>(() => {
 		if (!group || !group.members) return [];
 
 		const groupMembers = group.members
@@ -239,12 +200,12 @@ export default function FellowshipInfoScreen() {
 				),
 			);
 
-		const customMembers = members.filter(
+		const customMembers = participants.filter(
 			(member) => member.id.startsWith('custom-'),
 		);
 
 		return [...groupMembers, ...customMembers];
-	}, [group, user?.id, members]);
+	}, [group, user?.id, participants]);
 
 	const addMemberInputRef = useRef<TextInput>(null);
 	const membersScrollViewRef = useRef<ScrollView>(null);
@@ -253,7 +214,7 @@ export default function FellowshipInfoScreen() {
 	useEffect(() => {
 		if (isFirstRender) {
 			setTimeout(() => {
-				preachTitleRef.current?.focus();
+				titleRef.current?.focus();
 				setIsFirstRender(false);
 			}, 300);
 		}
@@ -267,16 +228,14 @@ export default function FellowshipInfoScreen() {
 					<VStack className="px-5 py-4 flex-1">
 						<VStack space="xl">
 							<TextInput
-								ref={preachTitleRef}
+								ref={titleRef}
 								placeholder="나눔 또는 설교 제목을 입력해주세요."
-								value={preachTitle}
-								onChangeText={(value) => setPreachTitle(value)}
+								value={title}
+								onChangeText={(value) => setTitle(value)}
 								returnKeyType="next"
 								onSubmitEditing={() => {
 									if (!preachTextExpanded) {
-										setPreachTextExpanded(true);
-										preachTextHeight.value = withTiming(74, { duration: 200 });
-										preachTextRotate.value = withTiming(1, { duration: 200 });
+										togglePreachText(preachTextRef);
 									}
 									setTimeout(() => {
 										preachTextRef.current?.focus();
@@ -320,18 +279,7 @@ export default function FellowshipInfoScreen() {
 								<AnimatedPressable
 									scale={0.98}
 									onPress={() => {
-										setPreachTextExpanded(!preachTextExpanded);
-										preachTextRef.current?.focus();
-										// 애니메이션 실행
-										if (preachTextExpanded) {
-											// 닫힐 때
-											preachTextHeight.value = withTiming(0, { duration: 200 });
-											preachTextRotate.value = withTiming(0, { duration: 200 });
-										} else {
-											// 열릴 때
-											preachTextHeight.value = withTiming(74, { duration: 200 });
-											preachTextRotate.value = withTiming(1, { duration: 200 });
-										}
+										togglePreachText(preachTextRef);
 									}}
 								>
 									<HStack className="items-center justify-between">
@@ -360,7 +308,7 @@ export default function FellowshipInfoScreen() {
 									</HStack>
 								</AnimatedPressable>
 								<Animated.View style={[preachTextContainerStyle]}>
-									<VStack space="sm" className="mt-6">
+									<VStack space="sm" className="pt-6" onLayout={onPreachTextContentLayout}>
 										<Input
 											variant="outline"
 											size="xl"
@@ -374,9 +322,7 @@ export default function FellowshipInfoScreen() {
 												returnKeyType="next"
 												onSubmitEditing={() => {
 													if (!preacherExpanded) {
-														setPreacherExpanded(true);
-														preacherHeight.value = withTiming(74, { duration: 200 });
-														preacherRotate.value = withTiming(1, { duration: 200 });
+														togglePreacher(preacherRef);
 													}
 													setTimeout(() => {
 														preacherRef.current?.focus();
@@ -393,18 +339,7 @@ export default function FellowshipInfoScreen() {
 								<AnimatedPressable
 									scale={0.98}
 									onPress={() => {
-										setPreacherExpanded(!preacherExpanded);
-										preacherRef.current?.focus();
-										// 애니메이션 실행
-										if (preacherExpanded) {
-											// 닫힐 때
-											preacherHeight.value = withTiming(0, { duration: 200 });
-											preacherRotate.value = withTiming(0, { duration: 200 });
-										} else {
-											// 열릴 때
-											preacherHeight.value = withTiming(74, { duration: 200 });
-											preacherRotate.value = withTiming(1, { duration: 200 });
-										}
+										togglePreacher(preacherRef);
 									}}
 								>
 									<HStack className="items-center justify-between">
@@ -433,7 +368,7 @@ export default function FellowshipInfoScreen() {
 									</HStack>
 								</AnimatedPressable>
 								<Animated.View style={[preacherContainerStyle]}>
-									<VStack space="sm" className="mt-6">
+									<VStack space="sm" className="pt-6" onLayout={onPreacherContentLayout}>
 										<Input
 											variant="outline"
 											size="xl"
@@ -446,11 +381,7 @@ export default function FellowshipInfoScreen() {
 												onChangeText={setPreacher}
 												returnKeyType="next"
 												onSubmitEditing={() => {
-													if (!membersExpanded) {
-														setMembersExpanded(true);
-														membersHeight.value = withTiming(400, { duration: 200 });
-														membersRotate.value = withTiming(1, { duration: 200 });
-													}
+													toggleMembers();
 												}}
 												className="font-pretendard-Regular"
 											/>
@@ -463,17 +394,7 @@ export default function FellowshipInfoScreen() {
 								<AnimatedPressable
 									scale={0.98}
 									onPress={() => {
-										setMembersExpanded(!membersExpanded);
-										// 애니메이션 실행
-										if (membersExpanded) {
-											// 닫힐 때
-											membersHeight.value = withTiming(0, { duration: 200 });
-											membersRotate.value = withTiming(0, { duration: 200 });
-										} else {
-											// 열릴 때
-											membersHeight.value = withTiming(400, { duration: 200 });
-											membersRotate.value = withTiming(1, { duration: 200 });
-										}
+										toggleMembers();
 									}}
 								>
 									<HStack className="items-center justify-between">
@@ -489,7 +410,7 @@ export default function FellowshipInfoScreen() {
 										</HStack>
 										<HStack space="md" className="items-center">
 											<Text size="lg" weight="medium" className="text-typography-700">
-												{members.length > 0 ? `${members.length}명` : '0명'}
+												{participants.length > 0 ? `${participants.length}명` : '0명'}
 											</Text>
 											<Animated.View style={[membersIconStyle]}>
 												<Icon
@@ -523,7 +444,7 @@ export default function FellowshipInfoScreen() {
 											) : (
 												<ScrollView ref={membersScrollViewRef} className="py-3 max-h-72">
 													{allFellowshipMembers.map((member) => {
-														const isSelected = members.some((m) => m.id === member.id);
+														const isSelected = participants.some((m) => m.id === member.id);
 														const isMe = member.id === user?.id;
 														return (
 															<VStack key={member.id}>
@@ -589,28 +510,25 @@ export default function FellowshipInfoScreen() {
 					variant="solid"
 					className="mb-6 mx-5"
 					onPress={() => {
-						if (!preachTitle) {
+						if (!title) {
 							showInfo('나눔 제목을 입력해주세요');
 
 							// 첫 번째 비어있는 필드에 포커스 이동
-							if (!preachTitle) {
-								preachTitleRef.current?.focus();
+							if (!title) {
+								titleRef.current?.focus();
 								return;
 							}
 							return;
 						}
+						updateFellowshipRoles({
+							leaderId: user?.id || '',
+						});
 						updateFellowshipInfo({
 							date: selectedDate,
-							preachTitle,
-							preachText: {
-								value: preachText,
-								isActive: preachText !== '',
-							},
-							preacher: {
-								value: preacher,
-								isActive: preacher !== '',
-							},
-							members,
+							title,
+							preachText,
+							preacher,
+							participants,
 						});
 						setStep('CONTENT');
 					}}

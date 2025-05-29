@@ -3,7 +3,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
-import { Edit3 } from 'lucide-react-native';
+import { Edit3, CircleHelp } from 'lucide-react-native';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import type {
 	ClientFellowshipContentField,
@@ -12,6 +12,8 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
 import { useFellowship } from '../hooks/useFellowship';
 import { router } from 'expo-router';
+import { Box } from '#/components/ui/box';
+import { Icon } from '#/components/ui/icon';
 
 type SermonContentItemProps = {
 	fellowshipId: string;
@@ -48,9 +50,11 @@ export default function FellowshipContent({
 	return (
 		<>
 			<VStack space="2xl" className="">
-				<HStack className="ml-2 items-center justify-between">
+				<HStack space="sm" className="items-center justify-between">
+					<Box className="p-2 rounded-full bg-primary-100">
+						<Icon as={CircleHelp} size="lg" className="text-primary-500" />
+					</Box>
 					<Text size="xl" className="font-pretendard-semi-bold flex-1 mr-2">
-						{index !== undefined && `${index + 1}. `}
 						{question}
 					</Text>
 					{enableReply && (
@@ -59,7 +63,7 @@ export default function FellowshipContent({
 						</Button>
 					)}
 				</HStack>
-				<VStack space="xl" className="pl-4">
+				<VStack space="xl" className="pl-2">
 					{existedAnswers.map((answer) => (
 						<VStack key={answer.member?.id}>
 							<VStack space="sm">

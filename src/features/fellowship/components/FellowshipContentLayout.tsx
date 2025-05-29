@@ -21,7 +21,7 @@ export default function FellowshipContentLayout({
 	return (
 		<VStack space="lg" {...props}>
 			<HStack className="items-center justify-between">
-				<Heading size="xl" className="text-typography-900">
+				<Heading size="2xl" className="text-typography-900">
 					{title}
 				</Heading>
 				{enableReply && (

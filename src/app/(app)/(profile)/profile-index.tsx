@@ -27,7 +27,7 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
 import { useUserPrayerRequests } from '@/features/prayer-request/hooks/useUserPrayerRequests';
 import { useInfiniteBoardPosts } from '@/features/board/hooks';
-import { useUserFellowships } from '@/features/fellowship/hooks';
+import { useUserFellowships } from '@/features/fellowship/hooks/useUserFellowships';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
 	BottomSheetListLayout,

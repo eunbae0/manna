@@ -2,9 +2,10 @@ import { handleApiError } from '@/api/errors';
 import { withApiLogging } from '@/api/utils/logger';
 import { getFellowshipService } from './service';
 import type {
-	ClientFellowship,
-	CreateFellowshipInput,
-	UpdateFellowshipInput,
+	ClientFellowshipV2,
+	CompactClientFellowshipV2,
+	CreateFellowshipInputV2,
+	UpdateFellowshipInputV2,
 } from './types';
 import type { Timestamp } from '@react-native-firebase/firestore';
 
@@ -18,14 +19,14 @@ import type { Timestamp } from '@react-native-firebase/firestore';
 export const fetchGroupFellowships = withApiLogging(
 	async ({
 		groupId,
-		limitCount = 10,
+		limitCount = 8,
 		startAfter,
 	}: {
 		groupId: string;
 		limitCount?: number;
 		startAfter?: Timestamp; // Timestamp from Firestore
 	}): Promise<{
-		items: ClientFellowship[];
+		items: ClientFellowshipV2[];
 		hasMore: boolean;
 		total: number;
 	}> => {
@@ -63,7 +64,7 @@ export const fetchRecentFellowshipsWhereUserIsLeader = withApiLogging(
 		userId: string;
 		limitCount?: number;
 	}): Promise<{
-		items: ClientFellowship[];
+		items: CompactClientFellowshipV2[];
 		total: number;
 	}> => {
 		try {
@@ -96,6 +97,54 @@ export const fetchRecentFellowshipsWhereUserIsLeader = withApiLogging(
 );
 
 /**
+ * 특정 사용자가 참여한 나눔을 가져옵니다
+ * @param groupId 그룹 ID
+ * @param userId 사용자 ID
+ * @param limitCount 가져올 항목 수 (기본값: 8)
+ * @param startAfter 페이지네이션을 위한 시작점
+ * @returns 페이지네이션된 나눔 데이터
+ */
+export const fetchUserFellowships = withApiLogging(
+	async ({
+		groupId,
+		userId,
+		limitCount = 8,
+		startAfter,
+	}: {
+		groupId: string;
+		userId: string;
+		limitCount?: number;
+		startAfter?: Timestamp;
+	}): Promise<{
+		items: ClientFellowshipV2[];
+		hasMore: boolean;
+		total: number;
+	}> => {
+		try {
+			if (!groupId || !userId) {
+				return {
+					items: [],
+					hasMore: false,
+					total: 0,
+				};
+			}
+
+			const fellowshipService = getFellowshipService();
+			return await fellowshipService.getUserFellowships({
+				groupId,
+				userId,
+				limitCount,
+				startAfter,
+			});
+		} catch (error) {
+			throw handleApiError(error, 'fetchUserFellowships', 'fellowship');
+		}
+	},
+	'fetchUserFellowships',
+	'fellowship',
+);
+
+/**
  * Fetches a specific fellowship by ID
  * @param groupId ID of the group
  * @param fellowshipId ID of the fellowship to fetch
@@ -108,7 +157,7 @@ export const fetchFellowshipById = withApiLogging(
 	}: {
 		groupId: string;
 		fellowshipId: string;
-	}): Promise<ClientFellowship | null> => {
+	}): Promise<ClientFellowshipV2 | null> => {
 		try {
 			const fellowshipService = getFellowshipService();
 			return await fellowshipService.getFellowshipById({
@@ -130,18 +179,10 @@ export const fetchFellowshipById = withApiLogging(
  * @returns ID of the created fellowship
  */
 export const createFellowship = withApiLogging(
-	async (
-		{ groupId }: { groupId: string },
-		fellowshipData: CreateFellowshipInput,
-	): Promise<string> => {
+	async (fellowshipData: CreateFellowshipInputV2): Promise<string> => {
 		try {
 			const fellowshipService = getFellowshipService();
-			return await fellowshipService.createFellowship(
-				{
-					groupId,
-				},
-				fellowshipData,
-			);
+			return await fellowshipService.createFellowship(fellowshipData);
 		} catch (error) {
 			throw handleApiError(error, 'createFellowship', 'fellowship');
 		}
@@ -159,7 +200,7 @@ export const createFellowship = withApiLogging(
 export const updateFellowship = withApiLogging(
 	async (
 		{ groupId, fellowshipId }: { groupId: string; fellowshipId: string },
-		fellowshipData: UpdateFellowshipInput,
+		fellowshipData: UpdateFellowshipInputV2,
 	): Promise<void> => {
 		try {
 			const fellowshipService = getFellowshipService();
@@ -196,45 +237,5 @@ export const deleteFellowship = withApiLogging(
 		}
 	},
 	'deleteFellowship',
-	'fellowship',
-);
-
-/**
- * Fetches fellowships by date range
- * @param groupId ID of the group
- * @param startDate Start date of the range
- * @param endDate End date of the range
- * @returns Array of fellowship data within the date range
- */
-export const fetchFellowshipsByDateRange = withApiLogging(
-	async (
-		{ groupId }: { groupId: string },
-		startDate: Date,
-		endDate: Date,
-	): Promise<ClientFellowship[]> => {
-		try {
-			const fellowshipService = getFellowshipService();
-			const result = await fellowshipService.getFellowshipsByDateRange(
-				{
-					groupId,
-				},
-				startDate,
-				endDate,
-			);
-
-			// Pass metadata to the withApiLogging wrapper via context
-			const context = {
-				count: result.length,
-				groupId,
-				dateRange: `${startDate.toISOString()} to ${endDate.toISOString()}`,
-			};
-
-			// The withApiLogging wrapper will include this context in the success log
-			return Object.assign(result, { __logContext: context });
-		} catch (error) {
-			throw handleApiError(error, 'fetchFellowshipsByDateRange', 'fellowship');
-		}
-	},
-	'fetchFellowshipsByDateRange',
 	'fellowship',
 );

@@ -1,4 +1,4 @@
-import { Button, ButtonText } from '@/components/common/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Divider } from '#/components/ui/divider';
 import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
@@ -9,16 +9,42 @@ import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/auth';
 import { useFellowshipStore } from '@/store/createFellowship';
-import { ChevronRight, Check } from 'lucide-react-native';
-import { Pressable } from 'react-native';
+import {
+	ChevronRight,
+	Check,
+	ChevronDown,
+	Pickaxe,
+	MessageSquareHeart,
+	X,
+	Plus,
+	ThumbsUp,
+	HelpingHand,
+} from 'lucide-react-native';
+import { Keyboard, TextInput } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useBackHandler } from '@/shared/hooks/useBackHandler';
 import { useRecentFellowshipsWhereUserIsLeader } from '../../hooks/useRecentFellowshipsWhereUserIsLeader';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { ScrollView } from 'react-native-gesture-handler';
-import type { ClientFellowship } from '../../api/types';
+import type { ClientFellowship, ClientFellowshipV2, CompactClientFellowshipV2 } from '../../api/types';
 import { v4 as uuidv4 } from 'uuid';
+import { useExpandAnimation } from '@/shared/hooks/animation/useExpandAnimation';
+import Animated from 'react-native-reanimated';
+import { cn } from '@/shared/utils/cn';
+import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
+import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
+import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
+import {
+	BottomSheetListLayout,
+	BottomSheetListHeader,
+} from '@/components/common/bottom-sheet';
+import {
+	type QuestionCategory,
+	ICEBREAKING_CATEGORIES,
+	SERMON_CATEGORIES,
+} from '../../constants/question';
+import { Box } from '#/components/ui/box';
 
 export default function FellowshipContentScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -40,7 +66,7 @@ export default function FellowshipContentScreen() {
 	);
 
 	// 선택된 fellowship과 선택된 질문들을 관리하는 상태
-	type FellowshipItem = NonNullable<ClientFellowship>;
+	type FellowshipItem = NonNullable<CompactClientFellowshipV2>;
 	const [selectedFellowship, setSelectedFellowship] =
 		useState<FellowshipItem | null>(null);
 	const [selectedQuestions, setSelectedQuestions] = useState<{
@@ -79,97 +105,421 @@ export default function FellowshipContentScreen() {
 		return true;
 	});
 
+	const {
+		toggle: toggleIceBreaking,
+		containerStyle: iceBreakingContainerStyle,
+		iconStyle: iceBreakingIconStyle,
+		onContentLayout: onIceBreakingContentLayout,
+	} = useExpandAnimation();
+
+	const {
+		toggle: toggleSermonTopic,
+		containerStyle: sermonTopicContainerStyle,
+		iconStyle: sermonTopicIconStyle,
+		onContentLayout: onSermonTopicContentLayout,
+	} = useExpandAnimation();
+
+	const iceBreakingTextInputRef = useRef<TextInput>(null);
+	const sermonTextInputRef = useRef<TextInput>(null);
+
+	const [iceBreakingAnswers, setIceBreakingAnswers] = useState([
+		{ id: uuidv4(), title: '' },
+	]);
+
+	const [sermonTopicAnswers, setSermonTopicAnswers] = useState([
+		{ id: uuidv4(), title: '' },
+	]);
+
+	// 나눔 추천
+
+	const {
+		BottomSheetContainer: RecommendedQuestionsBottomSheetContainer,
+		handleOpen: handleOpenRecommendedQuestions,
+		handleClose: handleCloseRecommendedQuestions,
+	} = useBottomSheet();
+
+	const [selectedCategory, setSelectedCategory] = useState<
+		'iceBreaking' | 'sermonTopic'
+	>('iceBreaking');
+	const [activeCategoryId, setActiveCategoryId] = useState<string>('1');
+	const [recommendedQuestions, setRecommendedQuestions] = useState<
+		QuestionCategory[]
+	>(
+		ICEBREAKING_CATEGORIES
+	);
+
+	// 선택된 질문 개수 계산
+	const selectedQuestionsCount = useMemo(() => {
+		return recommendedQuestions.reduce((count, category) => {
+			return count + category.questions.filter((q) => q.selected).length;
+		}, 0);
+	}, [recommendedQuestions]);
+
+	const handlePressRecommendedQuestions = (category: 'iceBreaking' | 'sermonTopic') => {
+		Keyboard.dismiss();
+		setSelectedCategory(category);
+		setRecommendedQuestions(category === 'iceBreaking' ? ICEBREAKING_CATEGORIES : SERMON_CATEGORIES);
+		handleOpenRecommendedQuestions();
+	};
+
+	const handleSelectCategory = (categoryId: string) => {
+		setActiveCategoryId(categoryId);
+	};
+
+	const handleToggleQuestion = (categoryId: string, questionId: string) => {
+		setRecommendedQuestions((prev) => {
+			return prev.map((category) => {
+				if (category.id === categoryId) {
+					return {
+						...category,
+						questions: category.questions.map((question) => {
+							if (question.id === questionId) {
+								return { ...question, selected: !question.selected };
+							}
+							return question;
+						}),
+					};
+				}
+				return category;
+			});
+		});
+	};
+
+
+	const handleAddSelectedQuestions = () => {
+		const isIceBreaking = selectedCategory === 'iceBreaking';
+		// 모든 카테고리에서 선택된 질문들 수집
+		const selectedQuestions = recommendedQuestions
+			.flatMap(category => category.questions)
+			.filter(question => question.selected)
+			.map(question => ({
+				id: uuidv4(),
+				title: question.text,
+			}));
+
+		if (selectedQuestions.length === 0) {
+			// 선택된 질문이 없으면 바텀시트만 닫기
+			handleCloseRecommendedQuestions();
+			return;
+		}
+
+		if (isIceBreaking) {
+			const updatedFields = [...iceBreakingAnswers.filter(({ title }) => title !== ''), ...selectedQuestions];
+			setIceBreakingAnswers(updatedFields);
+		} else {
+			const updatedFields = [...sermonTopicAnswers.filter(({ title }) => title !== ''), ...selectedQuestions];
+			setSermonTopicAnswers(updatedFields);
+		}
+
+		// 선택 상태 초기화
+		setRecommendedQuestions(prev => {
+			return prev.map(category => ({
+				...category,
+				questions: category.questions.map(question => ({
+					...question,
+					selected: false
+				}))
+			}));
+		});
+
+		// 바텀시트 닫기
+		handleCloseRecommendedQuestions();
+
+		// 포커스 설정 (마지막 필드로)
+		setTimeout(() => {
+			if (isIceBreaking) {
+				iceBreakingTextInputRef.current?.focus();
+			} else {
+				sermonTextInputRef.current?.focus();
+			}
+		}, 100);
+	};
+
+
 	return (
 		<>
-			<VStack className="flex-1">
+			<KeyboardDismissView className="flex-1">
 				<Header onPressBackButton={() => setStep('INFO')} />
-				<VStack className="px-5 py-6 gap-12 flex-1">
-					<HStack className="items-center justify-between">
-						<Heading className="text-[24px]">나눔은 어떻게 진행할까요?</Heading>
-						{/* TODO: 도움말 모달 추가하기 */}
-						{/* <Pressable>
-							<Icon
-								as={CircleHelp}
-								size="lg"
-								className="color-typography-600"
-							/>
-						</Pressable> */}
-					</HStack>
-					<VStack className="gap-8">
-						<Pressable onPress={() => setStep('CONTENT_ICEBREAKING')}>
-							<HStack className="py-3 items-center justify-between w-full">
-								<Heading size="xl">아이스 브레이킹</Heading>
-								<HStack space="md" className="items-center">
-									<Text size="lg" className="text-typography-600">
-										{content.iceBreaking.length}개
-									</Text>
+				<KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+					<VStack className="flex-1">
+						<VStack className="px-5 py-6 gap-16 flex-1">
+							<HStack className="items-center justify-between">
+								<Heading className="text-[24px]">
+									나눔은 어떻게 진행할까요?
+								</Heading>
+								{/* TODO: 도움말 모달 추가하기 */}
+								{/* <Pressable>
 									<Icon
-										as={ChevronRight}
+										as={CircleHelp}
 										size="lg"
 										className="color-typography-600"
 									/>
-								</HStack>
+								</Pressable> */}
 							</HStack>
-						</Pressable>
-						<Pressable onPress={() => setStep('CONTENT_SERMON')}>
-							<HStack className="py-3 items-center justify-between w-full">
-								<Heading size="xl">설교 나눔</Heading>
-								<HStack space="md" className="items-center">
-									<Text size="lg" className="text-typography-600">
-										{content.sermonTopic.length}개
-									</Text>
-									<Icon
-										as={ChevronRight}
-										size="lg"
-										className="color-typography-600"
-									/>
+							<VStack className="gap-7">
+								<VStack>
+									<AnimatedPressable onPress={() => toggleIceBreaking()}>
+										<HStack className="items-center justify-between">
+											<HStack space="md" className="items-center">
+												<Icon
+													as={Pickaxe}
+													size="xl"
+													className="text-primary-500"
+												/>
+												<Text
+													size="xl"
+													weight="medium"
+													className="text-typography-700"
+												>
+													아이스 브레이킹
+												</Text>
+											</HStack>
+											<HStack space="md" className="items-center">
+												<Text
+													size="xl"
+													weight="medium"
+													className="text-typography-700"
+												>
+													{iceBreakingAnswers.length > 0
+														? `${iceBreakingAnswers.length}개`
+														: '질문을 추가해보세요'}
+												</Text>
+												<Animated.View style={[iceBreakingIconStyle]}>
+													<Icon
+														as={ChevronDown}
+														size="md"
+														className="text-typography-500"
+													/>
+												</Animated.View>
+											</HStack>
+										</HStack>
+									</AnimatedPressable>
+									<Animated.View style={iceBreakingContainerStyle}>
+										<VStack
+											space="md"
+											className="pt-6"
+											onLayout={onIceBreakingContentLayout}
+										>
+											{iceBreakingAnswers.map(({ id, title }, index) => (
+												<HStack key={id} space="sm" className="items-center">
+													<TextInput
+														ref={
+															index === iceBreakingAnswers.length - 1
+																? iceBreakingTextInputRef
+																: null
+														}
+														value={title}
+														onChangeText={(text) => {
+															const updatedFields = [...iceBreakingAnswers];
+															updatedFields[index].title = text;
+															setIceBreakingAnswers(updatedFields);
+														}}
+														multiline
+														placeholder="ex. 이번 주 동안 있었던 재밌는 일 한가지를 말해주세요"
+														textAlignVertical="top"
+														className={cn(
+															TEXT_INPUT_STYLE,
+															'text-lg py-3 placeholder:text-typography-400 flex-1',
+														)}
+													/>
+													{iceBreakingAnswers.length > 1 && (
+														<Button
+															variant="icon"
+															onPress={() => {
+																const updatedFields = iceBreakingAnswers.filter(
+																	(item) => item.id !== id,
+																);
+																setIceBreakingAnswers(updatedFields);
+															}}
+														>
+															<ButtonIcon as={X} />
+														</Button>
+													)}
+												</HStack>
+											))}
+											<HStack space="sm" className="items-center">
+												<Button
+													variant="outline"
+													className="flex-1"
+													onPress={() => {
+														const updatedFields = [...iceBreakingAnswers];
+														updatedFields.push({ id: uuidv4(), title: '' });
+														setIceBreakingAnswers(updatedFields);
+														// focus keyboard
+														setTimeout(() => {
+															iceBreakingTextInputRef.current?.focus();
+														}, 100);
+													}}
+												>
+													<ButtonText>항목 추가하기</ButtonText>
+													<ButtonIcon as={Plus} />
+												</Button>
+												<Button
+													className="flex-1"
+													onPress={() => handlePressRecommendedQuestions('iceBreaking')}
+												>
+													<ButtonText>추천 질문 보기</ButtonText>
+													<ButtonIcon as={ThumbsUp} />
+												</Button>
+											</HStack>
+										</VStack>
+									</Animated.View>
+								</VStack>
+
+								<Divider />
+
+								<VStack>
+									<AnimatedPressable onPress={() => toggleSermonTopic()}>
+										<HStack className="items-center justify-between">
+											<HStack space="md" className="items-center">
+												<Icon
+													as={MessageSquareHeart}
+													size="xl"
+													className="text-primary-500"
+												/>
+												<Text
+													size="xl"
+													weight="medium"
+													className="text-typography-700"
+												>
+													설교 나눔
+												</Text>
+											</HStack>
+											<HStack space="md" className="items-center">
+												<Text
+													size="xl"
+													weight="medium"
+													className="text-typography-700"
+												>
+													{sermonTopicAnswers.length > 0
+														? `${sermonTopicAnswers.length}개`
+														: '질문을 추가해보세요'}
+												</Text>
+												<Animated.View style={[sermonTopicIconStyle]}>
+													<Icon
+														as={ChevronDown}
+														size="md"
+														className="text-typography-500"
+													/>
+												</Animated.View>
+											</HStack>
+										</HStack>
+									</AnimatedPressable>
+									<Animated.View style={sermonTopicContainerStyle}>
+										<VStack
+											space="md"
+											className="pt-6"
+											onLayout={onSermonTopicContentLayout}
+										>
+											{sermonTopicAnswers.map(({ id, title }, index) => (
+												<HStack key={id} space="sm" className="items-center">
+													<TextInput
+														ref={
+															index === sermonTopicAnswers.length - 1
+																? sermonTextInputRef
+																: null
+														}
+														value={title}
+														onChangeText={(text) => {
+															const updatedFields = [...sermonTopicAnswers];
+															updatedFields[index].title = text;
+															setSermonTopicAnswers(updatedFields);
+														}}
+														multiline
+														placeholder="ex. 이번 주 동안 있었던 재밌는 일 한가지를 말해주세요"
+														textAlignVertical="top"
+														className={cn(
+															TEXT_INPUT_STYLE,
+															'text-lg py-3 placeholder:text-typography-400 flex-1',
+														)}
+													/>
+													{sermonTopicAnswers.length > 1 && (
+														<Button
+															variant="icon"
+															onPress={() => {
+																const updatedFields = sermonTopicAnswers.filter(
+																	(item) => item.id !== id,
+																);
+																setSermonTopicAnswers(updatedFields);
+															}}
+														>
+															<ButtonIcon as={X} />
+														</Button>
+													)}
+												</HStack>
+											))}
+											<HStack space="sm" className="items-center">
+												<Button
+													variant="outline"
+													className="flex-1"
+													onPress={() => {
+														const updatedFields = [...iceBreakingAnswers];
+														updatedFields.push({ id: uuidv4(), title: '' });
+														setIceBreakingAnswers(updatedFields);
+														// focus keyboard
+														setTimeout(() => {
+															iceBreakingTextInputRef.current?.focus();
+														}, 100);
+													}}
+												>
+													<ButtonText>항목 추가하기</ButtonText>
+													<ButtonIcon as={Plus} />
+												</Button>
+												<Button
+													className="flex-1"
+													onPress={() => handlePressRecommendedQuestions('sermonTopic')}
+												>
+													<ButtonText>추천 질문 보기</ButtonText>
+													<ButtonIcon as={ThumbsUp} />
+												</Button>
+											</HStack>
+										</VStack>
+									</Animated.View>
+								</VStack>
+
+								<Divider />
+
+								<HStack className="items-center justify-between">
+									<HStack space="md" className="items-center">
+										<Icon
+											as={HelpingHand}
+											size="xl"
+											className="text-primary-500"
+										/>
+										<Text
+											size="xl"
+											weight="medium"
+											className="text-typography-700"
+										>
+											기도 제목
+										</Text>
+									</HStack>
+									<HStack space="sm" className="items-center">
+										{/* <Text size="md" weight="regular" className="text-typography-600">
+											활성화 됨
+										</Text> */}
+										<Switch
+											size="md"
+											isDisabled={false}
+										// defaultValue={content.categories.prayerRequest.isActive}
+										// onChange={() => {
+										// 	updateFellowshipContent({
+										// 		categories: {
+										// 			...content.categories,
+										// 			prayerRequest: {
+										// 				...content.categories.prayerRequest,
+										// 				isActive: !content.categories.prayerRequest.isActive,
+										// 			},
+										// 		},
+										// 	});
+										// }}
+										/>
+									</HStack>
 								</HStack>
-							</HStack>
-						</Pressable>
-
-						<HStack className="items-center justify-between mt-2">
-							<VStack space="xs">
-								<Heading size="xl">기도 제목</Heading>
-								<Text className="text-typography-600">
-									소그룹원과 기도 제목을 나눠보세요
-								</Text>
 							</VStack>
-							<Switch
-								size="md"
-								isDisabled={false}
-								defaultValue={content.prayerRequest.isActive}
-								onChange={() => {
-									updateFellowshipContent({
-										prayerRequest: {
-											...content.prayerRequest,
-											isActive: !content.prayerRequest.isActive,
-										},
-									});
-								}}
-							/>
-						</HStack>
-						<Divider />
-
-						<HStack className="items-center justify-between">
-							<VStack space="xs">
-								<Heading size="xl">그룹원도 나눔 답변 작성</Heading>
-								<Text className="text-typography-600">
-									활성화하면 그룹원도 함께 나눔 답변을 작성할 수 있어요
-								</Text>
-							</VStack>
-							<Switch
-								size="md"
-								isDisabled={false}
-								defaultValue={options.enableMemberReply}
-								onChange={() => {
-									updateFellowshipOptions({
-										enableMemberReply: !options.enableMemberReply,
-									});
-								}}
-							/>
-						</HStack>
+						</VStack>
 					</VStack>
-				</VStack>
+				</KeyboardAwareScrollView>
 				<HStack space="sm" className="mb-6 mx-5">
 					<Button
 						size="lg"
@@ -185,20 +535,14 @@ export default function FellowshipContentScreen() {
 						size="lg"
 						variant="solid"
 						className="flex-1"
-						onPress={async () => {
-							await completeFellowship({
-								type,
-								groupId: currentGroup?.groupId || '',
-								fellowshipId,
-							});
+						onPress={() => {
+							setStep('OPTIONS');
 						}}
 					>
-						<ButtonText>
-							{type === 'CREATE' ? '생성하기' : '저장하기'}
-						</ButtonText>
+						<ButtonText>다음</ButtonText>
 					</Button>
 				</HStack>
-			</VStack>
+			</KeyboardDismissView>
 			<BottomSheetContainer>
 				<VStack space="2xl" className="justify-center pt-4 pb-5 px-4">
 					<VStack className="items-start" space="sm">
@@ -214,7 +558,7 @@ export default function FellowshipContentScreen() {
 							<ScrollView className="md:max-h-screen max-h-60">
 								{fellowships?.items.map((fellowship) => (
 									<AnimatedPressable
-										key={fellowship.id}
+										key={fellowship.identifiers.id}
 										onPress={() => {
 											setSelectedFellowship(fellowship);
 											// 선택된 질문 초기화
@@ -246,7 +590,7 @@ export default function FellowshipContentScreen() {
 													)}
 												</Text>
 												<Text size="lg" className="font-pretendard-bold">
-													{fellowship.info.preachTitle || '제목 없음'}
+													{fellowship.info.title || '제목 없음'}
 												</Text>
 											</VStack>
 											<Icon as={ChevronRight} size="md" color="#9CA3AF" />
@@ -269,12 +613,12 @@ export default function FellowshipContentScreen() {
 							<VStack space="lg" className="w-full">
 								{/* 아이스브레이킹 섹션 */}
 								<VStack space="sm" className="w-full">
-									{selectedFellowship?.content.iceBreaking.length > 0 && (
+									{selectedFellowship?.content.categories.iceBreaking.items.length > 0 && (
 										<Text size="lg" className="font-pretendard-bold">
 											아이스브레이킹
 										</Text>
 									)}
-									{selectedFellowship?.content.iceBreaking.map(
+									{selectedFellowship?.content.categories.iceBreaking.items.map(
 										(item: { question: string; answer?: string }) => (
 											<AnimatedPressable
 												key={`ice-${item.question}`}
@@ -318,12 +662,12 @@ export default function FellowshipContentScreen() {
 
 								{/* 설교 나눔 섹션 */}
 								<VStack space="sm" className="w-full">
-									{selectedFellowship.content.sermonTopic.length > 0 && (
+									{selectedFellowship?.content.categories.sermonTopic.length > 0 && (
 										<Text size="lg" className="font-pretendard-bold">
 											설교 나눔
 										</Text>
 									)}
-									{selectedFellowship.content.sermonTopic.map(
+									{selectedFellowship?.content.categories.sermonTopic.items.map(
 										(item: { question: string; answer?: string }) => (
 											<AnimatedPressable
 												key={`preach-${item.question}`}
@@ -380,31 +724,44 @@ export default function FellowshipContentScreen() {
 										onPress={() => {
 											// 선택된 질문들을 추가
 											const selectedIceBreaking =
-												selectedFellowship.content.iceBreaking.filter(
-													(item: { question: string }) =>
+												selectedFellowship.content.categories.iceBreaking.items
+													.filter((item: { question: string }) =>
 														selectedQuestions.iceBreaking.includes(
 															item.question,
 														),
-												).map(({ question }) => ({ id: uuidv4(), question, answers: [] }));
+													)
+													.map(({ question }) => ({
+														id: uuidv4(),
+														question,
+														answers: [],
+													}));
 
 											const selectedSermonTopic =
-												selectedFellowship.content.sermonTopic.filter(
-													(item: { question: string }) =>
+												selectedFellowship.content.categories.sermonTopic.items
+													.filter((item: { question: string }) =>
 														selectedQuestions.sermonTopic.includes(
 															item.question,
 														),
-												).map(({ question }) => ({ id: uuidv4(), question, answers: [] }));
+													)
+													.map(({ question }) => ({
+														id: uuidv4(),
+														question,
+														answers: [],
+													}));
 
 											// 현재 Fellowship 콘텐츠에 선택된 질문들 추가
 											updateFellowshipContent({
-												iceBreaking: [
-													...content.iceBreaking,
-													...selectedIceBreaking,
-												],
-												sermonTopic: [
-													...content.sermonTopic,
-													...selectedSermonTopic,
-												],
+												categories: {
+													...content.categories,
+													iceBreaking: [
+														...content.categories.iceBreaking.items,
+														...selectedIceBreaking,
+													],
+													sermonTopic: [
+														...content.categories.sermonTopic.items,
+														...selectedSermonTopic,
+													],
+												},
 											});
 
 											// BottomSheet 닫기
@@ -430,6 +787,95 @@ export default function FellowshipContentScreen() {
 					)}
 				</VStack>
 			</BottomSheetContainer>
+			<RecommendedQuestionsBottomSheetContainer>
+				<BottomSheetListLayout>
+					<BottomSheetListHeader
+						label={
+							selectedCategory === 'iceBreaking'
+								? '아이스 브레이킹 추천 질문'
+								: '설교 나눔 추천 질문'
+						}
+						onPress={handleCloseRecommendedQuestions}
+					/>
+					<VStack>
+						{/* 카테고리 탭 */}
+						<HStack className="mb-4 border-b border-background-200">
+							{recommendedQuestions.map((category) => (
+								<AnimatedPressable
+									key={category.id}
+									scale={0.98}
+									onPress={() => handleSelectCategory(category.id)}
+									className={cn(
+										'py-3 px-4',
+										activeCategoryId === category.id &&
+										'border-b-2 border-primary-500',
+									)}
+								>
+									<Text
+										size="md"
+										weight="medium"
+										className={cn(
+											activeCategoryId === category.id
+												? 'text-primary-500'
+												: 'text-typography-500',
+										)}
+									>
+										{category.title}
+									</Text>
+								</AnimatedPressable>
+							))}
+						</HStack>
+
+						{/* 현재 선택된 카테고리의 질문 목록 */}
+						<VStack space="md" className="mb-4">
+							{recommendedQuestions
+								.find((category) => category.id === activeCategoryId)
+								?.questions.map((question) => {
+									const isSelected = question.selected;
+									return (
+										<AnimatedPressable
+											key={question.id}
+											scale={0.98}
+											onPress={() =>
+												handleToggleQuestion(activeCategoryId, question.id)
+											}
+											className="py-3"
+										>
+											<HStack className="items-center justify-between">
+												<HStack space="sm" className="items-center flex-1">
+													<Box className="w-2 h-2 bg-background-400 rounded-full" />
+													<Text size="md" className="flex-1">
+														{question.text}
+													</Text>
+												</HStack>
+												{isSelected ? (
+													<Box className="bg-primary-500 rounded-full p-1 w-6 h-6 mr-2">
+														<Icon as={Check} size="sm" color="white" />
+													</Box>
+												) : (
+													<Box className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
+												)}
+											</HStack>
+										</AnimatedPressable>
+									);
+								})}
+						</VStack>
+
+						{/* 추가하기 버튼 */}
+						<Button
+							size="lg"
+							className="mt-2"
+							onPress={handleAddSelectedQuestions}
+						>
+							<ButtonText>
+								{selectedQuestionsCount > 0
+									? `${selectedQuestionsCount}개 추가하기`
+									: '닫기'}
+							</ButtonText>
+						</Button>
+					</VStack>
+				</BottomSheetListLayout>
+			</RecommendedQuestionsBottomSheetContainer>
 		</>
 	);
 }

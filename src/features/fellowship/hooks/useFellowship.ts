@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { ClientFellowship, UpdateFellowshipInput } from '../api/types';
+import { useEffect, useCallback } from 'react';
+import type { ClientFellowshipV2, UpdateFellowshipInputV2 } from '../api/types';
 import {
-	deleteFellowship,
 	fetchFellowshipById,
+	deleteFellowship,
 	updateFellowship,
 } from '../api';
+import { getFellowshipService } from '../api/service';
 import { useToastStore } from '@/store/toast';
 import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
@@ -18,49 +20,60 @@ export function useFellowship(id: string | undefined) {
 	const queryClient = useQueryClient();
 	const { showSuccess, showError } = useToastStore();
 	const { currentGroup } = useAuthStore();
+	const groupId = currentGroup?.groupId || '';
 
-	// 나눔 노트 조회 쿼리
-	const {
-		data: fellowship,
-		isLoading,
-		isError,
-		error,
-		refetch,
-		isFetching,
-	} = useQuery<ClientFellowship, Error>({
-		queryKey: [FELLOWSHIP_QUERY_KEY, id],
+	// React Query를 사용하여 fellowship 데이터 가져오기
+	const fellowshipQuery = useQuery<ClientFellowshipV2 | null>({
+		queryKey: [FELLOWSHIP_QUERY_KEY, groupId, id],
 		queryFn: async () => {
-			if (!id) throw new Error('ID가 없습니다.');
-			const data = await fetchFellowshipById({
-				groupId: currentGroup?.groupId || '',
-				fellowshipId: id,
-			});
-			if (!data) {
-				throw new Error('나눔 노트를 찾을 수 없습니다.');
-			}
-			return data;
+			return null;
 		},
-		enabled: !!id && !!currentGroup?.groupId,
-		staleTime: 5 * 60 * 1000, // 5분 동안 데이터를 신선한 상태로 유지
-		retry: 2,
+		enabled: !!id && !!groupId,
 	});
 
-	// 나눔 노트 업데이트 뮤테이션
-	const updateFellowshipMutation = useMutation({
-		mutationFn: async (updatedFellowship: UpdateFellowshipInput) => {
-			if (!id) throw new Error('ID가 없습니다.');
-			await updateFellowship(
+	// 실시간 업데이트 리스너 설정
+	useEffect(() => {
+		if (!id || !groupId) {
+			return;
+		}
+		const fellowshipService = getFellowshipService();
+
+		const unsubscribe = fellowshipService.onFellowshipSnapshot(
+			{ groupId, fellowshipId: id },
+			(data: ClientFellowshipV2 | null) => {
+				if (data) {
+					queryClient.setQueryData([FELLOWSHIP_QUERY_KEY, groupId, id], data);
+				}
+			},
+			(err: Error) => {
+				console.error('Error listening to fellowship:', err);
+				queryClient.invalidateQueries({
+					queryKey: [FELLOWSHIP_QUERY_KEY, groupId, id],
+				});
+			},
+		);
+
+		return () => {
+			unsubscribe();
+		};
+	}, [id, groupId, queryClient]);
+
+	// 나눔 노트 업데이트를 위한 mutation
+	const updateMutation = useMutation({
+		mutationFn: async (updatedFellowship: UpdateFellowshipInputV2) => {
+			if (!id || !groupId) {
+				throw new Error('ID가 없습니다.');
+			}
+
+			return updateFellowship(
 				{
-					groupId: currentGroup?.groupId || '',
+					groupId,
 					fellowshipId: id,
 				},
 				updatedFellowship,
 			);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: [FELLOWSHIP_QUERY_KEY, id],
-			});
 			showSuccess('나눔 노트가 업데이트되었어요');
 		},
 		onError: (error) => {
@@ -69,20 +82,27 @@ export function useFellowship(id: string | undefined) {
 		},
 	});
 
-	const deleteFellowshipMutation = useMutation({
+	// 나눔 노트 삭제를 위한 mutation
+	const deleteMutation = useMutation({
 		mutationFn: async () => {
-			if (!id) throw new Error('ID가 없습니다');
-			await deleteFellowship({
-				groupId: currentGroup?.groupId || '',
+			if (!id || !groupId) {
+				throw new Error('ID가 없습니다.');
+			}
+
+			return deleteFellowship({
+				groupId,
 				fellowshipId: id,
 			});
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: [FELLOWSHIP_QUERY_KEY, id],
-			});
 			showSuccess('나눔 노트가 삭제되었어요');
+			// 삭제 후 뒤로 가기
 			if (router.canGoBack()) router.back();
+
+			// 관련 쿼리 무효화
+			queryClient.invalidateQueries({
+				queryKey: [FELLOWSHIP_QUERY_KEY],
+			});
 		},
 		onError: (error) => {
 			console.error('Error deleting fellowship:', error);
@@ -90,21 +110,30 @@ export function useFellowship(id: string | undefined) {
 		},
 	});
 
-	const updateFellowshipState = (updatedFellowship: UpdateFellowshipInput) => {
-		if (!fellowship) return;
+	// 편의를 위한 래퍼 함수
+	const updateFellowshipState = useCallback(
+		(updatedFellowship: UpdateFellowshipInputV2) => {
+			updateMutation.mutate(updatedFellowship);
+		},
+		[updateMutation],
+	);
 
-		updateFellowshipMutation.mutate(updatedFellowship);
-	};
+	const deleteFellowshipState = useCallback(() => {
+		deleteMutation.mutate();
+	}, [deleteMutation]);
 
 	return {
-		fellowship,
-		isLoading,
-		isError,
-		error,
-		refetch,
-		isFetching,
+		fellowship: fellowshipQuery.data,
+		isLoading: fellowshipQuery.isLoading,
+		isError: fellowshipQuery.isError,
+		error: fellowshipQuery.error,
+		refetch: fellowshipQuery.refetch,
+		isFetching: fellowshipQuery.isFetching,
 		updateFellowship: updateFellowshipState,
-		isUpdating: updateFellowshipMutation.isPending,
-		deleteFellowship: deleteFellowshipMutation.mutate,
+		isUpdating: updateMutation.isPending,
+		updateError: updateMutation.error,
+		deleteFellowship: deleteFellowshipState,
+		isDeleting: deleteMutation.isPending,
+		deleteError: deleteMutation.error,
 	};
 }

@@ -75,6 +75,7 @@ export default function AnswerScreen() {
 
   // 초기 데이터 로드
   useEffect(() => {
+    console.log(fellowship);
     if (fellowship && contentType && index !== undefined) {
       const existedPrayerRequest = fellowship.content.prayerRequest?.answers;
       const existedContents = isPrayerRequest ? undefined : fellowship.content[contentType][Number(index)];
@@ -167,7 +168,7 @@ export default function AnswerScreen() {
                   </Text>
                 </VStack>
 
-                <Divider />
+                <Divider className="h-2 bg-background-100" />
               </>
             )}
             <VStack space="4xl" className="mx-4 mt-2 mb-4 flex-1">
@@ -191,7 +192,7 @@ export default function AnswerScreen() {
                         />
                       </Button>
                     </HStack>
-                    <VStack space="3xl">
+                    <VStack space="4xl">
                       {fellowship.info.members.map((member) => (
                         <AnswerField
                           key={member.id}

@@ -6,6 +6,7 @@ import type { FellowshipStoreStep } from '@/store/createFellowship/types';
 
 import FellowshipInfoScreen from '@/features/fellowship/screens/create/FellowshipInfoScreen';
 import FellowshipContentScreen from '@/features/fellowship/screens/create/FellowshipContentScreen';
+import FellowshipOptionsScreen from '@/features/fellowship/screens/create/FellowshipOptionsScreen';
 import FellowshipIcebrakingScreen from '@/features/fellowship/screens/create/IceBreakingScreen';
 import FellowshipSermonTopicScreen from '@/features/fellowship/screens/create/FellowshipSermonTopicScreen';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
@@ -22,6 +23,8 @@ export default function CreateFellowshipScreen() {
 				return <FellowshipInfoScreen />;
 			case 'CONTENT':
 				return <FellowshipContentScreen />;
+			case 'OPTIONS':
+				return <FellowshipOptionsScreen />;
 			case 'CONTENT_ICEBREAKING':
 				return <FellowshipIcebrakingScreen />;
 			case 'CONTENT_SERMON':
