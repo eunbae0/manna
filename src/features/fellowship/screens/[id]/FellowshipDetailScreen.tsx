@@ -396,8 +396,10 @@ export default function FellowshipDetailScreen({
 									}
 									}
 								>
-									<FellowshipPrayerRequestList
-										answers={fellowshipData?.content.categories.prayerRequest.items.prayerRequest.answers || []}
+									<FellowshipContentList
+										fellowshipId={id}
+										contentType="prayerRequest"
+										enableReply={enableReply}
 									/>
 								</FellowshipContentLayout>
 							)}

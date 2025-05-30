@@ -11,13 +11,13 @@ import { useFellowship } from '../hooks/useFellowship';
 import { router } from 'expo-router';
 import { Box } from '#/components/ui/box';
 import { Icon } from '#/components/ui/icon';
-import type { FellowshipContentItemV2 } from '@/features/fellowship/api/types';
+import type { ClientFellowship, FellowshipContentItemV2 } from '@/features/fellowship/api/types';
 import { useMemo } from 'react';
 import { cn } from '@/shared/utils/cn';
 
 type SermonContentItemProps = {
 	fellowshipId: string;
-	contentType: 'iceBreaking' | 'sermonTopic';
+	contentType: keyof ClientFellowship['content'];
 	fellowshipContent: FellowshipContentItemV2;
 	enableReply: boolean;
 };
@@ -57,7 +57,7 @@ export default function FellowshipContent({
 	return (
 		<>
 			<VStack space="2xl">
-				<HStack space="xs" className="items-center justify-between">
+				{contentType !== 'prayerRequest' && <HStack space="xs" className="items-center justify-between">
 					<HStack space="xs" className="items-start flex-1">
 						<Box className="p-1 rounded-full bg-primary-100">
 							<Icon as={CircleHelp} size="md" className="text-primary-500" />
@@ -71,7 +71,7 @@ export default function FellowshipContent({
 							<ButtonIcon as={Edit3} />
 						</Button>
 					)}
-				</HStack>
+				</HStack>}
 				<VStack space="xl" className={cn("pl-2", answersWithParticipant.length !== 0 && "pb-6")}>
 					{answersWithParticipant.map((answer) => (
 						<VStack key={answer.participant?.id}>

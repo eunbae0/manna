@@ -7,7 +7,7 @@ import { useFellowship } from '../hooks/useFellowship';
 
 type SermonContentListProps = {
 	fellowshipId: string;
-	contentType: Exclude<keyof ClientFellowship['content'], 'prayerRequest'>;
+	contentType: keyof ClientFellowship['content'];
 	enableReply: boolean;
 };
 
