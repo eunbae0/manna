@@ -4,13 +4,13 @@ import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import type {
-	ClientFellowshipAnswerField,
+	ClientFellowshipAnswerV2,
 } from '@/features/fellowship/api/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
 
 type FellowshipPrayerRequestListProps = {
-	answers: ClientFellowshipAnswerField[];
+	answers: ClientFellowshipAnswerV2[];
 };
 
 export default function FellowshipPrayerRequestList({
@@ -20,28 +20,28 @@ export default function FellowshipPrayerRequestList({
 		<>
 			<VStack space="xl" className="pl-2">
 				{existedAnswers.map((answer) => (
-					<VStack key={answer.member.id}>
+					<VStack key={answer.participant.id}>
 						<VStack space="sm" className="">
 							<AnimatedPressable
 								onPress={() =>
-									!answer.member.isGuest && openProfile(answer.member.id)
+									!answer.participant.isGuest && openProfile(answer.participant.id)
 								}
 							>
 								<HStack space="sm" className="items-center">
 									<Avatar
 										size="2xs"
-										photoUrl={answer.member.photoUrl || undefined}
+										photoUrl={answer.participant.photoUrl || undefined}
 									/>
 									<Text
 										size="md"
 										className="font-pretendard-bold text-typography-600"
 									>
-										{answer.member.displayName}
+										{answer.participant.displayName}
 									</Text>
 								</HStack>
 							</AnimatedPressable>
 							<Text size="lg" className="flex-1 mx-1">
-								{answer.value}
+								{answer.content}
 							</Text>
 						</VStack>
 					</VStack>

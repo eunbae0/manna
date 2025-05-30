@@ -27,7 +27,10 @@ import { useBackHandler } from '@/shared/hooks/useBackHandler';
 import { useRecentFellowshipsWhereUserIsLeader } from '../../hooks/useRecentFellowshipsWhereUserIsLeader';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { ScrollView } from 'react-native-gesture-handler';
-import type { ClientFellowship, ClientFellowshipV2, CompactClientFellowshipV2 } from '../../api/types';
+import type {
+	CompactClientFellowshipV2,
+	FellowshipContentItemV2,
+} from '../../api/types';
 import { v4 as uuidv4 } from 'uuid';
 import { useExpandAnimation } from '@/shared/hooks/animation/useExpandAnimation';
 import Animated from 'react-native-reanimated';
@@ -47,16 +50,12 @@ import {
 import { Box } from '#/components/ui/box';
 
 export default function FellowshipContentScreen() {
-	const { user, currentGroup } = useAuthStore();
+	const { user } = useAuthStore();
 	const {
 		type,
-		fellowshipId,
 		setStep,
-		updateFellowshipContent,
-		updateFellowshipOptions,
+		updateFellowshipContent: updateFellowshipContentStore,
 		content,
-		options,
-		completeFellowship,
 		hasShownRecentRecommendSheet,
 		setHasShownRecentRecommendSheet,
 	} = useFellowshipStore();
@@ -122,16 +121,22 @@ export default function FellowshipContentScreen() {
 	const iceBreakingTextInputRef = useRef<TextInput>(null);
 	const sermonTextInputRef = useRef<TextInput>(null);
 
-	const [iceBreakingAnswers, setIceBreakingAnswers] = useState([
-		{ id: uuidv4(), title: '' },
-	]);
+	const [iceBreakingAnswers, setIceBreakingAnswers] = useState(
+		content.categories.iceBreaking.items && Object.values(content.categories.iceBreaking.items).length > 0
+			? Object.values(content.categories.iceBreaking.items).map(({ id, title }) => { return { id, title } })
+			: [
+				{ id: 'iceBreaking_temp', title: '' },
+			]);
 
-	const [sermonTopicAnswers, setSermonTopicAnswers] = useState([
-		{ id: uuidv4(), title: '' },
-	]);
+	const [sermonTopicAnswers, setSermonTopicAnswers] = useState(
+		content.categories.sermonTopic.items && Object.values(content.categories.sermonTopic.items).length > 0
+			? Object.values(content.categories.sermonTopic.items).map(({ id, title }) => { return { id, title } })
+			: [
+				{ id: 'sermonTopic_temp', title: '' },
+			]);
+
 
 	// 나눔 추천
-
 	const {
 		BottomSheetContainer: RecommendedQuestionsBottomSheetContainer,
 		handleOpen: handleOpenRecommendedQuestions,
@@ -144,9 +149,7 @@ export default function FellowshipContentScreen() {
 	const [activeCategoryId, setActiveCategoryId] = useState<string>('1');
 	const [recommendedQuestions, setRecommendedQuestions] = useState<
 		QuestionCategory[]
-	>(
-		ICEBREAKING_CATEGORIES
-	);
+	>(ICEBREAKING_CATEGORIES);
 
 	// 선택된 질문 개수 계산
 	const selectedQuestionsCount = useMemo(() => {
@@ -155,10 +158,14 @@ export default function FellowshipContentScreen() {
 		}, 0);
 	}, [recommendedQuestions]);
 
-	const handlePressRecommendedQuestions = (category: 'iceBreaking' | 'sermonTopic') => {
+	const handlePressRecommendedQuestions = (
+		category: 'iceBreaking' | 'sermonTopic',
+	) => {
 		Keyboard.dismiss();
 		setSelectedCategory(category);
-		setRecommendedQuestions(category === 'iceBreaking' ? ICEBREAKING_CATEGORIES : SERMON_CATEGORIES);
+		setRecommendedQuestions(
+			category === 'iceBreaking' ? ICEBREAKING_CATEGORIES : SERMON_CATEGORIES,
+		);
 		handleOpenRecommendedQuestions();
 	};
 
@@ -185,14 +192,13 @@ export default function FellowshipContentScreen() {
 		});
 	};
 
-
 	const handleAddSelectedQuestions = () => {
 		const isIceBreaking = selectedCategory === 'iceBreaking';
 		// 모든 카테고리에서 선택된 질문들 수집
 		const selectedQuestions = recommendedQuestions
-			.flatMap(category => category.questions)
-			.filter(question => question.selected)
-			.map(question => ({
+			.flatMap((category) => category.questions)
+			.filter((question) => question.selected)
+			.map((question) => ({
 				id: uuidv4(),
 				title: question.text,
 			}));
@@ -204,21 +210,27 @@ export default function FellowshipContentScreen() {
 		}
 
 		if (isIceBreaking) {
-			const updatedFields = [...iceBreakingAnswers.filter(({ title }) => title !== ''), ...selectedQuestions];
+			const updatedFields = [
+				...iceBreakingAnswers.filter(({ title }) => title !== ''),
+				...selectedQuestions,
+			];
 			setIceBreakingAnswers(updatedFields);
 		} else {
-			const updatedFields = [...sermonTopicAnswers.filter(({ title }) => title !== ''), ...selectedQuestions];
+			const updatedFields = [
+				...sermonTopicAnswers.filter(({ title }) => title !== ''),
+				...selectedQuestions,
+			];
 			setSermonTopicAnswers(updatedFields);
 		}
 
 		// 선택 상태 초기화
-		setRecommendedQuestions(prev => {
-			return prev.map(category => ({
+		setRecommendedQuestions((prev) => {
+			return prev.map((category) => ({
 				...category,
-				questions: category.questions.map(question => ({
+				questions: category.questions.map((question) => ({
 					...question,
-					selected: false
-				}))
+					selected: false,
+				})),
 			}));
 		});
 
@@ -235,12 +247,61 @@ export default function FellowshipContentScreen() {
 		}, 100);
 	};
 
+	// local > store 업데이트
+	const updateFellowshipContent = () => {
+		const iceBreakingItems: Record<string, FellowshipContentItemV2> = {}
+		iceBreakingAnswers.forEach(({ id, title }, index) => {
+			if (!title) return;
+			iceBreakingItems[id] = {
+				id, title, order: index, answers: {}
+			}
+		})
+		if (Object.keys(iceBreakingItems).length === 0)
+			iceBreakingItems.iceBreaking_temp = {
+				id: 'iceBreaking_temp', title: '', order: 0, answers: {}
+			}
+		const sermonTopicItems: Record<string, FellowshipContentItemV2> = {}
+		sermonTopicAnswers.forEach(({ id, title }, index) => {
+			if (!title) return;
+			sermonTopicItems[id] = {
+				id, title, order: index, answers: {}
+			}
+		})
+		if (Object.keys(sermonTopicItems).length === 0)
+			sermonTopicItems.sermonTopic_temp = {
+				id: 'sermonTopic_temp', title: '', order: 0, answers: {}
+			}
+		updateFellowshipContentStore({
+			categories: {
+				iceBreaking: {
+					order: 0,
+					id: 'iceBreaking',
+					title: "아이스 브레이킹",
+					type: 'iceBreaking',
+					isActive: iceBreakingAnswers.length > 0,
+					items: iceBreakingItems
+				},
+				sermonTopic: {
+					order: 1,
+					id: 'sermonTopic',
+					title: "설교 나눔",
+					type: 'sermonTopic',
+					isActive: sermonTopicAnswers.length > 0,
+					items: sermonTopicItems
+				},
+			},
+		});
+	}
 
 	return (
 		<>
 			<KeyboardDismissView className="flex-1">
 				<Header onPressBackButton={() => setStep('INFO')} />
-				<KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+				<KeyboardAwareScrollView
+					showsVerticalScrollIndicator={false}
+					contentContainerStyle={{ flexGrow: 1 }}
+					keyboardShouldPersistTaps="handled"
+				>
 					<VStack className="flex-1">
 						<VStack className="px-5 py-6 gap-16 flex-1">
 							<HStack className="items-center justify-between">
@@ -276,13 +337,13 @@ export default function FellowshipContentScreen() {
 											</HStack>
 											<HStack space="md" className="items-center">
 												<Text
-													size="xl"
+													size="lg"
 													weight="medium"
 													className="text-typography-700"
 												>
-													{iceBreakingAnswers.length > 0
-														? `${iceBreakingAnswers.length}개`
-														: '질문을 추가해보세요'}
+													{iceBreakingAnswers.length === 1 && iceBreakingAnswers[0].title === ''
+														? '질문을 추가해보세요'
+														: `${iceBreakingAnswers.length}개`}
 												</Text>
 												<Animated.View style={[iceBreakingIconStyle]}>
 													<Icon
@@ -351,12 +412,14 @@ export default function FellowshipContentScreen() {
 														}, 100);
 													}}
 												>
-													<ButtonText>항목 추가하기</ButtonText>
+													<ButtonText>항목 추가</ButtonText>
 													<ButtonIcon as={Plus} />
 												</Button>
 												<Button
 													className="flex-1"
-													onPress={() => handlePressRecommendedQuestions('iceBreaking')}
+													onPress={() =>
+														handlePressRecommendedQuestions('iceBreaking')
+													}
 												>
 													<ButtonText>추천 질문 보기</ButtonText>
 													<ButtonIcon as={ThumbsUp} />
@@ -387,13 +450,13 @@ export default function FellowshipContentScreen() {
 											</HStack>
 											<HStack space="md" className="items-center">
 												<Text
-													size="xl"
+													size="lg"
 													weight="medium"
 													className="text-typography-700"
 												>
-													{sermonTopicAnswers.length > 0
-														? `${sermonTopicAnswers.length}개`
-														: '질문을 추가해보세요'}
+													{sermonTopicAnswers.length === 1 && sermonTopicAnswers[0].title === ''
+														? '질문을 추가해보세요'
+														: `${sermonTopicAnswers.length}개`}
 												</Text>
 												<Animated.View style={[sermonTopicIconStyle]}>
 													<Icon
@@ -426,7 +489,7 @@ export default function FellowshipContentScreen() {
 															setSermonTopicAnswers(updatedFields);
 														}}
 														multiline
-														placeholder="ex. 이번 주 동안 있었던 재밌는 일 한가지를 말해주세요"
+														placeholder="ex. 오늘 말씀을 삶에 어떻게 적용할 수 있을까요?"
 														textAlignVertical="top"
 														className={cn(
 															TEXT_INPUT_STYLE,
@@ -453,21 +516,23 @@ export default function FellowshipContentScreen() {
 													variant="outline"
 													className="flex-1"
 													onPress={() => {
-														const updatedFields = [...iceBreakingAnswers];
+														const updatedFields = [...sermonTopicAnswers];
 														updatedFields.push({ id: uuidv4(), title: '' });
-														setIceBreakingAnswers(updatedFields);
+														setSermonTopicAnswers(updatedFields);
 														// focus keyboard
 														setTimeout(() => {
-															iceBreakingTextInputRef.current?.focus();
+															sermonTextInputRef.current?.focus();
 														}, 100);
 													}}
 												>
-													<ButtonText>항목 추가하기</ButtonText>
+													<ButtonText>항목 추가</ButtonText>
 													<ButtonIcon as={Plus} />
 												</Button>
 												<Button
 													className="flex-1"
-													onPress={() => handlePressRecommendedQuestions('sermonTopic')}
+													onPress={() =>
+														handlePressRecommendedQuestions('sermonTopic')
+													}
 												>
 													<ButtonText>추천 질문 보기</ButtonText>
 													<ButtonIcon as={ThumbsUp} />
@@ -501,21 +566,21 @@ export default function FellowshipContentScreen() {
 										<Switch
 											size="md"
 											isDisabled={false}
-										// defaultValue={content.categories.prayerRequest.isActive}
-										// onChange={() => {
-										// 	updateFellowshipContent({
-										// 		categories: {
-										// 			...content.categories,
-										// 			prayerRequest: {
-										// 				...content.categories.prayerRequest,
-										// 				isActive: !content.categories.prayerRequest.isActive,
-										// 			},
-										// 		},
-										// 	});
-										// }}
+											defaultValue={content.categories.prayerRequest.isActive}
+											onChange={() => {
+												updateFellowshipContentStore({
+													categories: {
+														prayerRequest: {
+															isActive: !content.categories.prayerRequest.isActive,
+														},
+													},
+												});
+											}}
 										/>
 									</HStack>
 								</HStack>
+
+								<Box className="h-20" />
 							</VStack>
 						</VStack>
 					</VStack>
@@ -526,6 +591,7 @@ export default function FellowshipContentScreen() {
 						variant="outline"
 						className="flex-1"
 						onPress={() => {
+							updateFellowshipContent();
 							setStep('INFO');
 						}}
 					>
@@ -536,6 +602,7 @@ export default function FellowshipContentScreen() {
 						variant="solid"
 						className="flex-1"
 						onPress={() => {
+							updateFellowshipContent();
 							setStep('OPTIONS');
 						}}
 					>
@@ -558,6 +625,7 @@ export default function FellowshipContentScreen() {
 							<ScrollView className="md:max-h-screen max-h-60">
 								{fellowships?.items.map((fellowship) => (
 									<AnimatedPressable
+										scale="sm"
 										key={fellowship.identifiers.id}
 										onPress={() => {
 											setSelectedFellowship(fellowship);
@@ -613,27 +681,29 @@ export default function FellowshipContentScreen() {
 							<VStack space="lg" className="w-full">
 								{/* 아이스브레이킹 섹션 */}
 								<VStack space="sm" className="w-full">
-									{selectedFellowship?.content.categories.iceBreaking.items.length > 0 && (
-										<Text size="lg" className="font-pretendard-bold">
-											아이스브레이킹
-										</Text>
-									)}
-									{selectedFellowship?.content.categories.iceBreaking.items.map(
-										(item: { question: string; answer?: string }) => (
+									{selectedFellowship?.content.categories.iceBreaking.items
+										&& (
+											<Text size="lg" className="font-pretendard-bold">
+												아이스브레이킹
+											</Text>
+										)}
+									{Object.values(selectedFellowship?.content.categories.iceBreaking.items).map(
+										({ id, title }) => (
 											<AnimatedPressable
-												key={`ice-${item.question}`}
+												scale="sm"
+												key={id}
 												onPress={() => {
 													setSelectedQuestions((prev) => {
 														const isSelected = prev.iceBreaking.includes(
-															item.question,
+															title,
 														);
 														return {
 															...prev,
 															iceBreaking: isSelected
 																? prev.iceBreaking.filter(
-																	(q) => q !== item.question,
+																	(q) => q !== title,
 																)
-																: [...prev.iceBreaking, item.question],
+																: [...prev.iceBreaking, title],
 														};
 													});
 												}}
@@ -641,10 +711,10 @@ export default function FellowshipContentScreen() {
 											>
 												<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
 													<Text className="flex-1" size="md">
-														{item.question}
+														{title}
 													</Text>
 													{selectedQuestions.iceBreaking.includes(
-														item.question,
+														title,
 													) ? (
 														<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
 															<Icon as={Check} size="sm" color="white" />
@@ -662,27 +732,27 @@ export default function FellowshipContentScreen() {
 
 								{/* 설교 나눔 섹션 */}
 								<VStack space="sm" className="w-full">
-									{selectedFellowship?.content.categories.sermonTopic.length > 0 && (
+									{selectedFellowship?.content.categories.sermonTopic.items && (
 										<Text size="lg" className="font-pretendard-bold">
 											설교 나눔
 										</Text>
 									)}
-									{selectedFellowship?.content.categories.sermonTopic.items.map(
-										(item: { question: string; answer?: string }) => (
+									{Object.values(selectedFellowship?.content.categories.sermonTopic.items).map(
+										({ id, title }) => (
 											<AnimatedPressable
-												key={`preach-${item.question}`}
+												key={id}
 												onPress={() => {
 													setSelectedQuestions((prev) => {
 														const isSelected = prev.sermonTopic.includes(
-															item.question,
+															title,
 														);
 														return {
 															...prev,
 															sermonTopic: isSelected
 																? prev.sermonTopic.filter(
-																	(q) => q !== item.question,
+																	(q) => q !== title,
 																)
-																: [...prev.sermonTopic, item.question],
+																: [...prev.sermonTopic, title],
 														};
 													});
 												}}
@@ -690,10 +760,10 @@ export default function FellowshipContentScreen() {
 											>
 												<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
 													<Text className="flex-1" size="md">
-														{item.question}
+														{title}
 													</Text>
 													{selectedQuestions.sermonTopic.includes(
-														item.question,
+														title,
 													) ? (
 														<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
 															<Icon as={Check} size="sm" color="white" />
@@ -724,46 +794,44 @@ export default function FellowshipContentScreen() {
 										onPress={() => {
 											// 선택된 질문들을 추가
 											const selectedIceBreaking =
-												selectedFellowship.content.categories.iceBreaking.items
-													.filter((item: { question: string }) =>
+												Object.values(selectedFellowship.content.categories.iceBreaking.items)
+													.filter((item: { title: string }) =>
 														selectedQuestions.iceBreaking.includes(
-															item.question,
+															item.title,
 														),
 													)
-													.map(({ question }) => ({
+													.map(({ title }) => ({
 														id: uuidv4(),
-														question,
-														answers: [],
+														title,
+														answers: {},
 													}));
 
 											const selectedSermonTopic =
-												selectedFellowship.content.categories.sermonTopic.items
-													.filter((item: { question: string }) =>
+												Object.values(selectedFellowship.content.categories.sermonTopic.items)
+													.filter((item: { title: string }) =>
 														selectedQuestions.sermonTopic.includes(
-															item.question,
+															item.title,
 														),
 													)
-													.map(({ question }) => ({
+													.map(({ title }) => ({
 														id: uuidv4(),
-														question,
-														answers: [],
+														title,
+														answers: {},
 													}));
-
-											// 현재 Fellowship 콘텐츠에 선택된 질문들 추가
-											updateFellowshipContent({
-												categories: {
-													...content.categories,
-													iceBreaking: [
-														...content.categories.iceBreaking.items,
-														...selectedIceBreaking,
-													],
-													sermonTopic: [
-														...content.categories.sermonTopic.items,
-														...selectedSermonTopic,
-													],
-												},
-											});
-
+											if (selectedIceBreaking.length > 0) {
+												const updatedFields = [
+													...iceBreakingAnswers.filter(({ title }) => title !== ''),
+													...selectedIceBreaking,
+												];
+												setIceBreakingAnswers(updatedFields);
+											}
+											if (selectedSermonTopic.length > 0) {
+												const updatedSermonTopicFields = [
+													...sermonTopicAnswers.filter(({ title }) => title !== ''),
+													...selectedSermonTopic,
+												];
+												setSermonTopicAnswers(updatedSermonTopicFields);
+											}
 											// BottomSheet 닫기
 											handleCloseSheet();
 										}}
@@ -788,7 +856,7 @@ export default function FellowshipContentScreen() {
 				</VStack>
 			</BottomSheetContainer>
 			<RecommendedQuestionsBottomSheetContainer>
-				<BottomSheetListLayout>
+				<BottomSheetListLayout className="pb-4">
 					<BottomSheetListHeader
 						label={
 							selectedCategory === 'iceBreaking'
@@ -803,21 +871,21 @@ export default function FellowshipContentScreen() {
 							{recommendedQuestions.map((category) => (
 								<AnimatedPressable
 									key={category.id}
-									scale={0.98}
+									scale='sm'
 									onPress={() => handleSelectCategory(category.id)}
 									className={cn(
-										'py-3 px-4',
 										activeCategoryId === category.id &&
 										'border-b-2 border-primary-500',
 									)}
 								>
 									<Text
-										size="md"
-										weight="medium"
+										size="lg"
+										weight="semi-bold"
 										className={cn(
 											activeCategoryId === category.id
 												? 'text-primary-500'
 												: 'text-typography-500',
+											'py-2 px-4',
 										)}
 									>
 										{category.title}
@@ -827,39 +895,40 @@ export default function FellowshipContentScreen() {
 						</HStack>
 
 						{/* 현재 선택된 카테고리의 질문 목록 */}
-						<VStack space="md" className="mb-4">
-							{recommendedQuestions
-								.find((category) => category.id === activeCategoryId)
-								?.questions.map((question) => {
-									const isSelected = question.selected;
-									return (
-										<AnimatedPressable
-											key={question.id}
-											scale={0.98}
-											onPress={() =>
-												handleToggleQuestion(activeCategoryId, question.id)
-											}
-											className="py-3"
-										>
-											<HStack className="items-center justify-between">
-												<HStack space="sm" className="items-center flex-1">
-													<Box className="w-2 h-2 bg-background-400 rounded-full" />
-													<Text size="md" className="flex-1">
-														{question.text}
-													</Text>
+						<ScrollView className="h-64" showsVerticalScrollIndicator={false}>
+							<VStack space="md" className="mb-4">
+								{recommendedQuestions
+									.find((category) => category.id === activeCategoryId)
+									?.questions.map((question) => {
+										const isSelected = question.selected;
+										return (
+											<AnimatedPressable
+												key={question.id}
+												scale='sm'
+												onPress={() =>
+													handleToggleQuestion(activeCategoryId, question.id)
+												}
+											>
+												<HStack space="md" className="items-center justify-between py-3">
+													<HStack space="sm" className="items-center flex-1">
+														<Box className="w-2 h-2 bg-background-400 rounded-full" />
+														<Text size="lg" className="flex-1">
+															{question.text}
+														</Text>
+													</HStack>
+													{isSelected ? (
+														<Box className="bg-primary-500 rounded-full p-1 w-6 h-6 mr-2">
+															<Icon as={Check} size="sm" color="white" />
+														</Box>
+													) : (
+														<Box className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
+													)}
 												</HStack>
-												{isSelected ? (
-													<Box className="bg-primary-500 rounded-full p-1 w-6 h-6 mr-2">
-														<Icon as={Check} size="sm" color="white" />
-													</Box>
-												) : (
-													<Box className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
-												)}
-											</HStack>
-										</AnimatedPressable>
-									);
-								})}
-						</VStack>
+											</AnimatedPressable>
+										);
+									})}
+							</VStack>
+						</ScrollView>
 
 						{/* 추가하기 버튼 */}
 						<Button

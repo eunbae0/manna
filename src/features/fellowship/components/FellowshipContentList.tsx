@@ -20,16 +20,15 @@ export default function FellowshipContentList({
 		fellowship,
 	} = useFellowship(fellowshipId);
 
-	const fellowshipContents = fellowship?.content[contentType];
+	const fellowshipContents = Object.values(fellowship?.content.categories[contentType]?.items || {});
 
 	return (
-		<VStack className="gap-12" >
-			{fellowshipContents?.map((content, index) => (
+		<VStack space="md" >
+			{fellowshipContents?.map((content) => (
 				<FellowshipContent
 					key={content.id}
-					index={index}
-					contentType={contentType}
 					fellowshipId={fellowshipId}
+					contentType={contentType}
 					fellowshipContent={content}
 					enableReply={enableReply}
 				/>

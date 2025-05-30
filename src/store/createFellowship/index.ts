@@ -6,7 +6,12 @@ import type {
 	FellowshipStoreStep,
 	FellowshipStoreType,
 } from './types';
-import type { CreateFellowshipInputV2 } from '@/features/fellowship/api/types';
+import type {
+	ClientFellowshipV2,
+	CreateFellowshipInputV2,
+} from '@/features/fellowship/api/types';
+import type { DeepPartial } from '@/shared/utils/deepPartial';
+import { deepMerge } from '@/shared/utils/deepMerge';
 
 export const FELLOWSHIP_DEFAULT_STEP: FellowshipStoreStep = 'INFO';
 export const FELLOWSHIP_DEFAULT_TYPE: FellowshipStoreType = 'CREATE';
@@ -28,7 +33,7 @@ type FellowShipStoreState = FellowShipStoreData & {
 	getLastUpdatedIdAndReset: () => string | null;
 	updateFellowshipInfo: (data: Partial<FellowShipStoreState['info']>) => void;
 	updateFellowshipContent: (
-		data: Partial<FellowShipStoreState['content']>,
+		data: DeepPartial<FellowShipStoreState['content']>,
 	) => void;
 	updateFellowshipOptions: (
 		data: Partial<FellowShipStoreState['options']>,
@@ -71,14 +76,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 				order: 0,
 				type: 'iceBreaking',
 				isActive: false,
-				items: {
-					iceBreaking_1: {
-						id: 'iceBreaking_1',
-						title: '',
-						order: 0,
-						answers: [],
-					},
-				},
+				items: {},
 			},
 			sermonTopic: {
 				id: 'sermonTopic',
@@ -86,27 +84,20 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 				order: 0,
 				type: 'sermonTopic',
 				isActive: false,
-				items: {
-					sermonTopic_1: {
-						id: 'sermonTopic_1',
-						title: '',
-						order: 0,
-						answers: [],
-					},
-				},
+				items: {},
 			},
 			prayerRequest: {
 				id: 'prayerRequest',
 				title: '기도 제목',
 				order: 0,
 				type: 'prayerRequests',
-				isActive: false,
+				isActive: true,
 				items: {
-					prayerRequest_1: {
-						id: 'prayerRequest_1',
+					prayerRequest: {
+						id: 'prayerRequest',
 						title: '',
 						order: 0,
-						answers: [],
+						answers: {},
 					},
 				},
 			},
@@ -130,15 +121,15 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 		})),
 	updateFellowshipContent: (data) =>
 		set((state) => ({
-			content: JSON.parse(JSON.stringify({ ...state.content, ...data })),
+			content: deepMerge(state.content, data),
 		})),
 	updateFellowshipOptions: (data) =>
 		set((state) => ({
-			options: JSON.parse(JSON.stringify({ ...state.options, ...data })),
+			options: deepMerge(state.options, data),
 		})),
 	updateFellowshipRoles: (data) =>
 		set((state) => ({
-			roles: JSON.parse(JSON.stringify({ ...state.roles, ...data })),
+			roles: deepMerge(state.roles, data),
 		})),
 	/**
 	 * Transforms store data into the format expected by the API
@@ -146,6 +137,38 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 	 */
 	transformFellowshipData: (groupId: string) => {
 		const { info, roles, content, options } = get();
+
+		const formattedContent = {
+			categories: Object.entries(content.categories).reduce(
+				(acc, [categoryKey, category]) => {
+					// 카테고리의 items 필터링
+					const filteredItems = Object.entries(category.items).reduce(
+						(itemsAcc, [itemKey, item]) => {
+							// 임시 항목이면서 제목이 비어있는 경우 제외
+							const isTempEmpty =
+								(itemKey === 'iceBreaking_temp' ||
+									itemKey === 'sermonTopic_temp') &&
+								item.title === '';
+
+							if (!isTempEmpty) {
+								itemsAcc[itemKey] = item;
+							}
+							return itemsAcc;
+						},
+						{} as Record<string, any>,
+					);
+
+					// 필터링된 items로 카테고리 업데이트
+					acc[categoryKey] = {
+						...category,
+						items: filteredItems,
+					};
+
+					return acc;
+				},
+				{} as Record<string, any>,
+			),
+		};
 
 		return {
 			identifiers: {
@@ -160,33 +183,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 					);
 				}),
 			},
-			content: {
-				categories: Object.entries(content.categories).reduce(
-					(acc, [key, value]) => {
-						acc[key] = {
-							...value,
-							items: Object.entries(value.items).reduce(
-								(acc2, [key2, value2]) => {
-									acc2[key2] = {
-										...value2,
-										answers: Object.entries(value2.answers).reduce(
-											(acc3, [key3, value3]) => {
-												acc3[key3] = value3;
-												return acc3;
-											},
-											{},
-										),
-									};
-									return acc2;
-								},
-								{},
-							),
-						};
-						return acc;
-					},
-					{},
-				),
-			},
+			content: formattedContent,
 			options,
 			roles,
 		};
@@ -272,7 +269,39 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 				leaderId: '',
 			},
 			content: {
-				categories: {},
+				categories: {
+					iceBreaking: {
+						id: 'iceBreaking',
+						title: '아이스 브레이킹',
+						order: 0,
+						type: 'iceBreaking',
+						isActive: false,
+						items: {},
+					},
+					sermonTopic: {
+						id: 'sermonTopic',
+						title: '설교 나눔',
+						order: 0,
+						type: 'sermonTopic',
+						isActive: false,
+						items: {},
+					},
+					prayerRequest: {
+						id: 'prayerRequest',
+						title: '기도 제목',
+						order: 0,
+						type: 'prayerRequests',
+						isActive: true,
+						items: {
+							prayerRequest: {
+								id: 'prayerRequest',
+								title: '',
+								order: 0,
+								answers: {},
+							},
+						},
+					},
+				},
 			},
 			options: {
 				enableMemberReply: false,

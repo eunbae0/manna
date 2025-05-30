@@ -74,7 +74,7 @@ export function useFellowship(id: string | undefined) {
 			);
 		},
 		onSuccess: () => {
-			showSuccess('나눔 노트가 업데이트되었어요');
+			// showSuccess('나눔 노트가 업데이트되었어요');
 		},
 		onError: (error) => {
 			console.error('Error updating fellowship:', error);

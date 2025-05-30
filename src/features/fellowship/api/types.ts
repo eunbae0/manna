@@ -45,39 +45,19 @@ export interface FellowshipContentItemV2Base {
 }
 
 // 서버/클라이언트 콘텐츠 아이템 타입
-export interface ServerFellowshipContentItemV2
-	extends FellowshipContentItemV2Base {
+export interface FellowshipContentItemV2 extends FellowshipContentItemV2Base {
 	answers: Record<participantId, answerContent>;
 }
 
-export interface ClientFellowshipContentItemV2
-	extends FellowshipContentItemV2Base {
-	answers: ClientFellowshipAnswerV2[];
-}
-
 // 카테고리 기본 타입
-export interface FellowshipCategoryV2Base {
+export interface FellowshipCategoryV2 {
 	id: string;
 	title: string;
 	order: number;
 	type: FellowshipCategoryType;
 	isActive: boolean;
+	items: Record<contentId, FellowshipContentItemV2>;
 }
-
-// 서버/클라이언트 카테고리 타입
-export interface ServerFellowshipCategoryV2 extends FellowshipCategoryV2Base {
-	items: Record<contentId, ServerFellowshipContentItemV2>;
-}
-
-export interface ClientFellowshipCategoryV2 extends FellowshipCategoryV2Base {
-	items: Record<contentId, ClientFellowshipContentItemV2>;
-}
-
-export interface CompactClientFellowshipCategoryV2
-	extends FellowshipCategoryV2Base {
-	items: Record<contentId, FellowshipContentItemV2Base>;
-}
-
 // 기도 요청 필드 타입
 export interface ServerFellowshipPrayerRequestFieldV2 {
 	isActive: boolean;
@@ -107,6 +87,9 @@ export interface BaseFellowshipV2 {
 	options: {
 		enableMemberReply: boolean;
 	};
+	content: {
+		categories: Record<categoryId, FellowshipCategoryV2>;
+	};
 	extensions?: Record<string, unknown>;
 }
 
@@ -119,9 +102,6 @@ export interface ServerFellowshipV2 extends BaseFellowshipV2 {
 		date: Timestamp;
 		participants: ServerFellowshipParticipantV2[];
 	};
-	content: {
-		categories: Record<categoryId, ServerFellowshipCategoryV2>;
-	};
 }
 
 export interface ClientFellowshipV2 extends BaseFellowshipV2 {
@@ -132,9 +112,6 @@ export interface ClientFellowshipV2 extends BaseFellowshipV2 {
 		date: Date;
 		participants: ClientFellowshipParticipantV2[];
 	};
-	content: {
-		categories: Record<categoryId, ClientFellowshipCategoryV2>;
-	};
 }
 
 export interface CompactClientFellowshipV2 extends BaseFellowshipV2 {
@@ -144,9 +121,6 @@ export interface CompactClientFellowshipV2 extends BaseFellowshipV2 {
 		preachText: string;
 		date: Date;
 		participants: ServerFellowshipParticipantV2[];
-	};
-	content: {
-		categories: Record<categoryId, CompactClientFellowshipCategoryV2>;
 	};
 }
 
@@ -162,7 +136,7 @@ export interface CreateFellowshipInputV2
 		participants: ServerFellowshipParticipantV2[];
 	};
 	content: {
-		categories: Record<categoryId, ServerFellowshipCategoryV2>;
+		categories: Record<categoryId, FellowshipCategoryV2>;
 	};
 }
 

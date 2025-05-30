@@ -8,7 +8,7 @@ import type { ClientFellowship } from '../api/types';
  * @param limit 페이지당 가져올 항목 수
  * @returns 무한 스크롤 쿼리 결과
  */
-export function useInfiniteFellowships(limit = 10) {
+export function useInfiniteFellowships(limit = 8) {
 	const { currentGroup } = useAuthStore();
 
 	return useInfiniteQuery({

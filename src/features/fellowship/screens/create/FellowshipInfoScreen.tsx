@@ -36,7 +36,7 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 import { useGroup } from '@/features/home/group/hooks/useGroup';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { cn } from '@/shared/utils/cn';
 import { isAndroid } from '@/shared/utils/platform';
@@ -87,11 +87,13 @@ export default function FellowshipInfoScreen() {
 	} = useExpandAnimation();
 	const {
 		toggle: toggleMembers,
+		isExpanded: membersExpanded,
 		containerStyle: membersContainerStyle,
 		iconStyle: membersIconStyle,
 	} = useExpandAnimation(
 		{
-			expandedHeight: 400,
+			expandedHeight: 360,
+			onToggle: () => { Keyboard.isVisible() && Keyboard.dismiss() }
 		}
 	);
 
@@ -192,7 +194,6 @@ export default function FellowshipInfoScreen() {
 				Object.assign(
 					{
 						id: member.id,
-						isLeader: false,
 						isGuest: false,
 					},
 					member.displayName ? { displayName: member.displayName } : {},
@@ -201,7 +202,7 @@ export default function FellowshipInfoScreen() {
 			);
 
 		const customMembers = participants.filter(
-			(member) => member.id.startsWith('custom-'),
+			(member) => member.isGuest
 		);
 
 		return [...groupMembers, ...customMembers];
@@ -224,7 +225,10 @@ export default function FellowshipInfoScreen() {
 		<KeyboardDismissView style={{ flex: 1 }}>
 			<VStack className="flex-1">
 				<Header onPressBackButtonWithRouter={() => clearFellowship()} />
-				<KeyboardAwareScrollView>
+				<KeyboardAwareScrollView
+					showsVerticalScrollIndicator={false}
+					keyboardShouldPersistTaps="handled"
+				>
 					<VStack className="px-5 py-4 flex-1">
 						<VStack space="xl">
 							<TextInput
@@ -251,15 +255,15 @@ export default function FellowshipInfoScreen() {
 									<HStack space="md" className="items-center">
 										<Icon
 											as={Calendar}
-											size="lg"
+											size="xl"
 											className="text-primary-500"
 										/>
-										<Text size="lg" weight="medium" className="text-typography-700">
+										<Text size="xl" weight="medium" className="text-typography-700">
 											나눔 날짜
 										</Text>
 									</HStack>
 									<HStack space="md" className="items-center">
-										<Text size="lg" weight="medium" className="text-typography-700">
+										<Text size="xl" weight="medium" className="text-typography-700">
 											{selectedDate.toLocaleDateString('ko-KR', {
 												month: 'long',
 												day: 'numeric',
@@ -286,15 +290,15 @@ export default function FellowshipInfoScreen() {
 										<HStack space="md" className="items-center">
 											<Icon
 												as={BookOpen}
-												size="lg"
+												size="xl"
 												className="text-primary-500"
 											/>
-											<Text size="lg" weight="medium" className="text-typography-700">
+											<Text size="xl" weight="medium" className="text-typography-700">
 												설교 본문
 											</Text>
 										</HStack>
 										<HStack space="md" className="items-center">
-											<Text size="lg" weight="medium" className="text-typography-700">
+											<Text size="xl" weight="medium" className="text-typography-700">
 												{preachText || '없음'}
 											</Text>
 											<Animated.View style={[preachTextIconStyle]}>
@@ -346,15 +350,15 @@ export default function FellowshipInfoScreen() {
 										<HStack space="md" className="items-center">
 											<Icon
 												as={Megaphone}
-												size="lg"
+												size="xl"
 												className="text-primary-500"
 											/>
-											<Text size="lg" weight="medium" className="text-typography-700">
+											<Text size="xl" weight="medium" className="text-typography-700">
 												설교자
 											</Text>
 										</HStack>
 										<HStack space="md" className="items-center">
-											<Text size="lg" weight="medium" className="text-typography-700">
+											<Text size="xl" weight="medium" className="text-typography-700">
 												{preacher || '없음'}
 											</Text>
 											<Animated.View style={[preacherIconStyle]}>
@@ -381,7 +385,9 @@ export default function FellowshipInfoScreen() {
 												onChangeText={setPreacher}
 												returnKeyType="next"
 												onSubmitEditing={() => {
-													toggleMembers();
+													if (!membersExpanded) {
+														toggleMembers();
+													}
 												}}
 												className="font-pretendard-Regular"
 											/>
@@ -401,15 +407,15 @@ export default function FellowshipInfoScreen() {
 										<HStack space="md" className="items-center">
 											<Icon
 												as={Users}
-												size="lg"
+												size="xl"
 												className="text-primary-500"
 											/>
-											<Text size="lg" weight="medium" className="text-typography-700">
+											<Text size="xl" weight="medium" className="text-typography-700">
 												나눔 인원
 											</Text>
 										</HStack>
 										<HStack space="md" className="items-center">
-											<Text size="lg" weight="medium" className="text-typography-700">
+											<Text size="xl" weight="medium" className="text-typography-700">
 												{participants.length > 0 ? `${participants.length}명` : '0명'}
 											</Text>
 											<Animated.View style={[membersIconStyle]}>
@@ -423,7 +429,7 @@ export default function FellowshipInfoScreen() {
 									</HStack>
 								</AnimatedPressable>
 								<Animated.View style={[membersContainerStyle]}>
-									<VStack space="sm" className="mt-2">
+									<VStack space="sm" className="mt-6">
 										{/* 멤버 선택 리스트 */}
 										<VStack>
 											{isGroupsLoading ? (
@@ -442,7 +448,7 @@ export default function FellowshipInfoScreen() {
 													</Text>
 												</VStack>
 											) : (
-												<ScrollView ref={membersScrollViewRef} className="py-3 max-h-72">
+												<ScrollView ref={membersScrollViewRef} className="pb-4 max-h-72">
 													{allFellowshipMembers.map((member) => {
 														const isSelected = participants.some((m) => m.id === member.id);
 														const isMe = member.id === user?.id;

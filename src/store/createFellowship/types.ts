@@ -5,11 +5,6 @@ export type FellowShipStoreData = Omit<
 	'identifiers' | 'metadata' | 'extensions'
 >;
 
-export type FellowshipStoreStep =
-	| 'INFO'
-	| 'CONTENT'
-	| 'OPTIONS'
-	| 'CONTENT_ICEBREAKING'
-	| 'CONTENT_SERMON';
+export type FellowshipStoreStep = 'INFO' | 'CONTENT' | 'OPTIONS';
 
 export type FellowshipStoreType = 'CREATE' | 'EDIT';

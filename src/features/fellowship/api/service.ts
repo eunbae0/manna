@@ -22,9 +22,6 @@ import type {
 	UpdateFellowshipInputV2,
 	ClientFellowshipV2,
 	ClientFellowshipParticipantV2,
-	ClientFellowshipCategoryV2,
-	ServerFellowshipCategoryV2,
-	ClientFellowshipContentItemV2,
 	CompactClientFellowshipV2,
 } from '@/features/fellowship/api/types';
 import { serverTimestamp } from '@/firebase/firestore';
@@ -95,57 +92,12 @@ export class FirestoreFellowshipService {
 		data: ServerFellowshipV2,
 		participants: ClientFellowshipParticipantV2[],
 	): ClientFellowshipV2 {
-		// 카테고리 변환 함수
-		const transformCategories = (
-			categories: Record<string, ServerFellowshipCategoryV2>,
-		): Record<string, ClientFellowshipCategoryV2> => {
-			const result: Record<string, ClientFellowshipCategoryV2> = {};
-
-			// 각 카테고리 순회
-			for (const [categoryId, category] of Object.entries(categories)) {
-				// 각 아이템 순회하며 answers 변환
-				const transformedItems: Record<string, ClientFellowshipContentItemV2> =
-					{};
-
-				for (const [itemId, item] of Object.entries(category.items)) {
-					// Record<participantId, answerContent> 형태를
-					// { participant: ClientFellowshipParticipantV2, content: string }[] 형태로 변환
-					const transformedAnswers = Object.entries(item.answers).map(
-						([participantId, content]) => ({
-							participant: participants.find((p) => p.id === participantId) || {
-								id: participantId,
-								displayName: DELETED_MEMBER_DISPLAY_NAME,
-								isGuest: true,
-							},
-							content,
-						}),
-					);
-
-					transformedItems[itemId] = {
-						...item,
-						answers: transformedAnswers,
-					};
-				}
-
-				result[categoryId] = {
-					...category,
-					items: transformedItems,
-				};
-			}
-
-			return result;
-		};
-
 		return {
 			...data,
 			info: {
 				...data.info,
 				date: data.info.date.toDate(),
 				participants,
-			},
-			content: {
-				...data.content,
-				categories: transformCategories(data.content.categories),
 			},
 		};
 	}
@@ -188,14 +140,14 @@ export class FirestoreFellowshipService {
 		if (startAfter) {
 			q = query(
 				this.getFellowshipCollectionRef({ groupId }),
-				orderBy('createdAt', 'desc'),
-				where('createdAt', '<', startAfter),
+				orderBy('metadata.createdAt', 'desc'),
+				where('metadata.createdAt', '<', startAfter),
 				limit(_limitCount),
 			);
 		} else {
 			q = query(
 				this.getFellowshipCollectionRef({ groupId }),
-				orderBy('createdAt', 'desc'),
+				orderBy('metadata.createdAt', 'desc'),
 				limit(_limitCount),
 			);
 		}
@@ -210,7 +162,7 @@ export class FirestoreFellowshipService {
 
 		const fellowships: ClientFellowshipV2[] = [];
 		for (const fellowshipsDoc of docs) {
-			const members: ClientFellowshipParticipantV2[] = [];
+			const participants: ClientFellowshipParticipantV2[] = [];
 			const data = fellowshipsDoc.data() as ServerFellowshipV2;
 			const memberPromises = data.info.participants.map((member) =>
 				this.getParticipantWithCache(groupId, member.id, {
@@ -220,9 +172,9 @@ export class FirestoreFellowshipService {
 
 			// 병렬로 멤버 정보 조회
 			const memberResults = await Promise.all(memberPromises);
-			members.push(...memberResults);
+			participants.push(...memberResults);
 
-			const fellowship = this.convertToClientFellowship(data, members);
+			const fellowship = this.convertToClientFellowship(data, participants);
 			fellowships.push(fellowship);
 		}
 
@@ -247,7 +199,7 @@ export class FirestoreFellowshipService {
 	}> {
 		const q = query(
 			this.getFellowshipCollectionRef({ groupId }),
-			orderBy('createdAt', 'desc'),
+			orderBy('metadata.createdAt', 'desc'),
 			where('roles.leaderId', '==', userId),
 			limit(limitCount),
 		);
@@ -399,10 +351,9 @@ export class FirestoreFellowshipService {
 		if (groupCache.has(memberId)) {
 			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			const cachedMember = groupCache.get(memberId)!;
-			// 리더 상태와 게스트 상태는 최신 정보로 업데이트
+			// TODO: 리더 상태와 게스트 상태는 최신 정보로 업데이트
 			return {
 				...cachedMember,
-				displayName: additionalInfo?.displayName,
 			};
 		}
 
@@ -572,6 +523,7 @@ export class FirestoreFellowshipService {
 			updateData[key] = value as FieldValue | Partial<unknown> | undefined;
 		}
 
+		console.log(updateData);
 		await updateDoc(docRef, updateData);
 	}
 

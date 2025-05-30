@@ -4,37 +4,33 @@ import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import { Edit3, CircleHelp } from 'lucide-react-native';
-import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import type {
-	ClientFellowshipContentField,
-} from '@/features/fellowship/api/types';
+import { Button, ButtonIcon } from '@/components/common/button';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
 import { useFellowship } from '../hooks/useFellowship';
 import { router } from 'expo-router';
 import { Box } from '#/components/ui/box';
 import { Icon } from '#/components/ui/icon';
+import type { FellowshipContentItemV2 } from '@/features/fellowship/api/types';
+import { useMemo } from 'react';
+import { cn } from '@/shared/utils/cn';
 
 type SermonContentItemProps = {
 	fellowshipId: string;
-	index?: number;
 	contentType: 'iceBreaking' | 'sermonTopic';
-	fellowshipContent: ClientFellowshipContentField;
+	fellowshipContent: FellowshipContentItemV2;
 	enableReply: boolean;
 };
 
 export default function FellowshipContent({
 	fellowshipId,
-	index,
 	contentType,
 	fellowshipContent,
 	enableReply,
 }: SermonContentItemProps) {
-	const { id: contentId, question, answers: existedAnswers } = fellowshipContent;
+	const { id: contentId, title, answers } = fellowshipContent;
 
-	const {
-		fellowship,
-	} = useFellowship(fellowshipId);
+	const { fellowship } = useFellowship(fellowshipId);
 
 	if (!fellowship) {
 		return null;
@@ -43,50 +39,65 @@ export default function FellowshipContent({
 	const handlePressSummaryButton = () => {
 		router.push({
 			pathname: `/(app)/(fellowship)/${fellowshipId}/answer`,
-			params: { contentType, index: index?.toString() || undefined }
+			params: { contentType, answerId: contentId },
 		});
-	}
+	};
+
+	const answersWithParticipant = useMemo(() => {
+		if (!answers || !fellowship?.info.participants) return [];
+
+		return fellowship.info.participants
+			.filter(participant => answers[participant.id]) // 답변이 있는 참가자만 필터링
+			.map(participant => ({
+				participant,
+				content: answers[participant.id] || '',
+			}));
+	}, [answers, fellowship?.info.participants]);
 
 	return (
 		<>
-			<VStack space="2xl" className="">
-				<HStack space="sm" className="items-center justify-between">
-					<Box className="p-2 rounded-full bg-primary-100">
-						<Icon as={CircleHelp} size="lg" className="text-primary-500" />
-					</Box>
-					<Text size="xl" className="font-pretendard-semi-bold flex-1 mr-2">
-						{question}
-					</Text>
+			<VStack space="2xl">
+				<HStack space="xs" className="items-center justify-between">
+					<HStack space="xs" className="items-start flex-1">
+						<Box className="p-1 rounded-full bg-primary-100">
+							<Icon as={CircleHelp} size="md" className="text-primary-500" />
+						</Box>
+						<Text size="xl" className="font-pretendard-semi-bold flex-1 mr-2 mt-[2px]">
+							{title}
+						</Text>
+					</HStack>
 					{enableReply && (
 						<Button variant="icon" onPress={handlePressSummaryButton}>
 							<ButtonIcon as={Edit3} />
 						</Button>
 					)}
 				</HStack>
-				<VStack space="xl" className="pl-2">
-					{existedAnswers.map((answer) => (
-						<VStack key={answer.member?.id}>
+				<VStack space="xl" className={cn("pl-2", answersWithParticipant.length !== 0 && "pb-6")}>
+					{answersWithParticipant.map((answer) => (
+						<VStack key={answer.participant?.id}>
 							<VStack space="sm">
 								<AnimatedPressable
+									scale="sm"
 									onPress={() =>
-										!answer.member?.isGuest && openProfile(answer.member?.id)
+										!answer.participant?.isGuest &&
+										openProfile(answer.participant?.id)
 									}
 								>
 									<HStack space="sm" className="items-center">
 										<Avatar
 											size="2xs"
-											photoUrl={answer.member?.photoUrl || undefined}
+											photoUrl={answer.participant?.photoUrl || undefined}
 										/>
 										<Text
 											size="md"
 											className="font-pretendard-bold text-typography-600"
 										>
-											{answer.member?.displayName}
+											{answer.participant?.displayName}
 										</Text>
 									</HStack>
 								</AnimatedPressable>
 								<Text size="lg" className="flex-1 mx-1">
-									{answer.value}
+									{answer.content}
 								</Text>
 							</VStack>
 						</VStack>

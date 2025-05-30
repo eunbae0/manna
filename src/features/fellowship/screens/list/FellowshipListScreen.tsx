@@ -30,7 +30,7 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 
 import { FellowshipSkeleton } from '../../components/FellowshipSkeleton';
 import { useInfiniteFellowships } from '../../hooks/useInfiniteFellowships';
-import type { ClientFellowship, ClientFellowshipMember } from '../../api/types';
+import type { ClientFellowship, ClientFellowshipMember, ClientFellowshipParticipantV2, ClientFellowshipV2 } from '../../api/types';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { cn } from '@/shared/utils/cn';
 
@@ -102,7 +102,7 @@ export default function FellowshipListScreen() {
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = useInfiniteFellowships(10);
+	} = useInfiniteFellowships(8);
 
 	// 모든 페이지의 나눔 기록을 하나의 배열로 합치기
 	const fellowships = data?.pages.flatMap((page) => page.items) || [];
@@ -174,19 +174,19 @@ export default function FellowshipListScreen() {
 	};
 
 	// 나눔장(리더) 찾기 함수
-	const findLeader = (members: ClientFellowshipMember[]) => {
-		return members.find((member: ClientFellowshipMember) => member.isLeader);
+	const findLeader = (members: ClientFellowshipParticipantV2[], leaderId: string) => {
+		return members.find((member) => member.id === leaderId);
 	};
 
 	// 나눔 아이템 렌더링 함수
-	const renderFellowshipItem = ({ item }: { item: ClientFellowship }) => {
+	const renderFellowshipItem = ({ item }: { item: ClientFellowshipV2 }) => {
 		// 나눔장(리더) 찾기
-		const leader = findLeader(item.info.members);
+		const leader = findLeader(item.info.participants, item.roles.leaderId);
 
 		return (
 			<AnimatedPressable
-				key={item.id}
-				onPress={() => handlePressFellowship(item.id)}
+				key={item.identifiers.id}
+				onPress={() => handlePressFellowship(item.identifiers.id)}
 				className="mb-3 mx-4"
 			>
 				<Box className="border border-gray-300 rounded-2xl px-4 py-4">
@@ -195,7 +195,7 @@ export default function FellowshipListScreen() {
 						<VStack space="xs">
 							<VStack space="xs">
 								<Text size="xl" className="font-pretendard-semi-bold">
-									{item.info.preachTitle}
+									{item.info.title}
 								</Text>
 								<Text size="md" className="text-typography-400">
 									{item.info.date
@@ -219,7 +219,7 @@ export default function FellowshipListScreen() {
 									</Text>
 								</HStack>
 							) : <HStack className="items-center gap-[1px]">
-								{item.info.members.map((member) => (
+								{item.info.participants.map((member) => (
 									<Avatar key={member.id} photoUrl={member.photoUrl || ''} size='2xs' />
 								))}
 							</HStack>}
@@ -452,18 +452,18 @@ export default function FellowshipListScreen() {
 
 				<VStack space="sm">
 					{selectedDateFellowships.map((fellowship) => {
-						const leader = findLeader(fellowship.info.members);
+						const leader = findLeader(fellowship.info.participants, fellowship.roles.leaderId);
 						return (
 							<AnimatedPressable
-								key={fellowship.id}
-								onPress={() => handlePressFellowship(fellowship.id)}
+								key={fellowship.identifiers.id}
+								onPress={() => handlePressFellowship(fellowship.identifiers.id)}
 							>
 								<Box
 									className="p-4 border border-gray-300 rounded-xl">
 									<HStack className="justify-between items-center">
 										<VStack space="xs">
 											<Text size="lg" className="flex-1">
-												{fellowship.info.preachTitle}
+												{fellowship.info.title}
 											</Text>
 											{showLeader && leader ? (
 												<HStack space="xs" className="items-center">
@@ -476,7 +476,7 @@ export default function FellowshipListScreen() {
 													</Text>
 												</HStack>
 											) : <HStack className="items-center gap-[1px]">
-												{fellowship.info.members.map((member) => (
+												{fellowship.info.participants.map((member) => (
 													<Avatar key={member.id} photoUrl={member.photoUrl || ''} size='2xs' />
 												))}
 											</HStack>}
@@ -540,7 +540,7 @@ export default function FellowshipListScreen() {
 							<FlatList
 								data={fellowships}
 								renderItem={renderFellowshipItem}
-								keyExtractor={(item) => item.id}
+								keyExtractor={(item) => item.identifiers.id}
 								ListHeaderComponent={
 									<AnimatedPressable
 										onPress={() => setShowLeader(!showLeader)}

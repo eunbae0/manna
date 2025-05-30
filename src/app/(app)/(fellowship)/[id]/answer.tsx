@@ -10,11 +10,7 @@ import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import { useToastStore } from '@/store/toast';
 import { Mic, PencilLine } from 'lucide-react-native';
-import { router } from 'expo-router';
 import Header from '@/components/common/Header';
-import type {
-  ClientFellowshipContentField,
-} from '@/features/fellowship/api/types';
 import {
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
@@ -24,14 +20,13 @@ import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 import { useAnswerRecordingStore } from '@/store/fellowship/answer-recording';
-import { useAnswerDataStore } from '@/store/fellowship/answer-data';
 import { AnswerField } from '@/features/fellowship/components/AnswerField';
 
 export default function AnswerScreen() {
-  const { id, contentType, index } = useLocalSearchParams<{
+  const { id, contentType, answerId } = useLocalSearchParams<{
     id: string;
     contentType: 'iceBreaking' | 'sermonTopic' | 'prayerRequest';
-    index?: string;
+    answerId: string;
   }>();
 
   const { fellowship, isLoading, error, updateFellowship } = useFellowship(id as string);
@@ -39,61 +34,53 @@ export default function AnswerScreen() {
 
   // 스토어 접근
   const answerRecordingStore = useAnswerRecordingStore();
-  const answerDataStore = useAnswerDataStore();
-
-  // 뒤로가기 방지
-  const { bottomSheetProps, handleExit } = usePreventBackWithConfirm({
-    condition: true,
-  });
 
   const isPrayerRequest = contentType === 'prayerRequest';
 
-  // 저장 버튼 핸들러
-  const handlePressSaveButton = () => {
-    if (!fellowship || !contentType) return;
+  // // 저장 버튼 핸들러
+  // const handlePressSaveButton = () => {
+  //   if (!fellowship || !contentType) return;
 
-    const fellowshipContents = isPrayerRequest ? undefined : fellowship.content[contentType];
-    const filteredAnswers = answerDataStore.getFilteredAnswers();
+  //   const fellowshipContents = isPrayerRequest ? undefined : fellowship.content.categories[contentType];
+  //   const filteredAnswers = answerDataStore.getFilteredAnswers();
 
-    const newContent = {
-      id: answerDataStore.contentId as string,
-      question: answerDataStore.question as string,
-      answers: filteredAnswers,
-    } satisfies ClientFellowshipContentField;
+  //   const newContent = {
+  //     id: answerDataStore.contentId as string,
+  //     question: answerDataStore.question as string,
+  //     answers: filteredAnswers,
+  //   } satisfies ClientFellowshipContentField;
 
-    // 콘텐츠 업데이트
-    const newContents =
-      isPrayerRequest
-        ? { answers: filteredAnswers }
-        : fellowshipContents?.map((topic) =>
-          topic.id === newContent.id ? newContent : topic,
-        );
+  //   // 콘텐츠 업데이트
+  //   const newContents: ServerFellowshipCategoryV2 =
+  //     isPrayerRequest
+  //       ? { answers: filteredAnswers }
+  //       : fellowshipContents?.items.map((topic) =>
+  //         topic.id === newContent.id ? newContent : topic,
+  //       ) || {};
 
-    updateFellowship({ content: { [contentType]: newContents } });
-    router.dismissTo(`/(app)/(fellowship)/${id}`);
+  //   updateFellowship({ content: { categories: { [contentType]: newContents } } });
+  //   router.dismissTo(`/(app)/(fellowship)/${id}`);
+  // };
+
+  const updateAnswer = (memberId: string, content: string) => {
+    updateFellowship(
+      {
+        content: {
+          categories: {
+            [contentType]: {
+              items: {
+                [answerId]: {
+                  answers: {
+                    [memberId]: content,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    );
   };
-
-  // 초기 데이터 로드
-  useEffect(() => {
-    console.log(fellowship);
-    if (fellowship && contentType && index !== undefined) {
-      const existedPrayerRequest = fellowship.content.prayerRequest?.answers;
-      const existedContents = isPrayerRequest ? undefined : fellowship.content[contentType][Number(index)];
-      console.log(fellowship.content)
-      answerDataStore.setInitialData({
-        members: fellowship.info.members,
-        existingContent: isPrayerRequest ? undefined : existedContents,
-        existingPrayerRequestAnswers: isPrayerRequest ? existedPrayerRequest : undefined,
-        contentType,
-      });
-    }
-
-    // 컴포넌트 언마운트 시 스토어 초기화
-    return () => {
-      answerRecordingStore.reset();
-      answerDataStore.reset();
-    };
-  }, [isPrayerRequest, fellowship, contentType, index]);
 
   // 음성 인식 이벤트 리스너
   useSpeechRecognitionEvent('start', () => {
@@ -154,17 +141,13 @@ export default function AnswerScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView className="flex-1">
           <VStack space="xs" className="flex-1">
-            <Header className="justify-between pr-3">
-              <Button variant='text' size="lg" onPress={handlePressSaveButton}>
-                <ButtonText>저장하기</ButtonText>
-              </Button>
-            </Header>
+            <Header />
             {!isPrayerRequest && (
               <>
                 <VStack space="md" className="px-4 pt-2 pb-6">
                   <Heading size="2xl">현재 질문</Heading>
                   <Text size="lg">
-                    {answerDataStore.question}
+                    {fellowship.content.categories[contentType].items[answerId].title}
                   </Text>
                 </VStack>
 
@@ -193,10 +176,12 @@ export default function AnswerScreen() {
                       </Button>
                     </HStack>
                     <VStack space="4xl">
-                      {fellowship.info.members.map((member) => (
+                      {fellowship.info.participants.map((member) => (
                         <AnswerField
                           key={member.id}
                           member={member}
+                          answer={fellowship.content.categories[contentType].items[answerId].answers[member.id] || ''}
+                          updateAnswer={updateAnswer}
                         />
                       ))}
                     </VStack>
@@ -208,7 +193,6 @@ export default function AnswerScreen() {
         </KeyboardAvoidingView>
       </SafeAreaView>
       <KeyboardToolbar />
-      <ExitConfirmModal {...bottomSheetProps} onExit={handleExit} />
     </>
   );
 }

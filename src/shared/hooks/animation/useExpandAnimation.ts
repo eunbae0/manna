@@ -4,13 +4,14 @@ import {
 	useAnimatedStyle,
 	withTiming,
 } from 'react-native-reanimated';
-import type { LayoutChangeEvent, TextInput } from 'react-native';
+import { Keyboard, type LayoutChangeEvent, type TextInput } from 'react-native';
 
 type UseExpandAnimationParams = {
 	initialHeight?: number;
 	expandedHeight?: number | 'auto';
 	duration?: number;
 	initiallyExpanded?: boolean;
+	onToggle?: () => void;
 };
 
 /**
@@ -21,6 +22,7 @@ export function useExpandAnimation({
 	expandedHeight = 'auto',
 	duration = 200,
 	initiallyExpanded = false,
+	onToggle,
 }: UseExpandAnimationParams = {}) {
 	// 확장 상태
 	const [isExpanded, setIsExpanded] = useState(initiallyExpanded);
@@ -88,9 +90,11 @@ export function useExpandAnimation({
 			}, 100);
 		} else {
 			// 닫힐 때
+			Keyboard.isVisible() && Keyboard.dismiss();
 			height.value = withTiming(initialHeight, { duration });
 			rotate.value = withTiming(0, { duration });
 		}
+		onToggle?.();
 	};
 
 	return {

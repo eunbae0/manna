@@ -40,6 +40,7 @@ import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import type {
 	ClientFellowship,
+	ClientFellowshipV2,
 	ServerFellowshipMember,
 } from '@/features/fellowship/api/types';
 import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
@@ -64,7 +65,7 @@ interface FellowshipDetailScreenProps {
 
 function AdditionalInfo({
 	fellowship,
-}: { fellowship: ClientFellowship | undefined }) {
+}: { fellowship: ClientFellowshipV2 | undefined }) {
 	const [isFolded, setIsFolded] = useState(false);
 
 	const foldAnimation = useSharedValue(1); // 1: 펼쳐짐, 0: 접힘
@@ -128,12 +129,12 @@ function AdditionalInfo({
 					</Text>
 				</HStack>
 				<Text size="xl" className="ml-6">
-					{fellowship?.info.preachTitle}
+					{fellowship?.info.title}
 				</Text>
 			</VStack>
 			{/* 접기/펼치기 가능한 콘텐츠 */}
 			<Animated.View style={contentStyle}>
-				{fellowship?.info.preachText?.isActive && (
+				{fellowship?.info.preachText && (
 					<VStack space="xs">
 						<HStack space="sm" className="items-center">
 							<Icon as={BookText} size="sm" className="text-typography-600" />
@@ -142,11 +143,11 @@ function AdditionalInfo({
 							</Text>
 						</HStack>
 						<Text size="xl" className="ml-6">
-							{fellowship?.info.preachText?.value}
+							{fellowship?.info.preachText}
 						</Text>
 					</VStack>
 				)}
-				{fellowship?.info.preacher?.isActive && (
+				{fellowship?.info.preacher && (
 					<VStack space="xs">
 						<HStack space="sm" className="items-center">
 							<Icon
@@ -159,7 +160,7 @@ function AdditionalInfo({
 							</Text>
 						</HStack>
 						<Text size="xl" className="ml-6">
-							{fellowship?.info.preacher?.value}
+							{fellowship?.info.preacher}
 						</Text>
 					</VStack>
 				)}
@@ -171,17 +172,17 @@ function AdditionalInfo({
 						</Text>
 					</HStack>
 					<HStack space="sm" className="flex-wrap ml-6">
-						{fellowship?.info.members && fellowship.info.members.length > 0 ? (
+						{fellowship?.info.participants && fellowship.info.participants.length > 0 ? (
 							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 								<HStack space="md" className="itmes-center">
-									{fellowship.info.members.map((member) => (
+									{fellowship.info.participants.map((participant) => (
 										<AnimatedPressable
-											key={member.id}
-											onPress={() => !member.isGuest && openProfile(member.id)}
+											key={participant.id}
+											onPress={() => !participant.isGuest && openProfile(participant.id)}
 										>
 											<Avatar
-												label={member.displayName || ''}
-												photoUrl={member.photoUrl || ''}
+												label={participant.displayName || ''}
+												photoUrl={participant.photoUrl || ''}
 												size="sm"
 											/>
 										</AnimatedPressable>
@@ -223,7 +224,7 @@ export default function FellowshipDetailScreen({
 		updateFellowship,
 		deleteFellowship,
 	} = useFellowship(id);
-	
+
 	// null을 undefined로 변환하여 타입 호환성 유지
 	const fellowshipData = fellowship || undefined;
 
@@ -237,9 +238,9 @@ export default function FellowshipDetailScreen({
 
 	const handlePressEditButton = () => {
 		if (!fellowshipData) return;
-		
+
 		setType('EDIT');
-		setFellowshipId(fellowshipData.id);
+		setFellowshipId(fellowshipData.identifiers.id);
 		updateFellowshipInfo({
 			...fellowshipData.info,
 		});
@@ -271,8 +272,8 @@ export default function FellowshipDetailScreen({
 		() =>
 			fellowshipData
 				? user?.id ===
-				fellowshipData.info.members.find(
-					(member: ServerFellowshipMember) => member.isLeader,
+				fellowshipData.info.participants.find(
+					(participant) => participant.id === fellowshipData.roles.leaderId,
 				)?.id
 				: false,
 		[fellowshipData, user],
@@ -344,7 +345,7 @@ export default function FellowshipDetailScreen({
 					<VStack space="2xl" className="px-5 flex-1 pb-8">
 						{/* 나눔 노트 제목 및 정보 */}
 						<VStack space="md">
-							<Heading size="3xl">{fellowshipData?.info.preachTitle}</Heading>
+							<Heading size="3xl">{fellowshipData?.info.title}</Heading>
 							<Text size="lg" className="text-typography-500">
 								{fellowshipData?.info.date?.toLocaleDateString('ko-KR', {
 									year: 'numeric',
@@ -361,8 +362,9 @@ export default function FellowshipDetailScreen({
 
 						{/* 말씀 내용 */}
 						<VStack className="gap-8 pb-10">
-							{fellowshipData?.content.iceBreaking &&
-								fellowshipData?.content.iceBreaking.length > 0 && (
+							{
+								fellowshipData?.content.categories.iceBreaking.items &&
+								Object.keys(fellowshipData.content.categories.iceBreaking.items).length > 0 && (
 									<FellowshipContentLayout title="아이스 브레이킹">
 										<FellowshipContentList
 											fellowshipId={id}
@@ -371,8 +373,8 @@ export default function FellowshipDetailScreen({
 										/>
 									</FellowshipContentLayout>
 								)}
-							{fellowshipData?.content.sermonTopic &&
-								fellowshipData?.content.sermonTopic.length > 0 && (
+							{fellowshipData?.content.categories.sermonTopic.items &&
+								Object.keys(fellowshipData.content.categories.sermonTopic.items).length > 0 && (
 									<FellowshipContentLayout title="설교 나눔">
 										<FellowshipContentList
 											fellowshipId={id}
@@ -381,7 +383,7 @@ export default function FellowshipDetailScreen({
 										/>
 									</FellowshipContentLayout>
 								)}
-							{fellowshipData?.content.prayerRequest.isActive && (
+							{fellowshipData?.content.categories.prayerRequest.isActive && (
 								<FellowshipContentLayout
 									title="기도 제목"
 									enableReply={enableReply}
@@ -389,13 +391,13 @@ export default function FellowshipDetailScreen({
 										// id가 content id
 										router.push({
 											pathname: `/(app)/(fellowship)/${id}/answer`,
-											params: { contentType: "prayerRequest", index: "-1" }
+											params: { contentType: "prayerRequest", answerId: "prayerRequest" }
 										});
 									}
 									}
 								>
 									<FellowshipPrayerRequestList
-										answers={fellowshipData?.content.prayerRequest.answers}
+										answers={fellowshipData?.content.categories.prayerRequest.items.prayerRequest.answers || []}
 									/>
 								</FellowshipContentLayout>
 							)}

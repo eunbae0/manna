@@ -1,14 +1,12 @@
-import { useState } from 'react';
-import type { ClientFellowshipMember } from '@/features/fellowship/api/types';
+import { useEffect, useRef, useState } from 'react';
+import type { ClientFellowshipParticipantV2 } from '@/features/fellowship/api/types';
 import { useAnswerRecordingStore } from '@/store/fellowship/answer-recording';
-import { useAnswerDataStore } from '@/store/fellowship/answer-data';
+import { useToastStore } from '@/store/toast';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
 import { TextInput, Pressable } from 'react-native';
-import { useToastStore } from '@/store/toast';
-import { VolumeMeteringButton } from './VolumeMeteringButton';
 import { ButtonText, ButtonIcon } from '@/components/common/button';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 import { Brain, Check, ChevronLeft, ChevronRight, LoaderIcon } from 'lucide-react-native';
@@ -20,6 +18,7 @@ import { cn } from '@/shared/utils/cn';
 import { Icon } from '#/components/ui/icon';
 import { Box } from '#/components/ui/box';
 import { GEMINI_API_URL } from '@/shared/constants/url';
+import { VolumeMeteringButton } from './VolumeMeteringButton';
 
 // Gemini AI 요약을 위한 프롬프트
 const SUMMARY_PROMPT = `
@@ -36,8 +35,51 @@ const SUMMARY_PROMPT = `
 각 요약에는 번호를 꼭 제거해주세요. 그리고 두가지 요약 내용을 plain text로, '+'로 구분해서 제공해주세요.
 `;
 
-export function AnswerField({ member }: { member: ClientFellowshipMember }) {
+export function AnswerField({ member, answer, updateAnswer }: { member: ClientFellowshipParticipantV2, answer: string, updateAnswer: (memberId: string, content: string) => void }) {
   const { showSuccess, showInfo } = useToastStore();
+
+  const [localAnswer, setLocalAnswer] = useState(answer);
+  const lastUpdateRef = useRef(answer);
+
+  // 디바운스 타이머 참조
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 텍스트 변경 핸들러
+  const handleTextChange = (text: string) => {
+    setLocalAnswer(text);
+
+    // 이전 타이머가 있으면 취소
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    // 새 타이머 설정
+    timerRef.current = setTimeout(() => {
+      if (lastUpdateRef.current !== text) {
+        updateAnswer(member.id, text);
+        lastUpdateRef.current = text;
+      }
+      timerRef.current = null;
+    }, 500);
+  };
+
+  // 외부에서 answer가 변경되었을 때 로컬 상태 동기화
+  useEffect(() => {
+    if (answer !== lastUpdateRef.current) {
+      setLocalAnswer(answer);
+      lastUpdateRef.current = answer;
+    }
+  }, [answer]);
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
 
   // 스토어 접근
   const {
@@ -50,15 +92,11 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
     clearTranscriptForMember
   } = useAnswerRecordingStore();
 
-  const { answers, updateAnswer } = useAnswerDataStore();
-
   // 현재 멤버 관련 상태 추출
   const isCurrentMember = member.id === currentMember?.id;
   const transcript = liveTranscript.find(
     (item) => item.member.id === member.id,
   )?.transcript;
-  const answerValue =
-    answers.find((answer) => answer.member.id === member.id)?.value || '';
 
   // AI 요약 관련 상태
   const [summarizeText, setSummarizeText] = useState('');
@@ -170,48 +208,54 @@ export function AnswerField({ member }: { member: ClientFellowshipMember }) {
             {member.displayName}
           </Text>
         </HStack>
-        <HStack space="lg" className="items-center">
-          <TextInput
-            value={answerValue}
-            placeholder="답변을 입력해주세요"
-            onChangeText={(text) => updateAnswer(member.id, text)}
-            multiline
-            textAlignVertical="top"
-            className={cn(
-              TEXT_INPUT_STYLE,
-              'flex-1 min-h-28 text-lg py-2 rounded-lg',
-            )}
-          />
-          {isRecordingMode && (
-            <VolumeMeteringButton
-              onPress={() => {
-                if (isRecording && isCurrentMember) {
-                  // 현재 녹음 중인 멤버의 버튼을 누르면 녹음 중지
-                  stopListening();
-                } else if (isRecording && !isCurrentMember) {
-                  // 다른 멤버가 녹음 중이라면 알림 표시
-                  const recordingMember = currentMember?.displayName || '다른 멤버';
-                  showInfo(`${recordingMember}님을 녹음 중이에요. 완료 후 시도해주세요.`);
-                } else {
-                  // 녹음 중이 아니면 녹음 시작
-                  startListening(member);
-                }
-              }}
-              isRecording={isRecording && isCurrentMember}
-              isCurrentMember={isCurrentMember}
-              className="mr-3"
+        <VStack space="xs">
+          <HStack space="lg" className="items-center">
+            <TextInput
+              value={localAnswer}
+              placeholder="답변을 입력해주세요"
+              onChangeText={handleTextChange}
+              multiline
+              textAlignVertical="top"
+              className={cn(
+                TEXT_INPUT_STYLE,
+                'flex-1 min-h-28 text-lg py-2 rounded-lg',
+              )}
             />
+            {isRecordingMode && (
+              <VolumeMeteringButton
+                onPress={() => {
+                  if (isRecording && isCurrentMember) {
+                    // 현재 녹음 중인 멤버의 버튼을 누르면 녹음 중지
+                    stopListening();
+                  } else if (isRecording && !isCurrentMember) {
+                    // 다른 멤버가 녹음 중이라면 알림 표시
+                    const recordingMember = currentMember?.displayName || '다른 멤버';
+                    showInfo(`${recordingMember}님을 녹음 중이에요. 완료 후 시도해주세요.`);
+                  } else {
+                    // 녹음 중이 아니면 녹음 시작
+                    startListening(member);
+                  }
+                }}
+                isRecording={isRecording && isCurrentMember}
+                isCurrentMember={isCurrentMember}
+                className="mr-3"
+              />
+            )}
+          </HStack>
+          {/* Real-time transcription display */}
+          {isRecordingMode && (isRecording || transcript) && (
+            <VStack space="sm" className="mt-2 p-3 bg-typography-50/80 rounded-md">
+              {transcript && transcript.length > 0 ? (
+                <Text size="md">{transcript}</Text>
+              ) : (
+                <VStack space="sm">
+                  <Text size="md" className="text-typography-500">녹음 대기 중...</Text>
+                  <Text size="md" className="text-typography-500">말을 하면 여기에 기록됩니다.</Text>
+                </VStack>
+              )}
+            </VStack>
           )}
-        </HStack>
-
-        {/* Real-time transcription display */}
-        {isRecordingMode && transcript && (
-          <VStack space="sm" className="mt-2 p-2 bg-background-50 rounded-md">
-            <Text size="md">
-              {transcript}
-            </Text>
-          </VStack>
-        )}
+        </VStack>
 
         {/* Summarize recording button - 녹음이 완료된 후에만 표시 */}
         {isRecordingMode && transcript && !isRecording && (

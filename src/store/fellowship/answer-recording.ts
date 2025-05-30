@@ -1,30 +1,30 @@
 import { create } from 'zustand';
 import { ExpoSpeechRecognitionModule } from 'expo-speech-recognition';
-import type { ClientFellowshipMember } from '@/features/fellowship/api/types';
+import type { ClientFellowshipParticipantV2 } from '@/features/fellowship/api/types';
 import { useToastStore } from '../toast';
 import { openAppSettings } from '@/shared/utils/app/open_app_settings';
 
 type TranscriptItem = {
-	member: ClientFellowshipMember;
+	member: ClientFellowshipParticipantV2;
 	transcript: string;
 };
 
 interface AnswerRecordingState {
 	isRecording: boolean;
 	isRecordingMode: boolean;
-	currentMember: ClientFellowshipMember | null;
+	currentMember: ClientFellowshipParticipantV2 | null;
 	liveTranscript: TranscriptItem[];
 
 	toggleRecordingMode: () => Promise<void>;
-	startListening: (member: ClientFellowshipMember) => void;
+	startListening: (member: ClientFellowshipParticipantV2) => void;
 	stopListening: () => void;
 	updateTranscript: (
-		member: ClientFellowshipMember,
+		member: ClientFellowshipParticipantV2,
 		transcript: string,
 	) => void;
 	clearTranscriptForMember: (memberId: string) => void;
 	setIsRecording: (isRecording: boolean) => void;
-	setCurrentMember: (member: ClientFellowshipMember | null) => void;
+	setCurrentMember: (member: ClientFellowshipParticipantV2 | null) => void;
 	reset: () => void;
 }
 
