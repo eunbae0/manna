@@ -37,6 +37,7 @@ import type { AmplitudeLocation } from '@/shared/constants/amplitude';
 import { openProfile } from '@/shared/utils/router';
 import { PopupMenu, PopupMenuItem, PopupMenuItemLabel } from '@/shared/components/popup-menu';
 import { MemberListItem } from '../profile/components/MemberListItem';
+import * as Haptics from 'expo-haptics';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
 
@@ -87,6 +88,11 @@ function HomeHeader({ groups }: Props) {
 		});
 		setIsExpanded((prev) => !prev);
 		handleOpenMember();
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+			.then(() =>
+				setTimeout(() => {
+					Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+				}, 50));
 	};
 
 	const handlePressManageMember = () => {
@@ -140,6 +146,16 @@ function HomeHeader({ groups }: Props) {
 			},
 		});
 	};
+
+	const handlePressMenu = () => {
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+		trackAmplitudeEvent('홈 메뉴 클릭', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location: 'Group_Menu_Bottom_Sheet',
+		});
+		handleOpenMenu();
+	}
 
 	const { shareInviteCode } = useShareInviteCode(group?.inviteCode || '');
 
@@ -221,14 +237,7 @@ function HomeHeader({ groups }: Props) {
 				<Button
 					size="xl"
 					variant="icon"
-					onPress={() => {
-						trackAmplitudeEvent('홈 메뉴 클릭', {
-							screen: 'Tab_Home',
-							symbol: 'Home_Header',
-							location: 'Group_Menu_Bottom_Sheet',
-						});
-						handleOpenMenu();
-					}}
+					onPress={handlePressMenu}
 				>
 					<ButtonIcon as={MenuIcon} />
 				</Button>
