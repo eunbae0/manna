@@ -18,6 +18,7 @@ import {
 	Info,
 	MessageCircleReply,
 	NotepadText,
+	Megaphone,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
 import { APP_STORE_REVIEW_URL, PLAY_STORE_URL } from '@/shared/constants/app';
@@ -67,7 +68,7 @@ export default function TabFourScreen() {
 				</VStack>
 				<VStack space="2xl">
 					<Heading size="xl">앱 설정</Heading>
-					<VStack space="xl">
+					<VStack space="lg">
 						{/* <ListItem
 								label="화면"
 								icon={Smartphone}
@@ -104,6 +105,17 @@ export default function TabFourScreen() {
 							/> */}
 						<VStack space="xs">
 							<ListItem
+								label="공지사항"
+								icon={Megaphone}
+								onPress={() => {
+									trackAmplitudeEvent('공지사항 클릭', {
+										screen: 'Tab_More',
+									});
+									router.push('/(app)/(more)/notice');
+								}}
+								isNew
+							/>
+							<ListItem
 								label="업데이트 노트"
 								icon={NotepadText}
 								onPress={() => {
@@ -115,16 +127,6 @@ export default function TabFourScreen() {
 								isNew
 							/>
 							<ListItem
-								label="지원"
-								icon={Info}
-								onPress={() => {
-									trackAmplitudeEvent('지원 클릭', {
-										screen: 'Tab_More',
-									});
-									router.push('/(app)/(more)/support');
-								}}
-							/>
-							<ListItem
 								label="개발자에게 피드백 보내기"
 								icon={MessageCircleReply}
 								onPress={() => {
@@ -134,6 +136,19 @@ export default function TabFourScreen() {
 									router.push('/(app)/(more)/(feedback)/feedback-index');
 								}}
 								isNew
+							/>
+						</VStack>
+						<VStack space="xs">
+
+							<ListItem
+								label="지원"
+								icon={Info}
+								onPress={() => {
+									trackAmplitudeEvent('지원 클릭', {
+										screen: 'Tab_More',
+									});
+									router.push('/(app)/(more)/support');
+								}}
 							/>
 							<ListItem
 								label="정책"

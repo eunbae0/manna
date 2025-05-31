@@ -33,6 +33,7 @@ import { useInfiniteFellowships } from '../../hooks/useInfiniteFellowships';
 import type { ClientFellowship, ClientFellowshipMember, ClientFellowshipParticipantV2, ClientFellowshipV2 } from '../../api/types';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { cn } from '@/shared/utils/cn';
+import { shadowStyle } from '@/shared/styles/shadow';
 
 type ViewMode = 'list' | 'calendar';
 
@@ -189,14 +190,14 @@ export default function FellowshipListScreen() {
 				onPress={() => handlePressFellowship(item.identifiers.id)}
 				className="mb-3 mx-4"
 			>
-				<Box className="border border-gray-300 rounded-2xl px-4 py-4">
+				<Box style={shadowStyle.shadow} className="border bg-gray-100 border-gray-200 rounded-2xl px-4 py-3">
 					{/* 상단 영역: 날짜와 나눔장 정보 */}
 					<HStack className="justify-between items-center">
 						<VStack space="xs">
-							<VStack space="xs">
-								<Text size="xl" className="font-pretendard-semi-bold">
-									{item.info.title}
-								</Text>
+							<Text size="xl" className="font-pretendard-semi-bold">
+								{item.info.title}
+							</Text>
+							<HStack space="md" className="items-center">
 								<Text size="md" className="text-typography-400">
 									{item.info.date
 										.toLocaleDateString('ko-KR', {
@@ -207,22 +208,22 @@ export default function FellowshipListScreen() {
 										.replace(/\. /g, '.')
 										.replace(/\.$/, '')}
 								</Text>
-							</VStack>
-							{showLeader && leader ? (
-								<HStack space="xs" className="items-center">
-									<Avatar size="2xs" photoUrl={leader.photoUrl || ''} />
-									<Text
-										size="sm"
-										className="text-typography-500 font-pretendard-semi-bold"
-									>
-										{leader.displayName}
-									</Text>
-								</HStack>
-							) : <HStack className="items-center gap-[1px]">
-								{item.info.participants.map((member) => (
-									<Avatar key={member.id} photoUrl={member.photoUrl || ''} size='2xs' />
-								))}
-							</HStack>}
+								{showLeader && leader ? (
+									<HStack space="xs" className="items-center">
+										<Avatar size="2xs" photoUrl={leader.photoUrl || ''} />
+										<Text
+											size="sm"
+											className="text-typography-500 font-pretendard-semi-bold"
+										>
+											{leader.displayName}
+										</Text>
+									</HStack>
+								) : <HStack className="items-center gap-[1px]">
+									{item.info.participants.map((member) => (
+										<Avatar key={member.id} photoUrl={member.photoUrl || ''} size='2xs' />
+									))}
+								</HStack>}
+							</HStack>
 						</VStack>
 						<Icon as={ChevronRight} className="color-typography-400" />
 					</HStack>
@@ -438,7 +439,7 @@ export default function FellowshipListScreen() {
 						className="self-end"
 					>
 						<HStack space="sm" className="items-center mr-2">
-							<Text size="md" className="text-typography-600">나눔장 보기</Text>
+							<Text size="md" className="text-typography-600">나눔장만 보기</Text>
 							<Box
 								className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
 							>
@@ -459,10 +460,11 @@ export default function FellowshipListScreen() {
 								onPress={() => handlePressFellowship(fellowship.identifiers.id)}
 							>
 								<Box
-									className="p-4 border border-gray-300 rounded-xl">
+									style={shadowStyle.shadow}
+									className="px-4 py-3 bg-gray-100 border border-gray-200 rounded-2xl">
 									<HStack className="justify-between items-center">
-										<VStack space="xs">
-											<Text size="lg" className="flex-1">
+										<VStack space="sm">
+											<Text size="lg" className="font-pretendard-semi-bold">
 												{fellowship.info.title}
 											</Text>
 											{showLeader && leader ? (
@@ -546,8 +548,8 @@ export default function FellowshipListScreen() {
 										onPress={() => setShowLeader(!showLeader)}
 										className="self-end"
 									>
-										<HStack space="sm" className="items-center mr-5 py-2">
-											<Text size="md" className="text-typography-600">나눔장 보기</Text>
+										<HStack space="sm" className="items-center mr-5 pt-6 pb-4">
+											<Text size="md" className="text-typography-600">나눔장만 보기</Text>
 											<Box
 												className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
 											>

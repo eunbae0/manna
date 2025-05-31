@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RefreshControl } from 'react-native';
 import { type Href, router } from 'expo-router';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
@@ -14,7 +15,7 @@ import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRe
 import { Text } from '@/shared/components/text';
 import { PrayerRequestSkeleton } from '@/features/prayer-request/components/PrayerRequestSkeleton';
 import { usePrayerRequests } from '@/features/prayer-request/hooks/usePrayerRequests';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { GROUP_QUERY_KEY, GROUPS_QUERY_KEY } from './group/hooks/useGroups';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { useAuthStore } from '@/store/auth';
@@ -23,6 +24,8 @@ import { useInfiniteBoardPosts } from '../board/hooks';
 import { HomeBoardPostCard } from '../board/components/HomeBoardPostCard';
 import { HomeBoardPostSkeleton } from '../board/components/HomeBoardPostSkeleton';
 import { CoverImageCarousel } from './components/CoverImageCarousel';
+import NoticeBox from './components/NoticeBox';
+import { fetchMainScreenNotices } from '@/api/notice';
 
 function HomeList() {
 	const { currentGroup } = useAuthStore()
@@ -43,6 +46,12 @@ function HomeList() {
 		markAsRead,
 	} = useNotifications();
 
+	// 메인화면에 표시할 공지사항 가져오기
+	const { data: mainNotices, refetch: refetchNotices } = useQuery({
+		queryKey: ['mainScreenNotices'],
+		queryFn: fetchMainScreenNotices,
+	});
+
 	// Handle pull-to-refresh
 	const onRefresh = useCallback(async () => {
 		setRefreshing(true);
@@ -50,6 +59,7 @@ function HomeList() {
 			await Promise.all([
 				refetchPrayerRequests(),
 				refetchNotifications(),
+				refetchNotices(),
 				queryClient.invalidateQueries({
 					queryKey: [GROUPS_QUERY_KEY],
 				}),
@@ -62,12 +72,67 @@ function HomeList() {
 			// tracking amplitude
 			trackAmplitudeEvent('홈 새로고침', { screen: 'Tab_Home' });
 		}
-	}, [refetchPrayerRequests, refetchNotifications, queryClient]);
+	}, [refetchPrayerRequests, refetchNotifications, refetchNotices, queryClient]);
 
 	const handlePressAddButton = () => {
 		trackAmplitudeEvent('기도제목 작성하기 클릭', { screen: 'Tab_Home' });
 		router.navigate('/(app)/createPrayerRequestModal');
 	};
+
+	// 숨긴 공지사항 ID 상태 관리
+	const [dismissedNoticeIds, setDismissedNoticeIds] = useState<string[]>([]);
+
+	// AsyncStorage에서 숨긴 공지사항 ID 불러오기
+	useEffect(() => {
+		const loadDismissedNotices = async () => {
+			try {
+				const dismissedNoticesJson = await AsyncStorage.getItem('dismissedNoticeIds');
+				if (dismissedNoticesJson) {
+					setDismissedNoticeIds(JSON.parse(dismissedNoticesJson));
+				}
+			} catch (error) {
+				console.error('Failed to load dismissed notices:', error);
+			}
+		};
+
+		loadDismissedNotices();
+	}, []);
+
+	// 가장 최근 공지사항 가져오기 (숨기지 않은 것만)
+	const latestMainNotice = useMemo(() => {
+		if (!mainNotices || mainNotices.length === 0) return null;
+
+		// 숨기지 않은 공지사항 중 첫 번째 항목 반환
+		const visibleNotice = mainNotices.find(notice => !dismissedNoticeIds.includes(notice.id));
+		return visibleNotice || null;
+	}, [mainNotices, dismissedNoticeIds]);
+
+	const handlePressNoticeBox = () => {
+		if (latestMainNotice) {
+			router.push({
+				pathname: '/(app)/(more)/notice',
+				params: { id: latestMainNotice.id }
+			});
+			trackAmplitudeEvent('공지사항 클릭', { screen: 'Tab_Home', noticeId: latestMainNotice.id });
+		}
+	};
+
+	// 공지사항 숨기기 처리
+	const handleDismissNotice = useCallback(async () => {
+		if (!latestMainNotice) return;
+
+		try {
+			// 현재 공지사항 ID를 숨김 목록에 추가
+			const updatedDismissedIds = [...dismissedNoticeIds, latestMainNotice.id];
+			setDismissedNoticeIds(updatedDismissedIds);
+
+			// AsyncStorage에 저장
+			await AsyncStorage.setItem('dismissedNoticeIds', JSON.stringify(updatedDismissedIds));
+
+		} catch (error) {
+			console.error('Failed to dismiss notice:', error);
+		}
+	}, [latestMainNotice, dismissedNoticeIds]);
 
 	// 현재 표시할 알림 상태 관리
 	const [recentFellowshipNotification, setRecentFellowshipNotification] =
@@ -172,6 +237,13 @@ function HomeList() {
 				}
 			>
 				<VStack className="pt-1 pb-4">
+					{latestMainNotice && (
+						<NoticeBox
+							content={latestMainNotice.mainDisplayText}
+							onPress={handlePressNoticeBox}
+							onDismiss={handleDismissNotice}
+						/>
+					)}
 					<CoverImageCarousel />
 					<VStack className="">
 						{recentFellowshipNotification && (
