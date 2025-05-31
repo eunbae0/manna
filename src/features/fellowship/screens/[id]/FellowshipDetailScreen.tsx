@@ -220,7 +220,6 @@ export default function FellowshipDetailScreen({
 		fellowship,
 		isLoading,
 		isError,
-		refetch,
 		updateFellowship,
 		deleteFellowship,
 	} = useFellowship(id);
@@ -285,16 +284,6 @@ export default function FellowshipDetailScreen({
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 
-	const handleRefresh = useCallback(async () => {
-		// 실시간 업데이트를 사용하지만 사용자가 수동 새로고침할 수 있도록 유지
-		setIsRefreshing(true);
-		try {
-			await refetch();
-		} finally {
-			setIsRefreshing(false);
-		}
-	}, [refetch]);
-
 	if (isLoading) {
 		return <FellowshipSkeleton />;
 	}
@@ -311,12 +300,10 @@ export default function FellowshipDetailScreen({
 				</Text>
 				<Button
 					variant="outline"
-					onPress={() => refetch()}
 					className="mt-4"
-					animation={true}
+					onPress={() => router.replace('/(app)')}
 				>
-					<ButtonText>다시 시도</ButtonText>
-					<ButtonIcon as={RefreshCw} />
+					<ButtonText>메인으로 가기</ButtonText>
 				</Button>
 			</VStack>
 		);
@@ -335,12 +322,6 @@ export default function FellowshipDetailScreen({
 
 				<ScrollView
 					showsVerticalScrollIndicator={false}
-					refreshControl={
-						<RefreshControl
-							refreshing={isRefreshing}
-							onRefresh={handleRefresh}
-						/>
-					}
 				>
 					<VStack space="2xl" className="px-5 flex-1 pb-8">
 						{/* 나눔 노트 제목 및 정보 */}

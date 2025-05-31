@@ -127,7 +127,6 @@ export function useFellowship(id: string | undefined) {
 		isLoading: fellowshipQuery.isLoading,
 		isError: fellowshipQuery.isError,
 		error: fellowshipQuery.error,
-		refetch: fellowshipQuery.refetch,
 		isFetching: fellowshipQuery.isFetching,
 		updateFellowship: updateFellowshipState,
 		isUpdating: updateMutation.isPending,
