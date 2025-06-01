@@ -145,6 +145,65 @@ export const fetchUserFellowships = withApiLogging(
 );
 
 /**
+ * Fetches fellowships by date
+ * @param groupId ID of the group
+ * @param date Date to fetch fellowships for
+ * @returns Array of fellowships
+ */
+export const fetchFellowshipsByDate = withApiLogging(
+	async ({
+		groupId,
+		date,
+	}: {
+		groupId: string;
+		date: Date;
+	}): Promise<ClientFellowshipV2[]> => {
+		try {
+			const fellowshipService = getFellowshipService();
+			return await fellowshipService.getFellowshipsByDate({
+				groupId,
+				date,
+			});
+		} catch (error) {
+			throw handleApiError(error, 'fetchFellowshipsByDate', 'fellowship');
+		}
+	},
+	'fetchFellowshipsByDate',
+	'fellowship',
+);
+
+/**
+ * Fetches fellowships by date
+ * @param groupId ID of the group
+ * @param date Date to fetch fellowships for
+ * @returns Array of fellowships
+ */
+export const fetchFellowshipDates = withApiLogging(
+	async ({
+		groupId,
+		year,
+		month,
+	}: {
+		groupId: string;
+		year: number;
+		month: number;
+	}): Promise<number[]> => {
+		try {
+			const fellowshipService = getFellowshipService();
+			return await fellowshipService.getFellowshipDates({
+				groupId,
+				year,
+				month,
+			});
+		} catch (error) {
+			throw handleApiError(error, 'fetchFellowshipDates', 'fellowship');
+		}
+	},
+	'fetchFellowshipDates',
+	'fellowship',
+);
+
+/**
  * Fetches a specific fellowship by ID
  * @param groupId ID of the group
  * @param fellowshipId ID of the fellowship to fetch

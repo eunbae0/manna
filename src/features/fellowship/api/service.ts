@@ -140,24 +140,24 @@ export class FirestoreFellowshipService {
 		if (startAfter) {
 			q = query(
 				this.getFellowshipCollectionRef({ groupId }),
-				orderBy('metadata.createdAt', 'desc'),
-				where('metadata.createdAt', '<', startAfter),
+				orderBy('info.date', 'desc'),
+				where('info.date', '<', startAfter),
 				limit(_limitCount),
 			);
 		} else {
 			q = query(
 				this.getFellowshipCollectionRef({ groupId }),
-				orderBy('metadata.createdAt', 'desc'),
+				orderBy('info.date', 'desc'),
 				limit(_limitCount),
 			);
 		}
 
 		const querySnapshot = await getDocs(q);
-		const hasMore = querySnapshot.docs.length > _limitCount;
+		const hasMore = querySnapshot.docs.length > limitCount;
 
 		// If we fetched an extra item to check for more, remove it from the results
 		const docs = hasMore
-			? querySnapshot.docs.slice(0, _limitCount)
+			? querySnapshot.docs.slice(0, limitCount)
 			: querySnapshot.docs;
 
 		const fellowships: ClientFellowshipV2[] = [];
@@ -199,7 +199,7 @@ export class FirestoreFellowshipService {
 	}> {
 		const q = query(
 			this.getFellowshipCollectionRef({ groupId }),
-			orderBy('metadata.createdAt', 'desc'),
+			orderBy('info.date', 'desc'),
 			where('roles.leaderId', '==', userId),
 			limit(limitCount),
 		);
@@ -245,7 +245,7 @@ export class FirestoreFellowshipService {
 		// Firestore에서는 배열 내 특정 값을 포함하는 문서를 찾기 위해 array-contains 연산자를 사용
 		const q = query(
 			this.getFellowshipCollectionRef({ groupId }),
-			orderBy('metadata.createdAt', 'desc'),
+			orderBy('info.date', 'desc'),
 			where('info.participants', 'array-contains', { id: userId }),
 			...(startAfter ? [startAfter] : []),
 			limit(limitCount + 1), // 추가 항목을 가져와서 더 있는지 확인
@@ -283,6 +283,83 @@ export class FirestoreFellowshipService {
 			hasMore,
 			total: fellowships.length,
 		};
+	}
+
+	/**
+	 * Fetches fellowships by date
+	 * @param groupId ID of the group
+	 * @param date Date to fetch fellowships for
+	 * @returns Array of fellowships
+	 */
+	async getFellowshipsByDate({
+		groupId,
+		date,
+	}: {
+		groupId: string;
+		date: Date;
+	}): Promise<ClientFellowshipV2[]> {
+		const nextDay = new Date(date);
+		nextDay.setDate(date.getDate() + 1);
+		const q = query(
+			this.getFellowshipCollectionRef({ groupId }),
+			orderBy('info.date', 'desc'),
+			where('info.date', '>=', date),
+			where('info.date', '<=', nextDay),
+		);
+
+		const querySnapshot = await getDocs(q);
+
+		const fellowships: ClientFellowshipV2[] = [];
+		for (const fellowshipsDoc of querySnapshot.docs) {
+			const members: ClientFellowshipParticipantV2[] = [];
+			const data = fellowshipsDoc.data() as ServerFellowshipV2;
+			const memberPromises = data.info.participants.map((member) =>
+				this.getParticipantWithCache(groupId, member.id, {
+					displayName: member.displayName,
+				}),
+			);
+
+			// 병렬로 멤버 정보 조회
+			const memberResults = await Promise.all(memberPromises);
+			members.push(...memberResults);
+
+			const fellowship = this.convertToClientFellowship(data, members);
+			fellowships.push(fellowship);
+		}
+
+		return fellowships;
+	}
+
+	/**
+	 * Fetches fellowships by date
+	 * @param groupId ID of the group
+	 * @param date Date to fetch fellowships for
+	 * @returns Array of fellowships
+	 */
+	async getFellowshipDates({
+		groupId,
+		year,
+		month,
+	}: {
+		groupId: string;
+		year: number;
+		month: number;
+	}): Promise<number[]> {
+		const q = query(
+			this.getFellowshipCollectionRef({ groupId }),
+			orderBy('info.date', 'desc'),
+			where('info.date', '>=', new Date(year, month - 1, 1)),
+			where('info.date', '<', new Date(year, month, 1)),
+		);
+
+		const querySnapshot = await getDocs(q);
+
+		const fellowships: Set<number> = new Set<number>();
+		for (const fellowshipsDoc of querySnapshot.docs) {
+			const data = fellowshipsDoc.data() as ServerFellowshipV2;
+			fellowships.add(data.info.date.toDate().getDate());
+		}
+		return Array.from(fellowships);
 	}
 
 	/**

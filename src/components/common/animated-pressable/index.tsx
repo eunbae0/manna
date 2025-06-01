@@ -50,6 +50,10 @@ interface AnimatedPressableProps extends PressableProps {
 	 */
 	className?: string;
 	/**
+	 * Pressable 컴포넌트의 클래스명
+	 */
+	pressableClassName?: string;
+	/**
 	 * 클릭 시 배경색 변경 활성화 여부
 	 * @default false
 	 */
@@ -90,6 +94,7 @@ function AnimatedPressable({
 	containerStyle,
 	withHaptic = false,
 	className,
+	pressableClassName,
 	style,
 	withBackground = false,
 	pressedBackgroundClass = 'bg-background-50',
@@ -138,6 +143,9 @@ function AnimatedPressable({
 				onPressIn={handlePressIn}
 				onPressOut={handlePressOut}
 				{...props}
+				className={cn(
+					pressableClassName,
+				)}
 			>
 				{children}
 			</Pressable>
