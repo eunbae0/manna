@@ -14,7 +14,7 @@ export function MemberListItem({
   member: GroupMember;
 } & Omit<React.ComponentProps<typeof AnimatedPressable>, 'children'>) {
   return (
-    <AnimatedPressable {...props}>
+    <AnimatedPressable {...props} scale="sm">
       <HStack className="items-center justify-between py-4">
         <HStack space="lg" className="items-center">
           <HStack space="md" className="items-center">
