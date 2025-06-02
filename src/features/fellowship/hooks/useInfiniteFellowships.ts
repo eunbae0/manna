@@ -1,23 +1,41 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
 import { fetchGroupFellowships } from '../api';
+import type { ClientFellowshipV2 } from '../api/types';
+import type { Timestamp } from '@react-native-firebase/firestore';
+import type {
+	InfiniteData,
+	DefinedUseInfiniteQueryResult,
+} from '@tanstack/react-query';
 
 /**
  * 무한 스크롤을 위한 나눔 기록 조회 훅
  * @param limit 페이지당 가져올 항목 수
  * @returns 무한 스크롤 쿼리 결과
  */
-export function useInfiniteFellowships(limit = 8) {
+export function useInfiniteFellowships(
+	limit = 8,
+): DefinedUseInfiniteQueryResult<
+	InfiniteData<
+		{ items: ClientFellowshipV2[]; hasMore: boolean; total: number },
+		unknown
+	>,
+	Error
+> {
 	const { currentGroup } = useAuthStore();
 
-	return useInfiniteQuery({
+	return useInfiniteQuery<{
+		items: ClientFellowshipV2[];
+		hasMore: boolean;
+		total: number;
+	}>({
 		queryKey: [
 			'fellowships',
 			'infinite',
 			currentGroup?.groupId || '',
 			{ limit },
 		],
-		queryFn: async ({ pageParam }) => {
+		queryFn: async ({ pageParam }: { pageParam: Timestamp | undefined }) => {
 			if (!currentGroup?.groupId) {
 				return {
 					items: [],

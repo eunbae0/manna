@@ -6,7 +6,7 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Pen, ChevronRight } from 'lucide-react-native';
+import { Pen, ChevronRight, Plus } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import NotificationBox from './components/NotificationBox';
 import ServiceGroups from './components/ServiceGroups';
@@ -26,6 +26,10 @@ import { HomeBoardPostSkeleton } from '../board/components/HomeBoardPostSkeleton
 import { CoverImageCarousel } from './components/CoverImageCarousel';
 import NoticeBox from './components/NoticeBox';
 import { fetchMainScreenNotices } from '@/api/notice';
+import { useFellowshipStore } from '@/store/createFellowship';
+import { useInfiniteFellowships } from '../fellowship/hooks/useInfiniteFellowships';
+import FellowshipCard from '../fellowship/components/home/FellowshipCard';
+import FellowshipCardSkeleton from '../fellowship/components/home/FellowshipCardSkeleton';
 
 function HomeList() {
 	const { currentGroup } = useAuthStore()
@@ -33,12 +37,6 @@ function HomeList() {
 	const [refreshing, setRefreshing] = useState(false);
 
 	const queryClient = useQueryClient();
-
-	const {
-		prayerRequests,
-		isLoading,
-		refetch: refetchPrayerRequests,
-	} = usePrayerRequests();
 
 	const {
 		notifications,
@@ -52,29 +50,9 @@ function HomeList() {
 		queryFn: fetchMainScreenNotices,
 	});
 
-	// Handle pull-to-refresh
-	const onRefresh = useCallback(async () => {
-		setRefreshing(true);
-		try {
-			await Promise.all([
-				refetchPrayerRequests(),
-				refetchNotifications(),
-				refetchNotices(),
-				queryClient.invalidateQueries({
-					queryKey: [GROUPS_QUERY_KEY],
-				}),
-				queryClient.invalidateQueries({
-					queryKey: [GROUP_QUERY_KEY],
-				}),
-			]);
-		} finally {
-			setRefreshing(false);
-			// tracking amplitude
-			trackAmplitudeEvent('홈 새로고침', { screen: 'Tab_Home' });
-		}
-	}, [refetchPrayerRequests, refetchNotifications, refetchNotices, queryClient]);
 
-	const handlePressAddButton = () => {
+
+	const handlePressAddButton = async () => {
 		trackAmplitudeEvent('기도제목 작성하기 클릭', { screen: 'Tab_Home' });
 		router.navigate('/(app)/createPrayerRequestModal');
 	};
@@ -187,17 +165,50 @@ function HomeList() {
 		}
 	}, [recentFellowshipNotification, markAsRead]);
 
+	const { setType } = useFellowshipStore()
 
-	// 기도 제목
+	const handlePressCreateFellowship = useCallback(() => {
+		trackAmplitudeEvent('나눔 만들기 클릭', { screen: 'Tab_Home' });
+		setType('CREATE');
+		router.push('/(app)/(fellowship)/create');
+	}, [setType]);
+
+	const handleViewMoreFellowships = useCallback(() => {
+		trackAmplitudeEvent('나눔 더보기 클릭', { screen: 'Tab_Home' });
+		router.push('/(app)/(fellowship)/list');
+	}, []);
+
 	const handleViewMorePrayerRequests = useCallback(() => {
 		trackAmplitudeEvent('기도 제목 더보기 클릭', { screen: 'Tab_Home' });
 		router.push('/(app)/(prayerRequest)/list');
 	}, []);
 
+
 	const handleViewMoreBoardPosts = useCallback(() => {
 		trackAmplitudeEvent('게시판 더보기 클릭', { screen: 'Tab_Home' });
 		router.push('/(app)/(board)/board-index');
 	}, []);
+
+	// 최근 나눔
+	const {
+		data: fellowshipData,
+		isLoading: isFellowshipLoading,
+		isError: isFellowshipError,
+		refetch: refetchFellowships,
+	} = useInfiniteFellowships(8);
+
+	const fellowships = React.useMemo(() => {
+		if (!fellowshipData || !fellowshipData.pages) return [];
+		return fellowshipData.pages.flatMap(page => page.items).slice(0, 3);
+	}, [fellowshipData]);
+
+	// 기도 제목
+	const {
+		prayerRequests,
+		isLoading,
+		refetch: refetchPrayerRequests,
+		isError: isPrayerRequestError,
+	} = usePrayerRequests();
 
 	const recentPrayerRequests = useMemo(() => {
 		return prayerRequests?.slice(0, 3) || [];
@@ -208,8 +219,7 @@ function HomeList() {
 		data: boardPosts,
 		isLoading: isBoardLoading,
 		isError: isBoardError,
-		error: boardError,
-		refetch,
+		refetch: refetchBoardPosts,
 	} = useInfiniteBoardPosts({
 		groupId: currentGroup?.groupId || '',
 		limit: 10, // 한 페이지에 표시할 게시글 수
@@ -220,6 +230,28 @@ function HomeList() {
 		return allPosts?.slice(0, 3) || [];
 	}, [allPosts]);
 
+	// Handle pull-to-refresh
+	const onRefresh = useCallback(async () => {
+		setRefreshing(true);
+		try {
+			await Promise.all([
+				refetchFellowships(),
+				refetchPrayerRequests(),
+				refetchNotifications(),
+				refetchNotices(),
+				queryClient.invalidateQueries({
+					queryKey: [GROUPS_QUERY_KEY],
+				}),
+				queryClient.invalidateQueries({
+					queryKey: [GROUP_QUERY_KEY],
+				}),
+			]);
+		} finally {
+			setRefreshing(false);
+			// tracking amplitude
+			trackAmplitudeEvent('홈 새로고침', { screen: 'Tab_Home' });
+		}
+	}, [refetchFellowships, refetchPrayerRequests, refetchNotifications, refetchNotices, queryClient]);
 
 	return (
 		<>
@@ -236,7 +268,7 @@ function HomeList() {
 					/>
 				}
 			>
-				<VStack className="pt-1 pb-4">
+				<VStack className="pt-1">
 					{latestMainNotice && (
 						<NoticeBox
 							content={latestMainNotice.mainDisplayText}
@@ -256,7 +288,59 @@ function HomeList() {
 						)}
 						<ServiceGroups />
 					</VStack>
+				</VStack>
 
+				<VStack space="2xl">
+					{/* 나눔 */}
+					<VStack className="mt-3 py-1 items-center justify-center">
+						<HStack className="justify-between pl-4 pr-1 items-center w-full">
+							<Heading size="xl">최근 나눔</Heading>
+							<Button variant="text" size='sm' onPress={handleViewMoreFellowships}>
+								<ButtonText>더보기</ButtonText>
+								<ButtonIcon as={ChevronRight} />
+							</Button>
+						</HStack>
+						{isFellowshipLoading ? (
+							<ScrollView horizontal scrollEnabled={false}>
+								<HStack space="md" className="ml-4 my-4 justify-start">
+									<FellowshipCardSkeleton />
+									<FellowshipCardSkeleton />
+								</HStack>
+							</ScrollView>
+						) : isFellowshipError ? (
+							<VStack space="xs" className="px-4 pt-10 pb-6">
+								<Text className="text-center text-error-500">
+									나눔을 불러오는 중 오류가 발생했어요.
+								</Text>
+								<Button
+									variant="outline"
+									size="sm"
+									className="self-center mt-4"
+									onPress={() => refetchFellowships()}
+								>
+									<Text>다시 시도하기</Text>
+								</Button>
+							</VStack>
+						) : fellowships.length === 0 ? (
+							<VStack space="xl" className="px-4 pt-10 pb-6 text-typography-500">
+								<Text className="text-center">
+									그룹의 첫 나눔을 만들어보세요.
+								</Text>
+								<Button variant="outline" action="secondary" onPress={handlePressCreateFellowship}>
+									<ButtonText className="font-pretendard-semi-bold">나눔 만들기</ButtonText>
+									<ButtonIcon as={Plus} />
+								</Button>
+							</VStack>
+						) : (
+							<ScrollView className="px-4 pt-4 pb-4" horizontal showsHorizontalScrollIndicator={false}>
+								<HStack space="md" className="w-full">
+									{fellowships.map((item) => (
+										<FellowshipCard key={item.identifiers.id} fellowship={item} />
+									))}
+								</HStack>
+							</ScrollView>
+						)}
+					</VStack>
 					{/* 기도 제목 */}
 					<VStack className="mt-3 py-1 items-center justify-center">
 						<HStack className="justify-between pl-4 pr-1 items-center w-full">
@@ -268,8 +352,22 @@ function HomeList() {
 						</HStack>
 						{isLoading ? (
 							<PrayerRequestSkeleton />
+						) : isPrayerRequestError ? (
+							<VStack space="xs" className="px-4 pt-10 pb-6">
+								<Text className="text-center text-error-500">
+									기도 제목을 불러오는 중 오류가 발생했어요.
+								</Text>
+								<Button
+									variant="outline"
+									size="sm"
+									className="self-center mt-4"
+									onPress={() => refetchPrayerRequests()}
+								>
+									<Text>다시 시도하기</Text>
+								</Button>
+							</VStack>
 						) : recentPrayerRequests.length === 0 ? (
-							<VStack space="xs" className="px-4 py-10 text-typography-500">
+							<VStack space="xs" className="px-4 pt-10 pb-6 text-typography-500">
 								<Text className="text-center">
 									첫 기도 제목을 작성해보세요.
 								</Text>
@@ -291,34 +389,47 @@ function HomeList() {
 							<ButtonIcon as={Pen} />
 						</Button>
 					</VStack>
-				</VStack>
-
-				{/* 게시판 최근 글 */}
-				<VStack space="md" className="pt-8 pb-14">
-					<HStack className="justify-between pl-4 pr-1 items-center">
-						<Heading size="xl">게시판 최근 글</Heading>
-						<Button variant="text" size='sm' onPress={handleViewMoreBoardPosts}>
-							<ButtonText>더보기</ButtonText>
-							<ButtonIcon as={ChevronRight} />
-						</Button>
-					</HStack>
-					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-						<HStack space="md" className="px-4">
-							{isBoardLoading ? (
-								<HomeBoardPostSkeleton />
-							) : recentPosts.length === 0 ? (
-								<VStack space="xs" className="py-10 items-center justify-center w-full text-typography-500">
-									<Text className="text-center">
-										게시글이 없어요.
-									</Text>
-								</VStack>
-							) : (
-								recentPosts.map((post) => (
-									<HomeBoardPostCard key={post.id} post={post} />
-								))
-							)}
+					{/* 게시판 최근 글 */}
+					<VStack space="md" className="pt-8 pb-14">
+						<HStack className="justify-between pl-4 pr-1 items-center">
+							<Heading size="xl">게시판 최근 글</Heading>
+							<Button variant="text" size='sm' onPress={handleViewMoreBoardPosts}>
+								<ButtonText>더보기</ButtonText>
+								<ButtonIcon as={ChevronRight} />
+							</Button>
 						</HStack>
-					</ScrollView>
+						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+							<HStack space="md" className="px-4">
+								{isBoardLoading ? (
+									<HomeBoardPostSkeleton />
+								) : isBoardError ? (
+									<VStack space="xs" className="py-10 pl-24 items-center justify-center w-full">
+										<Text className="text-center text-error-500">
+											게시글을 불러오는 중 오류가 발생했어요.
+										</Text>
+										<Button
+											variant="outline"
+											size="sm"
+											className="self-center mt-4"
+											onPress={() => refetchBoardPosts()}
+										>
+											<Text>다시 시도하기</Text>
+										</Button>
+									</VStack>
+								) : recentPosts.length === 0 ? (
+									<VStack space="xs" className="py-10 items-center justify-center w-full text-typography-500">
+										<Text className="text-center">
+											게시글이 없어요.
+										</Text>
+									</VStack>
+								) : (
+									recentPosts.map((post) => (
+										<HomeBoardPostCard key={post.id} post={post} />
+									))
+								)}
+							</HStack>
+						</ScrollView>
+					</VStack>
 				</VStack>
 			</ScrollView>
 		</>

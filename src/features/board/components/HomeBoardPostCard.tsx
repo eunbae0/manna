@@ -1,12 +1,10 @@
 import React from 'react';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
-import { Box } from '#/components/ui/box';
 import { Text } from '@/shared/components/text';
 import { Avatar } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
 import { MessageCircle, Heart, Crown } from 'lucide-react-native';
-import { cn } from '@/shared/utils/cn';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import { router } from 'expo-router';
@@ -67,7 +65,7 @@ export function HomeBoardPostCard({ post }: HomeBoardPostCardProps) {
       onPress={handlePress}
       style={shadowStyle.shadow}
     >
-      <VStack space="xs" className="bg-background-50 rounded-2xl p-4 pb-8 w-72">
+      <VStack space="xs" className="bg-gray-50 border border-gray-100 rounded-2xl p-4 pb-8 w-72">
         <HStack space="sm" className="items-center">
           <Avatar
             size="sm"

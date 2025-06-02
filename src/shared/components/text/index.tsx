@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import type { ComponentPropsWithoutRef } from 'react';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
@@ -65,7 +65,7 @@ export interface TextProps
   weight?: FontWeight;
 }
 
-export function Text({
+export const Text = forwardRef<RNText, TextProps>(({
   className,
   size,
   weight,
@@ -74,15 +74,16 @@ export function Text({
   decoration,
   children,
   ...props
-}: TextProps) {
+}, ref) => {
   return (
     <RNText
+      ref={ref}
       className={cn(textStyles({ size, weight, align, color, decoration }), className)}
       {...props}
     >
       {children}
     </RNText>
   );
-}
+});
 
 export default Text;
