@@ -18,13 +18,14 @@ import type { ClientGroup } from '@/api/group/types';
 import type { UserGroup } from '@/shared/types';
 import { useToastStore } from '@/store/toast';
 import { GROUPS_CREATE_LIMIT } from '@/shared/constants';
+import { shadowStyle } from '@/shared/styles/shadow';
 
 export default function ManageMyGroupScreen() {
 	const { user, updateAllUserGroupProfile } = useAuthStore();
 
 	const [refreshing, setRefreshing] = useState(false);
 
-	const { groups, isLoading, refetch } = useGroups(user?.groups ?? []);
+	const { groups, refetch } = useGroups(user?.groups ?? []);
 
 	const { leaveGroup, isLeaving } = useLeaveGroup();
 
@@ -113,14 +114,14 @@ export default function ManageMyGroupScreen() {
 		};
 
 		return (
-			<Box className="bg-white rounded-xl p-4 mb-4 border border-gray-200">
+			<Box style={shadowStyle.shadow} className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-4">
 				<VStack space="md">
 					<HStack className="justify-between items-center">
 						<HStack space="sm" className="items-center">
 							<Heading size="lg">{item.groupName}</Heading>
 							{isMain && (
-								<Box className="bg-primary-100 px-2 py-1 rounded-md ml-2">
-									<Text size="xs" className="text-primary-700 font-semibold">
+								<Box className="bg-primary-100 border border-primary-200 rounded-3xl px-3 py-1">
+									<Text size="xs" weight="medium" className="text-primary-700">
 										대표 그룹
 									</Text>
 								</Box>
@@ -150,7 +151,6 @@ export default function ManageMyGroupScreen() {
 									action="primary"
 									size="sm"
 									onPress={handleSetMainGroup}
-									rounded
 								>
 									<ButtonText>대표 그룹 지정</ButtonText>
 								</Button>
@@ -161,7 +161,6 @@ export default function ManageMyGroupScreen() {
 									action="primary"
 									size="sm"
 									onPress={() => handleManageGroup(item.id)}
-									rounded
 								>
 									<ButtonIcon as={Settings} />
 									<ButtonText>그룹 관리</ButtonText>
@@ -173,7 +172,6 @@ export default function ManageMyGroupScreen() {
 									size="sm"
 									onPress={() => handleLeaveGroup(item)}
 									disabled={isLeaving}
-									rounded
 								>
 									<ButtonIcon as={LogOut} />
 									<ButtonText>나가기</ButtonText>
@@ -187,10 +185,10 @@ export default function ManageMyGroupScreen() {
 	};
 
 	return (
-		<SafeAreaView className="h-full bg-background-50">
+		<SafeAreaView className="h-full">
 			<KeyboardDismissView>
 				<Header label="내 그룹 관리" />
-				<VStack space="xl" className="flex-1 px-4 py-4">
+				<VStack space="lg" className="flex-1 px-4 py-5">
 					{/* 그룹 생성 및 참여 버튼 */}
 					<HStack space="sm" className="mb-4">
 						<Button
@@ -217,7 +215,7 @@ export default function ManageMyGroupScreen() {
 					</HStack>
 
 					<VStack space="xl">
-						<Heading size="xl">내 그룹 목록</Heading>
+						<Heading size="2xl">내 그룹 목록</Heading>
 						{groups.length === 0 ? (
 							<VStack className="items-center justify-center flex-1">
 								<Text className="text-typography-500">
