@@ -171,7 +171,7 @@ export default function FellowshipCard({
   }
 
   const generateRandomSliceRange = useCallback((length: number) => {
-    const randomIndex = Math.floor(Math.random() * length);
+    const randomIndex = Math.floor(Math.random() * (length - 1));
     const endIndex = Math.min(randomIndex + 2, length);
     return [randomIndex, endIndex];
   }, []);
