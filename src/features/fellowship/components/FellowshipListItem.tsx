@@ -9,6 +9,7 @@ import { Avatar } from '@/components/common/avatar';
 import { Icon } from '#/components/ui/icon';
 import { ChevronRight } from 'lucide-react-native';
 import { useMemo } from 'react';
+import { formatLocalDate } from '@/shared/utils/date';
 
 type Props = {
   item: ClientFellowshipV2;
@@ -46,14 +47,7 @@ export default function FellowshipListItem({ item, showOnlyLeader, onPress, show
             </Text>
             <HStack space="md" className="items-center">
               {showDate && <Text size="md" className="text-typography-400">
-                {item.info.date
-                  .toLocaleDateString('ko-KR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                  })
-                  .replace(/\. /g, '.')
-                  .replace(/\.$/, '')}
+                {formatLocalDate(item.info.date)}
               </Text>}
               {showOnlyLeader && leader ? (
                 <HStack space="xs" className="items-center">

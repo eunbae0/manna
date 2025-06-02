@@ -71,6 +71,7 @@ import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConf
 import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 import FilterTag from '@/shared/components/filter-tag';
+import { formatLocalDate } from '@/shared/utils/date';
 
 export default function NoteScreen() {
 	const insets = useSafeAreaInsets();
@@ -284,12 +285,7 @@ export default function NoteScreen() {
 								)}
 								<HStack className="items-center justify-between">
 									<Text size="lg" className="text-typography-500">
-										{selectedDate.toLocaleDateString('ko-KR', {
-											year: 'numeric',
-											month: 'long',
-											day: 'numeric',
-											weekday: 'long',
-										})}
+										{formatLocalDate(selectedDate)}
 									</Text>
 									{isEditing && (
 										<Button size="sm" variant="icon" onPress={handlePressDate}>

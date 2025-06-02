@@ -14,6 +14,7 @@ import { cn } from '@/shared/utils/cn';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { fetchAllNotices } from '@/api/notice';
 import type { Notice } from '@/api/notice';
+import { formatLocalDate } from '@/shared/utils/date';
 
 export default function NoticeScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -52,13 +53,7 @@ export default function NoticeScreen() {
   // 공지사항 아이템 렌더링
   const renderNoticeItem = ({ item, index }: { item: Notice; index: number }) => {
     const isExpanded = expandedNotice === item.id;
-    const formattedDate = item.date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    })
-      .replace(/\. /g, '.')
-      .replace(/\.$/, '')
+    const formattedDate = formatLocalDate(item.date)
 
     return (
       <VStack>

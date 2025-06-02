@@ -23,6 +23,7 @@ import { Avatar } from '@/components/common/avatar';
 import { ChevronRight } from 'lucide-react-native';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { useUserFellowships } from '@/features/fellowship/hooks/useUserFellowships';
+import { formatLocalDate } from '@/shared/utils/date';
 
 export default function UserFellowshipsScreen() {
 	// URL 파라미터에서 userId 가져오기
@@ -119,14 +120,7 @@ export default function UserFellowshipsScreen() {
 											</Text>
 											<Text size="sm" className="text-typography-500">
 												{item.info.date
-													? item.info.date
-														.toLocaleDateString('ko-KR', {
-															year: 'numeric',
-															month: '2-digit',
-															day: '2-digit',
-														})
-														.replace(/\. /g, '.')
-														.replace(/\.$/, '')
+													? formatLocalDate(item.info.date)
 													: ''}
 											</Text>
 										</VStack>

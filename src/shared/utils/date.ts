@@ -43,3 +43,14 @@ export const getEndOfDayKST = (date: Date): Date => {
 	kstDate.setHours(23, 59, 59, 999);
 	return kstDate;
 };
+
+export const formatLocalDate = (date: Date) => {
+	return date
+		.toLocaleDateString('ko-KR', {
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+		})
+		.replace(/\. /g, '.')
+		.replace(/\.$/, '');
+};
