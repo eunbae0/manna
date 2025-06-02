@@ -28,7 +28,8 @@ export default function NoticeBox({
     <Animated.View>
       <Pressable onPress={onPress}>
         <HStack className="items-center justify-between bg-blue-50 pl-3">
-          <HStack className="items-center">
+          <HStack space="sm" className="items-center">
+            <Text size="md" weight="bold" className="text-blue-900">알림</Text>
             <Text size="md" className="text-blue-900">{content}</Text>
           </HStack>
           <Pressable className="p-3 pr-4" onPress={handleDismiss}>
