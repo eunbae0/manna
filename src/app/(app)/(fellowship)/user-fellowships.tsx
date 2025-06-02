@@ -89,7 +89,7 @@ export default function UserFellowshipsScreen() {
 				) : (
 					<FlatList
 						data={fellowships}
-						keyExtractor={(item) => item.id}
+						keyExtractor={(item) => item.identifiers.id}
 						contentContainerStyle={{ paddingVertical: 16 }}
 						ListHeaderComponent={
 							<VStack space="md" className="px-4 mb-4">
@@ -104,7 +104,7 @@ export default function UserFellowshipsScreen() {
 						}
 						renderItem={({ item }) => (
 							<AnimatedPressable
-								onPress={() => router.push(`/(app)/(fellowship)/${item.id}`)}
+								onPress={() => router.push(`/(app)/(fellowship)/${item.identifiers.id}`)}
 								className="px-4 py-3"
 							>
 								<VStack space="sm">
@@ -115,7 +115,7 @@ export default function UserFellowshipsScreen() {
 												className="font-pretendard-bold text-typography-900"
 												numberOfLines={1}
 											>
-												{item.info.preachTitle}
+												{item.info.title}
 											</Text>
 											<Text size="sm" className="text-typography-500">
 												{item.info.date
@@ -139,7 +139,7 @@ export default function UserFellowshipsScreen() {
 
 									{/* 참여자 아바타 */}
 									<HStack space="xs" className="flex-wrap">
-										{item.info.members.slice(0, 5).map((member) => (
+										{item.info.participants.slice(0, 5).map((member) => (
 											<Avatar
 												key={member.id}
 												size="2xs"
@@ -148,10 +148,10 @@ export default function UserFellowshipsScreen() {
 												{member.displayName?.charAt(0)}
 											</Avatar>
 										))}
-										{item.info.members.length > 5 && (
+										{item.info.participants.length > 5 && (
 											<Box className="w-6 h-6 rounded-full bg-gray-100 items-center justify-center">
 												<Text size="xs" className="text-typography-500">
-													+{item.info.members.length - 5}
+													+{item.info.participants.length - 5}
 												</Text>
 											</Box>
 										)}
