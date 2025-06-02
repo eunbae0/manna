@@ -6,7 +6,7 @@ export default {
 		displayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
 		slug: 'so-group',
 		scheme: ['sogroup-development', 'sogroup'],
-		version: '1.2.0',
+		version: '1.2.1',
 		orientation: 'portrait',
 		icon: './assets/images/icons/app_icon.png',
 		userInterfaceStyle: 'automatic',
@@ -22,7 +22,7 @@ export default {
 				CADisableMinimumFrameDurationOnPhone: true,
 				UIBackgroundModes: ['remote-notification'],
 				CFBundleDisplayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
-				CFBundleVersion: '1.2.0',
+				CFBundleVersion: '1.2.1',
 			},
 			entitlements: {
 				'com.apple.developer.applesignin': ['Default'],
@@ -33,10 +33,10 @@ export default {
 				? './assets/google/development/GoogleService-Info.plist'
 				: './assets/google/GoogleService-Info.plist',
 			appleTeamId: 'AQ62DT56AM',
-			version: '1.2.0',
+			version: '1.2.1',
 		},
 		android: {
-			versionCode: 12000,
+			versionCode: 12100,
 			adaptiveIcon: {
 				foregroundImage: './assets/images/icons/app_icon.png',
 				backgroundColor: '#FEF8EF',
@@ -71,7 +71,7 @@ export default {
 				'expo-image-picker',
 				{
 					photosPermission:
-						'만나 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.',
+						'$(PRODUCT_NAME) 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.',
 				},
 			],
 			'@react-native-firebase/app',
