@@ -72,7 +72,7 @@ export default function FellowshipListView({ handlePressFellowship }: Props) {
 
   // 리스트 푸터 렌더링 함수
   const renderFooter = () => {
-    if (!isFetchingNextPage) return null;
+    if (!isFetchingNextPage) return <Box className="h-24" />;
 
     return (
       <Box className="py-4 items-center justify-center">
@@ -133,7 +133,7 @@ export default function FellowshipListView({ handlePressFellowship }: Props) {
         >
           <HStack space="sm" className="items-center mr-5 pt-6 pb-4">
             <Text size="md" className="text-typography-600">
-              나눔장만 보기
+              나눔 리더만 보기
             </Text>
             <Box
               className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}

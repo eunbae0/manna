@@ -306,7 +306,7 @@ export default function FellowshipCalendarView({ handlePressFellowship }: Props)
         >
           <HStack space="sm" className="items-center mr-2">
             <Text size="md" className="text-typography-600">
-              나눔장만 보기
+              나눔 리더만 보기
             </Text>
             <Box
               className={`w-4 h-4 rounded-sm border items-center justify-center ${showLeader ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}
