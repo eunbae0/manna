@@ -54,7 +54,7 @@ const DEFAULT_SECTIONS: SectionItem[] = [
 ];
 
 // AsyncStorage 키
-const SECTIONS_ORDER_KEY = '@so-group/main-screen-sections-order';
+const SECTIONS_ORDER_KEY = '@manna-client/main-screen-sections-order';
 
 export default function MainOrderSetting() {
   const [sections, setSections] = useState<SectionItem[]>(DEFAULT_SECTIONS);
