@@ -1,14 +1,17 @@
 import { useAuthStore } from '@/store/auth';
 import { useQuery } from '@tanstack/react-query';
 import { fetchFellowshipDates, fetchFellowshipsByDate } from '../api';
+import {
+	CALENDAR_FELLOWSHIPS_QUERY_KEY,
+	SELECTED_DATE_FELLOWSHIPS_QUERY_KEY,
+} from '../constants/queyKeys';
 
 export function useCalendarFellowshipDates(year: number, month: number) {
 	const { currentGroup } = useAuthStore();
 
 	return useQuery({
 		queryKey: [
-			'fellowships',
-			'calendar-dates',
+			CALENDAR_FELLOWSHIPS_QUERY_KEY,
 			currentGroup?.groupId || '',
 			year,
 			month,
@@ -32,8 +35,7 @@ export function useSelectedDateFellowships(date: Date | null) {
 
 	return useQuery({
 		queryKey: [
-			'fellowships',
-			'by-date',
+			SELECTED_DATE_FELLOWSHIPS_QUERY_KEY,
 			currentGroup?.groupId || '',
 			date?.toISOString(),
 		],

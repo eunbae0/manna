@@ -10,9 +10,11 @@ import { useFellowshipStore } from '@/store/createFellowship';
 import { useBackHandler } from '@/shared/hooks/useBackHandler';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
+import { FELLOWSHIPS_QUERY_KEY } from '../../constants/queyKeys';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function FellowshipContentScreen() {
-	const { user, currentGroup } = useAuthStore();
+	const { currentGroup } = useAuthStore();
 	const {
 		type,
 		fellowshipId,
@@ -26,6 +28,8 @@ export default function FellowshipContentScreen() {
 		setStep('INFO');
 		return true;
 	});
+
+	const queryClient = useQueryClient();
 
 	return (
 		<>
@@ -90,6 +94,9 @@ export default function FellowshipContentScreen() {
 								type,
 								groupId: currentGroup?.groupId || '',
 								fellowshipId,
+							});
+							queryClient.invalidateQueries({
+								queryKey: [FELLOWSHIPS_QUERY_KEY],
 							});
 						}}
 					>

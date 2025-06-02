@@ -10,6 +10,7 @@ import { getFellowshipService } from '../api/service';
 import { useToastStore } from '@/store/toast';
 import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
+import { FELLOWSHIPS_QUERY_KEY } from '../constants/queyKeys';
 
 export const FELLOWSHIP_QUERY_KEY = 'fellowship';
 
@@ -102,6 +103,9 @@ export function useFellowship(id: string | undefined) {
 			// 관련 쿼리 무효화
 			queryClient.invalidateQueries({
 				queryKey: [FELLOWSHIP_QUERY_KEY],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [FELLOWSHIPS_QUERY_KEY],
 			});
 		},
 		onError: (error) => {

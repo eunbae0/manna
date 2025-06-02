@@ -3,8 +3,7 @@ import type { ClientFellowshipV2 } from '../api/types';
 import { useAuthStore } from '@/store/auth';
 import { fetchUserFellowships } from '../api';
 import type { Timestamp } from '@react-native-firebase/firestore';
-
-export const USER_FELLOWSHIPS_QUERY_KEY = 'user-fellowships';
+import { USER_FELLOWSHIPS_QUERY_KEY } from '../constants/queyKeys';
 
 /**
  * 특정 유저가 참여한 나눔(fellowship) 목록을 무한 스크롤로 조회하는 훅
@@ -30,10 +29,10 @@ export function useUserFellowships(userId: string) {
 				total: number;
 			}[];
 		},
-		[string, string, string],
+		[string, string, string, string],
 		Timestamp | undefined
 	>({
-		queryKey: [USER_FELLOWSHIPS_QUERY_KEY, groupId, userId],
+		queryKey: [...USER_FELLOWSHIPS_QUERY_KEY, groupId, userId],
 		queryFn: async ({ pageParam }) => {
 			if (!groupId || !userId) {
 				return {

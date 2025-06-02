@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
 import { fetchRecentFellowshipsWhereUserIsLeader } from '../api';
+import { RECENT_FELLOWSHIPS_QUERY_KEY } from '../constants/queyKeys';
 
 /**
  * 특정 유저가 **리더로** 참여한 나눔의 최근 목록을 조회하는 훅
@@ -12,7 +13,7 @@ export function useRecentFellowshipsWhereUserIsLeader(userId: string) {
 	const groupId = currentGroup?.groupId || '';
 
 	return useQuery({
-		queryKey: ['fellowships', 'recent', groupId, userId],
+		queryKey: [RECENT_FELLOWSHIPS_QUERY_KEY, groupId, userId],
 		queryFn: async () => {
 			return await fetchRecentFellowshipsWhereUserIsLeader({
 				groupId,

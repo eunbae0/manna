@@ -7,6 +7,7 @@ import type {
 	InfiniteData,
 	DefinedUseInfiniteQueryResult,
 } from '@tanstack/react-query';
+import { INFINITE_FELLOWSHIPS_QUERY_KEY } from '../constants/queyKeys';
 
 /**
  * 무한 스크롤을 위한 나눔 기록 조회 훅
@@ -30,8 +31,7 @@ export function useInfiniteFellowships(
 		total: number;
 	}>({
 		queryKey: [
-			'fellowships',
-			'infinite',
+			...INFINITE_FELLOWSHIPS_QUERY_KEY,
 			currentGroup?.groupId || '',
 			{ limit },
 		],
