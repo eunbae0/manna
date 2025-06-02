@@ -319,8 +319,8 @@ function HomeList() {
 						</Button>
 					</VStack>
 				) : (
-					<ScrollView className="px-4 pt-4 pb-4" horizontal showsHorizontalScrollIndicator={false}>
-						<HStack space="md" className="w-full">
+					<ScrollView className="w-full px-4 pt-4 pb-4" horizontal showsHorizontalScrollIndicator={false}>
+						<HStack space="md">
 							{fellowships.map((item) => (
 								<FellowshipCard key={item.identifiers.id} fellowship={item} />
 							))}
@@ -412,7 +412,7 @@ function HomeList() {
 								</Button>
 							</VStack>
 						) : recentPosts.length === 0 ? (
-							<VStack space="xs" className="py-10 items-center justify-center w-full text-typography-500">
+							<VStack space="xs" className="py-10 pl-4 items-center justify-center w-full text-typography-500">
 								<Text className="text-center">
 									게시글이 없어요.
 								</Text>

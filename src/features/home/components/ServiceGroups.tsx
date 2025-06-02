@@ -11,13 +11,11 @@ import {
 	NotebookPen,
 	Presentation,
 	History,
-	ChevronRight,
 	Megaphone,
 } from 'lucide-react-native';
 import { usePinnedPost } from '@/features/board/hooks/useBoardPosts';
 import { useAuthStore } from '@/store/auth';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
-import { shadowStyle } from '@/shared/styles/shadow';
 
 export default function ServiceGroups() {
 	const { setType } = useFellowshipStore();
