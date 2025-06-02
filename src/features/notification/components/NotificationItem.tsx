@@ -241,32 +241,31 @@ export function NotificationItem({
 						className={cn('w-full', item.isRead ? '' : 'bg-primary-100')}
 					>
 						<AnimatedPressable onPress={onItemPress} className="w-full">
-							<HStack space="sm" className="px-6 py-5 justify-start">
-								<Box className="w-6 h-6 bg-primary-100 rounded-full items-center justify-center">
+							<HStack space="sm" className="px-5 py-5 justify-start">
+								<Box className="w-6 h-6 bg-primary-200/50 rounded-full items-center justify-center">
 									<Icon
 										as={titleToIcon(item.title)}
-										size="sm"
+										size="xs"
 										className="text-primary-500"
 									/>
 								</Box>
-								<VStack space="xs" className="flex-1">
+								<VStack space="xs" className="flex-1 ml-1">
 									<VStack space="xs">
 										<HStack className="justify-between items-center">
-											<HStack space="sm" className="items-center flex-wrap">
+											<HStack space="sm" className="mt-[2px] items-center flex-wrap">
 												{item.metadata?.groupName && (
 													<HStack space="sm" className="items-center">
 														<Text
 															size="sm"
-															weight="light"
-															className="text-typography-800"
+															className="text-typography-600"
 														>
 															{item.metadata.groupName}
 														</Text>
-														<Box className="w-[2px] h-[2px] bg-typography-800 rounded-full" />
+														<Box className="w-[2px] h-[2px] bg-typography-600 rounded-full" />
 													</HStack>
 												)}
 
-												<Text size="sm" weight="light" className="text-typography-800">
+												<Text size="sm" className="text-typography-600">
 													{item.title}
 												</Text>
 											</HStack>
@@ -275,7 +274,7 @@ export function NotificationItem({
 											</Text>
 										</HStack>
 									</VStack>
-									<Text size="lg">{item.body}</Text>
+									<Text size="lg" weight="medium" className="text-typography-700">{item.body}</Text>
 								</VStack>
 							</HStack>
 						</AnimatedPressable>
