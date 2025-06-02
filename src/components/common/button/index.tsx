@@ -395,11 +395,11 @@ const Button = React.forwardRef<View, ButtonProps>(
 
 						// 애니메이션 및 이벤트 호출
 						handlePressIn();
-						onPress?.(e);
 						props.onPressIn?.(e);
 					}}
 					onPressOut={(e) => {
 						handlePressOut();
+						onPress?.(e);
 						props.onPressOut?.(e);
 					}}
 					{...props}
