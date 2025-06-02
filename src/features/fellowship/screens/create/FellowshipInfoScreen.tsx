@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Keyboard, TextInput, View } from 'react-native';
+import { Keyboard, TextInput, InteractionManager, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
@@ -214,12 +214,19 @@ export default function FellowshipInfoScreen() {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (isFirstRender) {
-			setTimeout(() => {
-				titleRef.current?.focus();
+			// 화면이 렌더링되고 애니메이션이 완료된 후 포커스 설정
+			const timer = setTimeout(() => {
 				setIsFirstRender(false);
-			}, 300);
+				// 화면 렌더링 후 포커스 설정
+				InteractionManager.runAfterInteractions(() => {
+					// 키보드 애니메이션이 완료된 후 포커스 설정
+					titleRef.current?.focus();
+				});
+			}, 600); // 충분한 지연 시간 설정
+
+			return () => clearTimeout(timer);
 		}
-	}, [setIsFirstRender]);
+	}, [isFirstRender]);
 
 	return (
 		<KeyboardDismissView style={{ flex: 1 }}>
