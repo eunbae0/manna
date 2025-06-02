@@ -67,6 +67,7 @@ export default function RootLayout() {
 				<Stack.Screen name="(board)" options={{ headerShown: false }} />
 				<Stack.Screen name="(note)" options={{ headerShown: false }} />
 				<Stack.Screen name="(more)" options={{ headerShown: false }} />
+				<Stack.Screen name="(setting)" options={{ headerShown: false }} />
 				<Stack.Screen
 					name="createPrayerRequestModal"
 					options={{

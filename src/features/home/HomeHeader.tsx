@@ -66,18 +66,13 @@ function HomeHeader({ groups }: Props) {
 
 	const group = groups.find((group) => group.id === currentGroup?.groupId);
 
-	// const handlePressPrayerRequestList = () => {
-	// 	router.push('/(app)/(prayerRequest)/list');
-	// 	handleCloseMenu();
-	// };
-
-	const handlePressFellowshipList = () => {
-		trackAmplitudeEvent('나눔 기록 클릭', {
+	const handlePressMainScreenSetting = () => {
+		trackAmplitudeEvent('메인 화면 편집 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 			location: 'Group_Menu_Bottom_Sheet',
 		});
-		router.push('/(app)/(fellowship)/list');
+		router.push('/(app)/(setting)/main-screen-setting');
 		handleCloseMenu();
 	};
 
@@ -262,9 +257,9 @@ function HomeHeader({ groups }: Props) {
 					/>
 					<Divider />
 					<BottomSheetListItem
-						label="나눔 기록"
+						label="메인 화면 편집"
 						icon={Library}
-						onPress={handlePressFellowshipList}
+						onPress={handlePressMainScreenSetting}
 					/>
 
 					{isLeader && (
