@@ -22,6 +22,7 @@ import { cn } from '@/shared/utils/cn';
 import { useToastStore } from '@/store/toast';
 import { Icon } from '#/components/ui/icon';
 import { goBackOrReplaceHome } from '@/shared/utils/router';
+import { SECTIONS_ORDER_KEY } from '@/features/home/HomeList';
 
 // 섹션 타입 정의
 interface SectionItem {
@@ -54,7 +55,6 @@ const DEFAULT_SECTIONS: SectionItem[] = [
 ];
 
 // AsyncStorage 키
-const SECTIONS_ORDER_KEY = '@manna-client/main-screen-sections-order';
 
 export default function MainOrderSetting() {
   const [sections, setSections] = useState<SectionItem[]>(DEFAULT_SECTIONS);

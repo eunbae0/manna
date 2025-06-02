@@ -10,7 +10,7 @@ interface SectionItem {
 }
 
 // AsyncStorage 키
-const SECTIONS_ORDER_KEY = "@so-group/main-screen-sections-order";
+export const SECTIONS_ORDER_KEY = "@manna-client/main-screen-sections-order";
 
 // 기본 섹션 순서
 const DEFAULT_SECTIONS: SectionItem[] = [
@@ -85,8 +85,6 @@ function HomeList() {
 		queryKey: ['mainScreenNotices'],
 		queryFn: fetchMainScreenNotices,
 	});
-
-
 
 	const handlePressAddButton = useCallback(async () => {
 		trackAmplitudeEvent('기도제목 작성하기 클릭', { screen: 'Tab_Home' });
@@ -444,6 +442,7 @@ function HomeList() {
 				refetchPrayerRequests(),
 				refetchNotifications(),
 				refetchNotices(),
+				loadData(),
 				queryClient.invalidateQueries({
 					queryKey: [GROUPS_QUERY_KEY],
 				}),
@@ -456,7 +455,7 @@ function HomeList() {
 			// tracking amplitude
 			trackAmplitudeEvent('홈 새로고침', { screen: 'Tab_Home' });
 		}
-	}, [refetchFellowships, refetchPrayerRequests, refetchNotifications, refetchNotices, queryClient]);
+	}, [refetchFellowships, refetchPrayerRequests, refetchNotifications, refetchNotices, loadData, queryClient]);
 
 	return (
 		<>
