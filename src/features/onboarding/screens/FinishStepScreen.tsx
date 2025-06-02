@@ -20,10 +20,10 @@ export default function FinishStepScreen() {
 			<Heading size="3xl">만나서 반가워요! 👋</Heading>
 			<VStack space="xs">
 				<Text className="text-typography-600 text-center">
-					설교 기록부터 나눔, 기도제목까지.
+					설교 나눔부터 개인 묵상까지.
 				</Text>
 				<Text className="text-typography-600 text-center">
-					그룹원들의 다양한 활동과 소식을 확인해보세요
+					만나와 함께 그룹원들의 다양한 활동과 소식을 확인해보세요
 				</Text>
 			</VStack>
 			<Box className="absolute mb-12 mx-4 bottom-0 left-0 w-full">
