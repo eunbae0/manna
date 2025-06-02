@@ -495,7 +495,7 @@ function HomeList() {
 					</VStack>
 				</VStack>
 
-				<VStack space="2xl" className="pb-14">
+				<VStack space="md" className="pb-14">
 					{sections
 						.filter(section => section.enabled)
 						.map(section => {
