@@ -2,13 +2,13 @@ const IS_DEVELOPMENT = process.env.APP_VARIANT === 'development';
 
 export default {
 	expo: {
-		name: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
-		displayName: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
+		name: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
+		displayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
 		slug: 'so-group',
 		scheme: ['sogroup-development', 'sogroup'],
-		version: '1.1.2',
+		version: '1.2.0',
 		orientation: 'portrait',
-		icon: './assets/images/icons/icon.png',
+		icon: './assets/images/icons/app_icon.png',
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
 		ios: {
@@ -21,8 +21,8 @@ export default {
 				ITSAppUsesNonExemptEncryption: false,
 				CADisableMinimumFrameDurationOnPhone: true,
 				UIBackgroundModes: ['remote-notification'],
-				CFBundleDisplayName: IS_DEVELOPMENT ? '소그룹 (개발)' : '소그룹',
-				CFBundleVersion: '1.1.2',
+				CFBundleDisplayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
+				CFBundleVersion: '1.2.0',
 			},
 			entitlements: {
 				'com.apple.developer.applesignin': ['Default'],
@@ -33,12 +33,12 @@ export default {
 				? './assets/google/development/GoogleService-Info.plist'
 				: './assets/google/GoogleService-Info.plist',
 			appleTeamId: 'AQ62DT56AM',
-			version: '1.1.2',
+			version: '1.2.0',
 		},
 		android: {
-			versionCode: 11200,
+			versionCode: 12000,
 			adaptiveIcon: {
-				foregroundImage: './assets/images/icons/android_app_icon.png',
+				foregroundImage: './assets/images/icons/app_icon.png',
 				backgroundColor: '#FEF8EF',
 			},
 			package: 'com.eunbae.sogroup',
@@ -54,7 +54,7 @@ export default {
 			[
 				'expo-splash-screen',
 				{
-					image: './assets/images/icons/play_store_icon.png',
+					image: './assets/images/icons/app_splash_icon.png',
 					imageWidth: 200,
 					resizeMode: 'contain',
 					backgroundColor: '#FEF8EF',
@@ -71,7 +71,7 @@ export default {
 				'expo-image-picker',
 				{
 					photosPermission:
-						'소그룹 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.',
+						'만나 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.',
 				},
 			],
 			'@react-native-firebase/app',

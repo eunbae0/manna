@@ -9,7 +9,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>소그룹</string>
+    <string>만나</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -21,7 +21,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.1.2</string>
+    <string>1.2.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -42,7 +42,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>1.1.2</string>
+    <string>1.2.0</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>LSMinimumSystemVersion</key>
@@ -61,7 +61,7 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>$(PRODUCT_NAME)이 마이크에 접근할 수 있도록 허가해 주세요.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>소그룹 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.</string>
+    <string>만나 안에서 그룹원들과 프로필 이미지를 공유할 수 있도록 사진에 접근합니다.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>$(PRODUCT_NAME)이 음성을 인식할 수 있도록 허가해 주세요.</string>
     <key>NSUserActivityTypes</key>
