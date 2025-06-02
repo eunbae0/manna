@@ -43,6 +43,12 @@ export function WorshipTypeSelector() {
 			className="flex-grow"
 		>
 			<HStack space="sm" className="py-1 items-center">
+				<FilterTag
+					key="all"
+					label="전체"
+					onPress={() => setSelectedWorshipType(null)}
+					isSelected={selectedWorshipType === null}
+				/>
 				{worshipTypes.map((type) => (
 					<FilterTag
 						key={type.name}

@@ -1,17 +1,14 @@
 import { VStack } from '#/components/ui/vstack';
 import {
 	SafeAreaView,
-	useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { router } from 'expo-router';
 import {
-	ActivityIndicator,
 	Keyboard,
 	Pressable,
 	ScrollView,
 	TextInput,
-	TouchableOpacity,
 	View,
 } from 'react-native';
 import { Icon } from '#/components/ui/icon';
@@ -20,13 +17,11 @@ import {
 	AlignJustify,
 	BookText,
 	CalendarCog,
-	Check,
 	ChevronUp,
 	Megaphone,
-	Plus,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToastStore } from '@/store/toast';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
@@ -39,7 +34,6 @@ import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { useCreateNote } from '@/features/notes/hooks/useCreateNote';
 import { useWorshipStore } from '@/store/worship';
-import { cn } from '@/shared/utils/cn';
 import type { ClientWorshipType } from '@/api/worship-types/types';
 import Animated, {
 	useSharedValue,
@@ -49,12 +43,10 @@ import Animated, {
 	Easing,
 } from 'react-native-reanimated';
 import { isAndroid } from '@/shared/utils/platform';
-import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
+import FilterTag from '@/shared/components/filter-tag';
 
 export default function CreateScreen() {
-	const insets = useSafeAreaInsets();
-
 	const [title, setTitle] = useState('');
 	const [scripture, setScripture] = useState('');
 	const [preacher, setPreacher] = useState('');
@@ -266,39 +258,22 @@ export default function CreateScreen() {
 											>
 												<HStack space="sm" className="py-1 items-center">
 													{worshipTypes.map((type) => (
-														<TouchableOpacity
+														<FilterTag
 															key={type.id.toString()}
+															label={type.name}
 															onPress={() => setSelectedWorshipType(type)}
-															className={cn(
-																'mr-1 px-3 py-1 rounded-full',
-																selectedWorshipType?.id === type.id
-																	? 'border border-primary-200 bg-primary-100 text-primary-700'
-																	: 'border border-primary-200 text-typography-700',
-															)}
-														>
-															<HStack space="xs" className="items-center">
-																<Text size="md">{type.name}</Text>
-																{selectedWorshipType?.id === type.id && (
-																	<Icon
-																		as={Check}
-																		size="xs"
-																		className="text-typography-700"
-																	/>
-																)}
-															</HStack>
-														</TouchableOpacity>
+															isSelected={selectedWorshipType?.id === type.id}
+														/>
 													))}
-													<TouchableOpacity
+													<FilterTag
+														label="+"
 														onPress={() => {
 															// trackAmplitudeEvent('Open Manage Worship Type', {
 															// 	screen: 'Note_Create',
 															// });
 															router.push('/(app)/selectWorshipTypeModal');
 														}}
-														className="mr-1 p-2 border border-primary-200 bg-primary-50 rounded-full"
-													>
-														<Icon as={Plus} size="sm" className="" />
-													</TouchableOpacity>
+													/>
 												</HStack>
 											</ScrollView>
 										</VStack>
