@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import { VStack } from '#/components/ui/vstack';
 import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
@@ -11,7 +11,7 @@ import { useFellowship } from '../hooks/useFellowship';
 import { router } from 'expo-router';
 import { Box } from '#/components/ui/box';
 import { Icon } from '#/components/ui/icon';
-import type { ClientFellowship, FellowshipContentItemV2 } from '@/features/fellowship/api/types';
+import type { ClientFellowship, ClientFellowshipParticipantV2, FellowshipContentItemV2 } from '@/features/fellowship/api/types';
 import { useMemo } from 'react';
 import { cn } from '@/shared/utils/cn';
 
@@ -22,7 +22,7 @@ type SermonContentItemProps = {
 	enableReply: boolean;
 };
 
-export default function FellowshipContent({
+export default React.memo(function FellowshipContent({
 	fellowshipId,
 	contentType,
 	fellowshipContent,
@@ -74,36 +74,52 @@ export default function FellowshipContent({
 				</HStack>}
 				<VStack space="xl" className={cn("pl-2", answersWithParticipant.length !== 0 && "pb-6")}>
 					{answersWithParticipant.map((answer) => (
-						<VStack key={answer.participant?.id}>
-							<VStack space="sm">
-								<AnimatedPressable
-									scale="sm"
-									onPress={() =>
-										!answer.participant?.isGuest &&
-										openProfile(answer.participant?.id)
-									}
-								>
-									<HStack space="sm" className="items-center">
-										<Avatar
-											size="2xs"
-											photoUrl={answer.participant?.photoUrl || undefined}
-										/>
-										<Text
-											size="md"
-											className="font-pretendard-bold text-typography-600"
-										>
-											{answer.participant?.displayName}
-										</Text>
-									</HStack>
-								</AnimatedPressable>
-								<Text size="lg" className="flex-1 mx-1">
-									{answer.content}
-								</Text>
-							</VStack>
-						</VStack>
+						<AnswerItem
+							key={answer.participant?.id}
+							answer={answer}
+						/>
 					))}
 				</VStack>
 			</VStack>
 		</>
 	);
+})
+
+function AnswerItem({
+	answer,
+}: {
+	answer: {
+		participant: ClientFellowshipParticipantV2;
+		content: string;
+	};
+}) {
+	return (
+		<VStack key={answer.participant?.id}>
+			<VStack space="sm" className="">
+				<AnimatedPressable
+					scale="sm"
+					onPress={() =>
+						!answer.participant?.isGuest &&
+						openProfile(answer.participant?.id)
+					}
+				>
+					<HStack space="sm" className="items-center">
+						<Avatar
+							size="2xs"
+							photoUrl={answer.participant?.photoUrl || undefined}
+						/>
+						<Text
+							size="md"
+							className="font-pretendard-bold text-typography-600"
+						>
+							{answer.participant?.displayName}
+						</Text>
+					</HStack>
+				</AnimatedPressable>
+				<Text size="lg" className="mx-1">
+					{answer.content}
+				</Text>
+			</VStack>
+		</VStack>
+	)
 }

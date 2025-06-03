@@ -1,10 +1,10 @@
+import { useMemo } from 'react';
 import { VStack } from '#/components/ui/vstack';
 import type {
 	ClientFellowship,
 } from '@/features/fellowship/api/types';
 import FellowshipContent from './FellowshipContent';
 import { useFellowship } from '../hooks/useFellowship';
-
 type SermonContentListProps = {
 	fellowshipId: string;
 	contentType: keyof ClientFellowship['content'];
@@ -20,10 +20,11 @@ export default function FellowshipContentList({
 		fellowship,
 	} = useFellowship(fellowshipId);
 
-	const fellowshipContents = Object.values(fellowship?.content.categories[contentType]?.items || {});
+	const fellowshipContents = Object.values(fellowship?.content.categories[contentType]?.items || {})
+
 
 	return (
-		<VStack space="md" >
+		<VStack space="md">
 			{fellowshipContents?.map((content) => (
 				<FellowshipContent
 					key={content.id}

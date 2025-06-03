@@ -144,14 +144,14 @@ export default function AnswerScreen() {
             <Header />
             {!isPrayerRequest && (
               <>
-                <VStack space="md" className="px-4 pt-2 pb-6">
+                <VStack space="md" className="px-4 pt-2 pb-4">
                   <Heading size="2xl">현재 질문</Heading>
                   <Text size="lg">
                     {fellowship.content.categories[contentType].items[answerId].title}
                   </Text>
                 </VStack>
 
-                <Divider className="h-2 bg-background-100" />
+                <Divider className="h-1 bg-background-100" />
               </>
             )}
             <VStack space="4xl" className="mx-4 mt-2 mb-4 flex-1">

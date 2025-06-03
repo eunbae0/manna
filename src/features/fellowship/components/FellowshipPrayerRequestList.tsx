@@ -40,7 +40,7 @@ export default function FellowshipPrayerRequestList({
 									</Text>
 								</HStack>
 							</AnimatedPressable>
-							<Text size="lg" className="flex-1 mx-1">
+							<Text size="lg" className="mx-1">
 								{answer.content}
 							</Text>
 						</VStack>
