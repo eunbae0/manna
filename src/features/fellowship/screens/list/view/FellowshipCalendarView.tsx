@@ -70,7 +70,7 @@ export default function FellowshipCalendarView({ handlePressFellowship }: Props)
   const {
     data: selectedDateFellowships,
     refetch: refetchSelectedDateFellowships,
-    isLoading: isLoadingSelectedDateFellowships
+    isLoading: isLoadingSelectedDateFellowships,
   } = useSelectedDateFellowships(
     selectedDate,
   );
@@ -79,8 +79,8 @@ export default function FellowshipCalendarView({ handlePressFellowship }: Props)
 
   useEffect(() => {
     if (fellowshipDates && fellowshipDates.length > 0 && !selectedDate) {
-      const date = new Date(currentMonth);
-      date.setDate(fellowshipDates.sort((a, b) => b - a)[0]);
+      const day = fellowshipDates.sort((a, b) => b - a)[0]
+      const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
       setSelectedDate(date);
     }
   }, [fellowshipDates, currentMonth, selectedDate]);
@@ -252,6 +252,7 @@ export default function FellowshipCalendarView({ handlePressFellowship }: Props)
                 onPress={() => {
                   if (hasFellowship) {
                     const newSelectedDate = new Date(year, month, day);
+                    console.log(newSelectedDate);
                     setSelectedDate(isSelected ? null : newSelectedDate);
                   }
                 }}
@@ -293,15 +294,12 @@ export default function FellowshipCalendarView({ handlePressFellowship }: Props)
     if (!selectedDate || !selectedDateFellowships || selectedDateFellowships.length === 0) return null;
 
     return (
-      <HStack className="items-center justify-between px-4 mt-4 mb-2">
-        <HStack className="items-center">
-          <View className="w-1 h-1 rounded-full bg-primary-500 mr-2" />
-          <Text size="lg" className="font-pretendard-semi-bold">
-            {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일 나눔
-          </Text>
-        </HStack>
+      <HStack className="items-center justify-between px-4 mt-8 mb-4">
+        <Text size="xl" weight="semi-bold">
+          {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일 나눔
+        </Text>
         <AnimatedPressable
-          onPress={() => setShowLeader(!showLeader)}
+          onPress={() => setShowLeader(prev => !prev)}
           className="self-end"
         >
           <HStack space="sm" className="items-center mr-2">
@@ -340,16 +338,21 @@ export default function FellowshipCalendarView({ handlePressFellowship }: Props)
   // 나눔 아이템 렌더링 함수
   const renderFellowshipItem = useCallback(({ item }: { item: ClientFellowshipV2 }) => {
     return (
-      <FellowshipListItem item={item} showOnlyLeader={showLeader} showDate={false} onPress={handlePressFellowship} />
+      <FellowshipListItem
+        item={item}
+        showOnlyLeader={showLeader}
+        showDate={false}
+        onPress={handlePressFellowship}
+      />
     );
   }, [showLeader, handlePressFellowship]);
 
   return (
     <FlashList<ClientFellowshipV2>
-      data={selectedDate && selectedDateFellowships ? selectedDateFellowships : []
-      }
+      data={selectedDate && selectedDateFellowships ? selectedDateFellowships : []}
       renderItem={renderFellowshipItem}
       estimatedItemSize={100}
+      extraData={showLeader}
       keyExtractor={(item) => item.identifiers.id}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={CalendarHeader}
