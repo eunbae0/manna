@@ -6,9 +6,9 @@ export default {
 		displayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
 		slug: 'so-group',
 		scheme: ['sogroup-development', 'sogroup'],
-		version: '1.2.1',
+		version: '1.2.0',
 		orientation: 'portrait',
-		icon: './assets/images/icons/app_icon.png',
+		icon: './assets/images/icons/manna_icon_white.png',
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
 		ios: {
@@ -22,7 +22,7 @@ export default {
 				CADisableMinimumFrameDurationOnPhone: true,
 				UIBackgroundModes: ['remote-notification'],
 				CFBundleDisplayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
-				CFBundleVersion: '1.2.1',
+				CFBundleVersion: '1.2.0',
 			},
 			entitlements: {
 				'com.apple.developer.applesignin': ['Default'],
@@ -33,13 +33,13 @@ export default {
 				? './assets/google/development/GoogleService-Info.plist'
 				: './assets/google/GoogleService-Info.plist',
 			appleTeamId: 'AQ62DT56AM',
-			version: '1.2.1',
+			version: '1.2.0',
 		},
 		android: {
-			versionCode: 12100,
+			versionCode: 12002,
 			adaptiveIcon: {
-				foregroundImage: './assets/images/icons/app_icon.png',
-				backgroundColor: '#FEF8EF',
+				foregroundImage: './assets/images/icons/manna_icon_android_white.png',
+				backgroundColor: '#FFFFFF',
 			},
 			package: 'com.eunbae.sogroup',
 			googleServicesFile: './assets/google/google-services.json',
@@ -54,7 +54,7 @@ export default {
 			[
 				'expo-splash-screen',
 				{
-					image: './assets/images/icons/app_splash_icon.png',
+					image: './assets/images/icons/manna_icon_beige.png',
 					imageWidth: 200,
 					resizeMode: 'contain',
 					backgroundColor: '#FEF8EF',

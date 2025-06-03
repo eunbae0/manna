@@ -97,7 +97,7 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
         {/* 로고 컨테이너 - 애니메이션으로 위치 이동 */}
         <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
           <Image
-            source={require('../../../../assets/images/icons/app_splash_icon.png')}
+            source={require('../../../../assets/images/icons/manna_icon_beige.png')}
             style={styles.logo}
             contentFit="contain"
           />

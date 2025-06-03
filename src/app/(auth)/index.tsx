@@ -48,7 +48,7 @@ function AuthStepScreen() {
 			<VStack className="mx-4 items-center justify-between h-full gap-28 py-20">
 				<VStack space="sm" className="w-full">
 					<Image
-						source={require('../../../assets/images/icons/app_icon.png')}
+						source={require('../../../assets/images/icons/manna_icon_white.png')}
 						style={{ width: 80, height: 80 }}
 						contentFit="contain"
 					/>
