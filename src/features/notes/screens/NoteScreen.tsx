@@ -92,11 +92,11 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   });
 
   const {
-    toggle: toggleTitle,
-    isExpanded: titleExpanded,
-    containerStyle: titleContainerStyle,
-    iconStyle: titleIconStyle,
-    onContentLayout: onTitleContentLayout
+    toggle: toggleDetail,
+    isExpanded: detailExpanded,
+    containerStyle: detailContainerStyle,
+    iconStyle: detailIconStyle,
+    onContentLayout: onDetailContentLayout
   } = useExpandAnimation({
     initiallyExpanded: true,
   });
@@ -153,7 +153,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   };
 
   const handleEditButton = () => {
-    if (!titleExpanded) toggleTitle();
+    if (!detailExpanded) toggleDetail();
     setIsEditing(true);
   };
 
@@ -264,11 +264,11 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                     )}
                   </HStack>
                 </AnimatedPressable>
-                <HStack className="items-center justify-between">
+                <HStack space="sm" className="items-center justify-between">
                   {isEditing ? (
                     <TextInput
                       placeholder="설교 제목"
-                      className="text-3xl font-pretendard-bold text-typography-800"
+                      className="text-3xl font-pretendard-bold text-typography-800 flex-1"
                       value={editableNote.title}
                       onChangeText={(title) =>
                         setEditableNote((prev: Partial<Note>) => ({
@@ -278,12 +278,12 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                       }
                     />
                   ) : (
-                    <Text className="text-3xl font-pretendard-bold text-typography-900">
+                    <Text className="text-3xl font-pretendard-bold text-typography-900 flex-1">
                       {note?.title}
                     </Text>
                   )}
-                  <AnimatedPressable onPress={() => toggleTitle()}>
-                    <Animated.View style={[titleIconStyle]}>
+                  <AnimatedPressable onPress={() => toggleDetail()}>
+                    <Animated.View style={[detailIconStyle]}>
                       <Icon
                         as={ChevronDown}
                         // @ts-ignore
@@ -294,8 +294,8 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                   </AnimatedPressable>
                 </HStack>
               </VStack>
-              <Animated.View style={[titleContainerStyle]} className="px-5">
-                <VStack space="xl" className="pt-6" onLayout={onTitleContentLayout}>
+              <Animated.View style={[detailContainerStyle]} className="px-5">
+                <VStack space="xl" className="pt-6" onLayout={onDetailContentLayout}>
                   <VStack space="xs">
                     <HStack space="sm" className="items-center">
                       <Icon
