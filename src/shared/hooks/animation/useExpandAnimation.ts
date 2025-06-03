@@ -3,6 +3,7 @@ import {
 	useSharedValue,
 	useAnimatedStyle,
 	withTiming,
+	Easing,
 } from 'react-native-reanimated';
 import { Keyboard, type LayoutChangeEvent, type TextInput } from 'react-native';
 
@@ -20,7 +21,7 @@ type UseExpandAnimationParams = {
 export function useExpandAnimation({
 	initialHeight = 0,
 	expandedHeight = 'auto',
-	duration = 200,
+	duration = 300, // 지속 시간을 늘려 더 부드러운 애니메이션 구현
 	initiallyExpanded = false,
 	onToggle,
 }: UseExpandAnimationParams = {}) {
@@ -79,8 +80,14 @@ export function useExpandAnimation({
 						: contentHeight;
 
 			// targetHeight가 0이면 500으로 설정
-			height.value = withTiming(targetHeight || 500, { duration });
-			rotate.value = withTiming(1, { duration });
+			// 부드러운 이징 함수 사용
+			const animationConfig = {
+				duration,
+				easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+				driver: 'native',
+			};
+			height.value = withTiming(targetHeight || 500, animationConfig);
+			rotate.value = withTiming(1, animationConfig);
 
 			// 포커스 설정 (입력 요소가 제공된 경우)
 			setTimeout(() => {
@@ -91,8 +98,14 @@ export function useExpandAnimation({
 		} else {
 			// 닫힐 때
 			Keyboard.isVisible() && Keyboard.dismiss();
-			height.value = withTiming(initialHeight, { duration });
-			rotate.value = withTiming(0, { duration });
+			// 부드러운 이징 함수 사용
+			const animationConfig = {
+				duration,
+				easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+				driver: 'native',
+			};
+			height.value = withTiming(initialHeight, animationConfig);
+			rotate.value = withTiming(0, animationConfig);
 		}
 		onToggle?.();
 	};
