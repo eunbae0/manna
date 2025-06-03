@@ -15,7 +15,7 @@ const filterTagStyles = cva('px-3 py-1.5 rounded-full items-center justify-cente
     size: {
       xs: 'px-2 py-[2px]',
       sm: 'px-3 py-1',
-      md: 'px-3 py-1.5',
+      md: 'px-3 py-1',
       lg: 'px-3 py-2',
       xl: 'px-4 py-2',
     },
