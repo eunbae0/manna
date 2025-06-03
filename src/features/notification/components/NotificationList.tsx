@@ -27,6 +27,7 @@ import { cn } from '@/shared/utils/cn';
 import { Check, LoaderCircle } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
 import { FlashList } from '@shopify/flash-list';
+import { Divider } from '#/components/ui/divider';
 
 /**
  * 알림 목록 스켈레톤 UI 컴포넌트
@@ -185,7 +186,7 @@ export function NotificationList() {
 	// 그룹 필터 태그 렌더링 함수
 	const renderGroupFilterTags = () => {
 		return (
-			<Box className="py-2 px-5 h-12 overflow-hidden">
+			<Box className="px-4 pb-3 overflow-hidden">
 				<HStack className="justify-between">
 					<ScrollView
 						horizontal
@@ -197,7 +198,7 @@ export function NotificationList() {
 							<FilterTag
 								label="전체"
 								isSelected={selectedGroupId === null}
-								size="sm"
+								size="md"
 								onPress={() => setSelectedGroupId(null)}
 								withHaptic
 							/>
@@ -221,7 +222,7 @@ export function NotificationList() {
 										key={group.groupId}
 										label={group.groupName}
 										isSelected={selectedGroupId === group.groupId}
-										size="sm"
+										size="md"
 										onPress={() => setSelectedGroupId(group.groupId)}
 										withHaptic
 									/>
@@ -266,6 +267,7 @@ export function NotificationList() {
 		return (
 			<VStack className="flex-1">
 				{renderGroupFilterTags()}
+				<Divider className="mb-2" />
 				<FlatList
 					data={[]}
 					keyExtractor={() => 'empty'}
@@ -293,6 +295,7 @@ export function NotificationList() {
 	return (
 		<VStack className="flex-1">
 			{renderGroupFilterTags()}
+			<Divider className="mb-2" />
 			<FlashList
 				data={filteredNotifications}
 				keyExtractor={(item) => item.id}

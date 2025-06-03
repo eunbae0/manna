@@ -12,10 +12,10 @@ export function NotificationScreenHeader() {
 		<HStack
 			className={cn(
 				isIOS ? 'pt-5' : 'pt-6',
-				'pl-5 pr-3 pb-4 items-center justify-between',
+				'pl-4 pr-3 pb-4 items-center justify-between',
 			)}
 		>
-			<Heading size="2xl">알림센터</Heading>
+			<Heading size="2xl">알림 센터</Heading>
 			<Button
 				variant="icon"
 				size="lg"

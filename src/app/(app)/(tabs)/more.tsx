@@ -113,7 +113,6 @@ export default function TabFourScreen() {
 									});
 									router.push('/(app)/(more)/notice');
 								}}
-								isNew
 							/>
 							<ListItem
 								label="업데이트 노트"
