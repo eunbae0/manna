@@ -1,10 +1,9 @@
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import {
-	BottomSheetListLayout,
 	BottomSheetListHeader,
 } from '@/components/common/bottom-sheet';
 import { useState } from 'react';
-import { Alert, TextInput, type ViewProps } from 'react-native';
+import { Alert, type ViewProps } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { Avatar } from '@/components/common/avatar';
 import { VStack } from '#/components/ui/vstack';
@@ -17,6 +16,7 @@ import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import type { Comment } from '../types';
 import { Box } from '#/components/ui/box';
 import { PopupMenu, PopupMenuItem, PopupMenuItemLabel } from '@/shared/components/popup-menu';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 type CommentItemProps = {
 	comment: Comment;
@@ -72,14 +72,13 @@ export const CommentItem = ({
 		<HStack space="md" className="py-4" {...props}>
 			<Avatar
 				size="sm"
-				className="mt-1"
 				photoUrl={comment.author.photoUrl || ''}
 			/>
 			<VStack space="xs" className="flex-1">
 				<HStack space="sm" className="items-center justify-between">
 					<HStack space="sm" className="items-center">
 						<HStack space="xs" className="items-center">
-							<Text size="sm" className="font-pretendard-bold">
+							<Text size="md" className="font-pretendard-bold">
 								{comment.author.displayName || '이름없음'}
 							</Text>
 							{comment.author.role === 'leader' && (
@@ -88,12 +87,11 @@ export const CommentItem = ({
 						</HStack>
 						<HStack space="xs" className="items-center">
 							<Box className="w-1 h-1 rounded-full bg-gray-300" />
-							<Text className="text-typography-500" size="xs">
+							<Text className="text-typography-500" size="sm">
 								{formatRelativeTime(comment.createdAt)}
 							</Text>
 						</HStack>
 					</HStack>
-
 					{/* 댓글 작성자인 경우에만 더보기 메뉴 표시 */}
 					{isCurrentUser && (
 						<PopupMenu
@@ -104,7 +102,7 @@ export const CommentItem = ({
 									<Button
 										variant="icon"
 										size="sm"
-										className="absolute -top-3 -right-1"
+										className="absolute -top-5 -right-2"
 										{...triggerProps}
 									>
 										<ButtonIcon as={MoreHorizontal} size="sm" />
@@ -138,21 +136,21 @@ export const CommentItem = ({
 						</PopupMenu>
 					)}
 				</HStack>
-				<Text className="text-typography-700">{comment.content}</Text>
+				<Text size="lg" className="text-typography-700">{comment.content}</Text>
 			</VStack>
 
 			{/* 댓글 수정 바텀시트 */}
 			<EditBottomSheet>
-				<BottomSheetListLayout>
+				<VStack className="px-5">
 					<BottomSheetListHeader
 						label="댓글 수정하기"
 						onPress={closeEditSheet}
 					/>
-					<VStack space="md">
-						<TextInput
+					<VStack space="md" >
+						<BottomSheetTextInput
 							className="text-lg bg-gray-100 rounded-md p-3 text-typography-700 min-h-[100px] font-pretendard-Regular"
 							placeholder="댓글을 입력하세요"
-							value={editContent}
+							defaultValue={editContent}
 							onChangeText={setEditContent}
 							multiline
 							autoFocus
@@ -165,7 +163,7 @@ export const CommentItem = ({
 							<ButtonText>완료</ButtonText>
 						</Button>
 					</VStack>
-				</BottomSheetListLayout>
+				</VStack>
 			</EditBottomSheet>
 		</HStack>
 	);

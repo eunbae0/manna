@@ -613,7 +613,7 @@ export default function BoardPostDetailScreen() {
 							</Text>
 
 							{/* 댓글 목록 */}
-							<VStack className="mt-4">
+							<VStack className="mt-1">
 								{isCommentsLoading ? (
 									<VStack className="items-center py-8">
 										<ActivityIndicator size="small" color="#6366f1" />

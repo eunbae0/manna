@@ -241,18 +241,18 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 						photoUrl={post.author.photoUrl || ''}
 					/>
 					<VStack space="sm" className="flex-1">
-						<VStack>
+						<VStack space="xs">
 							<HStack className="items-center justify-between mr-1">
 								<HStack space="sm" className="items-center">
 									<HStack space="xs" className="items-center">
-										<Text size="md" className="font-pretendard-bold">
+										<Text size="md" weight="semi-bold">
 											{post.author.displayName || '이름없음'}
 										</Text>
 										{post.author.role === 'leader' && (
 											<Icon as={Crown} size="sm" className="text-yellow-500" />
 										)}
 									</HStack>
-									<HStack space="xs" className="items-center">
+									<HStack space="sm" className="items-center">
 										<Box className="w-1 h-1 rounded-full bg-gray-300" />
 										<Text className="text-typography-500" size="sm">
 											{formatRelativeTime(post.createdAt)}
@@ -283,14 +283,9 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 											/>
 										</HStack>
 									)}
-									{isOwner && (
-										<Button onPress={handlePressMoreButton} variant="icon">
-											<ButtonIcon as={MoreHorizontal} />
-										</Button>
-									)}
 								</HStack>
 							</HStack>
-							<VStack>
+							<VStack space="xs">
 								<Text size="lg" className="pr-12 font-pretendard-Medium">
 									{post.title}
 								</Text>
@@ -340,6 +335,13 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 							</HStack>
 						</HStack>
 					</VStack>
+					{isOwner && (
+						<Box className="absolute top-2 right-2">
+							<Button onPress={handlePressMoreButton} variant="icon">
+								<ButtonIcon as={MoreHorizontal} />
+							</Button>
+						</Box>
+					)}
 				</HStack>
 			</AnimatedPressable>
 			<BottomSheetContainer>
