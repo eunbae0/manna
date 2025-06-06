@@ -194,27 +194,6 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   });
 
 
-  const TextAreaBox = useCallback(() => {
-    return isEditing ? (
-      <TextInput
-        placeholder="설교 노트를 적어보세요..."
-        className="text-xl pb-6 min-h-80 font-pretendard-Regular"
-        multiline={true}
-        textAlignVertical="top"
-        scrollEnabled={false}
-        value={editableNote.content}
-        onChangeText={(content) =>
-          setEditableNote((prev: Partial<Note>) => ({
-            ...prev,
-            content,
-          }))
-        }
-      />
-    ) : (
-      <Text className="text-xl pb-6">{note?.content}</Text>
-    );
-  }, [isEditing, editableNote.content, note?.content])
-
   const isLoading = isLoadingNote || isUpdating || isDeleting || isLoadingCreate;
 
   if (!isCreateScreen && (isLoadingNote || !note)) {
@@ -416,7 +395,24 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
               <Divider className="bg-background-100 my-6" />
               {/* 노트 내용 영역 - 애니메이션과 분리하여 깜빡임 방지 */}
               <VStack className="px-5 pb-12">
-                <TextAreaBox />
+                {isEditing ? (
+                  <TextInput
+                    placeholder="설교 노트를 적어보세요..."
+                    className="text-xl pb-6 min-h-80 font-pretendard-Regular"
+                    multiline={true}
+                    textAlignVertical="top"
+                    scrollEnabled={false}
+                    value={editableNote.content}
+                    onChangeText={(content) =>
+                      setEditableNote((prev: Partial<Note>) => ({
+                        ...prev,
+                        content,
+                      }))
+                    }
+                  />
+                ) : (
+                  <Text className="text-xl pb-6">{note?.content}</Text>
+                )}
               </VStack>
             </VStack>
           </KeyboardAwareScrollView>
