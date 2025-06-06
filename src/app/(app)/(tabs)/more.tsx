@@ -138,17 +138,6 @@ export default function TabFourScreen() {
 							/>
 						</VStack>
 						<VStack space="xs">
-
-							<ListItem
-								label="지원"
-								icon={Info}
-								onPress={() => {
-									trackAmplitudeEvent('지원 클릭', {
-										screen: 'Tab_More',
-									});
-									router.push('/(app)/(more)/support');
-								}}
-							/>
 							<ListItem
 								label="정책"
 								icon={ScrollText}
@@ -158,6 +147,17 @@ export default function TabFourScreen() {
 									});
 									router.push('/policy');
 								}}
+							/>
+							<ListItem
+								label="만나 사용설명서"
+								icon={Info}
+								onPress={() => {
+									trackAmplitudeEvent('지원 클릭', {
+										screen: 'Tab_More',
+									});
+									router.push('/(app)/(more)/support');
+								}}
+								isNew
 							/>
 							{/* <ListItem
 								label="의견 남기기"
