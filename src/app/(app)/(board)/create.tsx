@@ -238,7 +238,7 @@ export default function CreateBoardPostScreen() {
 											placeholder="신앙 나눔이나 이야기를 남겨보세요."
 											value={content}
 											onChangeText={setContent}
-											className="text-lg font-pretendard-Medium flex-1 min-h-[200px] p-2"
+											className="text-lg font-pretendard-Regular text-typography-800 flex-1 min-h-[200px] p-2"
 											multiline
 											textAlignVertical="top"
 										/>

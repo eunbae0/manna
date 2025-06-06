@@ -23,10 +23,8 @@ import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import {
 	Crown,
 	MessageCircle,
-	Send,
 	ThumbsUp,
 	Eye,
-	SendHorizonal,
 	MoreHorizontal,
 	Pen,
 	Trash,
@@ -36,11 +34,8 @@ import {
 } from 'lucide-react-native';
 import Header from '@/components/common/Header';
 import type {
-	BoardPost,
-	Comment,
 	ReactionType,
 	PostReactionMetadata,
-	CommentReactionMetadata,
 } from '@/features/board/types';
 import { UserRole } from '@/features/board/types';
 import type { ClientReaction } from '@/features/board/api/service';
@@ -50,7 +45,6 @@ import {
 	useBoardPost,
 	useDeleteBoardPost,
 	useIncrementViewCount,
-	useUpdateBoardPost,
 } from '@/features/board/hooks/useBoardPosts';
 import { usePinPostUtils } from '@/features/board/utils/pin';
 import { checkPinnedPost } from '@/features/board/api';
@@ -75,6 +69,7 @@ import {
 	BottomSheetListLayout,
 } from '@/components/common/bottom-sheet';
 import { goBackOrReplaceHome, openProfile } from '@/shared/utils/router';
+import TextWithLinks from '@/shared/components/text-with-links';
 
 /**
  * 로딩 상태 컴포넌트
@@ -542,9 +537,7 @@ export default function BoardPostDetailScreen() {
 
 						{/* 게시글 내용 */}
 						<Box className="mb-6">
-							<Text size="lg" className="text-typography-700">
-								{post.content}
-							</Text>
+							<TextWithLinks text={post?.content || ''} size="lg" className="text-typography-700" />
 						</Box>
 
 						{/* 게시글 통계 */}
