@@ -269,7 +269,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 								</HStack>
 								<HStack space="xs" className="items-center">
 									{post.isPinned && (
-										<HStack space="xs" className="items-center">
+										<HStack space="xs" className="items-center mr-12">
 											<Text
 												size="xs"
 												className="text-typography-700 font-pretendard-Medium"
