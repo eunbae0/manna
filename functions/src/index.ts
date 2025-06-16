@@ -139,16 +139,20 @@ exports.fellowshipNotification = onDocumentCreated(
 	async (event) => {
 		const {
 			id: fellowshipId,
-			info: { members: fellowshipMembers },
+			info: { participants: fellowshipMembers },
+			roles: { leaderId },
 		} = event.data?.data() as {
 			id: string;
 			info: {
-				members: { id: string; displayName: string; isLeader: boolean }[];
+				participants: { id: string; displayName: string }[];
 			};
+			roles: {
+				leaderId: string
+			}
 		};
 
 		const { id: senderId, displayName: senderDisplayName } =
-			fellowshipMembers.find((member) => member.isLeader) || {
+			fellowshipMembers.find((member) => member.id === leaderId) || {
 				id: '',
 				displayName: '',
 			};
