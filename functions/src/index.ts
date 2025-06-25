@@ -138,24 +138,24 @@ exports.fellowshipNotification = onDocumentCreated(
 	'/groups/{documentId}/fellowship/{documentId}',
 	async (event) => {
 		const {
-			id: fellowshipId,
+			identifiers: { id: fellowshipId },
 			info: { participants: fellowshipMembers },
 			roles: { leaderId },
 		} = event.data?.data() as {
-			id: string;
+			identifiers: {
+				id: string;
+			};
 			info: {
-				participants: { id: string; displayName: string }[];
+				participants: { id: string; displayName?: string }[];
 			};
 			roles: {
-				leaderId: string
-			}
+				leaderId: string;
+			};
 		};
 
-		const { id: senderId, displayName: senderDisplayName } =
-			fellowshipMembers.find((member) => member.id === leaderId) || {
-				id: '',
-				displayName: '',
-			};
+		const { id: senderId } = fellowshipMembers.find(
+			(member) => member.id === leaderId,
+		) || { id: '' };
 
 		const group = await event.data?.ref.parent.parent?.get();
 
@@ -170,10 +170,15 @@ exports.fellowshipNotification = onDocumentCreated(
 
 		const membersRef = await group?.ref.collection('members').get();
 
+		let senderDisplayName = '알 수 없음';
+
 		for (const memberDoc of membersRef?.docs || []) {
-			const member = memberDoc.data() as { id: string };
+			const member = memberDoc.data() as { id: string; displayName: string };
 			if (!fellowshipMemberIds.has(member.id)) continue;
-			if (member.id === senderId) continue;
+			if (member.id === senderId) {
+				senderDisplayName = member.displayName;
+				continue;
+			}
 			members.add(member.id);
 		}
 
