@@ -5,7 +5,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import {
   ActivityIndicator,
   Alert,
@@ -24,19 +24,14 @@ import {
   Trash,
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useToastStore } from '@/store/toast';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import type { Note } from '@/api/notes/types';
+import type { Note, NoteInput } from '@/features/note/types';
 import { useWorshipStore } from '@/store/worship';
 import type { ClientWorshipType } from '@/api/worship-types/types';
-import {
-  useNote,
-  useUpdateNote,
-  useDeleteNote,
-} from '@/features/notes/hooks/useNote';
 import { Keyboard } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { cn } from '@/shared/utils/cn';
@@ -49,13 +44,20 @@ import { formatLocalDate } from '@/shared/utils/date';
 import { useExpandAnimation } from '@/shared/hooks/animation/useExpandAnimation';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Divider } from '#/components/ui/divider';
-import { useCreateNote } from '../hooks/useCreateNote';
 import { Box } from '#/components/ui/box';
+import { useAuthStore } from '@/store/auth';
+import { NoteStorageService } from '../storage';
 
 export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   const isCreateScreen = screen === 'create';
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<{ id?: string }>();
+
+
+  const { user } = useAuthStore()
+
+  if (!user?.id) return null;
+  const noteStorage = useMemo(() => NoteStorageService.getInstance(user.id), [user.id]);
 
   const [isEditing, setIsEditing] = useState(isCreateScreen);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -69,27 +71,27 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   // Get worship types from global store
   const { worshipTypes } = useWorshipStore();
 
-  // Use custom hooks for API operations
-  const { note, isLoading: isLoadingNote } = useNote(id);
-  const { updateNote, isLoading: isUpdating } = useUpdateNote(id, {
-    onSuccess: () => {
-      setIsEditing(false);
-      showSuccess('노트가 수정되었어요');
-    },
-    onError: () => {
-      showSuccess('노트 수정에 실패했어요. 다시 시도해주세요');
-    },
-  });
-  const { createNote, isLoading: isLoadingCreate } = useCreateNote({
-    onSuccess: (noteId) => {
-      showSuccess('노트가 생성되었어요');
-      handleExit();
-      router.replace(`/(app)/(note)/${noteId}`);
-    },
-    onError: () => {
-      showSuccess('노트 생성에 실패했어요. 다시 시도해주세요');
-    },
-  });
+  const existedNote = useMemo(() => id ? noteStorage.getNote(id) : undefined, [id, noteStorage]);
+
+  const createNote = (note: NoteInput) => {
+    const createdNote = noteStorage.saveNote(note);
+    showSuccess('노트가 생성되었어요');
+    handleExit();
+    router.replace(`/(app)/(note)/${createdNote.id}`);
+  }
+
+  const updateNote = (note: NoteInput) => {
+    noteStorage.saveNote(note)
+    showSuccess('노트가 수정되었어요');
+    setIsEditing(false);
+  }
+
+  // _local 항목 삭제시 pending 중인 변경사항에서 삭제
+  const deleteNote = (noteId: string) => {
+    noteStorage.deleteNote(noteId)
+    showSuccess('노트가 삭제되었어요');
+    router.canGoBack() ? router.back() : router.replace('/(app)/(tabs)/note');
+  }
 
   const {
     toggle: toggleDetail,
@@ -106,34 +108,24 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
 
   // Initialize editable note and date when note data is loaded
   useEffect(() => {
-    if (note) {
-      setEditableNote(note);
-      if (note.date) {
-        setSelectedDate(note.date.toDate());
+    if (existedNote) {
+      setEditableNote(existedNote);
+      if (existedNote.date) {
+        setSelectedDate(new Date(existedNote.date));
       }
-      if (note.worshipType) {
+      if (existedNote.worshipType) {
         // Find the matching worship type from the global store
         const matchingType = worshipTypes.find(
-          (type) => type.name === note.worshipType.name,
+          (type) => type.name === existedNote.worshipType.name,
         );
         if (matchingType) {
           setSelectedWorshipType(matchingType);
         }
       }
     }
-  }, [note, worshipTypes]);
+  }, [existedNote, worshipTypes]);
 
-  const { deleteNote, isLoading: isDeleting } = useDeleteNote(id, {
-    onSuccess: () => {
-      showSuccess('노트가 삭제되었어요');
-      router.canGoBack() ? router.back() : router.replace('/(app)/(tabs)/note');
-    },
-    onError: () => {
-      showSuccess('노트 삭제에 실패했어요. 다시 시도해주세요');
-    },
-  });
-
-  const handleDeleteNote = () => {
+  const handleDeleteNote = (id: string) => {
     Alert.alert(
       '노트 삭제',
       '정말 이 노트를 삭제할까요?',
@@ -145,7 +137,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
         {
           text: '삭제',
           style: 'destructive',
-          onPress: () => deleteNote(),
+          onPress: () => deleteNote(id),
         },
       ],
       { cancelable: true },
@@ -168,16 +160,14 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
       return;
     }
 
-    const noteData = {
-      title: editableNote.title || '',
-      date: selectedDate,
-      content: editableNote.content || '',
-      sermon: editableNote.sermon || '',
-      preacher: editableNote.preacher || '',
-      worshipType: {
-        name: selectedWorshipType?.name || '',
-        id: selectedWorshipType?.id || '',
-      },
+    const noteData: NoteInput = {
+      id,
+      title: editableNote.title,
+      date: selectedDate.toUTCString(),
+      content: editableNote.content,
+      sermon: editableNote.sermon,
+      preacher: editableNote.preacher,
+      worshipType: selectedWorshipType,
     }
 
     if (isCreateScreen) {
@@ -194,9 +184,8 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   });
 
 
-  const isLoading = isLoadingNote || isUpdating || isDeleting || isLoadingCreate;
 
-  if (!isCreateScreen && (isLoadingNote || !note)) {
+  if (!isCreateScreen && (!existedNote)) {
     return <ActivityIndicator />;
   }
 
@@ -215,7 +204,6 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                 size="lg"
                 variant="text"
                 onPress={handleUpdateNoteSubmit}
-                disabled={isLoading}
               >
                 <ButtonText>저장하기</ButtonText>
               </Button>
@@ -224,7 +212,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                 <Button variant="icon" onPress={handleEditButton}>
                   <ButtonIcon as={Edit} />
                 </Button>
-                <Button variant="icon" onPress={() => handleDeleteNote()}>
+                <Button variant="icon" onPress={() => handleDeleteNote(editableNote?.id || "")}>
                   <ButtonIcon as={Trash} className="text-red-600" />
                 </Button>
               </HStack>
@@ -258,7 +246,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                     />
                   ) : (
                     <Text className="text-3xl font-pretendard-bold text-typography-900 flex-1">
-                      {note?.title}
+                      {editableNote?.title}
                     </Text>
                   )}
                   <AnimatedPressable onPress={() => toggleDetail()}>
@@ -303,10 +291,10 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                         size="xl"
                         className={cn(
                           'ml-6',
-                          !note?.sermon && 'text-typography-500',
+                          !editableNote?.sermon && 'text-typography-500',
                         )}
                       >
-                        {note?.sermon || '비어 있음'}
+                        {editableNote?.sermon || '비어 있음'}
                       </Text>
                     )}
                   </VStack>
@@ -338,10 +326,10 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                         size="xl"
                         className={cn(
                           'ml-6',
-                          !note?.preacher && 'text-typography-500',
+                          !editableNote?.preacher && 'text-typography-500',
                         )}
                       >
-                        {note?.preacher || '비어 있음'}
+                        {editableNote?.preacher || '비어 있음'}
                       </Text>
                     )}
                   </VStack>
@@ -384,7 +372,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                     ) : (
                       <Box className="ml-6 items-start">
                         <FilterTag
-                          label={note?.worshipType?.name || '비어 있음'}
+                          label={existedNote?.worshipType?.name || '비어 있음'}
                           isSelected={true}
                         />
                       </Box>
@@ -411,7 +399,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                     }
                   />
                 ) : (
-                  <Text className="text-xl pb-6">{note?.content}</Text>
+                  <Text className="text-xl pb-6">{editableNote?.content}</Text>
                 )}
               </VStack>
             </VStack>

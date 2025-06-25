@@ -9,7 +9,7 @@
 export * from './auth';
 
 // Re-export all API functions from the notes module
-export * from './notes';
+export * from '../features/note/api';
 
 // Export error handling utilities
 export { handleApiError } from './errors';

@@ -16,6 +16,8 @@ import {
 import { usePinnedPost } from '@/features/board/hooks/useBoardPosts';
 import { useAuthStore } from '@/store/auth';
 import { useDelayedValue } from '@/hooks/useDelayedValue';
+import { listUsersWithNotes } from '@/scripts/listUsersWithNotes';
+import { getNotesUpdatedSince } from '@/api';
 
 export default function ServiceGroups() {
 	const { setType } = useFellowshipStore();
@@ -35,7 +37,7 @@ export default function ServiceGroups() {
 		router.push('/(app)/(fellowship)/create');
 	};
 
-	const handlePressFellowships = () => {
+	const handlePressFellowships = async () => {
 		trackAmplitudeEvent('나눔 기록 클릭', { screen: 'Tab_Home' });
 		router.push('/(app)/(fellowship)/list');
 	};
