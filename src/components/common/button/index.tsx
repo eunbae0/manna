@@ -8,6 +8,7 @@ import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
 import { Icon as UIIcon } from '#/components/ui/icon';
 import { Text, type TextProps } from '@/shared/components/text';
+import * as Haptics from 'expo-haptics';
 
 // Define button size type
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -318,6 +319,7 @@ export interface ButtonProps
 	animation?: boolean;
 	throttleTime?: number;
 	innerClassName?: string;
+	withHaptic?: boolean;
 }
 
 const Button = React.forwardRef<View, ButtonProps>(
@@ -334,6 +336,7 @@ const Button = React.forwardRef<View, ButtonProps>(
 			disabled = false,
 			animation = true,
 			throttleTime = 300, // 기본 쓰로틀 시간 300ms
+			withHaptic = false,
 			onPress,
 			...props
 		},
@@ -393,6 +396,9 @@ const Button = React.forwardRef<View, ButtonProps>(
 						// 마지막 클릭 시간 업데이트
 						lastPressTimeRef.current = now;
 
+						if (withHaptic) {
+							Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+						}
 						// 애니메이션 및 이벤트 호출
 						handlePressIn();
 						props.onPressIn?.(e);
