@@ -32,14 +32,6 @@ export const useToastStore = create<ToastState & ToastActions>()(
 			set((state) => {
 				const id = Date.now().toString();
 				state.toasts.push({ ...toast, id });
-
-				// // 자동으로 토스트 제거 (타이머 대신 스토어 외부에서 처리)
-				// setTimeout(() => {
-				// 	set((state) => {
-				// 		state.toasts = state.toasts.filter((t) => t.id !== id);
-				// 		return state;
-				// 	});
-				// }, 3000);
 			}),
 
 		showError: (error) => {

@@ -101,7 +101,7 @@ const AnimatedToast = ({ toast, onRemove }: AnimatedToastProps) => {
 			})
 			.onEnd((event) => {
 				// 충분히 위로 스와이프했으면 제거
-				if (event.translationY < -50) {
+				if (event.translationY < -20) {
 					runOnJS(dismissToast)();
 				} else {
 					// 충분하지 않으면 원래 위치로
@@ -155,7 +155,7 @@ const AnimatedToast = ({ toast, onRemove }: AnimatedToastProps) => {
 			<Animated.View style={animatedStyle} className="w-full mb-2">
 				<Box
 					className={cn(
-						'w-full rounded-3xl px-5 py-5 border dark:border-gray-700',
+						'w-full rounded-xl px-5 py-4 border dark:border-gray-700',
 						bgColor,
 						borderColor,
 					)}
@@ -164,9 +164,9 @@ const AnimatedToast = ({ toast, onRemove }: AnimatedToastProps) => {
 						<Icon as={IconComponent} size="lg" className={color} />
 						<VStack space="xs" className="flex-1">
 							{toast.title && (
-								<Text className="dark:text-gray-100">{toast.title}</Text>
+								<Text weight="semi-bold" className="text-typography-700">{toast.title}</Text>
 							)}
-							<Text size="lg" className="dark:text-gray-300 pr-4">
+							<Text size="lg" weight="medium" className="text-typography-700 pr-4">
 								{toast.message}
 							</Text>
 						</VStack>
@@ -184,7 +184,7 @@ export const ToastContainer = () => {
 	if (toasts.length === 0) return null;
 
 	return (
-		<Box style={{ top }} className="absolute px-4 z-30 mt-2 w-full">
+		<Box style={{ top }} className="absolute px-4 z-30 mt-3 w-full">
 			<VStack className="items-center">
 				{toasts.map((toast) => (
 					<AnimatedToast key={toast.id} toast={toast} onRemove={removeToast} />
