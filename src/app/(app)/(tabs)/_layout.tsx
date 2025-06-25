@@ -14,6 +14,7 @@ import {
 	NotebookPen,
 	Ellipsis,
 	type LucideIcon,
+	BookMarked,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 
@@ -41,7 +42,7 @@ export default function TabLayout() {
 			</View>
 			<TabList
 				style={{ marginBottom: insets.bottom }}
-				className="px-3 border-t border-gray-200 items-center justify-center"
+				className="px-2 pt-1 border-t border-l border-r rounded-2xl border-gray-200 items-center justify-center"
 			>
 				<TabTrigger
 					name="index"
@@ -49,7 +50,7 @@ export default function TabLayout() {
 					asChild
 					style={{ flex: 1, justifyContent: 'center' }}
 				>
-					<CustomTabButton icon={HouseIcon}>나의 소그룹</CustomTabButton>
+					<CustomTabButton icon={HouseIcon}>홈</CustomTabButton>
 				</TabTrigger>
 				<TabTrigger
 					name="note"
@@ -58,6 +59,14 @@ export default function TabLayout() {
 					style={{ flex: 1, justifyContent: 'center' }}
 				>
 					<CustomTabButton icon={NotebookPen}>설교 노트</CustomTabButton>
+				</TabTrigger>
+				<TabTrigger
+					name="bible"
+					href="/bible"
+					asChild
+					style={{ flex: 1, justifyContent: 'center' }}
+				>
+					<CustomTabButton icon={BookMarked}>성경</CustomTabButton>
 				</TabTrigger>
 				<TabTrigger
 					name="notification"
@@ -98,8 +107,8 @@ export const CustomTabButton = React.forwardRef<View, CustomTabButtonProps>(
 				transform: [{ scale: scale.value }],
 				backgroundColor: `rgba(54, 35, 3, ${backgroundColor.value * 0.04})`,
 				borderRadius: 8,
-				paddingTop: 8,
-				paddingBottom: 6,
+				paddingTop: 4,
+				paddingBottom: 4,
 			};
 		});
 
@@ -137,7 +146,7 @@ export const CustomTabButton = React.forwardRef<View, CustomTabButtonProps>(
 				}}
 			>
 				<Animated.View style={animatedStyle}>
-					<VStack className="items-center gap-[1px]">
+					<VStack className="items-center gap-[2px]">
 						<Icon
 							size="xl"
 							as={props.icon}
@@ -148,7 +157,8 @@ export const CustomTabButton = React.forwardRef<View, CustomTabButtonProps>(
 							)}
 						/>
 						<Text
-							size="xs"
+							size="sm"
+							weight="semi-bold"
 							className={cn(
 								props.isFocused ? 'text-primary-500' : 'text-typography-500',
 							)}
