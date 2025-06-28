@@ -26,10 +26,7 @@ export function BibleFloatingGuide({ isScrollDown, handleOpenBibleSelector }: Pr
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: isScrollDown ? withTiming(0, { duration: 200 }) : withTiming(1, { duration: 200 }),
     maxWidth: isScrollDown ? withTiming(0, { duration: 200 }) : withTiming(200, { duration: 200 }),
-    height: 24,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 22,
   }));
 
   return (

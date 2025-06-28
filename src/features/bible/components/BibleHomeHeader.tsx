@@ -35,7 +35,7 @@ export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector, handleO
 
   return (
     isScrollDown ? (
-      <HStack className="justify-between items-center p-2 border-b border-gray-100 dark:border-gray-800">
+      <HStack className="justify-between items-center px-2 pb-2 border-b border-gray-100 dark:border-gray-800">
         <Button
           variant="text"
           size="sm"
@@ -68,7 +68,7 @@ export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector, handleO
         </Button>
       </HStack>
     ) : (
-      <HStack className="justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800">
+      <HStack className="justify-between items-center pt-1 pb-2 pl-5 pr-3 border-b border-gray-100 dark:border-gray-800">
         <AnimatedPressable withHaptic onPress={handleOpenBibleSelector}>
           <HStack space="sm" className="items-center">
             <Text size="2xl" weight="semi-bold">
@@ -77,7 +77,7 @@ export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector, handleO
             <Icon as={ChevronDown} size="xl" className="text-typography-500" />
           </HStack>
         </AnimatedPressable>
-        <HStack space="md">
+        <HStack>
           <Button variant='icon' size="lg" withHaptic onPress={handlePressSearch}>
             <ButtonIcon as={Search} />
           </Button>
