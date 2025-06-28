@@ -6,6 +6,7 @@ import { BookMarked, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { DEFAULT_BOOK_DATA } from '../constants';
 import { useBibleStore } from '../store/bible';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 
 type Props = {
   isScrollDown: boolean;
@@ -19,33 +20,56 @@ export function BibleFloatingGuide({ isScrollDown, handleOpenBibleSelector }: Pr
   const isFirstChapter = currentChapter === 1;
   const isLastChapter = currentBook ? currentChapter === currentBook.chapters_count : false;
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: isScrollDown ? withTiming(0, { duration: 200 }) : withTiming(1, { duration: 200 }),
+    maxWidth: isScrollDown ? withTiming(0, { duration: 200 }) : withTiming(200, { duration: 200 }),
+    height: 24,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }));
+
   return (
-    <HStack space="sm" className="z-20 absolute bottom-4 right-4">
-      <AnimatedPressable
-        onPress={handleOpenBibleSelector}
-        className="py-3 px-4 rounded-full bg-primary-500 border border-primary-400"
-        withHaptic
-      >
-        <HStack space="xs" className="items-center">
-          <Icon as={BookMarked} size="md" className="text-primary-50" />
-          {!isScrollDown ? <Text size="lg" weight="medium" className="text-primary-50">바로가기</Text> : null}
-        </HStack>
-      </AnimatedPressable>
+    <HStack space="xs" className="z-20 absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-primary-600 px-2 items-center">
       <AnimatedPressable
         onPress={goToPrevChapter}
         disabled={isFirstChapter}
-        className="p-3 rounded-full bg-primary-500 border border-primary-400"
+        className="rounded-full"
+        scale="lg"
         withHaptic
+        pressableClassName='p-4'
       >
-        <Icon as={ChevronLeft} size="xl" className={cn(isFirstChapter ? 'text-gray-400' : 'text-primary-50')} />
+        <Icon as={ChevronLeft} size="xl" className={cn(isFirstChapter ? 'text-gray-400' : 'text-typography-200')} />
+      </AnimatedPressable>
+      <AnimatedPressable
+        onPress={handleOpenBibleSelector}
+        className="rounded-full bg-primary-500"
+        withHaptic
+        scale="lg"
+        pressableClassName='p-4'
+      >
+        <HStack space="xs" className="items-center">
+          <Icon as={BookMarked} size="md" className="text-typography-200" />
+          <Animated.View style={animatedStyle}>
+            <Text
+              size="lg"
+              weight="medium"
+              className="text-typography-200"
+            >
+              바로가기
+            </Text>
+          </Animated.View>
+        </HStack>
       </AnimatedPressable>
       <AnimatedPressable
         onPress={goToNextChapter}
         disabled={isLastChapter}
-        className="p-3 rounded-full bg-primary-500 border border-primary-400"
+        className="rounded-full"
+        scale="lg"
         withHaptic
+        pressableClassName='p-4'
       >
-        <Icon as={ChevronRight} size="xl" className={cn(isLastChapter ? 'text-gray-400' : 'text-primary-50')} />
+        <Icon as={ChevronRight} size="xl" className={cn(isLastChapter ? 'text-gray-400' : 'text-typography-200')} />
       </AnimatedPressable>
     </HStack>
   )
