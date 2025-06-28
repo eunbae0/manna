@@ -7,6 +7,7 @@ import { DEFAULT_BOOK_DATA } from '../constants';
 import { useBibleStore } from '../store/bible';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import Animated, { useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
+import { useToastStore } from '@/store/toast';
 
 type Props = {
   isScrollDown: boolean;
@@ -14,11 +15,13 @@ type Props = {
 }
 
 export function BibleFloatingGuide({ isScrollDown, handleOpenBibleSelector }: Props) {
+  const { showInfo } = useToastStore()
+
   const { currentBookId, bookIndex, currentChapter, goToPrevChapter, goToNextChapter } = useBibleStore();
   const currentBook = bookIndex.find(book => book.id === currentBookId) || DEFAULT_BOOK_DATA;
 
-  const isFirstChapter = currentChapter === 1;
-  const isLastChapter = currentBook ? currentChapter === currentBook.chapters_count : false;
+  const isFirstChapter = currentBookId === 'GEN' && currentChapter === 1;
+  const isLastChapter = currentBookId === 'REV' && currentChapter === currentBook?.chapters_count;
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: isScrollDown ? withTiming(0, { duration: 200 }) : withTiming(1, { duration: 200 }),
@@ -32,7 +35,7 @@ export function BibleFloatingGuide({ isScrollDown, handleOpenBibleSelector }: Pr
   return (
     <HStack space="xs" className="z-20 absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-primary-600 px-2 items-center">
       <AnimatedPressable
-        onPress={goToPrevChapter}
+        onPress={() => goToPrevChapter(showInfo)}
         disabled={isFirstChapter}
         className="rounded-full"
         scale="lg"
@@ -62,7 +65,7 @@ export function BibleFloatingGuide({ isScrollDown, handleOpenBibleSelector }: Pr
         </HStack>
       </AnimatedPressable>
       <AnimatedPressable
-        onPress={goToNextChapter}
+        onPress={() => goToNextChapter(showInfo)}
         disabled={isLastChapter}
         className="rounded-full"
         scale="lg"

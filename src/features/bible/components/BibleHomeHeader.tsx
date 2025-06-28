@@ -8,6 +8,7 @@ import { Icon } from '#/components/ui/icon';
 import { Button } from '@/components/common/button';
 import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
+import { useToastStore } from '@/store/toast';
 
 interface BibleHomeHeaderProps {
   isScrollDown: boolean;
@@ -15,12 +16,13 @@ interface BibleHomeHeaderProps {
 }
 
 export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector }: BibleHomeHeaderProps) {
+  const { showInfo } = useToastStore()
+
   const { currentBookId, bookIndex, currentChapter, goToPrevChapter, goToNextChapter } = useBibleStore();
   const currentBook = bookIndex.find(book => book.id === currentBookId) || DEFAULT_BOOK_DATA;
 
-  // TODO: 창세기, 요한계시록인 경우에만 구분
-  const isFirstChapter = currentChapter === 1;
-  const isLastChapter = currentBook ? currentChapter === currentBook.chapters_count : false;
+  const isFirstChapter = currentBookId === 'GEN' && currentChapter === 1;
+  const isLastChapter = currentBookId === 'REV' && currentChapter === currentBook?.chapters_count;
 
   const handlePressSearch = () => {
     router.push('/search');
@@ -32,7 +34,7 @@ export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector }: Bible
         <Button
           variant="text"
           size="sm"
-          onPress={goToPrevChapter}
+          onPress={() => goToPrevChapter(showInfo)}
           disabled={isFirstChapter}
           className="w-10 p-0"
           withHaptic
@@ -52,7 +54,7 @@ export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector }: Bible
         <Button
           variant="text"
           size="sm"
-          onPress={goToNextChapter}
+          onPress={() => goToNextChapter(showInfo)}
           disabled={isLastChapter}
           className="w-10 p-0"
           withHaptic
