@@ -1,8 +1,7 @@
 import { create } from 'zustand';
-import { getJsonDynamically, isBookData } from '../utils';
+import { getJsonDynamically } from '../utils';
 import type { BookData, BookIndex, Verse } from '../types';
 import { DEFAULT_BOOK_DATA } from '../constants';
-import { useToastStore } from '@/store/toast';
 
 interface SearchResult {
 	bookId: string;
@@ -46,7 +45,7 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 	bookIndex: [],
 	currentBookId: DEFAULT_BOOK_DATA.id,
 	currentChapter: 1,
-	currentVerse: 1,
+	currentVerse: null,
 	verses: [],
 	chapters: [],
 	isLoading: true,
@@ -102,7 +101,6 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 			set({
 				verses: chapterData.verses,
 				currentChapter: chapter,
-				currentVerse: 1,
 			});
 		} catch (error) {
 			console.error(`Failed to load verses for ${bookId} ${chapter}:`, error);

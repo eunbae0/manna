@@ -5,7 +5,7 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { useBibleStore } from '../store/bible';
 import { DEFAULT_BOOK_DATA } from '../constants';
 import { Icon } from '#/components/ui/icon';
-import { Button } from '@/components/common/button';
+import { Button, ButtonIcon } from '@/components/common/button';
 import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
 import { useToastStore } from '@/store/toast';
@@ -13,9 +13,10 @@ import { useToastStore } from '@/store/toast';
 interface BibleHomeHeaderProps {
   isScrollDown: boolean;
   handleOpenBibleSelector: () => void;
+  handleOpenSetting: () => void;
 }
 
-export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector }: BibleHomeHeaderProps) {
+export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector, handleOpenSetting }: BibleHomeHeaderProps) {
   const { showInfo } = useToastStore()
 
   const { currentBookId, bookIndex, currentChapter, goToPrevChapter, goToNextChapter } = useBibleStore();
@@ -25,7 +26,11 @@ export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector }: Bible
   const isLastChapter = currentBookId === 'REV' && currentChapter === currentBook?.chapters_count;
 
   const handlePressSearch = () => {
-    router.push('/search');
+    // router.push('/search');
+  }
+
+  const handlePressSetting = () => {
+    handleOpenSetting()
   }
 
   return (
@@ -73,9 +78,12 @@ export function BibleHomeHeader({ isScrollDown, handleOpenBibleSelector }: Bible
           </HStack>
         </AnimatedPressable>
         <HStack space="md">
-          <AnimatedPressable withHaptic onPress={handlePressSearch}>
-            <Search size={24} className="text-primary-400" />
-          </AnimatedPressable>
+          <Button variant='icon' size="lg" withHaptic onPress={handlePressSearch}>
+            <ButtonIcon as={Search} />
+          </Button>
+          <Button variant='icon' size="lg" withHaptic onPress={handlePressSetting}>
+            <ButtonIcon as={Settings} />
+          </Button>
         </HStack>
       </HStack>
     )

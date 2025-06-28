@@ -9,6 +9,7 @@ import { useScrollDown } from '@/shared/hooks/useScrollDown';
 import { BibleFloatingGuide } from '../components/BibleFloatingGuide';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { BibleSelector } from '../components/BibleSelector';
+import { BibleSetting } from '../components/BibleSetting';
 
 export default function BibleMainScreen() {
   const bibleContentRef = useRef(null);
@@ -23,12 +24,14 @@ export default function BibleMainScreen() {
   const { isScrollDown, onScrollDown } = useScrollDown();
 
   const { BottomSheetContainer: BibleSelectorBottomSheetContainer, handleOpen: handleOpenBibleSelector, handleClose: handleCloseBibleSelector } = useBottomSheet()
+  const { BottomSheetContainer: BibleSettingBottomSheetContainer, handleOpen: handleOpenBibleSetting, handleClose: handleCloseBibleSetting } = useBottomSheet()
 
   return (
     <VStack className="flex-1 h-full">
       <BibleHomeHeader
         isScrollDown={isScrollDown}
         handleOpenBibleSelector={handleOpenBibleSelector}
+        handleOpenSetting={handleOpenBibleSetting}
       />
       <BibleContent onScrollDown={onScrollDown} />
 
@@ -37,6 +40,11 @@ export default function BibleMainScreen() {
       <BibleSelector
         BibleSelectorBottomSheetContainer={BibleSelectorBottomSheetContainer}
         closeSelector={handleCloseBibleSelector}
+      />
+
+      <BibleSetting
+        BottomSheetContainer={BibleSettingBottomSheetContainer}
+        closeSetting={handleCloseBibleSetting}
       />
     </VStack>
   );
