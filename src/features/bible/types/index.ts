@@ -8,6 +8,8 @@ export type BookIndexData = {
 	chapters_count: number;
 	type: 'OT' | 'NT';
 	group_kr: string;
+	next_book: string | null;
+	prev_book: string | null;
 };
 
 export type Verse = {

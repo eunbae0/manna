@@ -6,7 +6,9 @@
     "filename": "gen.json",
     "chapters_count": 50,
     "type": "OT",
-    "group_kr": "모세오경"
+    "group_kr": "모세오경",
+    "next_book": "EXO",
+    "prev_book": null
   },
   {
     "id": "EXO",
@@ -15,7 +17,9 @@
     "filename": "exo.json",
     "chapters_count": 40,
     "type": "OT",
-    "group_kr": "모세오경"
+    "group_kr": "모세오경",
+    "next_book": "LEV",
+    "prev_book": "GEN"
   },
   {
     "id": "LEV",
@@ -24,7 +28,9 @@
     "filename": "lev.json",
     "chapters_count": 27,
     "type": "OT",
-    "group_kr": "모세오경"
+    "group_kr": "모세오경",
+    "next_book": "NUM",
+    "prev_book": "EXO"
   },
   {
     "id": "NUM",
@@ -33,7 +39,9 @@
     "filename": "num.json",
     "chapters_count": 36,
     "type": "OT",
-    "group_kr": "모세오경"
+    "group_kr": "모세오경",
+    "next_book": "DEU",
+    "prev_book": "LEV"
   },
   {
     "id": "DEU",
@@ -42,7 +50,9 @@
     "filename": "deu.json",
     "chapters_count": 34,
     "type": "OT",
-    "group_kr": "모세오경"
+    "group_kr": "모세오경",
+    "next_book": "JOS",
+    "prev_book": "NUM"
   },
   {
     "id": "JOS",
@@ -51,7 +61,9 @@
     "filename": "jos.json",
     "chapters_count": 24,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "JDG",
+    "prev_book": "DEU"
   },
   {
     "id": "JDG",
@@ -60,7 +72,9 @@
     "filename": "jdg.json",
     "chapters_count": 21,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "RUT",
+    "prev_book": "JOS"
   },
   {
     "id": "RUT",
@@ -69,7 +83,9 @@
     "filename": "rut.json",
     "chapters_count": 4,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "1SA",
+    "prev_book": "JDG"
   },
   {
     "id": "1SA",
@@ -78,7 +94,9 @@
     "filename": "1sa.json",
     "chapters_count": 31,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "2SA",
+    "prev_book": "RUT"
   },
   {
     "id": "2SA",
@@ -87,7 +105,9 @@
     "filename": "2sa.json",
     "chapters_count": 24,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "1KI",
+    "prev_book": "1SA"
   },
   {
     "id": "1KI",
@@ -96,7 +116,9 @@
     "filename": "1ki.json",
     "chapters_count": 22,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "2KI",
+    "prev_book": "2SA"
   },
   {
     "id": "2KI",
@@ -105,7 +127,9 @@
     "filename": "2ki.json",
     "chapters_count": 25,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "1CH",
+    "prev_book": "1KI"
   },
   {
     "id": "1CH",
@@ -114,7 +138,9 @@
     "filename": "1ch.json",
     "chapters_count": 29,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "2CH",
+    "prev_book": "2KI"
   },
   {
     "id": "2CH",
@@ -123,7 +149,9 @@
     "filename": "2ch.json",
     "chapters_count": 36,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "EZR",
+    "prev_book": "1CH"
   },
   {
     "id": "EZR",
@@ -132,7 +160,9 @@
     "filename": "ezr.json",
     "chapters_count": 10,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "NEH",
+    "prev_book": "2CH"
   },
   {
     "id": "NEH",
@@ -141,7 +171,9 @@
     "filename": "neh.json",
     "chapters_count": 13,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "EST",
+    "prev_book": "EZR"
   },
   {
     "id": "EST",
@@ -150,7 +182,9 @@
     "filename": "est.json",
     "chapters_count": 10,
     "type": "OT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "JOB",
+    "prev_book": "NEH"
   },
   {
     "id": "JOB",
@@ -159,7 +193,9 @@
     "filename": "job.json",
     "chapters_count": 42,
     "type": "OT",
-    "group_kr": "시가서"
+    "group_kr": "시가서",
+    "next_book": "PSA",
+    "prev_book": "EST"
   },
   {
     "id": "PSA",
@@ -168,7 +204,9 @@
     "filename": "psa.json",
     "chapters_count": 150,
     "type": "OT",
-    "group_kr": "시가서"
+    "group_kr": "시가서",
+    "next_book": "PRO",
+    "prev_book": "JOB"
   },
   {
     "id": "PRO",
@@ -177,7 +215,9 @@
     "filename": "pro.json",
     "chapters_count": 31,
     "type": "OT",
-    "group_kr": "시가서"
+    "group_kr": "시가서",
+    "next_book": "ECC",
+    "prev_book": "PSA"
   },
   {
     "id": "ECC",
@@ -186,7 +226,9 @@
     "filename": "ecc.json",
     "chapters_count": 12,
     "type": "OT",
-    "group_kr": "시가서"
+    "group_kr": "시가서",
+    "next_book": "SNG",
+    "prev_book": "PRO"
   },
   {
     "id": "SNG",
@@ -195,7 +237,9 @@
     "filename": "sng.json",
     "chapters_count": 8,
     "type": "OT",
-    "group_kr": "시가서"
+    "group_kr": "시가서",
+    "next_book": "ISA",
+    "prev_book": "ECC"
   },
   {
     "id": "ISA",
@@ -204,7 +248,9 @@
     "filename": "isa.json",
     "chapters_count": 66,
     "type": "OT",
-    "group_kr": "대선지서"
+    "group_kr": "대선지서",
+    "next_book": "JER",
+    "prev_book": "SNG"
   },
   {
     "id": "JER",
@@ -213,7 +259,9 @@
     "filename": "jer.json",
     "chapters_count": 52,
     "type": "OT",
-    "group_kr": "대선지서"
+    "group_kr": "대선지서",
+    "next_book": "LAM",
+    "prev_book": "ISA"
   },
   {
     "id": "LAM",
@@ -222,7 +270,9 @@
     "filename": "lam.json",
     "chapters_count": 5,
     "type": "OT",
-    "group_kr": "대선지서"
+    "group_kr": "대선지서",
+    "next_book": "EZK",
+    "prev_book": "JER"
   },
   {
     "id": "EZK",
@@ -231,7 +281,9 @@
     "filename": "ezk.json",
     "chapters_count": 48,
     "type": "OT",
-    "group_kr": "대선지서"
+    "group_kr": "대선지서",
+    "next_book": "DAN",
+    "prev_book": "LAM"
   },
   {
     "id": "DAN",
@@ -240,7 +292,9 @@
     "filename": "dan.json",
     "chapters_count": 12,
     "type": "OT",
-    "group_kr": "대선지서"
+    "group_kr": "대선지서",
+    "next_book": "HOS",
+    "prev_book": "EZK"
   },
   {
     "id": "HOS",
@@ -249,7 +303,9 @@
     "filename": "hos.json",
     "chapters_count": 14,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "JOL",
+    "prev_book": "DAN"
   },
   {
     "id": "JOL",
@@ -258,7 +314,9 @@
     "filename": "jol.json",
     "chapters_count": 3,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "AMO",
+    "prev_book": "EZK"
   },
   {
     "id": "AMO",
@@ -267,7 +325,9 @@
     "filename": "amo.json",
     "chapters_count": 9,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "OBA",
+    "prev_book": "JOL"
   },
   {
     "id": "OBA",
@@ -276,7 +336,9 @@
     "filename": "oba.json",
     "chapters_count": 1,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "JON",
+    "prev_book": "AMO"
   },
   {
     "id": "JON",
@@ -285,7 +347,9 @@
     "filename": "jon.json",
     "chapters_count": 4,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "MIC",
+    "prev_book": "OBA"
   },
   {
     "id": "MIC",
@@ -294,7 +358,9 @@
     "filename": "mic.json",
     "chapters_count": 7,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "NAH",
+    "prev_book": "JON"
   },
   {
     "id": "NAH",
@@ -303,7 +369,9 @@
     "filename": "nah.json",
     "chapters_count": 3,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "HAB",
+    "prev_book": "MIC"
   },
   {
     "id": "HAB",
@@ -312,7 +380,9 @@
     "filename": "hab.json",
     "chapters_count": 3,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "ZEP",
+    "prev_book": "NAH"
   },
   {
     "id": "ZEP",
@@ -321,7 +391,9 @@
     "filename": "zep.json",
     "chapters_count": 3,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "HAG",
+    "prev_book": "HAB"
   },
   {
     "id": "HAG",
@@ -330,7 +402,9 @@
     "filename": "hag.json",
     "chapters_count": 2,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "ZEC",
+    "prev_book": "ZEP"
   },
   {
     "id": "ZEC",
@@ -339,7 +413,9 @@
     "filename": "zec.json",
     "chapters_count": 14,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "MAL",
+    "prev_book": "HAG"
   },
   {
     "id": "MAL",
@@ -348,7 +424,9 @@
     "filename": "mal.json",
     "chapters_count": 4,
     "type": "OT",
-    "group_kr": "소선지서"
+    "group_kr": "소선지서",
+    "next_book": "MAT",
+    "prev_book": "ZEC"
   },
   {
     "id": "MAT",
@@ -357,7 +435,9 @@
     "filename": "mat.json",
     "chapters_count": 28,
     "type": "NT",
-    "group_kr": "복음서"
+    "group_kr": "복음서",
+    "next_book": "MRK",
+    "prev_book": "MAL"
   },
   {
     "id": "MRK",
@@ -366,7 +446,9 @@
     "filename": "mrk.json",
     "chapters_count": 16,
     "type": "NT",
-    "group_kr": "복음서"
+    "group_kr": "복음서",
+    "next_book": "LUK",
+    "prev_book": "MAT"
   },
   {
     "id": "LUK",
@@ -375,7 +457,9 @@
     "filename": "luk.json",
     "chapters_count": 24,
     "type": "NT",
-    "group_kr": "복음서"
+    "group_kr": "복음서",
+    "next_book": "JHN",
+    "prev_book": "MRK"
   },
   {
     "id": "JHN",
@@ -384,7 +468,9 @@
     "filename": "jhn.json",
     "chapters_count": 21,
     "type": "NT",
-    "group_kr": "복음서"
+    "group_kr": "복음서",
+    "next_book": "ACT",
+    "prev_book": "LUK"
   },
   {
     "id": "ACT",
@@ -393,7 +479,9 @@
     "filename": "act.json",
     "chapters_count": 28,
     "type": "NT",
-    "group_kr": "역사서"
+    "group_kr": "역사서",
+    "next_book": "ROM",
+    "prev_book": "JHN"
   },
   {
     "id": "ROM",
@@ -402,7 +490,9 @@
     "filename": "rom.json",
     "chapters_count": 16,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "1CO",
+    "prev_book": "ACT"
   },
   {
     "id": "1CO",
@@ -411,7 +501,9 @@
     "filename": "1co.json",
     "chapters_count": 16,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "2CO",
+    "prev_book": "ROM"
   },
   {
     "id": "2CO",
@@ -420,7 +512,9 @@
     "filename": "2co.json",
     "chapters_count": 13,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "GAL",
+    "prev_book": "1CO"
   },
   {
     "id": "GAL",
@@ -429,7 +523,9 @@
     "filename": "gal.json",
     "chapters_count": 6,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "EPH",
+    "prev_book": "2CO"
   },
   {
     "id": "EPH",
@@ -438,7 +534,9 @@
     "filename": "eph.json",
     "chapters_count": 6,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "PHP",
+    "prev_book": "GAL"
   },
   {
     "id": "PHP",
@@ -447,7 +545,9 @@
     "filename": "php.json",
     "chapters_count": 4,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "COL",
+    "prev_book": "EPH"
   },
   {
     "id": "COL",
@@ -456,7 +556,9 @@
     "filename": "col.json",
     "chapters_count": 4,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "1TH",
+    "prev_book": "PHP"
   },
   {
     "id": "1TH",
@@ -465,7 +567,9 @@
     "filename": "1th.json",
     "chapters_count": 5,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "2TH",
+    "prev_book": "COL"
   },
   {
     "id": "2TH",
@@ -474,7 +578,9 @@
     "filename": "2th.json",
     "chapters_count": 3,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "1TI",
+    "prev_book": "1TH"
   },
   {
     "id": "1TI",
@@ -483,7 +589,9 @@
     "filename": "1ti.json",
     "chapters_count": 6,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "2TI",
+    "prev_book": "2TH"
   },
   {
     "id": "2TI",
@@ -492,7 +600,9 @@
     "filename": "2ti.json",
     "chapters_count": 4,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "TIT",
+    "prev_book": "1TI"
   },
   {
     "id": "TIT",
@@ -501,7 +611,9 @@
     "filename": "tit.json",
     "chapters_count": 3,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "PHM",
+    "prev_book": "2TI"
   },
   {
     "id": "PHM",
@@ -510,7 +622,9 @@
     "filename": "phm.json",
     "chapters_count": 1,
     "type": "NT",
-    "group_kr": "바울서신"
+    "group_kr": "바울서신",
+    "next_book": "HEB",
+    "prev_book": "TIT"
   },
   {
     "id": "HEB",
@@ -519,7 +633,9 @@
     "filename": "heb.json",
     "chapters_count": 13,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "JAS",
+    "prev_book": "PHM"
   },
   {
     "id": "JAS",
@@ -528,7 +644,9 @@
     "filename": "jas.json",
     "chapters_count": 5,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "1PE",
+    "prev_book": "HEB"
   },
   {
     "id": "1PE",
@@ -537,7 +655,9 @@
     "filename": "1pe.json",
     "chapters_count": 5,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "2PE",
+    "prev_book": "JAS"
   },
   {
     "id": "2PE",
@@ -546,7 +666,9 @@
     "filename": "2pe.json",
     "chapters_count": 3,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "1JN",
+    "prev_book": "1PE"
   },
   {
     "id": "1JN",
@@ -555,7 +677,9 @@
     "filename": "1jn.json",
     "chapters_count": 5,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "2JN",
+    "prev_book": "2PE"
   },
   {
     "id": "2JN",
@@ -564,7 +688,9 @@
     "filename": "2jn.json",
     "chapters_count": 1,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "3JN",
+    "prev_book": "1JN"
   },
   {
     "id": "3JN",
@@ -573,7 +699,9 @@
     "filename": "3jn.json",
     "chapters_count": 1,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "JUD",
+    "prev_book": "2JN"
   },
   {
     "id": "JUD",
@@ -582,7 +710,9 @@
     "filename": "jud.json",
     "chapters_count": 1,
     "type": "NT",
-    "group_kr": "일반서신"
+    "group_kr": "일반서신",
+    "next_book": "REV",
+    "prev_book": "3JN"
   },
   {
     "id": "REV",
@@ -591,6 +721,8 @@
     "filename": "rev.json",
     "chapters_count": 22,
     "type": "NT",
-    "group_kr": "예언서"
+    "group_kr": "예언서",
+    "next_book": null,
+    "prev_book": "JUD"
   }
 ]

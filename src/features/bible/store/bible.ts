@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { getJsonDynamically, isBookData } from '../utils';
 import type { BookData, BookIndex, Verse } from '../types';
 import { DEFAULT_BOOK_DATA } from '../constants';
+import { useToastStore } from '@/store/toast';
 
 interface SearchResult {
 	bookId: string;
@@ -140,15 +141,41 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 		if (nextChapter <= bookIndexData.chapters_count) {
 			await get().loadVerses(currentBookId, nextChapter);
 		} else {
-			// TODO: 다음 권으로 넘어갔다는 Toast Popup
+			const nextBook = bookIndex.find((b) => b.id === currentBookId)?.next_book;
+			if (!nextBook) {
+				useToastStore().showInfo('마지막 권이에요.');
+				return;
+			}
+			set({ currentBookId: nextBook, currentChapter: 1 });
+			await get().loadVerses(nextBook, 1);
+			useToastStore().showInfo('다음 권으로 넘어갔어요.');
 		}
 	},
 
 	goToPrevChapter: async () => {
-		const { currentBookId, currentChapter } = get();
+		const { currentBookId, currentChapter, bookIndex } = get();
 		if (!currentBookId || !currentChapter || currentChapter <= 1) return;
 
-		await get().loadVerses(currentBookId, currentChapter - 1);
+		const prevChapter = currentChapter - 1;
+		if (prevChapter >= 1) {
+			await get().loadVerses(currentBookId, prevChapter);
+		} else {
+			const prevBookId = bookIndex.find(
+				(b) => b.id === currentBookId,
+			)?.prev_book;
+			if (!prevBookId) {
+				useToastStore().showInfo('첫 권이에요.');
+				return;
+			}
+			const prevBookData = bookIndex.find((b) => b.id === prevBookId);
+			const prevBookChaptersCount = prevBookData?.chapters_count ?? 1;
+			set({
+				currentBookId: prevBookId,
+				currentChapter: prevBookChaptersCount,
+			});
+			await get().loadVerses(prevBookId, prevBookChaptersCount);
+			useToastStore().showInfo('이전 권으로 넘어갔어요.');
+		}
 	},
 
 	// Search actions
