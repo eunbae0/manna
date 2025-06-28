@@ -6,6 +6,8 @@ export type BookIndexData = {
 	name_en: string;
 	filename: string;
 	chapters_count: number;
+	type: 'OT' | 'NT';
+	group_kr: string;
 };
 
 export type Verse = {

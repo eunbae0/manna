@@ -6,13 +6,18 @@ import { VStack } from '#/components/ui/vstack';
 import { Button, ButtonText } from '@/components/common/button';
 import { FlashList } from '@shopify/flash-list';
 import { ActivityIndicator } from 'react-native';
+import type { UseScrollDownReturnType } from '@/shared/hooks/useScrollDown';
 
 interface VerseItem {
   verse: number;
   text: string;
 }
 
-export function BibleContent() {
+type Props = {
+  onScrollDown: UseScrollDownReturnType['onScrollDown'];
+};
+
+export function BibleContent({ onScrollDown }: Props) {
   const {
     verses,
     currentVerse,
@@ -33,18 +38,23 @@ export function BibleContent() {
   const renderVerse = ({ item }: { item: VerseItem }) => (
     <AnimatedPressable
       onPress={() => setCurrentVerse(item.verse)}
-      className={`p-4 ${currentVerse === item.verse ? 'bg-primary-50 dark:bg-primary-900/30' : ''}`}
+      className={`px-4 py-3 ${currentVerse === item.verse ? 'bg-primary-50 dark:bg-primary-900/30' : ''}`}
       scale="sm"
     >
-      <HStack space="sm">
-        <Text className="text-primary-500" weight="semi-bold" size="lg">{item.verse}.</Text>
-        <Text className="flex-1 text-typography-800" size="lg" weight="medium" selectable>
+      <HStack space="md">
+        <Text className="text-primary-500" weight="medium" size="lg">
+          {item.verse}
+        </Text>
+        <Text
+          className="flex-1 text-typography-800"
+          size="xl"
+          selectable
+        >
           {item.text}
         </Text>
       </HStack>
     </AnimatedPressable>
   );
-
 
   if (isLoading && verses.length === 0) {
     return (
@@ -76,15 +86,15 @@ export function BibleContent() {
       </VStack>
     );
   }
-
   return (
     <FlashList
+      bounces={false}
+      onScroll={onScrollDown}
       data={verses}
       keyExtractor={(item) => item.verse.toString()}
       renderItem={renderVerse}
-      contentContainerStyle={{ paddingBottom: 20 }}
+      contentContainerStyle={{ paddingBottom: 72 }}
       removeClippedSubviews={true}
-      showsVerticalScrollIndicator={false}
       estimatedItemSize={58}
     />
   );

@@ -30,7 +30,7 @@ import type { ClientGroup } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
 import { cn } from '@/shared/utils/cn';
-import { ScrollView } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { isAndroid, isIOS } from '@/shared/utils/platform';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import type { AmplitudeLocation } from '@/shared/constants/amplitude';
@@ -286,20 +286,23 @@ function HomeHeader({ groups }: Props) {
 					{/* Group Members List */}
 					<View className="pb-5">
 						{group?.members && group.members.length > 0 ? (
-							<ScrollView style={{ maxHeight: MAX_INNER_MEMBER_LIST_HEIGHT }}>
-								<VStack space="sm">
-									{group.members.map((member) => (
-										<MemberListItem
-											key={member.id}
-											member={member}
-											onPress={() => {
-												handleCloseMember();
-												openProfile(member.id);
-											}}
-										/>
-									))}
-								</VStack>
-							</ScrollView>
+							<FlatList
+								data={group.members}
+								renderItem={({ item: member }) => (
+									<MemberListItem
+										key={member.id}
+										member={member}
+										onPress={() => {
+											handleCloseMember();
+											openProfile(member.id);
+										}}
+									/>
+								)}
+								keyExtractor={(member) => member.id}
+								showsVerticalScrollIndicator={false}
+								contentContainerStyle={{ paddingHorizontal: 16 }}
+								style={{ maxHeight: MAX_INNER_MEMBER_LIST_HEIGHT }}
+							/>
 						) : (
 							<Text className="text-center py-4">그룹원이 없어요.</Text>
 						)}

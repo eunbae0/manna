@@ -4,461 +4,593 @@
     "name_kr": "창세기",
     "name_en": "Genesis",
     "filename": "gen.json",
-    "chapters_count": 50
+    "chapters_count": 50,
+    "type": "OT",
+    "group_kr": "모세오경"
   },
   {
     "id": "EXO",
     "name_kr": "출애굽기",
     "name_en": "Exodus",
     "filename": "exo.json",
-    "chapters_count": 40
+    "chapters_count": 40,
+    "type": "OT",
+    "group_kr": "모세오경"
   },
   {
     "id": "LEV",
     "name_kr": "레위기",
     "name_en": "Leviticus",
     "filename": "lev.json",
-    "chapters_count": 27
+    "chapters_count": 27,
+    "type": "OT",
+    "group_kr": "모세오경"
   },
   {
     "id": "NUM",
     "name_kr": "민수기",
     "name_en": "Numbers",
     "filename": "num.json",
-    "chapters_count": 36
+    "chapters_count": 36,
+    "type": "OT",
+    "group_kr": "모세오경"
   },
   {
     "id": "DEU",
     "name_kr": "신명기",
     "name_en": "Deuteronomy",
     "filename": "deu.json",
-    "chapters_count": 34
+    "chapters_count": 34,
+    "type": "OT",
+    "group_kr": "모세오경"
   },
   {
     "id": "JOS",
     "name_kr": "여호수아",
     "name_en": "Joshua",
     "filename": "jos.json",
-    "chapters_count": 24
+    "chapters_count": 24,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "JDG",
     "name_kr": "사사기",
     "name_en": "Judges",
     "filename": "jdg.json",
-    "chapters_count": 21
+    "chapters_count": 21,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "RUT",
     "name_kr": "룻기",
     "name_en": "Ruth",
     "filename": "rut.json",
-    "chapters_count": 4
+    "chapters_count": 4,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "1SA",
     "name_kr": "사무엘상",
     "name_en": "1 Samuel",
     "filename": "1sa.json",
-    "chapters_count": 31
+    "chapters_count": 31,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "2SA",
     "name_kr": "사무엘하",
     "name_en": "2 Samuel",
     "filename": "2sa.json",
-    "chapters_count": 24
+    "chapters_count": 24,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "1KI",
     "name_kr": "열왕기상",
     "name_en": "1 Kings",
     "filename": "1ki.json",
-    "chapters_count": 22
+    "chapters_count": 22,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "2KI",
     "name_kr": "열왕기하",
     "name_en": "2 Kings",
     "filename": "2ki.json",
-    "chapters_count": 25
+    "chapters_count": 25,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "1CH",
     "name_kr": "역대상",
     "name_en": "1 Chronicles",
     "filename": "1ch.json",
-    "chapters_count": 29
+    "chapters_count": 29,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "2CH",
     "name_kr": "역대하",
     "name_en": "2 Chronicles",
     "filename": "2ch.json",
-    "chapters_count": 36
+    "chapters_count": 36,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "EZR",
     "name_kr": "에스라",
     "name_en": "Ezra",
     "filename": "ezr.json",
-    "chapters_count": 10
+    "chapters_count": 10,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "NEH",
     "name_kr": "느헤미야",
     "name_en": "Nehemiah",
     "filename": "neh.json",
-    "chapters_count": 13
+    "chapters_count": 13,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "EST",
     "name_kr": "에스더",
     "name_en": "Esther",
     "filename": "est.json",
-    "chapters_count": 10
+    "chapters_count": 10,
+    "type": "OT",
+    "group_kr": "역사서"
   },
   {
     "id": "JOB",
     "name_kr": "욥기",
     "name_en": "Job",
     "filename": "job.json",
-    "chapters_count": 42
+    "chapters_count": 42,
+    "type": "OT",
+    "group_kr": "시가서"
   },
   {
     "id": "PSA",
     "name_kr": "시편",
     "name_en": "Psalms",
     "filename": "psa.json",
-    "chapters_count": 150
+    "chapters_count": 150,
+    "type": "OT",
+    "group_kr": "시가서"
   },
   {
     "id": "PRO",
     "name_kr": "잠언",
     "name_en": "Proverbs",
     "filename": "pro.json",
-    "chapters_count": 31
+    "chapters_count": 31,
+    "type": "OT",
+    "group_kr": "시가서"
   },
   {
     "id": "ECC",
     "name_kr": "전도서",
     "name_en": "Ecclesiastes",
     "filename": "ecc.json",
-    "chapters_count": 12
+    "chapters_count": 12,
+    "type": "OT",
+    "group_kr": "시가서"
   },
   {
     "id": "SNG",
     "name_kr": "아가",
     "name_en": "Song of Songs",
     "filename": "sng.json",
-    "chapters_count": 8
+    "chapters_count": 8,
+    "type": "OT",
+    "group_kr": "시가서"
   },
   {
     "id": "ISA",
     "name_kr": "이사야",
     "name_en": "Isaiah",
     "filename": "isa.json",
-    "chapters_count": 66
+    "chapters_count": 66,
+    "type": "OT",
+    "group_kr": "대선지서"
   },
   {
     "id": "JER",
     "name_kr": "예레미야",
     "name_en": "Jeremiah",
     "filename": "jer.json",
-    "chapters_count": 52
+    "chapters_count": 52,
+    "type": "OT",
+    "group_kr": "대선지서"
   },
   {
     "id": "LAM",
     "name_kr": "예레미야애가",
     "name_en": "Lamentations",
     "filename": "lam.json",
-    "chapters_count": 5
+    "chapters_count": 5,
+    "type": "OT",
+    "group_kr": "대선지서"
   },
   {
     "id": "EZK",
     "name_kr": "에스겔",
     "name_en": "Ezekiel",
     "filename": "ezk.json",
-    "chapters_count": 48
+    "chapters_count": 48,
+    "type": "OT",
+    "group_kr": "대선지서"
   },
   {
     "id": "DAN",
     "name_kr": "다니엘",
     "name_en": "Daniel",
     "filename": "dan.json",
-    "chapters_count": 12
+    "chapters_count": 12,
+    "type": "OT",
+    "group_kr": "대선지서"
   },
   {
     "id": "HOS",
     "name_kr": "호세아",
     "name_en": "Hosea",
     "filename": "hos.json",
-    "chapters_count": 14
+    "chapters_count": 14,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "JOL",
     "name_kr": "요엘",
     "name_en": "Joel",
     "filename": "jol.json",
-    "chapters_count": 3
+    "chapters_count": 3,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "AMO",
     "name_kr": "아모스",
     "name_en": "Amos",
     "filename": "amo.json",
-    "chapters_count": 9
+    "chapters_count": 9,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "OBA",
     "name_kr": "오바댜",
     "name_en": "Obadiah",
     "filename": "oba.json",
-    "chapters_count": 1
+    "chapters_count": 1,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "JON",
     "name_kr": "요나",
     "name_en": "Jonah",
     "filename": "jon.json",
-    "chapters_count": 4
+    "chapters_count": 4,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "MIC",
     "name_kr": "미가",
     "name_en": "Micah",
     "filename": "mic.json",
-    "chapters_count": 7
+    "chapters_count": 7,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "NAH",
     "name_kr": "나훔",
     "name_en": "Nahum",
     "filename": "nah.json",
-    "chapters_count": 3
+    "chapters_count": 3,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "HAB",
     "name_kr": "하박국",
     "name_en": "Habakkuk",
     "filename": "hab.json",
-    "chapters_count": 3
+    "chapters_count": 3,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "ZEP",
     "name_kr": "스바냐",
     "name_en": "Zephaniah",
     "filename": "zep.json",
-    "chapters_count": 3
+    "chapters_count": 3,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "HAG",
     "name_kr": "학개",
     "name_en": "Haggai",
     "filename": "hag.json",
-    "chapters_count": 2
+    "chapters_count": 2,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "ZEC",
     "name_kr": "스가랴",
     "name_en": "Zechariah",
     "filename": "zec.json",
-    "chapters_count": 14
+    "chapters_count": 14,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "MAL",
     "name_kr": "말라기",
     "name_en": "Malachi",
     "filename": "mal.json",
-    "chapters_count": 4
+    "chapters_count": 4,
+    "type": "OT",
+    "group_kr": "소선지서"
   },
   {
     "id": "MAT",
     "name_kr": "마태복음",
     "name_en": "Matthew",
     "filename": "mat.json",
-    "chapters_count": 28
+    "chapters_count": 28,
+    "type": "NT",
+    "group_kr": "복음서"
   },
   {
     "id": "MRK",
     "name_kr": "마가복음",
     "name_en": "Mark",
     "filename": "mrk.json",
-    "chapters_count": 16
+    "chapters_count": 16,
+    "type": "NT",
+    "group_kr": "복음서"
   },
   {
     "id": "LUK",
     "name_kr": "누가복음",
     "name_en": "Luke",
     "filename": "luk.json",
-    "chapters_count": 24
+    "chapters_count": 24,
+    "type": "NT",
+    "group_kr": "복음서"
   },
   {
     "id": "JHN",
     "name_kr": "요한복음",
     "name_en": "John",
     "filename": "jhn.json",
-    "chapters_count": 21
+    "chapters_count": 21,
+    "type": "NT",
+    "group_kr": "복음서"
   },
   {
     "id": "ACT",
     "name_kr": "사도행전",
     "name_en": "Acts",
     "filename": "act.json",
-    "chapters_count": 28
+    "chapters_count": 28,
+    "type": "NT",
+    "group_kr": "역사서"
   },
   {
     "id": "ROM",
     "name_kr": "로마서",
     "name_en": "Romans",
     "filename": "rom.json",
-    "chapters_count": 16
+    "chapters_count": 16,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "1CO",
     "name_kr": "고린도전서",
     "name_en": "1 Corinthians",
     "filename": "1co.json",
-    "chapters_count": 16
+    "chapters_count": 16,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "2CO",
     "name_kr": "고린도후서",
     "name_en": "2 Corinthians",
     "filename": "2co.json",
-    "chapters_count": 13
+    "chapters_count": 13,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "GAL",
     "name_kr": "갈라디아서",
     "name_en": "Galatians",
     "filename": "gal.json",
-    "chapters_count": 6
+    "chapters_count": 6,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "EPH",
     "name_kr": "에베소서",
     "name_en": "Ephesians",
     "filename": "eph.json",
-    "chapters_count": 6
+    "chapters_count": 6,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "PHP",
     "name_kr": "빌립보서",
     "name_en": "Philippians",
     "filename": "php.json",
-    "chapters_count": 4
+    "chapters_count": 4,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "COL",
     "name_kr": "골로새서",
     "name_en": "Colossians",
     "filename": "col.json",
-    "chapters_count": 4
+    "chapters_count": 4,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "1TH",
     "name_kr": "데살로니가전서",
     "name_en": "1 Thessalonians",
     "filename": "1th.json",
-    "chapters_count": 5
+    "chapters_count": 5,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "2TH",
     "name_kr": "데살로니가후서",
     "name_en": "2 Thessalonians",
     "filename": "2th.json",
-    "chapters_count": 3
+    "chapters_count": 3,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "1TI",
     "name_kr": "디모데전서",
     "name_en": "1 Timothy",
     "filename": "1ti.json",
-    "chapters_count": 6
+    "chapters_count": 6,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "2TI",
     "name_kr": "디모데후서",
     "name_en": "2 Timothy",
     "filename": "2ti.json",
-    "chapters_count": 4
+    "chapters_count": 4,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "TIT",
     "name_kr": "디도서",
     "name_en": "Titus",
     "filename": "tit.json",
-    "chapters_count": 3
+    "chapters_count": 3,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "PHM",
     "name_kr": "빌레몬서",
     "name_en": "Philemon",
     "filename": "phm.json",
-    "chapters_count": 1
+    "chapters_count": 1,
+    "type": "NT",
+    "group_kr": "바울서신"
   },
   {
     "id": "HEB",
     "name_kr": "히브리서",
     "name_en": "Hebrews",
     "filename": "heb.json",
-    "chapters_count": 13
+    "chapters_count": 13,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "JAS",
     "name_kr": "야고보서",
     "name_en": "James",
     "filename": "jas.json",
-    "chapters_count": 5
+    "chapters_count": 5,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "1PE",
     "name_kr": "베드로전서",
     "name_en": "1 Peter",
     "filename": "1pe.json",
-    "chapters_count": 5
+    "chapters_count": 5,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "2PE",
     "name_kr": "베드로후서",
     "name_en": "2 Peter",
     "filename": "2pe.json",
-    "chapters_count": 3
+    "chapters_count": 3,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "1JN",
     "name_kr": "요한일서",
     "name_en": "1 John",
     "filename": "1jn.json",
-    "chapters_count": 5
+    "chapters_count": 5,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "2JN",
     "name_kr": "요한이서",
     "name_en": "2 John",
     "filename": "2jn.json",
-    "chapters_count": 1
+    "chapters_count": 1,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "3JN",
     "name_kr": "요한삼서",
     "name_en": "3 John",
     "filename": "3jn.json",
-    "chapters_count": 1
+    "chapters_count": 1,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "JUD",
     "name_kr": "유다서",
     "name_en": "Jude",
     "filename": "jud.json",
-    "chapters_count": 1
+    "chapters_count": 1,
+    "type": "NT",
+    "group_kr": "일반서신"
   },
   {
     "id": "REV",
     "name_kr": "요한계시록",
     "name_en": "Revelation",
     "filename": "rev.json",
-    "chapters_count": 22
+    "chapters_count": 22,
+    "type": "NT",
+    "group_kr": "예언서"
   }
 ]
