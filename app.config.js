@@ -120,6 +120,7 @@ export default {
 				},
 			],
 			['expo-font'],
+			['expo-web-browser'],
 		],
 		experiments: {
 			typedRoutes: true,
