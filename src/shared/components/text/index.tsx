@@ -6,7 +6,7 @@ import { Text as RNText } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 
 // Define text size type
-export type TextSize = '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+export type TextSize = '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 export type FontWeight = 'light' | 'regular' | 'medium' | 'semi-bold' | 'bold';
 
 // Text base component with variants
@@ -21,6 +21,7 @@ const textStyles = cva('font-pretendard-regular', {
       xl: 'text-xl',
       '2xl': 'text-2xl',
       '3xl': 'text-3xl',
+      '4xl': 'text-4xl',
     },
     weight: {
       light: 'font-pretendard-light',
