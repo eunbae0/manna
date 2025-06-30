@@ -458,8 +458,8 @@ export class FirestoreFellowshipService {
 			const clientMember = groupMemberDoc.data() as ClientGroupMember;
 			memberData = {
 				...clientMember,
-				photoUrl: clientMember.photoUrl || undefined,
-				displayName: clientMember.displayName || undefined,
+				photoUrl: clientMember?.photoUrl || undefined,
+				displayName: clientMember?.displayName || undefined,
 				isGuest: false,
 			};
 		}
