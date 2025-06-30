@@ -1,3 +1,4 @@
+import type { TextSize } from '@/shared/components/text';
 import type { BookData, BookIndex } from '../types';
 
 export const getJsonDynamically = async <T>(
@@ -35,3 +36,22 @@ export const isBookData = (data: unknown): data is BookData => {
 		'chapters' in data
 	);
 };
+
+export function getTextSizeByFontSize(fontSize: number): TextSize {
+	switch (fontSize) {
+		case 80:
+			return 'md';
+		case 90:
+			return 'lg';
+		case 100:
+			return 'xl';
+		case 110:
+			return '2xl';
+		case 120:
+			return '3xl';
+		case 130:
+			return '4xl';
+		default:
+			return 'xl';
+	}
+}

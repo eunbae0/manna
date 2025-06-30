@@ -7,8 +7,10 @@ import { Button, ButtonText } from '@/components/common/button';
 import { FlashList } from '@shopify/flash-list';
 import { ActivityIndicator } from 'react-native';
 import type { UseScrollDownReturnType } from '@/shared/hooks/useScrollDown';
+import { useMemo } from 'react';
+import { getTextSizeByFontSize } from '../utils';
 
-interface VerseItem {
+type VerseItem = {
   verse: number;
   text: string;
 }
@@ -27,6 +29,7 @@ export function BibleContent({ onScrollDown }: Props) {
     error,
     setCurrentVerse,
     loadVerses,
+    fontSize,
   } = useBibleStore();
 
   const handleRefresh = async () => {
@@ -35,6 +38,10 @@ export function BibleContent({ onScrollDown }: Props) {
     }
   };
 
+  const textSize = useMemo(() => {
+    return getTextSizeByFontSize(fontSize);
+  }, [fontSize])
+
   const renderVerse = ({ item }: { item: VerseItem }) => (
     <AnimatedPressable
       onPress={() => setCurrentVerse(item.verse)}
@@ -42,12 +49,12 @@ export function BibleContent({ onScrollDown }: Props) {
       scale="sm"
     >
       <HStack space="md">
-        <Text className="text-primary-500" weight="medium" size="lg">
+        <Text className="text-primary-500" weight="medium" size={textSize}>
           {item.verse}
         </Text>
         <Text
           className="flex-1 text-typography-800"
-          size="xl"
+          size={textSize}
           selectable
         >
           {item.text}
@@ -96,6 +103,7 @@ export function BibleContent({ onScrollDown }: Props) {
       contentContainerStyle={{ paddingBottom: 72 }}
       removeClippedSubviews={true}
       estimatedItemSize={58}
+      extraData={fontSize}
     />
   );
 }

@@ -24,6 +24,7 @@ interface BibleState {
 	searchQuery: string;
 	searchResults: SearchResult[];
 	isSearching: boolean;
+	fontSize: number;
 
 	// Actions
 	loadBooksIndex: () => Promise<void>;
@@ -38,6 +39,7 @@ interface BibleState {
 	setSearchQuery: (query: string) => void;
 	searchVerses: (query: string) => Promise<void>;
 	clearSearch: () => void;
+	setFontSize: (fontSize: number) => void;
 }
 
 export const useBibleStore = create<BibleState>((set, get) => ({
@@ -53,6 +55,7 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 	searchQuery: '',
 	searchResults: [],
 	isSearching: false,
+	fontSize: 100,
 
 	// Load all books from the index
 	loadBooksIndex: async () => {
@@ -249,4 +252,6 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 			});
 		}
 	},
+
+	setFontSize: (fontSize: number) => set({ fontSize }),
 }));
