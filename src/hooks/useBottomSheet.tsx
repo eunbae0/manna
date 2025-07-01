@@ -22,7 +22,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import type { BottomSheetTextInputProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetTextInput';
 
-type IBottomSheet = React.ComponentProps<typeof BottomSheet>;
+type IBottomSheet = React.ComponentProps<typeof BottomSheet> & {
+	enableBackdrop?: boolean;
+};
 
 const ANIMATION_DELAY = 100;
 
@@ -141,13 +143,15 @@ export const useBottomSheet = ({
 	// FIX: layout을 계산하고, bottomInset을 적용하면 다른 컴포넌트로 인식돼서 첫번째 ref의 동작(뒤로가기 등)이 적용되지 않음
 
 	const BottomSheetContainer = useCallback(
-		({ children, ...props }: IBottomSheet) => (
+		({ children, enableBackdrop = true, ...props }: IBottomSheet) => (
 			<BottomSheetModal
 				// index={-1}
 				// onChange={handleSheetChanges}
 				// overDragResistanceFactor={0}
 				ref={bottomSheetModalRef}
-				backdropComponent={BottomSheetBackdropComponent}
+				backdropComponent={
+					enableBackdrop ? BottomSheetBackdropComponent : undefined
+				}
 				enablePanDownToClose={!isModal}
 				enableContentPanningGesture={false} // for Android: enable inner scroll
 				enableBlurKeyboardOnGesture={true}
@@ -160,7 +164,15 @@ export const useBottomSheet = ({
 				keyboardBehavior="interactive"
 				handleComponent={isModal ? null : BottomSheetHandleComponent}
 				bottomInset={isModal ? bottomInset : 0}
-				style={{ marginHorizontal: isModal ? 32 : 0 }}
+				style={enableBackdrop ?
+					{ marginHorizontal: isModal ? 32 : 0 } : {
+						borderRadius: 24,
+						shadowColor: 'black',
+						shadowOffset: { width: 0, height: 4 },
+						shadowOpacity: 0.2,
+						shadowRadius: 8,
+						elevation: 4,
+					}}
 				{...props}
 			>
 				<KeyboardDismissView>
