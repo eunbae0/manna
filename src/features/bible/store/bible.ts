@@ -18,6 +18,7 @@ interface BibleState {
 	currentBookId: string | null;
 	currentChapter: number | null;
 	currentVerse: number | null;
+	selectedVerses: number[];
 	verses: Verse[];
 	isLoading: boolean;
 	error: string | null;
@@ -35,6 +36,10 @@ interface BibleState {
 	goToNextChapter: (showInfoToast: (message: string) => void) => Promise<void>;
 	goToPrevChapter: (showInfoToast: (message: string) => void) => Promise<void>;
 
+	addSelectedVerses: (verse: number) => void;
+	removeSelectedVerses: (verse: number) => void;
+	clearSelectedVerses: () => void;
+
 	// Search actions
 	setSearchQuery: (query: string) => void;
 	searchVerses: (query: string) => Promise<void>;
@@ -48,6 +53,7 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 	currentBookId: DEFAULT_BOOK_DATA.id,
 	currentChapter: 1,
 	currentVerse: null,
+	selectedVerses: [],
 	verses: [],
 	chapters: [],
 	isLoading: true,
@@ -254,4 +260,12 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 	},
 
 	setFontSize: (fontSize: number) => set({ fontSize }),
+
+	addSelectedVerses: (verse: number) =>
+		set((state) => ({ selectedVerses: [...state.selectedVerses, verse] })),
+	removeSelectedVerses: (verse: number) =>
+		set((state) => ({
+			selectedVerses: state.selectedVerses.filter((v) => v !== verse),
+		})),
+	clearSelectedVerses: () => set({ selectedVerses: [] }),
 }));

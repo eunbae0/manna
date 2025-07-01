@@ -13,6 +13,7 @@ import { useBibleStore } from '../store/bible';
 import { getTextSizeByFontSize } from '../utils';
 import { Text } from '@/shared/components/text';
 import type { ViewStyle } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 export type VerseItem = {
   verse: number;
@@ -23,8 +24,8 @@ const CURRENT_VERSE_BACKGROUND_COLOR = 'rgba(250 ,240 ,217, 1)';
 const CURRENT_VERSE_BACKGROUND_COLOR_END = 'rgba(250 ,240 ,217, 0)';
 
 
-export const VerseItem = memo(({ item }: { item: VerseItem }) => {
-  const { currentVerse, fontSize } = useBibleStore();
+export const VerseItem = memo(({ item, handleOpenSheet, handleCloseSheet }: { item: VerseItem, handleOpenSheet: () => void, handleCloseSheet: () => void }) => {
+  const { currentVerse, fontSize, selectedVerses, addSelectedVerses, removeSelectedVerses } = useBibleStore();
 
   const isCurrent = currentVerse === item.verse;
 
@@ -71,11 +72,29 @@ export const VerseItem = memo(({ item }: { item: VerseItem }) => {
     return getTextSizeByFontSize(fontSize);
   }, [fontSize]);
 
+  const isSelected = useMemo(() => selectedVerses.includes(item.verse), [selectedVerses, item.verse]);
+
+  const handlePressVerse = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+    if (isSelected) {
+      if (selectedVerses.length === 1) {
+        handleCloseSheet();
+      }
+      removeSelectedVerses(item.verse);
+      return;
+    }
+    addSelectedVerses(item.verse);
+    if (selectedVerses.length === 0) {
+      handleOpenSheet();
+    }
+  }
+
   return (
     <AnimatedPressable
       scale="sm"
-      pressableClassName="px-4 py-3"
+      pressableClassName={cn("px-4 py-3", isSelected ? "bg-background-200/80" : "")}
       containerStyle={animatedStyle}
+      onPress={handlePressVerse}
     >
       <HStack space="md" className="items-start">
         <Text className="text-primary-500" weight="medium" size={textSize}>

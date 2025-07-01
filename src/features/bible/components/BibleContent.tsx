@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useBibleStore } from '../store/bible';
@@ -8,6 +8,8 @@ import { Button, ButtonText } from '@/components/common/button';
 import type { UseScrollDownReturnType } from '@/shared/hooks/useScrollDown';
 import { useInitializeCurrentVerse } from '../hooks/useInitializeCurrentVerse';
 import { VerseItem } from './VerseItem';
+import { useBottomSheet } from '@/hooks/useBottomSheet';
+import BibleVerseSheet from './BibleVerseSheet';
 
 type Props = {
   onScrollDown: UseScrollDownReturnType['onScrollDown'];
@@ -22,8 +24,8 @@ export function BibleContent({ onScrollDown }: Props) {
     isLoading,
     error,
     loadVerses,
+    clearSelectedVerses,
   } = useBibleStore();
-
 
   useInitializeCurrentVerse();
 
@@ -33,9 +35,16 @@ export function BibleContent({ onScrollDown }: Props) {
     }
   };
 
-  const renderVerse = useCallback(({ item }: { item: VerseItem }) => (
-    <VerseItem item={item} />
+  const renderVerse = useCallback(({ item, handleOpenSheet, handleCloseSheet }: { item: VerseItem, handleOpenSheet: () => void, handleCloseSheet: () => void }) => (
+    <VerseItem item={item} handleOpenSheet={handleOpenSheet} handleCloseSheet={handleCloseSheet} />
   ), []);
+
+  const onCloseBottomSheet = () => {
+    clearSelectedVerses();
+  };
+
+  const { BottomSheetContainer, handleOpen, handleClose } = useBottomSheet({ onClose: onCloseBottomSheet });
+
 
   if (isLoading && verses.length === 0) {
     return (
@@ -69,16 +78,19 @@ export function BibleContent({ onScrollDown }: Props) {
   }
 
   return (
-    <FlashList
-      bounces={false}
-      onScroll={onScrollDown}
-      data={verses}
-      keyExtractor={(item) => item.verse.toString()}
-      renderItem={renderVerse}
-      contentContainerStyle={{ paddingBottom: 72 }}
-      removeClippedSubviews={true}
-      estimatedItemSize={58}
-      extraData={[currentVerse]}
-    />
+    <>
+      <FlashList
+        bounces={false}
+        onScroll={onScrollDown}
+        data={verses}
+        keyExtractor={(item) => item.verse.toString()}
+        renderItem={(item) => renderVerse({ item: item.item, handleOpenSheet: handleOpen, handleCloseSheet: handleClose })}
+        contentContainerStyle={{ paddingBottom: 72 }}
+        removeClippedSubviews={true}
+        estimatedItemSize={58}
+        extraData={[currentVerse]}
+      />
+      <BibleVerseSheet BottomSheetContainer={BottomSheetContainer} handleCloseSheet={handleClose} />
+    </>
   );
 }
