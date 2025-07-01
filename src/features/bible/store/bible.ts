@@ -31,7 +31,7 @@ interface BibleState {
 	loadVerses: (bookId: string, chapter: number) => Promise<void>;
 	setCurrentBook: (bookId: string) => void;
 	setCurrentChapter: (chapter: number) => void;
-	setCurrentVerse: (verse: number) => void;
+	setCurrentVerse: (verse: number | null) => void;
 	goToNextChapter: (showInfoToast: (message: string) => void) => Promise<void>;
 	goToPrevChapter: (showInfoToast: (message: string) => void) => Promise<void>;
 
@@ -127,7 +127,7 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 		get().loadVerses(currentBookId, chapter);
 	},
 
-	setCurrentVerse: (verse: number) => {
+	setCurrentVerse: (verse) => {
 		set({ currentVerse: verse });
 	},
 

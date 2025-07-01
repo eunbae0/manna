@@ -14,3 +14,5 @@ export const DEFAULT_BOOK_DATA: BookIndexData = {
 
 export const MAX_BIBLE_FONT_SIZE = 130;
 export const MIN_BIBLE_FONT_SIZE = 80;
+
+export const CURRENT_VERSE_ANIMATION_DURATION = 2 * 1000;
