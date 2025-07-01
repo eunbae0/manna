@@ -252,7 +252,6 @@ export default function FellowshipCalendarView({ handlePressFellowship }: Props)
                 onPress={() => {
                   if (hasFellowship) {
                     const newSelectedDate = new Date(year, month, day);
-                    console.log(newSelectedDate);
                     setSelectedDate(isSelected ? null : newSelectedDate);
                   }
                 }}

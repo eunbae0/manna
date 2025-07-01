@@ -168,7 +168,6 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 		if (prevChapter >= 1) {
 			await get().loadVerses(currentBookId, prevChapter);
 		} else {
-			console.log(currentChapter);
 			const prevBookId = bookIndex.find(
 				(b) => b.id === currentBookId,
 			)?.prev_book;

@@ -63,7 +63,6 @@ export class NoteStorageService {
 		if (!notesJson) return [];
 
 		const notes: Record<string, Note> = JSON.parse(notesJson);
-		console.log(notes);
 		return Object.values(notes).filter((note) => !note.metadata?.isDeleted);
 	}
 
