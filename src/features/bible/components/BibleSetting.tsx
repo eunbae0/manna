@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { VStack } from '#/components/ui/vstack';
 import { BottomSheetListLayout } from '@/components/common/bottom-sheet';
 import { Text } from '@/shared/components/text';
@@ -6,6 +7,7 @@ import { Icon } from '#/components/ui/icon';
 import { Type } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
 import Slider from '@react-native-community/slider';
+import * as Haptics from 'expo-haptics';
 
 import { useBibleStore } from '@/features/bible/store/bible';
 import { MAX_BIBLE_FONT_SIZE, MIN_BIBLE_FONT_SIZE } from '../constants';
@@ -19,6 +21,11 @@ type Props = {
 
 export function BibleSetting({ BottomSheetContainer, closeSetting }: Props) {
   const { fontSize, setFontSize } = useBibleStore();
+
+  const handleSetFontSize = useCallback(async (value: number) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+    setFontSize(value);
+  }, [setFontSize]);
 
   return (
     <BottomSheetContainer>
@@ -39,7 +46,7 @@ export function BibleSetting({ BottomSheetContainer, closeSetting }: Props) {
                 thumbTintColor="#362303"
                 minimumTrackTintColor="#362303"
                 maximumTrackTintColor="#fef8ef"
-                onValueChange={setFontSize}
+                onValueChange={handleSetFontSize}
               />
             </HStack>
             <Text size="lg">{fontSize}%</Text>
