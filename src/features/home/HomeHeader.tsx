@@ -6,7 +6,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
 import { Heading } from '@/shared/components/heading';
 import { Icon } from '#/components/ui/icon';
-import { useShareInviteCode } from '@/shared/hooks/useShareInviteCode';
+import { useShareText } from '@/shared/hooks/useShareText';
 import {
 	ChevronDown,
 	MenuIcon,
@@ -152,7 +152,7 @@ function HomeHeader({ groups }: Props) {
 		handleOpenMenu();
 	}
 
-	const { shareInviteCode } = useShareInviteCode(group?.inviteCode || '');
+	const { shareText } = useShareText();
 
 	return (
 		<HStack
@@ -329,7 +329,7 @@ function HomeHeader({ groups }: Props) {
 								size="lg"
 								variant="solid"
 								className="flex-1"
-								onPress={shareInviteCode}
+								onPress={() => shareText(group?.inviteCode || '')}
 							>
 								<ButtonText>초대코드 공유하기</ButtonText>
 							</Button>

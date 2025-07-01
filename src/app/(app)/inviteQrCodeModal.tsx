@@ -5,7 +5,7 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { useShareInviteCode } from '@/shared/hooks/useShareInviteCode';
+import { useShareText } from '@/shared/hooks/useShareText';
 import { useCopyInviteCode } from '@/shared/hooks/useCopyInviteCode';
 import { Copy, Share, XIcon } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -20,7 +20,7 @@ export default function InviteQrCodeModal() {
 
 	const { inviteCode } = useLocalSearchParams<{ inviteCode: string }>();
 	const { copyInviteCode } = useCopyInviteCode(inviteCode);
-	const { shareInviteCode } = useShareInviteCode(inviteCode);
+	const { shareText } = useShareText();
 
 	const handleClose = () => {
 		router.back();
@@ -64,7 +64,7 @@ export default function InviteQrCodeModal() {
 						<ButtonText>코드 복사하기</ButtonText>
 						<ButtonIcon as={Copy} />
 					</Button>
-					<Button onPress={shareInviteCode} className="flex-1">
+					<Button onPress={() => shareText(inviteCode)} className="flex-1">
 						<ButtonText>공유하기</ButtonText>
 						<ButtonIcon as={Share} />
 					</Button>

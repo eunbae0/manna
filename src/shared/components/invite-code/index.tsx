@@ -3,7 +3,7 @@ import { Text } from '@/shared/components/text';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { QrCode } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
-import { useShareInviteCode } from '@/shared/hooks/useShareInviteCode';
+import { useShareText } from '@/shared/hooks/useShareText';
 
 export function ShareInviteCode({
 	inviteCode,
@@ -12,7 +12,7 @@ export function ShareInviteCode({
 	inviteCode: string;
 	handlePressQrCode: () => void;
 }) {
-	const { shareInviteCode } = useShareInviteCode(inviteCode);
+	const { shareText } = useShareText();
 
 	return (
 		<VStack space="sm" className="py-2">
@@ -31,7 +31,7 @@ export function ShareInviteCode({
 					size="lg"
 					variant="solid"
 					className="flex-1"
-					onPress={shareInviteCode}
+					onPress={() => shareText(inviteCode)}
 					rounded
 				>
 					<ButtonText>초대코드 공유하기</ButtonText>
