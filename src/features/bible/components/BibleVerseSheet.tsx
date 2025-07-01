@@ -4,13 +4,14 @@ import type { useBottomSheet } from '@/hooks/useBottomSheet';
 import { HStack } from '#/components/ui/hstack';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Icon } from '#/components/ui/icon';
-import { Copy, Plus } from 'lucide-react-native';
+import { Copy, MessageSquare, NotebookPen, Share2 } from 'lucide-react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
 import { useBibleStore } from '../store/bible';
 import { formatCopyedText, formatSelectedVerses } from '../utils';
 import { useCopyText } from '@/shared/hooks/useCopyText';
+import { useShareText } from '@/shared/hooks/useShareText';
 
 type Props = {
   BottomSheetContainer: ReturnType<
@@ -39,6 +40,7 @@ export default function BibleVerseSheet({
     success: `${currentBook?.name_kr} ${currentChapter}장 ${selectedVerseText}이 복사되었어요.`,
     error: '복사에 실패했어요.',
   });
+  const { shareText } = useShareText();
 
   const handleCopyText = async () => {
     const text = formatCopyedText({ verses, bookName: currentBook?.name_kr || null, chapter: currentChapter, selectedVerses })
@@ -46,8 +48,19 @@ export default function BibleVerseSheet({
     handleCloseSheet();
   }
 
+  const handleShareText = async () => {
+    const text = formatCopyedText({ verses, bookName: currentBook?.name_kr || null, chapter: currentChapter, selectedVerses })
+    await shareText(text);
+    handleCloseSheet();
+  }
+
   const handleAddToNote = () => {
     // TODO: 설교 노트에 추가 기능 추가
+  };
+
+
+  const handleAddToFellowship = () => {
+    // TODO: 설교 나눔에 추가 기능 추가
   };
 
   return (
@@ -59,36 +72,47 @@ export default function BibleVerseSheet({
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <HStack space="sm" className="justify-between items-center">
-              <AnimatedPressable onPress={handleCopyText}>
-                <HStack
-                  space="sm"
-                  className="items-center bg-background-100 rounded-xl px-5 py-3"
-                >
-                  <Icon as={Copy} />
-                  <Text size="lg" weight="medium">
-                    복사하기
-                  </Text>
-                </HStack>
-              </AnimatedPressable>
               <AnimatedPressable onPress={handleAddToNote}>
                 <HStack
                   space="sm"
-                  className="items-center bg-background-100 rounded-xl px-5 py-3"
+                  className="items-center bg-background-100 rounded-xl px-4 py-3"
                 >
-                  <Icon as={Plus} />
+                  <Icon as={NotebookPen} />
                   <Text size="lg" weight="medium">
                     설교 노트에 추가
                   </Text>
                 </HStack>
               </AnimatedPressable>
-              <AnimatedPressable>
+              <AnimatedPressable onPress={handleAddToFellowship}>
+                <HStack
+                  space="sm"
+                  className="items-center bg-background-100 rounded-xl px-4 py-3"
+                >
+                  <Icon as={MessageSquare} />
+                  <Text size="lg" weight="medium">
+                    설교 나눔에 추가
+                  </Text>
+                </HStack>
+              </AnimatedPressable>
+              <AnimatedPressable onPress={handleCopyText}>
                 <HStack
                   space="sm"
                   className="items-center bg-background-100 rounded-xl px-4 py-3"
                 >
                   <Icon as={Copy} />
                   <Text size="lg" weight="medium">
-                    공유하기
+                    복사
+                  </Text>
+                </HStack>
+              </AnimatedPressable>
+              <AnimatedPressable onPress={handleShareText}>
+                <HStack
+                  space="sm"
+                  className="items-center bg-background-100 rounded-xl px-4 py-3"
+                >
+                  <Icon as={Share2} />
+                  <Text size="lg" weight="medium">
+                    공유
                   </Text>
                 </HStack>
               </AnimatedPressable>
