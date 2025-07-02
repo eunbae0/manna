@@ -14,6 +14,7 @@ import { getTextSizeByFontSize } from '../utils';
 import { Text } from '@/shared/components/text';
 import type { ViewStyle } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { HIGHLIGHT_COLOR_HEX_MAP, HIGHLIGHT_COLOR_MAP } from '../constants/highlight';
 
 export type VerseItem = {
   verse: number;
@@ -25,7 +26,7 @@ const CURRENT_VERSE_BACKGROUND_COLOR_END = 'rgba(250 ,240 ,217, 0)';
 
 
 export const VerseItem = memo(({ item, handleOpenSheet, handleCloseSheet }: { item: VerseItem, handleOpenSheet: () => void, handleCloseSheet: () => void }) => {
-  const { currentVerse, fontSize, selectedVerses, addSelectedVerses, removeSelectedVerses } = useBibleStore();
+  const { currentVerse, fontSize, selectedVerses, currentHighlights, addSelectedVerses, removeSelectedVerses } = useBibleStore();
 
   const isCurrent = currentVerse === item.verse;
 
@@ -89,6 +90,13 @@ export const VerseItem = memo(({ item, handleOpenSheet, handleCloseSheet }: { it
     }
   }
 
+  const highlight = useMemo(() => {
+    return currentHighlights.find((highlight) => highlight.identifier.verse === item.verse);
+  }, [currentHighlights, item.verse]);
+
+  const isMarker = highlight && highlight.type === 'marker';
+  const isUnderline = highlight && highlight.type === 'underscore';
+
   return (
     <AnimatedPressable
       scale="sm"
@@ -104,9 +112,11 @@ export const VerseItem = memo(({ item, handleOpenSheet, handleCloseSheet }: { it
           className={cn(
             isCurrent ? 'text-typography-950' : 'text-typography-800',
             'flex-1',
+            isMarker ? HIGHLIGHT_COLOR_MAP[highlight.color] : '',
           )}
           size={textSize}
-          selectable
+          decoration={isUnderline ? 'underline' : 'none'}
+          style={{ textDecorationStyle: 'solid', textDecorationColor: highlight ? HIGHLIGHT_COLOR_HEX_MAP[highlight.color || 'yellow'] : 'none' }}
         >
           {item.text}
         </Text>

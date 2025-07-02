@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { getJsonDynamically } from '../utils';
 import type { BookData, BookIndex, Verse } from '../types';
 import { DEFAULT_BOOK_DATA } from '../constants';
+import { BibleStorageService } from '../storage';
+import { useAuthStore } from '@/store/auth';
+import type { VerseHighlight } from '../types/highlight';
 
 interface SearchResult {
 	bookId: string;
@@ -26,6 +29,7 @@ interface BibleState {
 	searchResults: SearchResult[];
 	isSearching: boolean;
 	fontSize: number;
+	currentHighlights: VerseHighlight[];
 
 	// Actions
 	loadBooksIndex: () => Promise<void>;
@@ -35,6 +39,9 @@ interface BibleState {
 	setCurrentVerse: (verse: number | null) => void;
 	goToNextChapter: (showInfoToast: (message: string) => void) => Promise<void>;
 	goToPrevChapter: (showInfoToast: (message: string) => void) => Promise<void>;
+
+	loadHighlights: (bookId: string, chapter: number) => void;
+	addHighlights: (highlights: VerseHighlight[]) => void;
 
 	addSelectedVerses: (verse: number) => void;
 	removeSelectedVerses: (verse: number) => void;
@@ -62,6 +69,7 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 	searchResults: [],
 	isSearching: false,
 	fontSize: 100,
+	currentHighlights: [],
 
 	// Load all books from the index
 	loadBooksIndex: async () => {
@@ -184,6 +192,24 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 			await get().loadVerses(prevBookId, prevBookChaptersCount);
 			showInfoToast(`${prevBookData?.name_kr}로 넘어갔어요.`);
 		}
+	},
+
+	// Highlight actions
+	loadHighlights: (bookId: string, chapter: number) => {
+		const { user } = useAuthStore.getState();
+		const highlightStorage = BibleStorageService.getInstance(user?.id || '');
+		const currentHighlights = highlightStorage.getHighlights(bookId, chapter);
+		set({ currentHighlights });
+	},
+
+	addHighlights: (highlights: VerseHighlight[]) => {
+		if (!get().currentBookId || !get().currentChapter) return;
+		const { user } = useAuthStore.getState();
+		const highlightStorage = BibleStorageService.getInstance(user?.id || '');
+		for (const highlight of highlights) {
+			highlightStorage.saveHighlight(highlight);
+		}
+		get().loadHighlights(get().currentBookId!, get().currentChapter!);
 	},
 
 	// Search actions

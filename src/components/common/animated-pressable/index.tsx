@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Pressable } from 'react-native';
 import type { PressableProps, ViewStyle } from 'react-native';
@@ -59,6 +59,11 @@ interface AnimatedPressableProps extends PressableProps {
 	 */
 	withBackground?: boolean;
 	/**
+	 * 클릭 시 배경색 변경 쓰로틀 시간 (ms)
+	 * @default 300
+	 */
+	throttleTime?: number;
+	/**
 	 * 클릭 시 적용할 배경색 클래스명
 	 * @default 'bg-background-50'
 	 */
@@ -97,6 +102,7 @@ function AnimatedPressable({
 	pressableClassName,
 	style,
 	withBackground = false,
+	throttleTime = 300, // 기본 쓰로틀 시간 300ms
 	pressedBackgroundClass = 'bg-background-50',
 	...props
 }: AnimatedPressableProps) {
@@ -115,8 +121,18 @@ function AnimatedPressable({
 		withHaptic,
 	});
 
+	const lastPressTimeRef = useRef<number>(0);
+
 	// 버튼 눌림 핸들러 (스케일 + 배경색)
 	const handlePressIn = () => {
+		// 쓰로틀링 기능 구현: 지정된 시간 내에 중복 호출 방지
+		const now = Date.now();
+		if (now - lastPressTimeRef.current < throttleTime) {
+			// 지정된 시간보다 빠르게 호출되면 무시
+			return;
+		}
+		// 마지막 클릭 시간 업데이트
+		lastPressTimeRef.current = now;
 		scaleHandlePressIn();
 		if (withBackground) {
 			setIsPressed(true);
