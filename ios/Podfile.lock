@@ -3253,7 +3253,7 @@ PODS:
     - ReactCommon/turbomodule/core
   - react-native-get-random-values (1.11.0):
     - React-Core
-  - react-native-keyboard-controller (1.17.2):
+  - react-native-keyboard-controller (1.17.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3268,7 +3268,7 @@ PODS:
     - React-hermes
     - React-ImageManager
     - React-jsi
-    - react-native-keyboard-controller/common (= 1.17.2)
+    - react-native-keyboard-controller/common (= 1.17.5)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -3278,7 +3278,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-keyboard-controller/common (1.17.2):
+  - react-native-keyboard-controller/common (1.17.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3392,6 +3392,32 @@ PODS:
     - React-ImageManager
     - React-jsi
     - react-native-safe-area-context/common
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-skia (2.1.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-callinvoker
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -3906,7 +3932,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGestureHandler (2.24.0):
+  - RNGestureHandler (2.27.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3956,7 +3982,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated (3.17.5):
+  - RNReanimated (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3979,10 +4005,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 3.17.5)
-    - RNReanimated/worklets (= 3.17.5)
+    - RNReanimated/reanimated (= 3.18.0)
+    - RNReanimated/worklets (= 3.18.0)
     - Yoga
-  - RNReanimated/reanimated (3.17.5):
+  - RNReanimated/reanimated (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -4005,9 +4031,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 3.17.5)
+    - RNReanimated/reanimated/apple (= 3.18.0)
     - Yoga
-  - RNReanimated/reanimated/apple (3.17.5):
+  - RNReanimated/reanimated/apple (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -4031,7 +4057,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNReanimated/worklets (3.17.5):
+  - RNReanimated/worklets (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -4054,9 +4080,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/worklets/apple (= 3.17.5)
+    - RNReanimated/worklets/apple (= 3.18.0)
     - Yoga
-  - RNReanimated/worklets/apple (3.17.5):
+  - RNReanimated/worklets/apple (3.18.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -4309,6 +4335,7 @@ DEPENDENCIES:
   - react-native-keyboard-controller (from `../node_modules/react-native-keyboard-controller`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -4576,6 +4603,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-mmkv"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-skia:
+    :path: "../node_modules/@shopify/react-native-skia"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
   react-native-webview:
@@ -4802,9 +4831,10 @@ SPEC CHECKSUMS:
   React-Mapbuffer: a277896f59b5e763ac49fa94d8adfca330b8f884
   React-microtasksnativemodule: 3fe68fd19e77d569a33b74f458691846babaf242
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
-  react-native-keyboard-controller: 0c9394a4c96ac02afc822a034433f887374430ff
+  react-native-keyboard-controller: 627042ee5608096bdeb0e1187e25eac026512b5d
   react-native-mmkv: 1d37043029380c491c83a4c48649376135a762b7
   react-native-safe-area-context: 6cec90ce53951d3b52dc73e873323a4a7662fc0c
+  react-native-skia: cb1f027b2399cdd0591ceec3ed0a627c13eaa9cf
   react-native-slider: 2ceb3abcc54e14ea0591aa54e8f550f2976820e8
   react-native-webview: 02c782d78f1a20bcb739f4556d936f84e4ca4f5c
   React-NativeModulesApple: 5566582f6bfc49eacd70ab42aeb1d29e173dacc6
@@ -4851,9 +4881,9 @@ SPEC CHECKSUMS:
   RNFBPerf: be64b6314aa23891e38778ac7f7b56a2134228cd
   RNFBStorage: 9836f85ce846bb4d4819364d566afceeccd1ae98
   RNFlashList: d698d1afdda4a2b1a7bce9b7c1437460b6110298
-  RNGestureHandler: 85b0463dbfed54eaba4360e31c0aa1a0fe83a6a6
+  RNGestureHandler: 557517e4f3f540dfbe136b8d8b43f48c7e785f35
   RNGoogleSignin: be1fbe1c9e0d438e87ae3d79329cc3f1407ba98c
-  RNReanimated: 7b926938d4190114e5848b5b022d83dbc2c0fe2c
+  RNReanimated: 2b314b18e28adf1b300f606eb0f205a1a6a643e1
   RNScreens: d9d5d8a2a484bb4446968bfa00db991f1117db44
   RNSentry: 262fe7fc57a3b459c5b0948e6c7eb4d936e06618
   RNSVG: 257f59c952e296c9c36035a8f49b61fda48e398a
