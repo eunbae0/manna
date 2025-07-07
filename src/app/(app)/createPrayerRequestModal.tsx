@@ -1,4 +1,4 @@
-import { CreatePrayerRequestScreen } from '@/features/home/screens/CreatePrayerRequestScreen';
+import { CreatePrayerRequestScreen } from '@/features/group/screens/CreatePrayerRequestScreen';
 
 /**
  * Modal screen for creating a new prayer request

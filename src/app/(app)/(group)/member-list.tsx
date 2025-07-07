@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
-import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
+import { useGroupMembers } from '@/features/group/hooks/useGroupMembers';
 import { useAuthStore } from '@/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';

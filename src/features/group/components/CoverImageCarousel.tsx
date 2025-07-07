@@ -11,7 +11,7 @@ import { ButtonIcon } from '@/components/common/button';
 import { useAuthStore } from '@/store/auth';
 import { ImageIcon } from 'lucide-react-native';
 import { Text } from '@/shared/components/text'
-import { useGroup } from '../group/hooks/useGroup';
+import { useGroup } from '@/features/group/hooks/useGroup';
 
 export function CoverImageCarousel() {
   const { user, currentGroup } = useAuthStore()

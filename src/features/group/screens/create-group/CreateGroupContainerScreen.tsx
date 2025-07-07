@@ -3,8 +3,8 @@ import { Redirect } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
-import CreateGroupFirstStepScreen from '@/features/home/group/screens/create-group/CreateGroupFirstStepScreen';
-import CreateGroupSecondStepScreen from '@/features/home/group/screens/create-group/CreateGroupSecondStepScreen';
+import CreateGroupFirstStepScreen from '@/features/group/screens/create-group/CreateGroupFirstStepScreen';
+import CreateGroupSecondStepScreen from '@/features/group/screens/create-group/CreateGroupSecondStepScreen';
 import type { ClientGroup } from '@/api/group/types';
 
 export type CreateGroupStep = 'GROUP_NAME' | 'CODE';

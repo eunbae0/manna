@@ -12,7 +12,7 @@ import Animated, {
  * Skeleton UI component for the HomeHeader
  * Displays loading placeholders with animation while data is being fetched
  */
-export function HomeHeaderSkeleton() {
+export function GroupHomeHeaderSkeleton() {
 	// Animation setup
 	const opacity = useSharedValue(0.5);
 

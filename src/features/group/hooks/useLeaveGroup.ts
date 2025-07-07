@@ -4,8 +4,10 @@ import { getUserService } from '@/api/user/service';
 import { useToastStore } from '@/store/toast';
 import { useAuthStore } from '@/store/auth';
 import type { ClientGroup } from '@/api/group/types';
-import { GROUP_QUERY_KEY } from './useGroup';
-import { GROUPS_QUERY_KEY } from './useGroups';
+import {
+	GROUP_QUERY_KEY,
+	GROUPS_QUERY_KEY,
+} from '@/features/group/hooks/useGroups';
 import { router } from 'expo-router';
 
 /**

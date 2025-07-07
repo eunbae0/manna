@@ -8,8 +8,8 @@ import EmailSignInStepScreen from '@/features/onboarding/screens/EmailSignInStep
 import GroupStepScreen from '@/features/onboarding/screens/GroupStepScreen';
 import NameStepScreen from '@/features/onboarding/screens/NameStepScreen';
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
-import CreateGroupContainerScreen from '@/features/home/group/screens/create-group/CreateGroupContainerScreen';
-import JoinGroupScreen from '@/features/home/group/screens/join-group/JoinGroupScreen';
+import CreateGroupContainerScreen from '@/features/group/screens/create-group/CreateGroupContainerScreen';
+import JoinGroupScreen from '@/features/group/screens/join-group/JoinGroupScreen';
 import EmailSignUpScreen from '@/features/onboarding/screens/EmailSignUpScreen';
 import ImageStepScreen from '@/features/onboarding/screens/ImageStepScreen';
 import PendingSubmitScreen from '@/features/onboarding/screens/PendingSubmitScreen';

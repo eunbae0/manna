@@ -23,7 +23,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Alert, Pressable } from 'react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import { usePrayerRequestMutations } from '@/features/home/hooks/usePrayerRequestMutations';
+import { usePrayerRequestMutations } from '@/features/group/hooks/usePrayerRequestMutations';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import Animated, {
 	useSharedValue,
@@ -36,7 +36,7 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
-import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
+import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
 import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '../hooks/usePrayerRequests';
 import type { AmplitudeEventType } from '@/shared/constants/amplitude';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';

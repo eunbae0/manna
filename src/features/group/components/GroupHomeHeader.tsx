@@ -36,7 +36,7 @@ import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import type { AmplitudeLocation } from '@/shared/constants/amplitude';
 import { openProfile } from '@/shared/utils/router';
 import { PopupMenu, PopupMenuItem, PopupMenuItemLabel } from '@/shared/components/popup-menu';
-import { MemberListItem } from '../profile/components/MemberListItem';
+import { MemberListItem } from '../../profile/components/MemberListItem';
 import * as Haptics from 'expo-haptics';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 200;
@@ -45,7 +45,7 @@ type Props = {
 	groups: ClientGroup[];
 };
 
-function HomeHeader({ groups }: Props) {
+function GroupHomeHeader({ groups }: Props) {
 	const { user, currentGroup, updateCurrentGroup } = useAuthStore();
 	const [isExpanded, setIsExpanded] = useState(false);
 
@@ -354,4 +354,4 @@ function HomeHeader({ groups }: Props) {
 	);
 }
 
-export default HomeHeader;
+export default GroupHomeHeader;

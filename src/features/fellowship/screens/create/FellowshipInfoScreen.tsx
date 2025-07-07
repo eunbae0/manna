@@ -34,7 +34,7 @@ import { Avatar } from '@/components/common/avatar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
-import { useGroup } from '@/features/home/group/hooks/useGroup';
+import { useGroup } from '@/features/group/hooks/useGroup';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 import Animated from 'react-native-reanimated';
 import AnimatedPressable from '@/components/common/animated-pressable';

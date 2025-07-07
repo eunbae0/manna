@@ -1,6 +1,6 @@
 import GroupLandingScreen, {
 	type GroupLandingOption,
-} from '@/features/home/group/screens/GroupLandingScreen';
+} from '@/features/group/screens/GroupLandingScreen';
 import { useOnboardingStore } from '@/store/onboarding';
 
 export default function GroupStepScreen() {

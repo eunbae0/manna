@@ -20,7 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { FilterTag } from '@/shared/components/filter-tag';
 import { useRefetchOnFocus } from '@/shared/hooks/useRefetchOnFocus';
-import { useGroups } from '@/features/home/group/hooks/useGroups';
+import { useGroups } from '@/features/group/hooks/useGroups';
 import type { ClientGroup } from '@/api/group/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { cn } from '@/shared/utils/cn';

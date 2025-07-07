@@ -10,7 +10,7 @@ import Header from '@/components/common/Header';
 import { useLocalSearchParams } from 'expo-router';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { useAuthStore } from '@/store/auth';
-import { useGroups } from '@/features/home/group/hooks/useGroups';
+import { useGroups } from '@/features/group/hooks/useGroups';
 
 /**
  * 게시판 알림 설정 화면

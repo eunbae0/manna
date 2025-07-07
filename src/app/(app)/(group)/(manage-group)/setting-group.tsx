@@ -3,7 +3,7 @@ import { Alert, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuthStore } from '@/store/auth';
-import { useGroup } from '@/features/home/group/hooks/useGroup';
+import { useGroup } from '@/features/group/hooks/useGroup';
 import type { UpdateGroupInput } from '@/api/group/types';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';

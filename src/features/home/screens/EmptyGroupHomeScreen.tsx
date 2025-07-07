@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import GroupLandingScreen, {
 	type GroupLandingOption,
-} from '../group/screens/GroupLandingScreen';
+} from '@/features/group/screens/GroupLandingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function EmptyGroupScreen() {

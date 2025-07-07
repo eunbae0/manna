@@ -41,31 +41,31 @@ import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
 import { Pen, ChevronRight, Plus } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
-import NotificationBox from './components/NotificationBox';
-import ServiceGroups from './components/ServiceGroups';
+import NotificationBox from './NotificationBox';
+import ServiceGroups from './ServiceGroups';
 import { useNotifications } from '@/features/notification/hooks/useNotifications';
 import { PrayerRequestCard } from '@/features/prayer-request/components/PrayerRequestCard';
 import { Text } from '@/shared/components/text';
 import { PrayerRequestSkeleton } from '@/features/prayer-request/components/PrayerRequestSkeleton';
 import { usePrayerRequests } from '@/features/prayer-request/hooks/usePrayerRequests';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import { GROUP_QUERY_KEY, GROUPS_QUERY_KEY } from './group/hooks/useGroups';
+import { GROUP_QUERY_KEY, GROUPS_QUERY_KEY } from '@/features/group/hooks/useGroups';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { useAuthStore } from '@/store/auth';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useInfiniteBoardPosts } from '../board/hooks';
-import { HomeBoardPostCard } from '../board/components/HomeBoardPostCard';
-import { HomeBoardPostSkeleton } from '../board/components/HomeBoardPostSkeleton';
-import { CoverImageCarousel } from './components/CoverImageCarousel';
-import NoticeBox from './components/NoticeBox';
+import { useInfiniteBoardPosts } from '@/features/board/hooks';
+import { HomeBoardPostCard } from '@/features/board/components/HomeBoardPostCard';
+import { HomeBoardPostSkeleton } from '../../board/components/HomeBoardPostSkeleton';
+import { CoverImageCarousel } from './CoverImageCarousel';
+import NoticeBox from './NoticeBox';
 import { fetchMainScreenNotices } from '@/api/notice';
 import { useFellowshipStore } from '@/store/createFellowship';
-import { useInfiniteFellowships } from '../fellowship/hooks/useInfiniteFellowships';
-import FellowshipCard from '../fellowship/components/home/FellowshipCard';
-import FellowshipCardSkeleton from '../fellowship/components/home/FellowshipCardSkeleton';
+import { useInfiniteFellowships } from '../../fellowship/hooks/useInfiniteFellowships';
+import FellowshipCard from '../../fellowship/components/home/FellowshipCard';
+import FellowshipCardSkeleton from '../../fellowship/components/home/FellowshipCardSkeleton';
 // 화면 포커스 감지를 위해 useFocusEffect 사용
 
-function HomeList() {
+function GroupHomeList() {
 	const { currentGroup } = useAuthStore()
 
 	const [refreshing, setRefreshing] = useState(false);
@@ -512,4 +512,4 @@ function HomeList() {
 	);
 }
 
-export default HomeList;
+export default GroupHomeList;

@@ -13,7 +13,7 @@ import { Text } from '@/shared/components/text';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { useAuthStore } from '@/store/auth';
-import { useGroup } from '@/features/home/group/hooks/useGroup';
+import { useGroup } from '@/features/group/hooks/useGroup';
 import type { CoverImage, UpdateGroupInput } from '@/api/group/types';
 import { useToastStore } from '@/store/toast';
 import Heading from '@/shared/components/heading';

@@ -13,7 +13,7 @@ import {
 	BottomSheetListItem,
 } from '@/components/common/bottom-sheet';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
+import { useGroupMembers } from '@/features/group/hooks/useGroupMembers';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
 	UserPlus,
@@ -23,7 +23,6 @@ import {
 	UserCog,
 	LogOut,
 } from 'lucide-react-native';
-import { useToast } from '#/components/ui/toast';
 import type { GroupMemberRole, GroupUser } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';

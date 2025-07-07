@@ -24,7 +24,7 @@ import { useToastStore } from '@/store/toast';
 import { userKeys, useUserProfile } from '@/features/profile/hooks/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { useGroupMembers } from '@/features/home/group/hooks/useGroupMembers';
+import { useGroupMembers } from '@/features/group/hooks/useGroupMembers';
 import { useUserPrayerRequests } from '@/features/prayer-request/hooks/useUserPrayerRequests';
 import { useInfiniteBoardPosts } from '@/features/board/hooks';
 import { useUserFellowships } from '@/features/fellowship/hooks/useUserFellowships';
@@ -38,10 +38,10 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import { TEXT_INPUT_STYLE } from '@/components/common/text-input';
 import { RefreshCw } from 'lucide-react-native';
-import { GROUPS_QUERY_KEY } from '@/features/home/group/hooks/useGroups';
+import { GROUPS_QUERY_KEY } from '@/features/group/hooks/useGroups';
 import { FELLOWSHIP_QUERY_KEY } from '@/features/fellowship/hooks/useFellowship';
 import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '@/features/prayer-request/hooks/usePrayerRequests';
-import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
+import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 
 interface ActivityItemProps {

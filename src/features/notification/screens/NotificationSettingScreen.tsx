@@ -8,7 +8,7 @@ import { NotificationSettingItem } from '../components/NotificationSettingItem';
 import { Pressable, View } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth';
-import { useGroups } from '@/features/home/group/hooks/useGroups';
+import { useGroups } from '@/features/group/hooks/useGroups';
 import type { ClientGroup } from '@/api/group/types';
 import { cn } from '@/shared/utils/cn';
 import type { UserGroup } from '@/shared/types';

@@ -3,7 +3,7 @@ import { createPrayerRequest } from '@/api/prayer-request';
 import { useAuthStore } from '@/store/auth';
 import { getKSTDate } from '@/shared/utils/date';
 import { router } from 'expo-router';
-import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/home/hooks/usePrayerRequestsByDate';
+import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
 import { ALL_PRAYER_REQUESTS_QUERY_KEY } from './usePrayerRequests';
 import { useToastStore } from '@/store/toast';
 

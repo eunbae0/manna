@@ -13,7 +13,7 @@ import Animated, {
  * Skeleton UI component for the HomeList
  * Displays loading placeholders with animation while data is being fetched
  */
-export function HomeSkeleton() {
+export function GroupHomeSkeleton() {
 	// Animation setup
 	const opacity = useSharedValue(0.5);
 

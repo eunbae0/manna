@@ -22,7 +22,7 @@ import { cn } from '@/shared/utils/cn';
 import { useToastStore } from '@/store/toast';
 import { Icon } from '#/components/ui/icon';
 import { goBackOrReplaceHome } from '@/shared/utils/router';
-import { SECTIONS_ORDER_KEY } from '@/features/home/HomeList';
+import { SECTIONS_ORDER_KEY } from '@/features/group/components/GroupHomeList';
 
 // 섹션 타입 정의
 interface SectionItem {
