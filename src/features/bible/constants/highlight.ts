@@ -1,7 +1,7 @@
 export const HIGHLIGHT_COLOR_MAP = {
-	yellow: 'bg-yellow-300/80',
-	green: 'bg-green-300/80',
-	red: 'bg-red-300/80',
+	yellow: 'bg-yellow-200',
+	green: 'bg-green-200',
+	red: 'bg-red-200',
 };
 
 export const HIGHLIGHT_COLOR_HEX_MAP = {
