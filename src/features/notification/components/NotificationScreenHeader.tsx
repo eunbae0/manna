@@ -1,21 +1,12 @@
-import { HStack } from '#/components/ui/hstack';
-import { Heading } from '@/shared/components/heading';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { router } from 'expo-router';
 import { Settings } from 'lucide-react-native';
-import { cn } from '@/shared/utils/cn';
-import { isIOS } from '@/shared/utils/platform';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import Header from '@/components/common/Header';
 
 export function NotificationScreenHeader() {
 	return (
-		<HStack
-			className={cn(
-				isIOS ? 'pt-5' : 'pt-6',
-				'pl-4 pr-3 pb-4 items-center justify-between',
-			)}
-		>
-			<Heading size="2xl">알림 센터</Heading>
+		<Header label="알림 센터" className="justify-between pr-3 mb-5">
 			<Button
 				variant="icon"
 				size="lg"
@@ -28,6 +19,6 @@ export function NotificationScreenHeader() {
 			>
 				<ButtonIcon as={Settings} />
 			</Button>
-		</HStack>
+		</Header>
 	);
 }

@@ -1,4 +1,4 @@
-export const formatRelativeTime = (date: Date | string): string => {
+export const formatRelativeTime = (date: Date | string | number): string => {
 	const now = new Date();
 	const postTime = new Date(date);
 	const diffMinutes = Math.floor(

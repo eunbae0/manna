@@ -377,7 +377,7 @@ export class FirestoreFellowshipService {
 		const docRef = this.getFellowshipDocRef({ groupId, fellowshipId });
 		const docSnap = await getDoc(docRef);
 
-		if (docSnap.exists) {
+		if (docSnap.exists()) {
 			const data = docSnap.data() as ServerFellowshipV2;
 			const members: ClientFellowshipParticipantV2[] = [];
 			const memberPromises = data.info.participants.map((member) =>
@@ -495,7 +495,7 @@ export class FirestoreFellowshipService {
 			docRef,
 			async (docSnap) => {
 				try {
-					if (docSnap.exists) {
+					if (docSnap.exists()) {
 						const data = docSnap.data() as ServerFellowshipV2;
 						const members: ClientFellowshipParticipantV2[] = [];
 

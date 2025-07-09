@@ -12,7 +12,7 @@ import { cn } from '@/shared/utils/cn';
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated';
 
 // 애니메이션 적용된 카테고리 제목 컴포넌트
-const AnimatedCategoryTitle = memo(function AnimatedCategoryTitle({
+export const AnimatedCategoryTitle = memo(function AnimatedCategoryTitle({
   content,
   isCurrentId
 }: {
@@ -65,7 +65,7 @@ type FellowshipContentItem = {
 }
 
 // 애니메이션 적용된 개별 아이템 컴포넌트
-const AnimatedContentItem = memo(function AnimatedContentItem({
+export const AnimatedContentItem = memo(function AnimatedContentItem({
   item,
   index
 }: {
