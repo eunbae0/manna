@@ -1,7 +1,20 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import {
+	QueryClient,
+	useInfiniteQuery,
+	useMutation,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
-import { fetchGroupPrayerRequests } from '@/api/prayer-request';
+import {
+	fetchGroupPrayerRequests,
+	togglePrayerRequestReaction,
+} from '@/api/prayer-request';
 import type { ClientPrayerRequest } from '@/api/prayer-request/types';
+import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
+import type { AmplitudeEventType } from '@/shared/constants/amplitude';
+import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import * as Haptics from 'expo-haptics';
+import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
 
 export const ALL_PRAYER_REQUESTS_QUERY_KEY = 'all-prayer-requests';
 /**
@@ -54,5 +67,61 @@ export function usePrayerRequests() {
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
+	};
+}
+
+export function usePrayerRequestToggleLike({
+	userId,
+	prayerRequestId,
+	groupId,
+	performLikeAnimation,
+}: {
+	userId: string;
+	prayerRequestId: string;
+	groupId: string;
+	performLikeAnimation: () => void;
+}) {
+	const queryClient = useQueryClient();
+	const { currentGroup } = useAuthStore();
+
+	const { mutate: toggleLike } = useMutation({
+		mutationFn: async (eventType: keyof typeof AmplitudeEventType) => {
+			await togglePrayerRequestReaction(groupId, prayerRequestId, {
+				type: 'LIKE',
+				member: {
+					id: userId,
+				},
+			});
+			return eventType;
+		},
+		onSuccess: (eventType: keyof typeof AmplitudeEventType) => {
+			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+			performLikeAnimation();
+
+			Promise.all([
+				queryClient.invalidateQueries({
+					queryKey: [PRAYER_REQUESTS_QUERY_KEY, currentGroup?.groupId || ''],
+				}),
+				queryClient.invalidateQueries({
+					queryKey: [
+						ALL_PRAYER_REQUESTS_QUERY_KEY,
+						currentGroup?.groupId || '',
+					],
+				}),
+				queryClient.invalidateQueries({
+					queryKey: [FEEDS_QUERY_KEY],
+				}),
+			]);
+
+			// tracking amplitude
+			trackAmplitudeEvent('기도제목 좋아요', {
+				screen: 'Tab_Home',
+				eventType,
+			});
+		},
+	});
+	return {
+		toggleLike,
 	};
 }

@@ -37,18 +37,16 @@ import * as Haptics from 'expo-haptics';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
-import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '../hooks/usePrayerRequests';
+import { ALL_PRAYER_REQUESTS_QUERY_KEY, usePrayerRequestToggleLike } from '../hooks/usePrayerRequests';
 import type { AmplitudeEventType } from '@/shared/constants/amplitude';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { useLikeAnimation } from '@/shared/hooks/animation/useLikeAnimation';
 
 type Props = {
 	prayerRequest: ClientPrayerRequest;
 };
 
 const PrayerRequestCard = ({ prayerRequest }: Props) => {
-	// Animation value for heart icon
-	const heartScale = useSharedValue(1);
-	const heartTranslateY = useSharedValue(0);
 	const { currentGroup, user } = useAuthStore();
 	const queryClient = useQueryClient();
 	const hasLiked = prayerRequest.reactions.some(
@@ -59,63 +57,15 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 
 	const { showSuccess, showError } = useToastStore();
 
-	const { mutate: toggleLike } = useMutation({
-		mutationFn: async (eventType: keyof typeof AmplitudeEventType) => {
-			await togglePrayerRequestReaction(
-				currentGroup?.groupId || '',
-				prayerRequest.id,
-				{
-					type: 'LIKE',
-					member: {
-						id: user?.id || '',
-					},
-				},
-			);
-			return eventType;
-		},
-		onSuccess: (eventType: keyof typeof AmplitudeEventType) => {
-			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+	const { heartScale, heartTranslateY, performLikeAnimation } = useLikeAnimation(hasLiked);
 
-			const isNowLiked = !hasLiked;
-			if (isNowLiked) {
-				heartScale.value = withSpring(
-					1.2,
-					{ damping: 50, stiffness: 200 },
-					() => {
-						heartScale.value = withSpring(1, { stiffness: 200 });
-					},
-				);
-				heartTranslateY.value = withSpring(
-					-5,
-					{ damping: 50, stiffness: 200 },
-					() => {
-						heartTranslateY.value = withSpring(0, { stiffness: 200 });
-					},
-				);
-			}
+	const { toggleLike } = usePrayerRequestToggleLike({
+		userId: user?.id || '',
+		prayerRequestId: prayerRequest.id,
+		groupId: currentGroup?.groupId || '',
+		performLikeAnimation,
+	})
 
-			Promise.all([
-				queryClient.invalidateQueries({
-					queryKey: [PRAYER_REQUESTS_QUERY_KEY, currentGroup?.groupId || ''],
-				}),
-				queryClient.invalidateQueries({
-					queryKey: [
-						ALL_PRAYER_REQUESTS_QUERY_KEY,
-						currentGroup?.groupId || '',
-					],
-				}),
-			]);
-
-			// tracking amplitude
-			trackAmplitudeEvent('기도제목 좋아요', {
-				screen: 'Tab_Home',
-				isNowLiked,
-				eventType,
-			});
-		},
-	});
-
-	// Create a double tap gesture
 	const doubleTap = Gesture.Tap()
 		.maxDuration(250)
 		.numberOfTaps(2)
