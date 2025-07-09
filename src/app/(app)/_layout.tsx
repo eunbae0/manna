@@ -22,7 +22,6 @@ export default function RootLayout() {
 	const { isAnimationComplete, setAnimationComplete } = useSplashAnimationStore();
 
 	useEffect(() => {
-		console.log('Animation complete:', isAnimationComplete)
 		if (loaded) {
 			// 애니메이션이 완료되면 SplashScreen을 숨깁니다
 			SplashScreen.hideAsync();
@@ -85,6 +84,7 @@ export default function RootLayout() {
 				<Stack.Screen name="(note)" options={{ headerShown: false }} />
 				<Stack.Screen name="(more)" options={{ headerShown: false }} />
 				<Stack.Screen name="(setting)" options={{ headerShown: false }} />
+				<Stack.Screen name="notification" options={{ headerShown: false }} />
 				<Stack.Screen
 					name="createPrayerRequestModal"
 					options={{

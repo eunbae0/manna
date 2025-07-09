@@ -1,7 +1,7 @@
-import GroupHomeScreen from '@/features/group/screens/GroupHomeScreen';
+import MainHomeScreen from '@/features/home/screens/MainHomeScreen';
 
 export default function HomeScreen() {
-	return <GroupHomeScreen />
+	return <MainHomeScreen />
 	// const { user } = useAuthStore();
 	// const isGroup = (user?.groups?.length ?? 0) > 0;
 	// return isGroup ? (

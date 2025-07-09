@@ -1,0 +1,63 @@
+import { useCallback } from 'react';
+import { Image } from 'expo-image';
+import { VStack } from '#/components/ui/vstack';
+import { Text } from '@/shared/components/text';
+import { useGroups } from '@/features/group/hooks/useGroups';
+import type { ClientGroup } from '@/api/group/types';
+import type { UserGroup } from '@/shared/types';
+import { FlashList } from '@shopify/flash-list';
+import { View } from 'react-native';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { router } from 'expo-router';
+import { useAuthStore } from '@/store/auth';
+import HomeUserGroupListSkeleton from './HomeUserGroupListSkeleton';
+
+type Props = {
+  groups: UserGroup[];
+};
+
+export function HomeUserGroupList({ groups }: Props) {
+  const { groups: groupsData, isLoading } = useGroups(groups);
+  return (
+    <View className="w-full">
+      {isLoading ?
+        <HomeUserGroupListSkeleton /> :
+        <FlashList
+          data={groupsData}
+          horizontal
+          renderItem={({ item }) => <GroupItem group={item} />}
+          style={{ width: '100%' }}
+          keyExtractor={(item) => item.id}
+          estimatedListSize={{ width: 120, height: 90 }}
+          estimatedItemSize={120}
+          showsHorizontalScrollIndicator={false}
+        />
+      }
+    </View>
+  );
+}
+
+function GroupItem({ group }: { group: ClientGroup }) {
+  const { uri } = group.coverImages[0];
+  const { updateCurrentGroup } = useAuthStore();
+
+  const handlePressGroupItem = useCallback(() => {
+    router.push('/(app)/(group)/home');
+    updateCurrentGroup({
+      groupId: group.id,
+    })
+  }, [group.id, updateCurrentGroup])
+
+  return (
+    <AnimatedPressable onPress={handlePressGroupItem}>
+      <VStack space="sm" className="items-center pr-4">
+        <Image
+          source={{ uri }}
+          contentFit="cover"
+          style={{ width: 120, height: 80, borderRadius: 14 }}
+        />
+        <Text size="sm" weight="medium" className="text-typography-800">{group.groupName}</Text>
+      </VStack>
+    </AnimatedPressable>
+  );
+}

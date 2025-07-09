@@ -8,6 +8,7 @@ export default function GroupLayout() {
 				contentStyle: { backgroundColor: 'white' },
 			}}
 		>
+			<Stack.Screen name="home" />
 			<Stack.Screen name="create-group" />
 			<Stack.Screen name="join-group" />
 			<Stack.Screen name="(manage-group)" />

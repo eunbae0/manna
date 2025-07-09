@@ -9,12 +9,12 @@ import {
 
 import { Icon } from '#/components/ui/icon';
 import {
-	Bell,
 	HouseIcon,
 	NotebookPen,
 	Ellipsis,
 	type LucideIcon,
 	BookMarked,
+	LayoutList,
 } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 
@@ -42,7 +42,7 @@ export default function TabLayout() {
 			</View>
 			<TabList
 				style={{ marginBottom: insets.bottom }}
-				className="px-2 pt-1 border-t border-l border-r rounded-2xl border-gray-200 items-center justify-center"
+				className="px-3 pt-1 border-t border-l border-r rounded-2xl border-gray-200 items-center justify-center"
 			>
 				<TabTrigger
 					name="index"
@@ -53,12 +53,12 @@ export default function TabLayout() {
 					<CustomTabButton icon={HouseIcon}>홈</CustomTabButton>
 				</TabTrigger>
 				<TabTrigger
-					name="note"
-					href="/note"
+					name="feed"
+					href="/feed"
 					asChild
 					style={{ flex: 1, justifyContent: 'center' }}
 				>
-					<CustomTabButton icon={NotebookPen}>설교 노트</CustomTabButton>
+					<CustomTabButton icon={LayoutList}>피드</CustomTabButton>
 				</TabTrigger>
 				<TabTrigger
 					name="bible"
@@ -69,12 +69,12 @@ export default function TabLayout() {
 					<CustomTabButton icon={BookMarked}>성경</CustomTabButton>
 				</TabTrigger>
 				<TabTrigger
-					name="notification"
-					href="/notification"
+					name="note"
+					href="/note"
 					asChild
 					style={{ flex: 1, justifyContent: 'center' }}
 				>
-					<CustomTabButton icon={Bell}>알림</CustomTabButton>
+					<CustomTabButton icon={NotebookPen}>노트</CustomTabButton>
 				</TabTrigger>
 				<TabTrigger
 					name="more"
@@ -153,14 +153,14 @@ export const CustomTabButton = React.forwardRef<View, CustomTabButtonProps>(
 							className={cn(
 								props.isFocused
 									? 'text-primary-500'
-									: 'text-typography-500',
+									: 'text-typography-400',
 							)}
 						/>
 						<Text
 							size="sm"
 							weight="semi-bold"
 							className={cn(
-								props.isFocused ? 'text-primary-500' : 'text-typography-500',
+								props.isFocused ? 'text-primary-500' : 'text-typography-400',
 							)}
 						>
 							{props.children}
