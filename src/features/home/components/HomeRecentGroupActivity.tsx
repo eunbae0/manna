@@ -18,10 +18,11 @@ import { useInfiniteUserFeeds } from '@/features/feeds/hooks/useFeeds';
 import { Text } from '@/shared/components/text';
 import { useCallback } from 'react';
 import { ChevronRight } from 'lucide-react-native';
+import { HomeFeedItemListSkeleton } from '@/features/feeds/components/FeedItemSkeleton';
 
 export function HomeRecentGroupActivity() {
   const handlePressMore = useCallback(() => {
-    router.push('/(app)/(tabs)/feeds');
+    router.push('/(app)/(tabs)/feed');
   }, []);
   return (
     <VStack space="sm" className="w-full">
@@ -46,8 +47,7 @@ function HomeRecentGroupActivityList() {
   const slicedFeeds = feeds?.slice(0, 3);
 
   if (isLoading) {
-    // return <HomeRecentGroupActivityListSkeleton />
-    return <Text className="text-center py-10">로딩 중...</Text>
+    return <HomeFeedItemListSkeleton />
   }
 
   if (error) {
