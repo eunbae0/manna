@@ -39,7 +39,7 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { HStack } from '#/components/ui/hstack';
-import { Pen, ChevronRight, Plus } from 'lucide-react-native';
+import { Pen, ChevronRight, Plus, Settings } from 'lucide-react-native';
 import { Divider } from '#/components/ui/divider';
 import NotificationBox from './NotificationBox';
 import ServiceGroups from './ServiceGroups';
@@ -63,6 +63,8 @@ import { useFellowshipStore } from '@/store/createFellowship';
 import { useInfiniteFellowships } from '../../fellowship/hooks/useInfiniteFellowships';
 import FellowshipCard from '../../fellowship/components/home/FellowshipCard';
 import FellowshipCardSkeleton from '../../fellowship/components/home/FellowshipCardSkeleton';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { Icon } from '#/components/ui/icon';
 // 화면 포커스 감지를 위해 useFocusEffect 사용
 
 function GroupHomeList() {
@@ -457,6 +459,15 @@ function GroupHomeList() {
 		}
 	}, [refetchFellowships, refetchPrayerRequests, refetchNotifications, refetchNotices, loadData, queryClient]);
 
+	const handlePressMainScreenSetting = useCallback(() => {
+		trackAmplitudeEvent('메인 화면 편집 클릭', {
+			screen: 'Tab_Home',
+			symbol: 'Home_Header',
+			location: 'Group_Menu_Bottom_Sheet',
+		});
+		router.push('/(app)/(setting)/main-screen-setting');
+	}, [router, trackAmplitudeEvent]);
+
 	return (
 		<>
 			<ScrollView
@@ -507,6 +518,12 @@ function GroupHomeList() {
 						})
 					}
 				</VStack>
+				<AnimatedPressable onPress={handlePressMainScreenSetting}>
+					<HStack space="sm" className="items-center px-4 py-2 bg-background-50 rounded-full self-center">
+						<Icon as={Settings} className='text-typography-600' />
+						<Text size="lg" weight="semi-bold" className="text-typography-600">홈 화면 순서 편집</Text>
+					</HStack>
+				</AnimatedPressable>
 			</ScrollView>
 		</>
 	);

@@ -1,4 +1,3 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
 import HomeHeader from '@/features/group/components/GroupHomeHeader';
 import HomeList from '@/features/group/components/GroupHomeList';
 import { useGroups } from '@/features/group/hooks/useGroups';
@@ -11,9 +10,9 @@ export default function GroupHomeScreen() {
 	const { groups, isLoading } = useGroups(user?.groups ?? []);
 
 	return (
-		<SafeAreaView>
+		<>
 			{isLoading ? <GroupHomeHeaderSkeleton /> : <HomeHeader groups={groups} />}
 			<HomeList />
-		</SafeAreaView>
+		</>
 	);
 }

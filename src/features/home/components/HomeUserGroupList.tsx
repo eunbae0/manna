@@ -42,7 +42,7 @@ function GroupItem({ group }: { group: ClientGroup }) {
   const { updateCurrentGroup } = useAuthStore();
 
   const handlePressGroupItem = useCallback(() => {
-    router.push('/(app)/(group)/home');
+    router.push('/(app)/(group)/(tabs)/home');
     updateCurrentGroup({
       groupId: group.id,
     })
