@@ -59,29 +59,29 @@ export function AnimatedSplashScreen({ onAnimationComplete }: AnimatedSplashScre
     // 애니메이션 시퀀스: 로고 중앙 위치 -> 타이틀 페이드 인 (로고 위로 이동) -> 서브타이틀 페이드 인 -> 홀드 -> 페이드 아웃
     const animationSequence = () => {
       // 로고 애니메이션
-      logoOpacity.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) });
-      logoScale.value = withTiming(1, { duration: 800, easing: Easing.out(Easing.cubic) });
+      logoOpacity.value = withTiming(1, { duration: 650, easing: Easing.out(Easing.cubic) });
+      logoScale.value = withTiming(1, { duration: 650, easing: Easing.out(Easing.cubic) });
 
-      // 타이틀 페이드 인 (800ms 후 시작, 700ms 동안)
+      // 타이틀 페이드 인 (650ms 후 시작, 700ms 동안)
       titleOpacity.value = withDelay(
-        800,
+        650,
         withTiming(1, { duration: 700, easing: Easing.out(Easing.ease) })
       );
 
-      // 타이틀이 나타날 때 로고를 위로 이동 (800ms 후 시작, 500ms 동안)
+      // 타이틀이 나타날 때 로고를 위로 이동 (650ms 후 시작, 500ms 동안)
       logoPosition.value = withDelay(
-        800,
+        650,
         withTiming(-1, { duration: 500, easing: Easing.out(Easing.ease) })
       );
 
-      // 서브타이틀 페이드 인 (1300ms 후 시작, 700ms 동안)
+      // 서브타이틀 페이드 인 (1200ms 후 시작, 700ms 동안)
       subtitleOpacity.value = withDelay(
-        1300,
+        1200,
         withTiming(1, { duration: 700, easing: Easing.out(Easing.ease) })
       );
 
-      // 전체 컨테이너 페이드 아웃 (3000ms 후 시작, 800ms 동안)
-      containerOpacity.value = withDelay(3000, withTiming(0, { duration: 800 }, () => {
+      // 전체 컨테이너 페이드 아웃 (2400ms 후 시작, 650ms 동안)
+      containerOpacity.value = withDelay(2400, withTiming(0, { duration: 650 }, () => {
         // 애니메이션이 완료되면 콜백 실행
         runOnJS(handleAnimationComplete)();
       }));
