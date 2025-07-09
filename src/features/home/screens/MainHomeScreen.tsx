@@ -20,9 +20,9 @@ export default function MainHomeScreen() {
         <HomeBanner />
         <Box className="h-2" />
         <HomeMyGroupList />
-        <Divider size="lg" className="my-6" />
+        <Divider size="lg" className="my-7" />
         <HomeRecentGroupActivity />
-        <Divider size="lg" className="my-6" />
+        <Divider size="lg" className="my-7" />
         <RecommendServiceList />
         <Box className="h-32" />
       </ScrollView>
