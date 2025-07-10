@@ -130,7 +130,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 		const ref = doc(this.getWorshipTypesCollectionRef(), worshipTypeId);
 		const docSnapshot = await getDoc(ref);
 
-		if (!docSnapshot.exists) {
+		if (!docSnapshot.exists()) {
 			return false;
 		}
 
@@ -150,7 +150,7 @@ export class FirestoreWorshipTypesService extends FirestoreService {
 		const ref = doc(this.getWorshipTypesCollectionRef(), worshipTypeId);
 		const docSnapshot = await getDoc(ref);
 
-		if (!docSnapshot.exists) {
+		if (!docSnapshot.exists()) {
 			return false;
 		}
 

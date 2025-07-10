@@ -394,7 +394,7 @@ export async function migrateGroupFellowshipToV2(
 		const groupDocRef = doc(database, 'groups', groupId);
 		const groupDoc = await groupDocRef.get();
 
-		if (!groupDoc.exists) {
+		if (!groupDoc.exists()) {
 			console.error(`그룹 ${groupId}가 존재하지 않습니다.`);
 			return;
 		}
@@ -496,7 +496,7 @@ export async function verifyGroupFellowshipMigration(
 		const groupDocRef = doc(database, 'groups', groupId);
 		const groupDoc = await groupDocRef.get();
 
-		if (!groupDoc.exists) {
+		if (!groupDoc.exists()) {
 			console.error(`그룹 ${groupId}가 존재하지 않습니다.`);
 			return;
 		}

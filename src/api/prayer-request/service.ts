@@ -110,7 +110,7 @@ export class FirestorePrayerRequestService {
 			);
 
 			// 탈퇴한 유저인 경우
-			if (!groupMemberDoc.exists) {
+			if (!groupMemberDoc.exists()) {
 				prayerRequests.push(
 					this.convertToClientPrayerRequest(data, {
 						id: data.member.id,
@@ -147,7 +147,7 @@ export class FirestorePrayerRequestService {
 		);
 		const prayerRequestDoc = await getDoc(prayerRequestRef);
 
-		if (!prayerRequestDoc.exists) {
+		if (!prayerRequestDoc.exists()) {
 			return null;
 		}
 
@@ -164,7 +164,7 @@ export class FirestorePrayerRequestService {
 		);
 
 		// 탈퇴한 유저인 경우
-		if (!groupMemberDoc.exists) {
+		if (!groupMemberDoc.exists()) {
 			return this.convertToClientPrayerRequest(data, {
 				id: data.member.id,
 				displayName: DELETED_MEMBER_DISPLAY_NAME,
@@ -219,7 +219,7 @@ export class FirestorePrayerRequestService {
 			);
 
 			// 탈퇴한 유저인 경우
-			if (!groupMemberDoc.exists) {
+			if (!groupMemberDoc.exists()) {
 				prayerRequests.push(
 					this.convertToClientPrayerRequest(data, {
 						id: data.member.id,

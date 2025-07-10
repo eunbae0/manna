@@ -115,7 +115,7 @@ export class FirestoreGroupService {
 		const groupRef = doc(database, this.collectionPath, groupId);
 		const groupDoc = await getDoc(groupRef);
 
-		if (!groupDoc.exists) {
+		if (!groupDoc.exists()) {
 			return null;
 		}
 
@@ -285,7 +285,7 @@ export class FirestoreGroupService {
 		);
 		const groupMemberDoc = await getDoc(groupMemberRef);
 
-		if (!groupMemberDoc.exists) {
+		if (!groupMemberDoc.exists()) {
 			return null;
 		}
 		return groupMemberDoc.data() as GroupMember;

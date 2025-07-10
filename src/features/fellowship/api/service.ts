@@ -448,7 +448,7 @@ export class FirestoreFellowshipService {
 		let memberData: ClientFellowshipParticipantV2;
 
 		// 탈퇴유저 또는 게스트유저인 경우
-		if (!groupMemberDoc.exists) {
+		if (!groupMemberDoc.exists()) {
 			memberData = {
 				id: memberId,
 				displayName: additionalInfo?.displayName ?? DELETED_MEMBER_DISPLAY_NAME,

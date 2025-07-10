@@ -39,7 +39,7 @@ export class FirestoreAppConfigService {
 		const configRef = doc(database, this.collectionPath, this.versionDocPath);
 		const configDoc = await getDoc(configRef);
 
-		if (!configDoc.exists) {
+		if (!configDoc.exists()) {
 			return null;
 		}
 		return configDoc.data() as AppVersionConfig;

@@ -132,7 +132,7 @@ export class FirestoreBoardService {
 			displayName: DELETED_MEMBER_DISPLAY_NAME,
 		};
 
-		if (memberDoc.exists) {
+		if (memberDoc.exists()) {
 			const memberData = memberDoc.data() as GroupMember;
 			author = {
 				id: post.author.id,
@@ -178,7 +178,7 @@ export class FirestoreBoardService {
 			displayName: DELETED_MEMBER_DISPLAY_NAME,
 		};
 
-		if (memberDoc.exists) {
+		if (memberDoc.exists()) {
 			const memberData = memberDoc.data() as GroupMember;
 			author = {
 				id: comment.author.id,
@@ -219,7 +219,7 @@ export class FirestoreBoardService {
 		);
 		const memberDoc = await getDoc(memberRef);
 
-		if (memberDoc.exists) {
+		if (memberDoc.exists()) {
 			const memberData = memberDoc.data() as GroupMember;
 			return {
 				id: metadata.userId,
@@ -251,7 +251,7 @@ export class FirestoreBoardService {
 			);
 			const postDoc = await getDoc(postRef);
 
-			if (!postDoc.exists) {
+			if (!postDoc.exists()) {
 				return null;
 			}
 
@@ -318,7 +318,7 @@ export class FirestoreBoardService {
 					startAfterId,
 				);
 				const startAfterDoc = await getDoc(startAfterDocRef);
-				if (startAfterDoc.exists) {
+				if (startAfterDoc.exists()) {
 					queryRef = query(queryRef, startAfter(startAfterDoc));
 				}
 			}
@@ -329,7 +329,7 @@ export class FirestoreBoardService {
 					endBeforeId,
 				);
 				const endBeforeDoc = await getDoc(endBeforeDocRef);
-				if (endBeforeDoc.exists) {
+				if (endBeforeDoc.exists()) {
 					// @ts-ignore - endBefore는 DocumentSnapshot을 받을 수 있지만 타입 오류가 발생함
 					queryRef = query(queryRef, endBefore(endBeforeDoc));
 				}
@@ -444,7 +444,7 @@ export class FirestoreBoardService {
 
 			// 생성된 게시글 조회
 			const createdPostDoc = await getDoc(postRef);
-			if (!createdPostDoc.exists) {
+			if (!createdPostDoc.exists()) {
 				throw new Error('Failed to create post');
 			}
 
@@ -472,7 +472,7 @@ export class FirestoreBoardService {
 			);
 			const postDoc = await getDoc(postRef);
 
-			if (!postDoc.exists) {
+			if (!postDoc.exists()) {
 				throw new Error('Post not found');
 			}
 
@@ -560,7 +560,7 @@ export class FirestoreBoardService {
 			);
 			const postDoc = await getDoc(postRef);
 
-			if (!postDoc.exists) {
+			if (!postDoc.exists()) {
 				throw new Error('Post not found');
 			}
 
@@ -589,7 +589,7 @@ export class FirestoreBoardService {
 			);
 			const postDoc = await getDoc(postRef);
 
-			if (!postDoc.exists) {
+			if (!postDoc.exists()) {
 				throw new Error('Post not found');
 			}
 
@@ -660,7 +660,7 @@ export class FirestoreBoardService {
 				const parentCommentRef = doc(commentsRef, commentData.parentId);
 				const parentCommentDoc = await getDoc(parentCommentRef);
 
-				if (!parentCommentDoc.exists) {
+				if (!parentCommentDoc.exists()) {
 					throw new Error('Parent comment not found');
 				}
 
@@ -703,7 +703,7 @@ export class FirestoreBoardService {
 
 			// 생성된 댓글 조회
 			const createdCommentDoc = await getDoc(commentRef);
-			if (!createdCommentDoc.exists) {
+			if (!createdCommentDoc.exists()) {
 				throw new Error('Failed to create comment');
 			}
 
@@ -732,7 +732,7 @@ export class FirestoreBoardService {
 			const commentRef = doc(commentsRef, metadata.commentId);
 			const commentDoc = await getDoc(commentRef);
 
-			if (!commentDoc.exists) {
+			if (!commentDoc.exists()) {
 				throw new Error('Comment not found');
 			}
 
@@ -771,7 +771,7 @@ export class FirestoreBoardService {
 			const commentRef = doc(commentsRef, metadata.commentId);
 			const commentDoc = await getDoc(commentRef);
 
-			if (!commentDoc.exists) {
+			if (!commentDoc.exists()) {
 				throw new Error('Comment not found');
 			}
 
@@ -834,7 +834,7 @@ export class FirestoreBoardService {
 			}
 			const targetDoc = await getDoc(targetRef);
 
-			if (!targetDoc.exists) {
+			if (!targetDoc.exists()) {
 				throw new Error(
 					`${metadata.targetType} with ID ${metadata.postId} not found`,
 				);
@@ -916,7 +916,7 @@ export class FirestoreBoardService {
 			}
 			const targetDoc = await getDoc(targetRef);
 
-			if (!targetDoc.exists) {
+			if (!targetDoc.exists()) {
 				throw new Error(
 					`${metadata.targetType} with ID ${metadata.postId} not found`,
 				);

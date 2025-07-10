@@ -71,7 +71,7 @@ export class FirestoreUserService {
 		const userRef = doc(database, this.usersCollectionPath, userId);
 		const userDoc = await getDoc(userRef);
 
-		if (!userDoc.exists) {
+		if (!userDoc.exists()) {
 			return null;
 		}
 

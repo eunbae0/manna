@@ -20,7 +20,7 @@ export async function getDeveloperIds(): Promise<string[]> {
 		const configRef = doc(database, APP_CONFIG_COLLECTION, DEVELOPER_DOC_PATH);
 		const configDoc = await getDoc(configRef);
 
-		if (!configDoc.exists) {
+		if (!configDoc.exists()) {
 			return [];
 		}
 

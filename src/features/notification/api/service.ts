@@ -60,7 +60,7 @@ export class FirestoreNotificationService implements NotificationService {
 				if (!groupDataMap.has(data.metadata.groupId)) {
 					const groupRef = doc(database, 'groups', data.metadata.groupId);
 					const groupDoc = await getDoc(groupRef);
-					if (groupDoc.exists) {
+					if (groupDoc.exists()) {
 						const groupData = groupDoc.data() as Group;
 						groupDataMap.set(data.metadata.groupId, groupData.groupName);
 					}
@@ -121,7 +121,7 @@ export class FirestoreNotificationService implements NotificationService {
 				database,
 				'users',
 				this.userId,
-				'notifications'
+				'notifications',
 			);
 
 			const q = query(notificationsRef, orderBy('timestamp', 'desc'));
@@ -129,7 +129,7 @@ export class FirestoreNotificationService implements NotificationService {
 
 			// 읽지 않은 알림만 필터링
 			const unreadNotifications = querySnapshot.docs.filter(
-				(doc) => !doc.data().isRead
+				(doc) => !doc.data().isRead,
 			);
 
 			// 각 알림을 읽음 상태로 업데이트
@@ -139,9 +139,9 @@ export class FirestoreNotificationService implements NotificationService {
 					'users',
 					this.userId,
 					'notifications',
-					docSnapshot.id
+					docSnapshot.id,
 				);
-				
+
 				return updateDoc(notificationRef, {
 					isRead: true,
 				});
@@ -173,7 +173,7 @@ export class FirestoreNotificationService implements NotificationService {
 
 			const docSnapshot = await getDoc(notificationRef);
 
-			if (!docSnapshot.exists) {
+			if (!docSnapshot.exists()) {
 				throw new Error('알림을 찾을 수 없어요.');
 			}
 
