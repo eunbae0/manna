@@ -17,7 +17,7 @@ import { PrayerRequestFeedItem } from '@/features/feeds/components/PrayerRequest
 import { useInfiniteUserFeeds } from '@/features/feeds/hooks/useFeeds';
 import { Text } from '@/shared/components/text';
 import { useCallback } from 'react';
-import { ChevronRight } from 'lucide-react-native';
+import { ChevronRight, RefreshCcw } from 'lucide-react-native';
 import { HomeFeedItemListSkeleton } from '@/features/feeds/components/FeedItemSkeleton';
 
 export function HomeRecentGroupActivity() {
@@ -42,7 +42,7 @@ export function HomeRecentGroupActivity() {
 }
 
 function HomeRecentGroupActivityList() {
-  const { data, isLoading, error } = useInfiniteUserFeeds();
+  const { data, isLoading, error, refetch } = useInfiniteUserFeeds();
   const feeds = data?.pages.flatMap((page) => page.feeds);
   const slicedFeeds = feeds?.slice(0, 3);
 
@@ -51,7 +51,13 @@ function HomeRecentGroupActivityList() {
   }
 
   if (error) {
-    return <Text className="text-center py-10">최근 소그룹의 활동을 불러오는데 실패했어요.</Text>
+    return <VStack space="xl" className="pt-10 pb-2 items-center" >
+      <Text size="lg" className="text-center">최근 소그룹의 활동을 불러오는데 실패했어요.</Text>
+      <Button variant="outline" size="md" onPress={() => refetch()}>
+        <ButtonText>다시 시도하기</ButtonText>
+        <ButtonIcon as={RefreshCcw} size="lg" />
+      </Button>
+    </VStack>
   }
 
   return (

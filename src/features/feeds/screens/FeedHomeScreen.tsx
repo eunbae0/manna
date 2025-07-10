@@ -15,6 +15,8 @@ import type {
 import Divider from '@/shared/components/divider';
 import { RefreshControl } from 'react-native';
 import { FeedItemListSkeleton } from '../components/FeedItemSkeleton';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
+import { RefreshCcw } from 'lucide-react-native';
 
 export default function FeedHomeScreen() {
   return (
@@ -58,11 +60,14 @@ function FeedItemList() {
 
   if (error)
     return (
-      <Text className="text-center py-10">피드를 불러오는데 실패했어요.</Text>
+      <VStack space="xl" className="py-10 items-center" >
+        <Text size="lg" className="text-center">피드를 불러오는데 실패했어요.</Text>
+        <Button variant="outline" size="md" onPress={() => refetch()}>
+          <ButtonText>다시 시도하기</ButtonText>
+          <ButtonIcon as={RefreshCcw} size="lg" />
+        </Button>
+      </VStack>
     );
-
-  if (feeds.length === 0)
-    return <Text className="text-center py-10">새 글이 없어요.</Text>;
 
   return (
     <FlashList
@@ -82,7 +87,7 @@ function FeedItemList() {
         ) : null
       }
       ListHeaderComponent={<Divider size="lg" />}
-      style={{ height: '100%', paddingBottom: 24 }}
+      ListEmptyComponent={<Text className="text-center py-10">새 글이 없어요.</Text>}
     />
   );
 }

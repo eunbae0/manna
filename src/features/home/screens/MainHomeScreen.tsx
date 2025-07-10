@@ -18,14 +18,14 @@ export default function MainHomeScreen() {
   return (
     <VStack>
       <HomeHeader />
-      <ScrollView 
-        showsVerticalScrollIndicator={false} 
+      <ScrollView
+        showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl 
-            refreshing={isRefreshing} 
-            onRefresh={onRefresh} 
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
           />
-        } 
+        }
         style={{ height: '100%' }}
       >
         <HomeBanner />
