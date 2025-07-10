@@ -8,7 +8,7 @@ import { Button, ButtonIcon } from '@/components/common/button';
 import { CaseUpper, ChevronLeft, ListCollapse } from 'lucide-react-native';
 import { useBibleStore } from '../store/bible';
 import type { useBottomSheet } from '@/hooks/useBottomSheet';
-import type { BookIndex } from '../types';
+import type { BookIndex, BookIndexData } from '../types';
 import { SegmentedControl, SegmentedControlTrigger } from '@/shared/components/segmented-control';
 import { BibleSelectorBookList } from './BibleSelectorBookList';
 import { BibleSelectorChapterList } from './BibleSelectorChapterList';
@@ -137,16 +137,22 @@ function getBookList(bookIndex: BookIndex, listType: 'Group' | 'Alphabet') {
   const OT = bookIndex.filter((book) => book.type === 'OT');
   const NT = bookIndex.filter((book) => book.type === 'NT');
 
+  const filterByAlphabet = (book: BookIndexData[], alphabet: string) => {
+    return book
+      .filter((book) => getChoseong(book.name_kr).startsWith(getChoseong(alphabet)))
+      .sort((a, b) => a.name_kr.localeCompare(b.name_kr, 'ko-KR'))
+  }
+
   if (listType === 'Alphabet') {
     return {
       OT: 가나다.map((alphabet) => ({
         label: alphabet,
-        books: OT.filter((book) => getChoseong(book.name_kr).startsWith(getChoseong(alphabet))),
+        books: filterByAlphabet(OT, alphabet)
       })).filter((item) => item.books.length > 0),
       NT: 가나다.map((alphabet) => ({
         label: alphabet,
-        books: NT.filter((book) => getChoseong(book.name_kr).startsWith(getChoseong(alphabet))),
-      })).filter((item) => item.books.length > 0),
+        books: filterByAlphabet(NT, alphabet)
+      })).filter((item) => item.books.length > 0)
     }
   }
 
