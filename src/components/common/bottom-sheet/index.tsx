@@ -6,7 +6,7 @@ import { Text } from '@/shared/components/text';
 import { VStack } from '#/components/ui/vstack';
 import { cn } from '@/shared/utils/cn';
 import { X, type LucideIcon } from 'lucide-react-native';
-import { Pressable, type ViewProps, type PressableProps } from 'react-native';
+import type { ViewProps, PressableProps } from 'react-native';
 import AnimatedPressable from '../animated-pressable';
 import { Box } from '#/components/ui/box';
 
@@ -53,11 +53,14 @@ export const BottomSheetListHeader = ({
 	...props
 }: { label: string; onPress: () => void } & ViewProps) => {
 	return (
-		<HStack className={cn("justify-between items-center py-3 mb-2 w-full", className)} {...props}>
-			<Heading size="xl">{label}</Heading>
+		<HStack
+			className={cn('justify-between items-center py-3 mb-2 w-full', className)}
+			{...props}
+		>
+			<Heading size="2xl">{label}</Heading>
 			<Box className="absolute -right-2">
 				<Button size="lg" variant="icon" onPress={onPress}>
-					<ButtonIcon as={X} />
+					<ButtonIcon as={X} className="text-background-600" />
 				</Button>
 			</Box>
 		</HStack>

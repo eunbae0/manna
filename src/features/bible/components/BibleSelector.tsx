@@ -1,17 +1,18 @@
-import { VStack } from '#/components/ui/vstack';
-import AnimatedPressable from '@/components/common/animated-pressable';
-import {
-  BottomSheetListLayout,
-  BottomSheetListHeader,
-} from '@/components/common/bottom-sheet';
-import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { cn } from '@/shared/utils/cn';
-import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import React, { useMemo, useState } from 'react';
-import { FlatList, View } from 'react-native';
-import { useBibleStore } from '../store/bible';
+import { View } from 'react-native';
 import { Text } from '@/shared/components/text';
+import { HStack } from '#/components/ui/hstack';
+import { VStack } from '#/components/ui/vstack';
+import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
+import { Button, ButtonIcon } from '@/components/common/button';
+import { CaseUpper, ChevronLeft, ListCollapse } from 'lucide-react-native';
+import { useBibleStore } from '../store/bible';
 import type { useBottomSheet } from '@/hooks/useBottomSheet';
+import type { BookIndex } from '../types';
+import { SegmentedControl, SegmentedControlTrigger } from '@/shared/components/segmented-control';
+import { BibleSelectorBookList } from './BibleSelectorBookList';
+import { BibleSelectorChapterList } from './BibleSelectorChapterList';
+import { getChoseong } from 'es-hangul';
 
 type Props = {
   BibleSelectorBottomSheetContainer: ReturnType<
@@ -24,59 +25,15 @@ export function BibleSelector({
   BibleSelectorBottomSheetContainer,
   closeSelector,
 }: Props) {
-  const { bookIndex, currentBookId, setCurrentBook, setCurrentChapter } =
-    useBibleStore();
+  const { bookIndex, currentBookId } = useBibleStore();
 
-  const richBookIndex = useMemo(() => {
-    const OT = bookIndex.filter((book) => book.type === 'OT');
-    const NT = bookIndex.filter((book) => book.type === 'NT');
-    return {
-      OT: [
-        {
-          label: '모세오경',
-          books: OT.filter((book) => book.group_kr === '모세오경'),
-        },
-        {
-          label: '역사서',
-          books: OT.filter((book) => book.group_kr === '역사서'),
-        },
-        {
-          label: '시가서',
-          books: OT.filter((book) => book.group_kr === '시가서'),
-        },
-        {
-          label: '대선지서',
-          books: OT.filter((book) => book.group_kr === '대선지서'),
-        },
-        {
-          label: '소선지서',
-          books: OT.filter((book) => book.group_kr === '소선지서'),
-        },
-      ],
-      NT: [
-        {
-          label: '복음서',
-          books: NT.filter((book) => book.group_kr === '복음서'),
-        },
-        {
-          label: '역사서',
-          books: NT.filter((book) => book.group_kr === '역사서'),
-        },
-        {
-          label: '바울서신',
-          books: NT.filter((book) => book.group_kr === '바울서신'),
-        },
-        {
-          label: '일반서신',
-          books: NT.filter((book) => book.group_kr === '일반서신'),
-        },
-        {
-          label: '예언서',
-          books: NT.filter((book) => book.group_kr === '예언서'),
-        },
-      ],
-    };
-  }, [bookIndex]);
+  const [listType, setListType] = useState<'Group' | 'Alphabet'>('Group');
+
+  const handlePressListType = (type: 'Group' | 'Alphabet') => {
+    setListType(type);
+  };
+
+  const bookList = useMemo(() => getBookList(bookIndex, listType), [bookIndex, listType]);
 
   const currentBookType = useMemo(() => {
     const book = bookIndex.find((book) => book.id === currentBookId);
@@ -87,160 +44,152 @@ export function BibleSelector({
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [step, setStep] = useState<'book' | 'chapter'>('book');
 
-  const handleSetCurrentType = (type: 'OT' | 'NT') => {
-    setCurrentType(type);
+
+  const handlePressListItem = (bookId: string) => {
+    setSelectedBook(bookId);
+    setStep('chapter');
   };
 
-  const label = useMemo(() => {
-    if (currentType === 'OT') {
-      return '신약 보기';
-    }
-    return '구약 보기';
-  }, [currentType]);
+  const selectedBookName = useMemo(() => {
+    const book = bookIndex.find((book) => book.id === selectedBook);
+    return book?.name_kr || '';
+  }, [bookIndex, selectedBook]);
 
   return (
     <BibleSelectorBottomSheetContainer
-      snapPoints={['70%']}
+      snapPoints={['80%']}
       enableDynamicSizing={false}
     >
-      <BottomSheetListLayout>
-        <BottomSheetListHeader
-          label="성경을 선택해주세요"
-          onPress={closeSelector}
-        />
-        {step === 'book' ? (
-          <FlatList
-            data={richBookIndex[currentType]}
-            renderItem={({ item }) => (
-              <VStack space="sm" className="mb-3">
-                <Text size="lg" weight="medium" className="text-typography-600">
-                  {item.label}
-                </Text>
-                <FlatList
-                  data={item.books}
-                  renderItem={({ item: book, index }) => {
-                    const shouldAddSpacer =
-                      item.books.length === index + 1 &&
-                      item.books.length % 3 !== 0;
-                    const spacerCount = 3 - (item.books.length % 3);
-                    return (
-                      <>
-                        <AnimatedPressable
-                          key={book.id}
-                          onPress={() => {
-                            setSelectedBook(book.id);
-                            setStep('chapter');
-                          }}
-                          className="flex-1 mb-2"
-                        >
-                          <View
-                            className={cn(
-                              'py-4 rounded-md items-center border',
-                              book.id === currentBookId
-                                ? 'bg-primary-500/80 border-primary-500'
-                                : 'bg-primary-200/30 border-primary-200/30',
-                            )}
-                          >
-                            <Text
-                              size="lg"
-                              weight="medium"
-                              className={cn(
-                                book.id === currentBookId
-                                  ? 'text-primary-50'
-                                  : 'text-primary-700',
-                              )}
-                            >
-                              {book.name_kr}
-                            </Text>
-                          </View>
-                        </AnimatedPressable>
-                        {shouldAddSpacer &&
-                          Array(spacerCount)
-                            .fill(0)
-                            .map((_, i) => (
-                              <View
-                                key={`spacer-${book.id}-${i}`}
-                                className="flex-1"
-                              />
-                            ))}
-                      </>
-                    );
-                  }}
-                  keyExtractor={(item) => item.id}
-                  numColumns={3}
-                  columnWrapperStyle={{ gap: 8 }}
-                  showsVerticalScrollIndicator={false}
-                />
-              </VStack>
+      <VStack space="md" className="flex-1 justify-between pt-1 pb-2">
+        <VStack space="xl" className="flex-1">
+          <VStack space="sm">
+            <View className='px-5'>
+              <BottomSheetListHeader
+                label={step === 'book' ? "성경을 선택해주세요" : "장을 선택해주세요"}
+                onPress={closeSelector}
+              />
+            </View>
+
+            {step === 'book' && <HStack space="xs" className='pl-5 pr-3'>
+              <SegmentedControl
+                defaultValue="OT"
+                onValueChange={(value) => setCurrentType(value as 'OT' | 'NT')}
+                className='flex-1'
+              >
+                <SegmentedControlTrigger value="OT" label="구약" withHaptic />
+                <SegmentedControlTrigger value="NT" label="신약" withHaptic />
+              </SegmentedControl>
+
+              {listType === 'Group' && <Button
+                size="md"
+                variant='icon'
+                onPress={() => handlePressListType('Alphabet')}
+                withHaptic
+              >
+                <ButtonIcon as={CaseUpper} />
+              </Button>}
+              {listType === 'Alphabet' && <Button
+                size="md"
+                variant='icon'
+                onPress={() => handlePressListType('Group')}
+                withHaptic
+              >
+                <ButtonIcon as={ListCollapse} />
+              </Button>}
+            </HStack>
+            }
+            {step === 'chapter' && (
+              <HStack className='items-center pl-2'>
+                <Button size="lg" variant='icon' onPress={() => setStep('book')}>
+                  <ButtonIcon as={ChevronLeft} className='text-primary-800' />
+                </Button>
+                <Text size="xl" weight="semi-bold" className="text-typography-800">{selectedBookName}</Text>
+              </HStack>
             )}
-            keyExtractor={(item) => item.label}
-            showsVerticalScrollIndicator={false}
-            style={{ height: '80%' }}
-          />
-        ) : (
-          <FlatList
-            data={Array.from(
-              {
-                length:
-                  bookIndex.find((book) => book.id === selectedBook)
-                    ?.chapters_count || 0,
-              },
-              (_, i) => i + 1,
-            )}
-            renderItem={({ item }) => (
-              <VStack space="sm" className="mb-1">
-                <AnimatedPressable
-                  onPress={() => {
-                    setCurrentBook(selectedBook);
-                    setCurrentChapter(Number(item));
-                    closeSelector();
-                  }}
-                  className="mb-2"
-                  withHaptic
-                >
-                  <View className="py-4 rounded-md items-center bg-primary-200/30">
-                    <Text
-                      size="lg"
-                      weight="medium"
-                      className="text-primary-700"
-                    >
-                      {item}
-                    </Text>
-                  </View>
-                </AnimatedPressable>
-              </VStack>
-            )}
-            keyExtractor={(item) => `${item.toString()}#${selectedBook}`}
-            // numColumns={3}
-            // columnWrapperStyle={{ gap: 8 }}
-            style={{ height: '80%' }}
-          />
-        )}
-      </BottomSheetListLayout>
-      {step === 'book' ? (
-        <Button
-          size="lg"
-          onPress={() =>
-            handleSetCurrentType(currentType === 'OT' ? 'NT' : 'OT')
-          }
-          rounded={false}
-          className="mx-4"
-        >
-          {currentType === 'NT' ? <ButtonIcon as={ChevronLeft} /> : null}
-          <ButtonText>{label}</ButtonText>
-          {currentType === 'OT' ? <ButtonIcon as={ChevronRight} /> : null}
-        </Button>
-      ) : (
-        <Button
-          size="lg"
-          onPress={() => setStep('book')}
-          rounded={false}
-          className="mx-4"
-        >
-          <ButtonIcon as={ChevronLeft} />
-          <ButtonText>다시 성경 선택하기</ButtonText>
-        </Button>
-      )}
+          </VStack>
+
+          {step === 'book' && (
+            <BibleSelectorBookList
+              data={bookList[currentType]}
+              handlePressListItem={handlePressListItem}
+            />
+          )}
+          {step === 'chapter' && (
+            <BibleSelectorChapterList
+              selectedBook={selectedBook}
+              closeSelector={closeSelector}
+            />
+          )}
+        </VStack>
+      </VStack>
     </BibleSelectorBottomSheetContainer>
   );
+}
+
+
+const 가나다 = ['가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하']
+
+function getBookList(bookIndex: BookIndex, listType: 'Group' | 'Alphabet') {
+  const OT = bookIndex.filter((book) => book.type === 'OT');
+  const NT = bookIndex.filter((book) => book.type === 'NT');
+
+  if (listType === 'Alphabet') {
+    return {
+      OT: 가나다.map((alphabet) => ({
+        label: alphabet,
+        books: OT.filter((book) => getChoseong(book.name_kr).startsWith(getChoseong(alphabet))),
+      })).filter((item) => item.books.length > 0),
+      NT: 가나다.map((alphabet) => ({
+        label: alphabet,
+        books: NT.filter((book) => getChoseong(book.name_kr).startsWith(getChoseong(alphabet))),
+      })).filter((item) => item.books.length > 0),
+    }
+  }
+
+  return {
+    OT: [
+      {
+        label: '모세오경',
+        books: OT.filter((book) => book.group_kr === '모세오경'),
+      },
+      {
+        label: '역사서',
+        books: OT.filter((book) => book.group_kr === '역사서'),
+      },
+      {
+        label: '시가서',
+        books: OT.filter((book) => book.group_kr === '시가서'),
+      },
+      {
+        label: '대선지서',
+        books: OT.filter((book) => book.group_kr === '대선지서'),
+      },
+      {
+        label: '소선지서',
+        books: OT.filter((book) => book.group_kr === '소선지서'),
+      },
+    ],
+    NT: [
+      {
+        label: '복음서',
+        books: NT.filter((book) => book.group_kr === '복음서'),
+      },
+      {
+        label: '역사서',
+        books: NT.filter((book) => book.group_kr === '역사서'),
+      },
+      {
+        label: '바울서신',
+        books: NT.filter((book) => book.group_kr === '바울서신'),
+      },
+      {
+        label: '일반서신',
+        books: NT.filter((book) => book.group_kr === '일반서신'),
+      },
+      {
+        label: '예언서',
+        books: NT.filter((book) => book.group_kr === '예언서'),
+      },
+    ],
+  };
 }
