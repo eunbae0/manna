@@ -177,7 +177,7 @@ export const useBottomSheet = ({
 			>
 				<KeyboardDismissView>
 					<BottomSheetView
-						style={{ paddingBottom: isModal ? 0 : insets.bottom }}
+						style={{ height: props.snapPoints ? '100%' : undefined, paddingBottom: isModal ? 0 : insets.bottom }}
 						onLayout={handleContentLayout}
 						{...keyDownHandlers}
 					>
