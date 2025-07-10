@@ -117,7 +117,11 @@ export function BibleSelector({
           {step === 'chapter' && (
             <BibleSelectorChapterList
               selectedBook={selectedBook}
-              closeSelector={closeSelector}
+              closeSelector={() => {
+                setStep('book');
+                setSelectedBook(null);
+                closeSelector();
+              }}
             />
           )}
         </VStack>

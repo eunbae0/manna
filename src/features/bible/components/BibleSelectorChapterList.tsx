@@ -4,6 +4,7 @@ import { VStack } from '#/components/ui/vstack';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { View } from 'react-native';
 import { Text } from '@/shared/components/text';
+import { useToastStore } from '@/store/toast';
 
 export function BibleSelectorChapterList({
   selectedBook,
@@ -15,6 +16,8 @@ export function BibleSelectorChapterList({
   const { bookIndex, setCurrentBook, setCurrentChapter } =
     useBibleStore();
 
+  const { showInfo } = useToastStore()
+
   const data = Array.from(
     {
       length:
@@ -24,9 +27,22 @@ export function BibleSelectorChapterList({
     (_, i) => i + 1,
   );
 
-  if (!selectedBook) {
+
+
+  const handlePressListItem = (chapter: number) => {
+    if (!selectedBook) {
+      closeSelector();
+      return;
+    }
+    const bookName = bookIndex.find((book) => book.id === selectedBook)?.name_kr;
+
+    setCurrentBook(selectedBook);
+    setCurrentChapter(Number(chapter));
     closeSelector();
-    return null;
+
+    setTimeout(() => {
+      showInfo(`${bookName} ${chapter}장으로 이동했어요.`);
+    }, 50);
   }
 
   return (
@@ -37,9 +53,7 @@ export function BibleSelectorChapterList({
         <VStack space="sm" className="mb-1 flex-1">
           <AnimatedPressable
             onPress={() => {
-              setCurrentBook(selectedBook);
-              setCurrentChapter(Number(item));
-              closeSelector();
+              handlePressListItem(item);
             }}
             className="mb-2"
             withHaptic
