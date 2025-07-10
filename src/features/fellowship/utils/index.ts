@@ -60,7 +60,10 @@ export function getCompactFellowshipContents(
 				.map((item) => {
 					const answerEntries = Object.entries(item.answers || {});
 					if (answerEntries.length === 0) return null;
-					const randomIdx = Math.floor(Math.random() * answerEntries.length);
+					let randomIdx = Math.floor(Math.random() * answerEntries.length);
+					while (!answerEntries[randomIdx][1]) {
+						randomIdx = Math.floor(Math.random() * answerEntries.length);
+					}
 					const [memberId, answer] = answerEntries[randomIdx];
 					return {
 						member: findMemberInfo(memberId),
