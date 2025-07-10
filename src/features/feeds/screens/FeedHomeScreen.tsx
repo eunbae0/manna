@@ -19,7 +19,7 @@ import { FeedItemListSkeleton } from '../components/FeedItemSkeleton';
 export default function FeedHomeScreen() {
   return (
     <VStack space="sm" className="w-full flex-1">
-      <Heading size="2xl" className="px-5 pt-4 pb-2">
+      <Heading size="2xl" className="px-5 pt-4 pb-3">
         최근 피드
       </Heading>
       <FeedItemList />

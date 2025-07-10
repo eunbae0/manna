@@ -56,7 +56,7 @@ export function FellowshipFeedItem({ item }: { item: FellowshipFeed }) {
         <HStack space="sm" className="items-center mb-3">
           <VStack space="xs" className="flex-1">
             <HStack space="sm" className="items-center">
-              <Text size="xl" weight="semi-bold" className="text-typography-700">
+              <Text size="xl" weight="semi-bold" className="text-typography-800">
                 {item.data.info.title}
               </Text>
               <View className="bg-primary-200/50 px-2 py-1 rounded-full items-center">
@@ -100,7 +100,7 @@ function ContentItem({ item }: { item: ReturnType<typeof getCompactFellowshipCon
       <Text
         size="lg"
         numberOfLines={1}
-        className="text-typography-700"
+        className="text-typography-800"
       >
         {item.content.answer}
       </Text>

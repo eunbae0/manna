@@ -34,7 +34,7 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
           <Avatar size="md" photoUrl={authorMember?.photoUrl || undefined} />
           <VStack className="gap-[2px] flex-1">
             <HStack space="sm" className="items-center">
-              <Text size="lg" weight="semi-bold" className="text-typography-700">{authorMember?.displayName}</Text>
+              <Text size="lg" weight="semi-bold" className="text-typography-800">{authorMember?.displayName}</Text>
               <View className="bg-primary-200/50 px-2 py-1 rounded-full items-center">
                 <Text size="xs" className='text-primary-600'>{group?.groupName}</Text>
               </View>
@@ -51,7 +51,7 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
           </VStack>
         </HStack>
 
-        <Text size="xl" className="mt-2 text-typography-700">{item.data.content}</Text>
+        <Text size="xl" className="mt-2 text-typography-800">{item.data.content}</Text>
 
         <HStack className="mt-3 pt-2">
           <HStack space="xl" className="items-center">
