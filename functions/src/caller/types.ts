@@ -1,4 +1,6 @@
-export type FeedTypeCollectionName = 'fellowship' | 'posts' | 'prayer-requests';
+import type { feedTypes } from './feedTypes';
+
+export type FeedTypeCollectionName = (typeof feedTypes)[number];
 
 export interface Feed {
 	identifier: {
@@ -19,6 +21,7 @@ export interface Feed {
 export interface RequestData {
 	lastVisible?: number | null;
 	limit?: number;
+	groupIds?: string[];
 }
 
 export interface ResponseData {

@@ -35,6 +35,7 @@ export type Feed = FellowshipFeed | PostsFeed | PrayerRequestsFeed;
 export interface RequestData {
 	lastVisible?: number | null;
 	limit?: number;
+	groupIds?: string[];
 }
 
 export interface ResponseData {

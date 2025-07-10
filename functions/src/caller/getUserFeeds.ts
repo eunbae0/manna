@@ -4,61 +4,64 @@ import {
 	HttpsError,
 	type CallableRequest,
 } from 'firebase-functions/v2/https';
+import { logger } from 'firebase-functions';
 import type {
 	RequestData,
 	ResponseData,
 	Feed,
-	FeedTypeCollectionName,
 	Member,
+	FeedTypeCollectionName,
 } from './types';
+import { feedTypes } from './feedTypes';
 
-const MAX_LIMIT = 10;
 const CREATED_AT_IDENTIFIER = 'createdAt';
 const CREATED_AT_IDENTIFIER_SCHEMA_V2 = 'metadata.createdAt';
+const GROUP_ID_IDENTIFIER = 'groupId';
+const GROUP_ID_IDENTIFIER_SCHEMA_V2 = 'identifiers.groupId';
+
+const MAX_LIMIT = 10;
 
 export function getUserFeeds() {
-	return onCall(
+	return onCall<RequestData>(
 		async (request: CallableRequest<RequestData>): Promise<ResponseData> => {
 			if (!request.auth) {
 				throw new HttpsError('unauthenticated', '로그인이 필요합니다.');
 			}
 
-			const userId = request.auth.uid;
-			const { lastVisible = null, limit = 10 } = request.data;
+			const { lastVisible = null, limit = 10, groupIds = [] } = request.data;
 
 			try {
-				// 1. 사용자의 그룹 목록 가져오기
-				const groupsSnapshot = await admin
-					.firestore()
-					.collection('users')
-					.doc(userId)
-					.collection('groups')
-					.get();
-
-				if (groupsSnapshot.empty) {
-					return { feeds: [], lastVisible: null, hasMore: false };
-				}
-
-				const groupIds = groupsSnapshot.docs.map((doc) => doc.data().groupId);
-
-				// 2. 각 그룹별로 제한된 개수의 최신 데이터만 가져오기
 				const fetchLimit = Math.max(limit, MAX_LIMIT);
 
-				const buildCollectionGroupQuery = (
-					groupId: string,
-					collectionName: FeedTypeCollectionName,
-				) => {
-					const isSchemaV2 = collectionName === 'fellowship';
+				const memberPromises = groupIds.map((groupId) =>
+					admin
+						.firestore()
+						.collection('groups')
+						.doc(groupId)
+						.collection('members')
+						.get(),
+				);
+
+				const feedPromises = feedTypes.map((type) => {
+					const isSchemaV2 = type === 'fellowship';
 					const createdAtIdentifier = isSchemaV2
 						? CREATED_AT_IDENTIFIER_SCHEMA_V2
 						: CREATED_AT_IDENTIFIER;
 
+					const groupIdIdentifier = isSchemaV2
+						? GROUP_ID_IDENTIFIER_SCHEMA_V2
+						: GROUP_ID_IDENTIFIER;
+
 					let query = admin
 						.firestore()
-						.collection('groups')
-						.doc(groupId)
-						.collection(collectionName)
-						.orderBy(createdAtIdentifier, 'desc');
+						.collectionGroup(type)
+						.where(groupIdIdentifier, 'in', groupIds);
+
+					if (type === 'posts') {
+						query = query.where('isDeleted', '==', false);
+					}
+
+					query = query.orderBy(createdAtIdentifier, 'desc');
 
 					if (lastVisible) {
 						const lastVisibleTimestamp =
@@ -66,77 +69,49 @@ export function getUserFeeds() {
 						query = query.where(createdAtIdentifier, '<', lastVisibleTimestamp);
 					}
 
-					return query.limit(fetchLimit);
-				};
-
-				const allFeedsPromises = groupIds.map(async (groupId) => {
-					const [fellowshipSnap, postsSnap, prayerRequestsSnap] =
-						await Promise.all([
-							buildCollectionGroupQuery(groupId, 'fellowship').get(),
-							buildCollectionGroupQuery(groupId, 'posts').get(),
-							buildCollectionGroupQuery(groupId, 'prayer-requests').get(),
-						]);
-
-					const feeds: Feed[] = [];
-
-					const memberSnapshot = await admin
-						.firestore()
-						.collection('groups')
-						.doc(groupId)
-						.collection('members')
-						.get();
-
-					const members = memberSnapshot.docs.map(
-						(doc) => doc.data() as Member,
-					);
-
-					// 각 컬렉션의 데이터를 활동 배열에 추가
-					const addFeeds = (
-						snapshot: FirebaseFirestore.QuerySnapshot,
-						type: FeedTypeCollectionName,
-					) => {
-						const isSchemaV2 = type === 'fellowship';
-						for (const doc of snapshot.docs) {
-							const data = doc.data();
-							feeds.push({
-								identifier: {
-									id: doc.id,
-									groupId,
-								},
-								metadata: {
-									type,
-									timestamp: isSchemaV2
-										? data.metadata.createdAt?.toMillis() || 0
-										: data.createdAt?.toMillis() || 0,
-								},
-								members,
-								data,
-							});
-						}
-					};
-
-					addFeeds(fellowshipSnap, 'fellowship');
-					addFeeds(postsSnap, 'posts');
-					addFeeds(prayerRequestsSnap, 'prayer-requests');
-
-					return feeds;
+					return query.limit(fetchLimit).get();
 				});
 
-				// 3. 모든 데이터 합치고 정렬
-				const allFeedsArrays = await Promise.all(allFeedsPromises);
-				let allFeeds = allFeedsArrays.flat();
+				const fetchFeedsStartTime = Date.now();
 
-				// 시간순 정렬 (최신순)
-				allFeeds.sort((a, b) => b.metadata.timestamp - a.metadata.timestamp);
+				const [memberSnapshots, feedSnapshots] = await Promise.all([
+					Promise.all(memberPromises),
+					Promise.all(feedPromises),
+				]);
+				const membersMap = generateMembersMap(memberSnapshots);
+				const fetchFeedsEndTime = Date.now();
+				logger.info(
+					`::Fetched all feeds with collectionGroup in ${fetchFeedsEndTime - fetchFeedsStartTime}ms`,
+				);
 
-				// 4. lastVisible 이후의 데이터만 필터링
-				if (lastVisible) {
-					allFeeds = allFeeds.filter(
-						(feed) => feed.metadata.timestamp < lastVisible,
-					);
+				const allFeeds: Feed[] = [];
+
+				for (const snapshot of feedSnapshots) {
+					for (const doc of snapshot.docs) {
+						const data = doc.data();
+						const type = doc.ref.parent.id as FeedTypeCollectionName;
+						const isSchemaV2 = type === 'fellowship';
+
+						const groupId = isSchemaV2
+							? data.identifiers.groupId
+							: data.groupId;
+
+						allFeeds.push({
+							identifier: { id: doc.id, groupId },
+							metadata: {
+								type,
+								timestamp: isSchemaV2
+									? data.metadata.createdAt?.toMillis() || 0
+									: data.createdAt?.toMillis() || 0,
+							},
+							members: membersMap.get(groupId) || [],
+							data,
+						});
+					}
 				}
 
-				// 5. 요청된 개수만큼 자르기
+				allFeeds.sort((a, b) => b.metadata.timestamp - a.metadata.timestamp);
+
 				const paginatedFeeds = allFeeds.slice(0, limit);
 				const newLastVisible =
 					paginatedFeeds.length > 0
@@ -150,7 +125,7 @@ export function getUserFeeds() {
 					hasMore,
 				};
 			} catch (error) {
-				console.error('getUserFeeds 오류:', error);
+				logger.error('Error in getUserFeeds:', error);
 				throw new HttpsError(
 					'internal',
 					'데이터를 가져오는 중 오류가 발생했습니다.',
@@ -158,4 +133,19 @@ export function getUserFeeds() {
 			}
 		},
 	);
+}
+
+function generateMembersMap(
+	memberSnapshots: admin.firestore.QuerySnapshot<admin.firestore.DocumentData>[],
+) {
+	const membersMap = new Map<string, Member[]>();
+	for (const snapshot of memberSnapshots) {
+		const groupId = snapshot.docs[0].ref.parent.parent?.id;
+		if (!groupId) {
+			continue;
+		}
+		const members = snapshot.docs.map((doc) => doc.data() as Member);
+		membersMap.set(groupId, members);
+	}
+	return membersMap;
 }

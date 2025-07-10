@@ -18,10 +18,12 @@ export class FirestoreFeedService {
 	getUserFeeds({
 		lastVisible = null,
 		limit = 10,
+		groupIds = [],
 	}: RequestData): ReturnType<ReturnType<typeof httpsCallable<ResponseData>>> {
 		return functions.httpsCallable('getUserFeeds')({
 			lastVisible,
 			limit,
+			groupIds,
 		});
 	}
 }
