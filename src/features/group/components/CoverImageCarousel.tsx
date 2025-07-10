@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/auth';
 import { ImageIcon } from 'lucide-react-native';
 import { Text } from '@/shared/components/text'
 import { useGroup } from '@/features/group/hooks/useGroup';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 export function CoverImageCarousel() {
   const { user, currentGroup } = useAuthStore()
@@ -42,12 +43,14 @@ export function CoverImageCarousel() {
         renderItem={({ item }) => (
           <View>
             <Image
-              source={{ uri: item.uri }}
+              source={getImageSourceForSignedImageUrl(item.uri)}
               style={{
                 width: '100%',
                 height: 200,
               }}
               contentFit="cover"
+              priority="high"
+              cachePolicy="memory-disk"
             />
           </View>
         )}

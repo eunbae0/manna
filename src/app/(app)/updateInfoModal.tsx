@@ -23,6 +23,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { isAndroid } from '@/shared/utils/platform';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 export default function UpdateInfoModal() {
   const insets = useSafeAreaInsets();
@@ -128,7 +129,7 @@ export default function UpdateInfoModal() {
                             className="overflow-hidden"
                           >
                             <Image
-                              source={{ uri: imageUrl }}
+                              source={getImageSourceForSignedImageUrl(imageUrl)}
                               alt={note.title}
                               style={{
                                 width: 200,

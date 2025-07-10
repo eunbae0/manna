@@ -18,6 +18,7 @@ import type { CoverImage, UpdateGroupInput } from '@/api/group/types';
 import { useToastStore } from '@/store/toast';
 import Heading from '@/shared/components/heading';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 const MAX_IMAGE_COUNT = 3;
 
@@ -329,7 +330,7 @@ export default function CoverImagesManagement() {
                     </View>
                   ) : (
                     <Image
-                      source={{ uri: item.uri }}
+                      source={getImageSourceForSignedImageUrl(item.uri)}
                       style={{ width: '100%', height: 160 }}
                       contentFit="cover"
                     />
@@ -380,7 +381,7 @@ export default function CoverImagesManagement() {
                   ) : (
                     <>
                       <Image
-                        source={{ uri: item.uri }}
+                        source={getImageSourceForSignedImageUrl(item.uri)}
                         style={{ width: '100%', height: 160 }}
                         contentFit="cover"
                         className="rounded-lg"

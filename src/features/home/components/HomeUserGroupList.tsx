@@ -11,6 +11,7 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { router } from 'expo-router';
 import { useAuthStore } from '@/store/auth';
 import HomeUserGroupListSkeleton from './HomeUserGroupListSkeleton';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 type Props = {
   groups: UserGroup[];
@@ -52,9 +53,11 @@ function GroupItem({ group }: { group: ClientGroup }) {
     <AnimatedPressable onPress={handlePressGroupItem}>
       <VStack space="sm" className="items-center pr-4">
         <Image
-          source={{ uri }}
+          source={getImageSourceForSignedImageUrl(uri)}
           contentFit="cover"
           style={{ width: 120, height: 80, borderRadius: 14 }}
+          priority="high"
+          cachePolicy="memory-disk"
         />
         <Text size="sm" weight="medium" className="text-typography-800">{group.groupName}</Text>
       </VStack>

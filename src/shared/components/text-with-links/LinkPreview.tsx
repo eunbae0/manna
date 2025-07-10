@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { Linking } from 'react-native';
 import { Box } from '#/components/ui/box';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 // OG 태그 정보 타입 정의
 interface OgMetadata {
@@ -121,7 +123,7 @@ export function LinkPreview({ url }: LinkPreviewProps) {
           {metadata.image && (
             <Box className="w-1/4 aspect-square bg-gray-100">
               <Image
-                source={{ uri: metadata.image }}
+                source={getImageSourceForSignedImageUrl(metadata.image)}
                 className="w-full h-full"
                 resizeMode="cover"
               />

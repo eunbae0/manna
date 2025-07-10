@@ -12,6 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { VStack } from '#/components/ui/vstack';
 import { IMAGE_BLUR_HASH } from '@/shared/constants';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 export type AvatarProps = {
 	type?: 'leader' | 'member';
@@ -47,11 +48,11 @@ const Avatar = forwardRef<View, AvatarProps>(
 				>
 					{photoUrl ? (
 						<Image
-							source={{ uri: photoUrl }}
+							source={getImageSourceForSignedImageUrl(photoUrl)}
 							style={{ width, height, borderRadius: 100 }}
 							contentFit="cover"
 							placeholder={{ blurhash: IMAGE_BLUR_HASH }}
-							transition={200}
+							transition={50}
 						/>
 					) : (
 						<Icon

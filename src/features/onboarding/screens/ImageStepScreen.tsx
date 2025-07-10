@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Alert, Image, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
-import * as ImageManipulator from 'expo-image-manipulator';
 import Header from '@/components/common/Header';
 import { PlusCircle, UserRoundPen, X } from 'lucide-react-native';
 import { Text } from '@/shared/components/text';
@@ -13,6 +12,8 @@ import { Box } from '#/components/ui/box';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Icon } from '#/components/ui/icon';
 import { HStack } from '#/components/ui/hstack';
+import Image from 'expo-image';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 export default function ImageStepScreen() {
 	const { setStep, updateUserData, userData } = useOnboardingStore();
@@ -68,7 +69,7 @@ export default function ImageStepScreen() {
 							<AnimatedPressable onPress={handlePickImage}>
 								{imageUri ? (
 									<Image
-										source={{ uri: imageUri }}
+										source={getImageSourceForSignedImageUrl(imageUri)}
 										style={{
 											width: 200,
 											height: 200,

@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchAllUpdateNotes } from '@/api/app_config';
 import { Divider } from '#/components/ui/divider';
 import Header from '@/components/common/Header';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 export default function UpdateNoteScreen() {
   const {
@@ -79,7 +80,7 @@ export default function UpdateNoteScreen() {
                                     key={imageUrl}
                                   >
                                     <Image
-                                      source={{ uri: imageUrl }}
+                                      source={getImageSourceForSignedImageUrl(imageUrl)}
                                       alt={note.title}
                                       style={{
                                         width: 168,
