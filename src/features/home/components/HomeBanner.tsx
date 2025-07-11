@@ -13,7 +13,7 @@ export function HomeBanner() {
       <View className="relative bg-background-100/70 mx-4 h-24 rounded-3xl overflow-hidden border border-primary-100">
         <HStack className="w-full h-24 pl-5 pr-2 items-center justify-between">
           <VStack space="xs">
-            <Text size="lg" className="text-typography-700">소그룹원들과 공유 가능!</Text>
+            <Text size="lg" className="text-typography-700">성경 본문 추가 가능!</Text>
             <HStack className="gap-px items-center">
               <Text size="xl" weight="bold" className="text-typography-900">지금 설교 노트를 작성해보세요</Text>
               <Icon as={ChevronRight} className="text-typography-900" />
