@@ -50,7 +50,9 @@ import { BibleSelector } from '@/features/bible/components/BibleSelector';
 export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   const isCreateScreen = screen === 'create';
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id?: string }>();
+  const { id, sermon } = useLocalSearchParams<{ id?: string, sermon?: string }>();
+
+  const paramSermon = sermon ? [JSON.parse(sermon)] as SelectedBible[] : [];
 
   const { user } = useAuthStore();
 
@@ -70,7 +72,15 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   const { showSuccess } = useToastStore();
 
   // Get worship types from global store
-  const { worshipTypes } = useWorshipStore();
+  const { worshipTypes, setWorshipTypes } = useWorshipStore();
+
+
+  // TODO: worshipType을 local에서 관리하는 기능 추가시 삭제
+  useEffect(() => {
+    if (worshipTypes.length > 0) {
+      setWorshipTypes(worshipTypes);
+    }
+  }, [worshipTypes, setWorshipTypes]);
 
   const existedNote = useMemo(
     () => (id ? noteStorage.getNote(id) : undefined),
@@ -108,7 +118,9 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   });
 
   // Local state for editing
-  const [editableNote, setEditableNote] = useState<Partial<Note>>({});
+  const [editableNote, setEditableNote] = useState<Partial<Note>>({
+    sermon: paramSermon,
+  });
 
   // Initialize editable note and date when note data is loaded
   useEffect(() => {

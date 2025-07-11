@@ -24,6 +24,9 @@ import { cn } from '@/shared/utils/cn';
 import { isIOS } from '@/shared/utils/platform';
 import type { VerseHighlight, VerseHighlightColor, VerseHighlightType } from '../types/highlight';
 import { HIGHLIGHT_COLOR_MAP } from '../constants/highlight';
+import { router } from 'expo-router';
+import { formatToSelectedBible } from '../utils/selectedBible';
+import { useToastStore } from '@/store/toast';
 
 type Props = {
   BottomSheetContainer: ReturnType<
@@ -59,6 +62,8 @@ export default function BibleVerseSheet({
   });
   const { shareText } = useShareText();
 
+  const { showError } = useToastStore();
+
   const handleCopyText = async () => {
     const text = formatCopyedText({
       verses,
@@ -82,7 +87,20 @@ export default function BibleVerseSheet({
   };
 
   const handleAddToNote = () => {
-    // TODO: 설교 노트에 추가 기능 추가
+    if (!currentBook || !currentChapter) {
+      showError('책 정보를 찾을 수 없어요.')
+      handleCloseSheet();
+      return;
+    }
+    const selectedBible = formatToSelectedBible({
+      verses,
+      bookId: currentBook.id,
+      bookName: currentBook.name_kr,
+      chapter: currentChapter,
+      selectedVerses,
+    });
+    router.push(`/(app)/(note)/create?sermon=${JSON.stringify(selectedBible)}`);
+    handleCloseSheet();
   };
 
   const handleAddToFellowship = () => {
@@ -93,12 +111,17 @@ export default function BibleVerseSheet({
     type: VerseHighlightType,
     color: VerseHighlightColor,
   ) => {
+    if (!currentBookId || !currentChapter) {
+      showError('책 정보를 찾을 수 없어요.')
+      handleCloseSheet();
+      return;
+    }
     // TODO: delete highlights 기능 추가
     const highlights = selectedVerses.map((verse) => ({
       id: `${currentBookId}-${currentChapter}-${verse}`,
       identifier: {
-        bookId: currentBookId!,
-        chapter: currentChapter!,
+        bookId: currentBookId,
+        chapter: currentChapter,
         verse,
       },
       color,
@@ -171,7 +194,7 @@ export default function BibleVerseSheet({
                   </Text>
                 </HStack>
               </AnimatedPressable>
-              <AnimatedPressable onPress={handleAddToFellowship}>
+              {/* <AnimatedPressable onPress={handleAddToFellowship}>
                 <HStack
                   space="sm"
                   className="items-center bg-background-100 rounded-xl px-4 py-3"
@@ -181,7 +204,7 @@ export default function BibleVerseSheet({
                     설교 나눔에 추가
                   </Text>
                 </HStack>
-              </AnimatedPressable>
+              </AnimatedPressable> */}
               <AnimatedPressable onPress={handleCopyText}>
                 <HStack
                   space="sm"
