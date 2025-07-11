@@ -1,10 +1,6 @@
 import { VStack } from '#/components/ui/vstack';
 import { BibleHomeHeader } from '../components/BibleHomeHeader';
 import { BibleContent } from '../components/BibleContent';
-import { BibleSearch } from './BibleSearchScreen';
-import { useState, useEffect, useRef, useMemo } from 'react';
-import { useBibleStore } from '../store/bible';
-import { useInitializeBible } from '../hooks/useInitializeBible';
 import { useScrollDown } from '@/shared/hooks/useScrollDown';
 import { BibleFloatingGuide } from '../components/BibleFloatingGuide';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
@@ -12,9 +8,7 @@ import { BibleSelector } from '../components/BibleSelector';
 import { BibleSetting } from '../components/BibleSetting';
 
 export default function BibleMainScreen() {
-  const bibleContentRef = useRef(null);
-
-  useInitializeBible();
+  // const bibleContentRef = useRef(null);
 
   // bibleContentRef.current?.scrollToIndex({
   //   index: 1,
@@ -40,6 +34,7 @@ export default function BibleMainScreen() {
       <BibleSelector
         BibleSelectorBottomSheetContainer={BibleSelectorBottomSheetContainer}
         closeSelector={handleCloseBibleSelector}
+        mode="main"
       />
 
       <BibleSetting

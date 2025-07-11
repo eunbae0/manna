@@ -30,9 +30,13 @@ import Animated, {
 	Easing,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useInitializeBible } from '@/features/bible/hooks/useInitializeBible';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
+
+	// 메인 화면에서 성경 로드
+	useInitializeBible();
 
 	const insets = useSafeAreaInsets();
 	return (
