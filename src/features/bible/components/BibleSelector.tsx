@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
-import { Button, ButtonIcon } from '@/components/common/button';
-import { CaseUpper, ChevronLeft, ListCollapse } from 'lucide-react-native';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
+import { CaseUpper, ChevronLeft, ListCollapse, Plus, RotateCcw } from 'lucide-react-native';
 import { useBibleStore } from '../store/bible';
 import type { useBottomSheet } from '@/hooks/useBottomSheet';
 import type { BookIndex, BookIndexData } from '../types';
@@ -13,19 +13,37 @@ import { SegmentedControl, SegmentedControlTrigger } from '@/shared/components/s
 import { BibleSelectorBookList } from './BibleSelectorBookList';
 import { BibleSelectorChapterList } from './BibleSelectorChapterList';
 import { getChoseong } from 'es-hangul';
+import { useToastStore } from '@/store/toast';
+import { BibleSelectorVerseList } from './BibleSelectorVerseList';
+import { formatSelectedVerses } from '../utils';
+import { formatToSelectedBible } from '../utils/selectedBible';
+import type { SelectedBible } from '../types/selectedBible';
 
 type Props = {
   BibleSelectorBottomSheetContainer: ReturnType<
     typeof useBottomSheet
   >['BottomSheetContainer'];
   closeSelector: () => void;
+  mode: 'main' | 'select'
+  setSelectedBible?: (selectedBible: SelectedBible) => void;
 };
 
 export function BibleSelector({
   BibleSelectorBottomSheetContainer,
   closeSelector,
+  mode,
+  setSelectedBible,
 }: Props) {
-  const { bookIndex, currentBookId } = useBibleStore();
+  const { bookIndex, currentBookId, setCurrentBook, setCurrentChapter, currentChapter, selectedVerses, verses, addSelectedVerses, removeSelectedVerses, clearSelectedVerses } = useBibleStore();
+  const { showInfo } = useToastStore()
+
+  const isSelectMode = mode === 'select';
+
+  useEffect(() => {
+    if (isSelectMode) {
+      clearSelectedVerses();
+    }
+  }, [isSelectMode, clearSelectedVerses])
 
   const [listType, setListType] = useState<'Group' | 'Alphabet'>('Group');
 
@@ -42,18 +60,103 @@ export function BibleSelector({
 
   const [currentType, setCurrentType] = useState<'OT' | 'NT'>(currentBookType);
   const [selectedBook, setSelectedBook] = useState<string | null>(null);
-  const [step, setStep] = useState<'book' | 'chapter'>('book');
+  const [step, setStep] = useState<'book' | 'chapter' | 'verse'>('book');
 
-
-  const handlePressListItem = (bookId: string) => {
+  const handlePressBookListItem = useCallback((bookId: string) => {
     setSelectedBook(bookId);
     setStep('chapter');
-  };
+  }, []);
 
   const selectedBookName = useMemo(() => {
     const book = bookIndex.find((book) => book.id === selectedBook);
     return book?.name_kr || '';
   }, [bookIndex, selectedBook]);
+
+  const headerLabel = useMemo(() => {
+    switch (step) {
+      case 'book':
+        return '성경을 선택해주세요';
+      case 'chapter':
+        return '장을 선택해주세요';
+      case 'verse':
+        return '절을 선택해주세요';
+    }
+  }, [step]);
+
+  const clearSelectorState = useCallback(() => {
+    clearSelectedVerses();
+    setSelectedBook(null);
+    setCurrentChapter(1);
+    setCurrentType('OT');
+    setStep('book');
+    setListType('Group');
+    closeSelector();
+  }, [closeSelector, clearSelectedVerses, setCurrentChapter]);
+
+  const handlePressChapterListItem = useCallback((chapter: number) => {
+    if (!selectedBook) {
+      closeSelector();
+      return;
+    }
+
+    if (isSelectMode) {
+      setCurrentChapter(Number(chapter));
+      setStep('verse');
+      return;
+    }
+
+    setCurrentBook(selectedBook);
+    setCurrentChapter(Number(chapter));
+    closeSelector();
+
+    const bookName = bookIndex.find((book) => book.id === selectedBook)?.name_kr;
+
+    setTimeout(() => {
+      showInfo(`${bookName} ${chapter}장으로 이동했어요.`);
+    }, 50);
+  }, [bookIndex, isSelectMode, selectedBook, closeSelector, setCurrentBook, setCurrentChapter, showInfo]);
+
+
+  const handlePressVerseListItem = useCallback((verse: number) => {
+    if (!selectedBook || !currentChapter) {
+      closeSelector();
+      return;
+    }
+    if (selectedVerses.includes(verse)) {
+      removeSelectedVerses(Number(verse));
+      return;
+    }
+    addSelectedVerses(Number(verse));
+  }, [selectedBook, currentChapter, closeSelector, selectedVerses, addSelectedVerses, removeSelectedVerses]);
+
+  const handlePressAddVerses = useCallback(() => {
+    if (!selectedVerses.length) {
+      showInfo('절을 선택해주세요');
+      return;
+    }
+
+    if (!selectedBook || !currentChapter) {
+      closeSelector();
+      return;
+    }
+    const bookName = bookIndex.find((book) => book.id === selectedBook)?.name_kr || '';
+
+    const formattedBible = formatToSelectedBible({
+      bookName,
+      bookId: selectedBook,
+      chapter: currentChapter,
+      verses,
+      selectedVerses,
+    });
+
+    setSelectedBible?.(formattedBible)
+
+    clearSelectorState();
+
+    setTimeout(() => {
+      showInfo(`${formattedBible.title}을 추가했어요.`);
+    }, 50);
+  }, [bookIndex, selectedBook, currentChapter, closeSelector, selectedVerses, verses, showInfo, clearSelectorState, setSelectedBible]);
 
   return (
     <BibleSelectorBottomSheetContainer
@@ -65,7 +168,7 @@ export function BibleSelector({
           <VStack space="sm">
             <View className='px-5'>
               <BottomSheetListHeader
-                label={step === 'book' ? "성경을 선택해주세요" : "장을 선택해주세요"}
+                label={headerLabel}
                 onPress={closeSelector}
               />
             </View>
@@ -106,25 +209,53 @@ export function BibleSelector({
                 <Text size="xl" weight="semi-bold" className="text-typography-800">{selectedBookName}</Text>
               </HStack>
             )}
+            {step === 'verse' && (
+              <HStack className='items-center pl-2 pr-4 justify-between'>
+                <HStack className='items-center'>
+                  <Button size="lg" variant='icon' onPress={() => setStep('chapter')}>
+                    <ButtonIcon as={ChevronLeft} className='text-primary-800' />
+                  </Button>
+                  <Text size="xl" weight="semi-bold" className="text-typography-800">{selectedBookName} {currentChapter}장 {formatSelectedVerses(selectedVerses)}</Text>
+                </HStack>
+                {selectedVerses.length > 0 && <Button size="md" variant='icon' onPress={clearSelectedVerses} withHaptic>
+                  <ButtonIcon as={RotateCcw} className='text-primary-800' />
+                </Button>}
+              </HStack>
+            )}
           </VStack>
 
           {step === 'book' && (
             <BibleSelectorBookList
               data={bookList[currentType]}
-              handlePressListItem={handlePressListItem}
+              isSelectMode={isSelectMode}
+              handlePressListItem={handlePressBookListItem}
             />
           )}
           {step === 'chapter' && (
             <BibleSelectorChapterList
               selectedBook={selectedBook}
-              closeSelector={() => {
-                setStep('book');
-                setSelectedBook(null);
-                closeSelector();
-              }}
+              handlePressListItem={handlePressChapterListItem}
+            />
+          )}
+          {step === 'verse' && (
+            <BibleSelectorVerseList
+              handlePressListItem={handlePressVerseListItem}
             />
           )}
         </VStack>
+
+        {step === 'verse' && (
+          <Button
+            size="lg"
+            onPress={handlePressAddVerses}
+            withHaptic
+            rounded={false}
+            className='mb-2 mx-5'
+          >
+            <ButtonText>추가하기</ButtonText>
+            <ButtonIcon as={Plus} />
+          </Button>
+        )}
       </VStack>
     </BibleSelectorBottomSheetContainer>
   );

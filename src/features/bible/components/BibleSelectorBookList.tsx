@@ -9,12 +9,14 @@ import { FlatList } from 'react-native-gesture-handler';
 
 export function BibleSelectorBookList({
   data,
+  isSelectMode,
   handlePressListItem,
 }: {
   data: {
     label: string;
     books: BookIndexData[];
   }[];
+  isSelectMode: boolean;
   handlePressListItem: (bookId: string) => void;
 }) {
   const { currentBookId } = useBibleStore();
@@ -45,18 +47,20 @@ export function BibleSelectorBookList({
                     <View
                       className={cn(
                         'py-4 rounded-md items-center',
-                        book.id === currentBookId
-                          ? 'bg-primary-500'
-                          : 'bg-primary-200/25',
+                        isSelectMode ? 'bg-primary-200/25' :
+                          book.id === currentBookId
+                            ? 'bg-primary-500'
+                            : 'bg-primary-200/25',
                       )}
                     >
                       <Text
                         size="lg"
                         weight="bold"
                         className={cn(
-                          book.id === currentBookId
-                            ? 'text-primary-50'
-                            : 'text-primary-700/80',
+                          isSelectMode ? 'text-primary-700/80' :
+                            book.id === currentBookId
+                              ? 'text-primary-50'
+                              : 'text-primary-700/80',
                         )}
                       >
                         {book.name_kr}

@@ -4,19 +4,15 @@ import { VStack } from '#/components/ui/vstack';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { View } from 'react-native';
 import { Text } from '@/shared/components/text';
-import { useToastStore } from '@/store/toast';
 
 export function BibleSelectorChapterList({
   selectedBook,
-  closeSelector,
+  handlePressListItem,
 }: {
   selectedBook: string | null;
-  closeSelector: () => void;
+  handlePressListItem: (chapter: number) => void;
 }) {
-  const { bookIndex, setCurrentBook, setCurrentChapter } =
-    useBibleStore();
-
-  const { showInfo } = useToastStore()
+  const { bookIndex } = useBibleStore();
 
   const data = Array.from(
     {
@@ -26,24 +22,6 @@ export function BibleSelectorChapterList({
     },
     (_, i) => i + 1,
   );
-
-
-
-  const handlePressListItem = (chapter: number) => {
-    if (!selectedBook) {
-      closeSelector();
-      return;
-    }
-    const bookName = bookIndex.find((book) => book.id === selectedBook)?.name_kr;
-
-    setCurrentBook(selectedBook);
-    setCurrentChapter(Number(chapter));
-    closeSelector();
-
-    setTimeout(() => {
-      showInfo(`${bookName} ${chapter}장으로 이동했어요.`);
-    }, 50);
-  }
 
   return (
     <FlatList
@@ -58,13 +36,13 @@ export function BibleSelectorChapterList({
             className="mb-2"
             withHaptic
           >
-            <View className="py-4 rounded-md items-center bg-primary-200/30">
+            <View className="py-4 rounded-md items-center bg-primary-200/25">
               <Text
                 size="lg"
-                weight="medium"
-                className="text-primary-700"
+                weight="bold"
+                className="text-primary-700/80"
               >
-                {item}
+                {item}장
               </Text>
             </View>
           </AnimatedPressable>
