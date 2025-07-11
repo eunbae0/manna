@@ -46,6 +46,7 @@ import { NoteStorageService } from '../storage';
 import { SelectedBibleList } from '@/shared/components/bible';
 import type { SelectedBible } from '@/features/bible/types/selectedBible';
 import { BibleSelector } from '@/features/bible/components/BibleSelector';
+import { useWorshipTypes } from '../hooks/useWorshipTypes';
 
 export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   const isCreateScreen = screen === 'create';
@@ -72,8 +73,9 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   const { showSuccess } = useToastStore();
 
   // Get worship types from global store
-  const { worshipTypes, setWorshipTypes } = useWorshipStore();
+  const { setWorshipTypes } = useWorshipStore();
 
+  const { worshipTypes } = useWorshipTypes();
 
   // TODO: worshipType을 local에서 관리하는 기능 추가시 삭제
   useEffect(() => {
