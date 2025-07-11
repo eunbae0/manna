@@ -6,12 +6,7 @@ import {
 } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import {
-  ActivityIndicator,
-  Alert,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Alert, TextInput, View } from 'react-native';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '@/shared/components/text';
 import {
@@ -19,6 +14,7 @@ import {
   BookText,
   CalendarCog,
   ChevronDown,
+  ChevronRight,
   Edit,
   Megaphone,
   Trash,
@@ -47,17 +43,22 @@ import { Divider } from '#/components/ui/divider';
 import { Box } from '#/components/ui/box';
 import { useAuthStore } from '@/store/auth';
 import { NoteStorageService } from '../storage';
+import { SelectedBibleList } from '@/shared/components/bible';
+import type { SelectedBible } from '@/features/bible/types/selectedBible';
+import { BibleSelector } from '@/features/bible/components/BibleSelector';
 
 export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   const isCreateScreen = screen === 'create';
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id?: string }>();
 
-
-  const { user } = useAuthStore()
+  const { user } = useAuthStore();
 
   if (!user?.id) return null;
-  const noteStorage = useMemo(() => NoteStorageService.getInstance(user.id), [user.id]);
+  const noteStorage = useMemo(
+    () => NoteStorageService.getInstance(user.id),
+    [user.id],
+  );
 
   const [isEditing, setIsEditing] = useState(isCreateScreen);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -71,34 +72,37 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
   // Get worship types from global store
   const { worshipTypes } = useWorshipStore();
 
-  const existedNote = useMemo(() => id ? noteStorage.getNote(id) : undefined, [id, noteStorage]);
+  const existedNote = useMemo(
+    () => (id ? noteStorage.getNote(id) : undefined),
+    [id, noteStorage],
+  );
 
   const createNote = (note: NoteInput) => {
     const createdNote = noteStorage.saveNote(note);
     showSuccess('노트가 생성되었어요');
     handleExit();
     router.replace(`/(app)/(note)/${createdNote.id}`);
-  }
+  };
 
   const updateNote = (note: NoteInput) => {
-    noteStorage.saveNote(note)
+    noteStorage.saveNote(note);
     showSuccess('노트가 수정되었어요');
     setIsEditing(false);
-  }
+  };
 
   // _local 항목 삭제시 pending 중인 변경사항에서 삭제
   const deleteNote = (noteId: string) => {
-    noteStorage.deleteNote(noteId)
+    noteStorage.deleteNote(noteId);
     showSuccess('노트가 삭제되었어요');
     router.canGoBack() ? router.back() : router.replace('/(app)/(tabs)/note');
-  }
+  };
 
   const {
     toggle: toggleDetail,
     isExpanded: detailExpanded,
     containerStyle: detailContainerStyle,
     iconStyle: detailIconStyle,
-    onContentLayout: onDetailContentLayout
+    onContentLayout: onDetailContentLayout,
   } = useExpandAnimation({
     initiallyExpanded: true,
   });
@@ -168,7 +172,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
       sermon: editableNote.sermon,
       preacher: editableNote.preacher,
       worshipType: selectedWorshipType,
-    }
+    };
 
     if (isCreateScreen) {
       createNote(noteData);
@@ -183,9 +187,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
     condition: isEditing,
   });
 
-
-
-  if (!isCreateScreen && (!existedNote)) {
+  if (!isCreateScreen && !existedNote) {
     return <ActivityIndicator />;
   }
 
@@ -194,17 +196,20 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
     Keyboard.dismiss();
   };
 
+  const {
+    BottomSheetContainer: BibleSelectorBottomSheetContainer,
+    handleOpen: handleOpenBibleSelector,
+    handleClose: handleCloseBibleSelector,
+  } = useBottomSheet();
+
+
   return (
     <>
       <SafeAreaView className="h-full">
         <VStack space="md" className="h-full">
           <Header className="justify-between pr-4">
             {isEditing ? (
-              <Button
-                size="lg"
-                variant="text"
-                onPress={handleUpdateNoteSubmit}
-              >
+              <Button size="lg" variant="text" onPress={handleUpdateNoteSubmit}>
                 <ButtonText>저장하기</ButtonText>
               </Button>
             ) : (
@@ -212,22 +217,36 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                 <Button variant="icon" onPress={handleEditButton}>
                   <ButtonIcon as={Edit} />
                 </Button>
-                <Button variant="icon" onPress={() => handleDeleteNote(editableNote?.id || "")}>
+                <Button
+                  variant="icon"
+                  onPress={() => handleDeleteNote(editableNote?.id || '')}
+                >
                   <ButtonIcon as={Trash} className="text-red-600" />
                 </Button>
               </HStack>
             )}
           </Header>
-          <KeyboardAwareScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+          <KeyboardAwareScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
             <VStack className="flex-1">
               <VStack space="xs" className="px-5">
                 <AnimatedPressable scale="sm" onPress={handlePressDate}>
                   <HStack space="sm" className="items-center">
-                    <Text size="lg" weight="medium" className="text-typography-500">
+                    <Text
+                      size="lg"
+                      weight="medium"
+                      className="text-typography-500"
+                    >
                       {formatLocalDate(selectedDate)}
                     </Text>
                     {isEditing && (
-                      <Icon as={CalendarCog} size="sm" className="text-typography-500" />
+                      <Icon
+                        as={CalendarCog}
+                        size="sm"
+                        className="text-typography-500"
+                      />
                     )}
                   </HStack>
                 </AnimatedPressable>
@@ -262,7 +281,11 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                 </HStack>
               </VStack>
               <Animated.View style={[detailContainerStyle]} className="px-5">
-                <VStack space="xl" className="pt-6" onLayout={onDetailContentLayout}>
+                <VStack
+                  space="xl"
+                  className="pt-6"
+                  onLayout={onDetailContentLayout}
+                >
                   <VStack space="xs">
                     <HStack space="sm" className="items-center">
                       <Icon
@@ -270,33 +293,72 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                         size="sm"
                         className="text-typography-600"
                       />
-                      <Text size="lg" weight="medium" className="text-typography-500">
+                      <Text
+                        size="lg"
+                        weight="medium"
+                        className="text-typography-500"
+                      >
                         설교 본문
                       </Text>
                     </HStack>
-                    {isEditing ? (
-                      <TextInput
-                        placeholder="ex. 창세기 1장 1절"
-                        className="w-full h-8 text-xl ml-6 font-pretendard-Regular"
-                        value={editableNote.sermon}
-                        onChangeText={(sermon) =>
+                    {typeof editableNote.sermon === 'string' ? (
+                      // <TextInput
+                      //   placeholder="ex. 창세기 1장 1절"
+                      //   className="w-full h-8 text-xl ml-6 font-pretendard-Regular"
+                      //   value={editableNote.sermon}
+                      //   onChangeText={(sermon) =>
+                      //     setEditableNote((prev) => ({
+                      //       ...prev,
+                      //       sermon,
+                      //     }))
+                      //   }
+                      // />
+                      isEditing ? (
+                        <HStack className="items-center justify-between">
+                          <TextInput
+                            placeholder="ex. 창세기 1장 1절"
+                            className="w-2/3 h-8 text-xl ml-6 font-pretendard-Regular flex-1"
+                            value={editableNote.sermon}
+                            onChangeText={(sermon) =>
+                              setEditableNote((prev) => ({
+                                ...prev,
+                                sermon,
+                              }))
+                            }
+                          />
+                          <Button variant="text" size="md" onPress={handleOpenBibleSelector}>
+                            <ButtonText>성경에서 선택하기</ButtonText>
+                            <ButtonIcon as={ChevronRight} />
+                          </Button>
+                        </HStack>
+                      ) : (
+                        <Text
+                          size="xl"
+                          className={cn(
+                            'ml-6',
+                            !editableNote?.sermon && 'text-typography-500',
+                          )}
+                        >
+                          {editableNote?.sermon || '비어 있음'}
+                        </Text>
+                      )
+                    ) : (
+                      <SelectedBibleList
+                        selectedBible={editableNote.sermon || []}
+                        deleteBible={(selectedBible) =>
                           setEditableNote((prev) => ({
                             ...prev,
-                            sermon,
+                            sermon: (prev.sermon as SelectedBible[])?.filter(
+                              (v) => v.title !== selectedBible.title,
+                            ),
                           }))
                         }
+                        handleOpenBibleSelector={handleOpenBibleSelector}
+                        isReadonly={!isEditing}
+                        className='mt-1'
                       />
-                    ) : (
-                      <Text
-                        size="xl"
-                        className={cn(
-                          'ml-6',
-                          !editableNote?.sermon && 'text-typography-500',
-                        )}
-                      >
-                        {editableNote?.sermon || '비어 있음'}
-                      </Text>
                     )}
+
                   </VStack>
                   <VStack space="xs">
                     <HStack space="sm" className="items-center">
@@ -305,7 +367,11 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                         size="sm"
                         className="text-typography-600"
                       />
-                      <Text size="lg" weight="medium" className="text-typography-500">
+                      <Text
+                        size="lg"
+                        weight="medium"
+                        className="text-typography-500"
+                      >
                         설교자
                       </Text>
                     </HStack>
@@ -340,7 +406,11 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                         size="sm"
                         className="text-typography-600"
                       />
-                      <Text size="lg" weight="medium" className="text-typography-500">
+                      <Text
+                        size="lg"
+                        weight="medium"
+                        className="text-typography-500"
+                      >
                         예배 유형
                       </Text>
                     </HStack>
@@ -355,9 +425,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
                             <FilterTag
                               key={type.id}
                               label={type.name}
-                              isSelected={
-                                selectedWorshipType?.id === type.id
-                              }
+                              isSelected={selectedWorshipType?.id === type.id}
                               onPress={() => setSelectedWorshipType(type)}
                             />
                           ))}
@@ -425,6 +493,24 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
             />
           </View>
         </BottomSheetContainer>
+        <BibleSelector
+          BibleSelectorBottomSheetContainer={BibleSelectorBottomSheetContainer}
+          closeSelector={handleCloseBibleSelector}
+          mode="select"
+          setSelectedBible={(selectedBible) => {
+            if (typeof editableNote.sermon === 'string') {
+              setEditableNote((prev) => ({
+                ...prev,
+                sermon: [selectedBible],
+              }));
+              return;
+            }
+            setEditableNote((prev) => ({
+              ...prev,
+              sermon: prev.sermon ? [...(prev.sermon as SelectedBible[]), selectedBible] : [selectedBible],
+            }));
+          }}
+        />
         {/* 뒤로가기 확인 모달 */}
         <ExitConfirmModal {...bottomSheetProps} onExit={handleExit} />
       </SafeAreaView>

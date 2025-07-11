@@ -1,4 +1,5 @@
 import type { ClientWorshipType } from '@/api/worship-types/types';
+import type { SelectedBible } from '@/features/bible/types/selectedBible';
 import type { Timestamp } from '@react-native-firebase/firestore';
 export interface NotesByMonth {
 	[monthKey: string]: Note[];
@@ -12,7 +13,7 @@ export interface Note {
 	title: string;
 	content: string;
 	date: UTCString;
-	sermon: string;
+	sermon: SelectedBible[] | string;
 	preacher: string;
 	worshipType: ClientWorshipType;
 	metadata: {

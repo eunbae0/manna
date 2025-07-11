@@ -12,6 +12,7 @@ type Props = {
   selectedBible: SelectedBible[];
   setSelectedBible?: React.Dispatch<React.SetStateAction<SelectedBible[]>>;
   handleOpenBibleSelector?: () => void;
+  deleteBible?: (selectedBible: SelectedBible) => void;
   isReadonly?: boolean;
 } & ViewProps;
 
@@ -19,12 +20,14 @@ export function SelectedBibleList({
   selectedBible,
   setSelectedBible,
   handleOpenBibleSelector,
+  deleteBible,
   isReadonly = false,
   className,
   ...props
 }: Props) {
   const handlePressDeleteButton = (verse: SelectedBible) => {
     setSelectedBible?.((prev) => prev.filter((v) => v.title !== verse.title));
+    deleteBible?.(verse);
   };
   return (
     <>
