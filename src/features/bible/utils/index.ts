@@ -75,9 +75,9 @@ export function formatSelectedVerses(selectedVerses: number[]): string {
 			const lastChunk = acc[acc.length - 1];
 			const isContinued = /~/.test(lastChunk);
 			if (isContinued) {
-				acc[acc.length - 1] = `${lastChunk.split(' ~ ')[0]} ~ ${verse}`;
+				acc[acc.length - 1] = `${lastChunk.split('~')[0]}~${verse}`;
 			} else {
-				acc[acc.length - 1] = `${lastChunk} ~ ${verse}`;
+				acc[acc.length - 1] = `${lastChunk}~${verse}`;
 			}
 			return acc;
 		}
