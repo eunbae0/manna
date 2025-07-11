@@ -61,6 +61,7 @@ import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
 import { useExpandAnimation } from '@/shared/hooks/animation/useExpandAnimation';
 import { cn } from '@/shared/utils/cn';
+import { SelectedBibleList } from '@/shared/components/bible';
 
 interface FellowshipDetailScreenProps {
 	id: string;
@@ -241,15 +242,20 @@ export default function FellowshipDetailScreen({
 										</Text>
 									</HStack>
 
-									<Text
-										size="xl"
-										className={cn(
-											'ml-6',
-											!fellowship?.info.preachText && 'text-typography-500',
-										)}
-									>
-										{fellowship?.info.preachText || '비어 있음'}
-									</Text>
+									{typeof fellowship?.info.preachText !== 'string' ?
+										<SelectedBibleList
+											selectedBible={fellowship?.info.preachText || []}
+											isReadonly
+											className="mt-1"
+										/> : <Text
+											size="xl"
+											className={cn(
+												'ml-6',
+												!fellowship?.info.preachText && 'text-typography-500',
+											)}
+										>
+											{fellowship?.info.preachText || '비어 있음'}
+										</Text>}
 								</VStack>
 								{/* 설교자 */}
 								<VStack space="xs">

@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, TextInput, InteractionManager, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+	DateTimePickerAndroid,
+} from '@react-native-community/datetimepicker';
 
 import { Box } from '#/components/ui/box';
-import { Button, ButtonText } from '@/components/common/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { Divider } from '#/components/ui/divider';
 import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
@@ -25,11 +27,10 @@ import {
 	Megaphone,
 	Plus,
 	Users,
+	X,
 } from 'lucide-react-native';
 import { useToastStore } from '@/store/toast';
-import type {
-	ClientFellowshipParticipantV2,
-} from '@/features/fellowship/api/types';
+import type { ClientFellowshipParticipantV2 } from '@/features/fellowship/api/types';
 import { Avatar } from '@/components/common/avatar';
 import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardDismissView';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
@@ -42,6 +43,9 @@ import { cn } from '@/shared/utils/cn';
 import { isAndroid } from '@/shared/utils/platform';
 import { v4 as uuidv4 } from 'uuid';
 import { useExpandAnimation } from '@/shared/hooks/animation/useExpandAnimation';
+import { BibleSelector } from '@/features/bible/components/BibleSelector';
+import type { SelectedBible } from '@/features/bible/types/selectedBible';
+import { SelectedBibleList } from '@/shared/components/bible';
 
 export default function FellowshipInfoScreen() {
 	const { user, currentGroup } = useAuthStore();
@@ -66,8 +70,15 @@ export default function FellowshipInfoScreen() {
 	const preachTextRef = useRef<TextInput>(null);
 	const preacherRef = useRef<TextInput>(null);
 
-	const { info, setStep, updateFellowshipInfo, updateFellowshipRoles, clearFellowship, isFirstRender, setIsFirstRender } =
-		useFellowshipStore();
+	const {
+		info,
+		setStep,
+		updateFellowshipInfo,
+		updateFellowshipRoles,
+		clearFellowship,
+		isFirstRender,
+		setIsFirstRender,
+	} = useFellowshipStore();
 	const [selectedDate, setSelectedDate] = useState(info.date || new Date());
 	const [title, setTitle] = useState(info.title || '');
 
@@ -76,30 +87,33 @@ export default function FellowshipInfoScreen() {
 		isExpanded: preachTextExpanded,
 		containerStyle: preachTextContainerStyle,
 		iconStyle: preachTextIconStyle,
-		onContentLayout: onPreachTextContentLayout
+		onContentLayout: onPreachTextContentLayout,
 	} = useExpandAnimation();
 	const {
 		toggle: togglePreacher,
 		isExpanded: preacherExpanded,
 		containerStyle: preacherContainerStyle,
 		iconStyle: preacherIconStyle,
-		onContentLayout: onPreacherContentLayout
+		onContentLayout: onPreacherContentLayout,
 	} = useExpandAnimation();
 	const {
 		toggle: toggleMembers,
 		isExpanded: membersExpanded,
 		containerStyle: membersContainerStyle,
 		iconStyle: membersIconStyle,
-	} = useExpandAnimation(
-		{
-			expandedHeight: 360,
-			onToggle: () => { Keyboard.isVisible() && Keyboard.dismiss() }
-		}
-	);
+	} = useExpandAnimation({
+		expandedHeight: 360,
+		onToggle: () => {
+			Keyboard.isVisible() && Keyboard.dismiss();
+		},
+	});
 
-	const [preachText, setPreachText] = useState<string>(info.preachText || '');
+	// const [preachText, setPreachText] = useState<string>(info.preachText || '');
+	const [preachText, setPreachText] = useState<SelectedBible[]>([]);
 	const [preacher, setPreacher] = useState<string>(info.preacher || '');
-	const [participants, setParticipants] = useState<ClientFellowshipParticipantV2[]>(
+	const [participants, setParticipants] = useState<
+		ClientFellowshipParticipantV2[]
+	>(
 		info.participants.length === 0
 			? [
 				{
@@ -201,9 +215,7 @@ export default function FellowshipInfoScreen() {
 				),
 			);
 
-		const customMembers = participants.filter(
-			(member) => member.isGuest
-		);
+		const customMembers = participants.filter((member) => member.isGuest);
 
 		return [...groupMembers, ...customMembers];
 	}, [group, user?.id, participants]);
@@ -228,6 +240,12 @@ export default function FellowshipInfoScreen() {
 		}
 	}, [isFirstRender]);
 
+	const {
+		BottomSheetContainer: BibleSelectorBottomSheetContainer,
+		handleOpen: handleOpenBibleSelector,
+		handleClose: handleCloseBibleSelector,
+	} = useBottomSheet();
+
 	return (
 		<KeyboardDismissView style={{ flex: 1 }}>
 			<VStack className="flex-1">
@@ -236,7 +254,7 @@ export default function FellowshipInfoScreen() {
 					showsVerticalScrollIndicator={false}
 					keyboardShouldPersistTaps="handled"
 				>
-					<VStack className="px-5 py-4 flex-1">
+					<VStack className="px-5 pt-4 pb-20 flex-1">
 						<VStack space="xl">
 							<TextInput
 								ref={titleRef}
@@ -246,7 +264,7 @@ export default function FellowshipInfoScreen() {
 								returnKeyType="next"
 								onSubmitEditing={() => {
 									if (!preachTextExpanded) {
-										togglePreachText(preachTextRef);
+										togglePreachText();
 									}
 									setTimeout(() => {
 										preachTextRef.current?.focus();
@@ -254,10 +272,7 @@ export default function FellowshipInfoScreen() {
 								}}
 								className="mb-4 text-2xl text-typography-700 placeholder:text-typography-400 font-pretendard-semi-bold py-3"
 							/>
-							<AnimatedPressable
-								scale={0.98}
-								onPress={handlePressOpenDate}
-							>
+							<AnimatedPressable scale={0.98} onPress={handlePressOpenDate}>
 								<HStack className="items-center justify-between">
 									<HStack space="md" className="items-center">
 										<Icon
@@ -265,12 +280,20 @@ export default function FellowshipInfoScreen() {
 											size="xl"
 											className="text-primary-500"
 										/>
-										<Text size="xl" weight="medium" className="text-typography-700">
+										<Text
+											size="xl"
+											weight="medium"
+											className="text-typography-700"
+										>
 											나눔 날짜
 										</Text>
 									</HStack>
 									<HStack space="md" className="items-center">
-										<Text size="xl" weight="medium" className="text-typography-700">
+										<Text
+											size="xl"
+											weight="medium"
+											className="text-typography-700"
+										>
 											{selectedDate.toLocaleDateString('ko-KR', {
 												month: 'long',
 												day: 'numeric',
@@ -290,23 +313,35 @@ export default function FellowshipInfoScreen() {
 								<AnimatedPressable
 									scale={0.98}
 									onPress={() => {
-										togglePreachText(preachTextRef);
+										if (!preachTextExpanded && preachText.length === 0) {
+											handleOpenBibleSelector();
+										}
+										togglePreachText();
 									}}
 								>
-									<HStack className="items-center justify-between">
+									<HStack className="items-center justify-between w-full">
 										<HStack space="md" className="items-center">
 											<Icon
 												as={BookOpen}
 												size="xl"
 												className="text-primary-500"
 											/>
-											<Text size="xl" weight="medium" className="text-typography-700">
+											<Text
+												size="xl"
+												weight="medium"
+												className="text-typography-700"
+											>
 												설교 본문
 											</Text>
 										</HStack>
-										<HStack space="md" className="items-center">
-											<Text size="xl" weight="medium" className="text-typography-700">
-												{preachText || '없음'}
+										<HStack space="md" className="items-center justify-end">
+											<Text
+												size="xl"
+												weight="medium"
+												className="text-typography-700 w-2/3 text-right"
+												numberOfLines={1}
+											>
+												{preachText.length === 0 ? '없음' : preachText.length === 1 ? preachText[0].title : `${preachText.length}개`}
 											</Text>
 											<Animated.View style={[preachTextIconStyle]}>
 												<Icon
@@ -319,29 +354,16 @@ export default function FellowshipInfoScreen() {
 									</HStack>
 								</AnimatedPressable>
 								<Animated.View style={[preachTextContainerStyle]}>
-									<VStack space="sm" className="pt-6" onLayout={onPreachTextContentLayout}>
-										<Input
-											variant="outline"
-											size="xl"
-											className="rounded-xl"
-										>
-											<InputField
-												ref={preachTextRef}
-												placeholder="ex. 창세기 1장 1~7절"
-												value={preachText}
-												onChangeText={setPreachText}
-												returnKeyType="next"
-												onSubmitEditing={() => {
-													if (!preacherExpanded) {
-														togglePreacher(preacherRef);
-													}
-													setTimeout(() => {
-														preacherRef.current?.focus();
-													}, 100);
-												}}
-												className="font-pretendard-Regular"
-											/>
-										</Input>
+									<VStack
+										space="md"
+										className="pt-6"
+										onLayout={onPreachTextContentLayout}
+									>
+										<SelectedBibleList
+											selectedBible={preachText}
+											setSelectedBible={setPreachText}
+											handleOpenBibleSelector={handleOpenBibleSelector}
+										/>
 									</VStack>
 								</Animated.View>
 							</VStack>
@@ -360,12 +382,20 @@ export default function FellowshipInfoScreen() {
 												size="xl"
 												className="text-primary-500"
 											/>
-											<Text size="xl" weight="medium" className="text-typography-700">
+											<Text
+												size="xl"
+												weight="medium"
+												className="text-typography-700"
+											>
 												설교자
 											</Text>
 										</HStack>
 										<HStack space="md" className="items-center">
-											<Text size="xl" weight="medium" className="text-typography-700">
+											<Text
+												size="xl"
+												weight="medium"
+												className="text-typography-700"
+											>
 												{preacher || '없음'}
 											</Text>
 											<Animated.View style={[preacherIconStyle]}>
@@ -379,12 +409,12 @@ export default function FellowshipInfoScreen() {
 									</HStack>
 								</AnimatedPressable>
 								<Animated.View style={[preacherContainerStyle]}>
-									<VStack space="sm" className="pt-6" onLayout={onPreacherContentLayout}>
-										<Input
-											variant="outline"
-											size="xl"
-											className="rounded-xl"
-										>
+									<VStack
+										space="sm"
+										className="pt-6"
+										onLayout={onPreacherContentLayout}
+									>
+										<Input variant="outline" size="xl" className="rounded-xl">
 											<InputField
 												ref={preacherRef}
 												placeholder="설교자를 입력해주세요."
@@ -412,18 +442,24 @@ export default function FellowshipInfoScreen() {
 								>
 									<HStack className="items-center justify-between">
 										<HStack space="md" className="items-center">
-											<Icon
-												as={Users}
+											<Icon as={Users} size="xl" className="text-primary-500" />
+											<Text
 												size="xl"
-												className="text-primary-500"
-											/>
-											<Text size="xl" weight="medium" className="text-typography-700">
+												weight="medium"
+												className="text-typography-700"
+											>
 												나눔 인원
 											</Text>
 										</HStack>
 										<HStack space="md" className="items-center">
-											<Text size="xl" weight="medium" className="text-typography-700">
-												{participants.length > 0 ? `${participants.length}명` : '0명'}
+											<Text
+												size="xl"
+												weight="medium"
+												className="text-typography-700"
+											>
+												{participants.length > 0
+													? `${participants.length}명`
+													: '0명'}
 											</Text>
 											<Animated.View style={[membersIconStyle]}>
 												<Icon
@@ -455,15 +491,24 @@ export default function FellowshipInfoScreen() {
 													</Text>
 												</VStack>
 											) : (
-												<ScrollView ref={membersScrollViewRef} className="pb-4 max-h-72">
+												<ScrollView
+													ref={membersScrollViewRef}
+													className="pb-4 max-h-72"
+												>
 													{allFellowshipMembers.map((member) => {
-														const isSelected = participants.some((m) => m.id === member.id);
+														const isSelected = participants.some(
+															(m) => m.id === member.id,
+														);
 														const isMe = member.id === user?.id;
 														return (
 															<VStack key={member.id}>
 																<AnimatedPressable
 																	scale={isMe ? 1 : 0.98}
-																	onPress={() => !isMe ? toggleSelectGroupMember(member) : null}
+																	onPress={() =>
+																		!isMe
+																			? toggleSelectGroupMember(member)
+																			: null
+																	}
 																	className="py-4"
 																>
 																	<HStack className="items-center justify-between">
@@ -472,10 +517,18 @@ export default function FellowshipInfoScreen() {
 																				size="sm"
 																				photoUrl={member.photoUrl || undefined}
 																			/>
-																			<Text size="md">{member.displayName}</Text>
+																			<Text size="md">
+																				{member.displayName}
+																			</Text>
 																		</HStack>
 																		{isSelected ? (
-																			<View pointerEvents='none' className={cn("bg-primary-500 rounded-full p-1 w-6 h-6 mr-2", isMe && "bg-background-400")}>
+																			<View
+																				pointerEvents="none"
+																				className={cn(
+																					'bg-primary-500 rounded-full p-1 w-6 h-6 mr-2',
+																					isMe && 'bg-background-400',
+																				)}
+																			>
 																				<Icon
 																					as={CheckIcon}
 																					size="sm"
@@ -483,7 +536,10 @@ export default function FellowshipInfoScreen() {
 																				/>
 																			</View>
 																		) : (
-																			<View pointerEvents='none' className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2" />
+																			<View
+																				pointerEvents="none"
+																				className="border border-primary-500 rounded-full p-1 w-6 h-6 mr-2"
+																			/>
 																		)}
 																	</HStack>
 																</AnimatedPressable>
@@ -504,7 +560,9 @@ export default function FellowshipInfoScreen() {
 											onPress={handleOpenCreateMemberButton}
 										>
 											<HStack space="sm" className="items-center">
-												<ButtonText className="text-primary-500">이름으로 추가하기</ButtonText>
+												<ButtonText className="text-primary-500">
+													이름으로 추가하기
+												</ButtonText>
 												<Icon
 													as={Plus}
 													size="md"
@@ -568,9 +626,7 @@ export default function FellowshipInfoScreen() {
 							disabled={memberNameInput.trim() === ''}
 							animation={true}
 						>
-							<ButtonText>
-								추가하기
-							</ButtonText>
+							<ButtonText>추가하기</ButtonText>
 						</Button>
 					</VStack>
 				</VStack>
@@ -591,6 +647,14 @@ export default function FellowshipInfoScreen() {
 					/>
 				</Box>
 			</DateBottomSheetContainer>
+			<BibleSelector
+				BibleSelectorBottomSheetContainer={BibleSelectorBottomSheetContainer}
+				closeSelector={handleCloseBibleSelector}
+				mode="select"
+				setSelectedBible={(selectedBible) => {
+					setPreachText((prev) => [...prev, selectedBible]);
+				}}
+			/>
 		</KeyboardDismissView>
 	);
 }

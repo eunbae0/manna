@@ -1,4 +1,5 @@
 import type { ClientGroupMember } from '@/api/prayer-request/types';
+import type { SelectedBible } from '@/features/bible/types/selectedBible';
 import type { DeepPartial } from '@/shared/utils/deepPartial';
 import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 
@@ -98,7 +99,7 @@ export interface ServerFellowshipV2 extends BaseFellowshipV2 {
 	info: {
 		title: string;
 		preacher: string;
-		preachText: string;
+		preachText: SelectedBible[] | string;
 		date: Timestamp;
 		participants: ServerFellowshipParticipantV2[];
 	};
@@ -108,7 +109,7 @@ export interface ClientFellowshipV2 extends BaseFellowshipV2 {
 	info: {
 		title: string;
 		preacher: string;
-		preachText: string;
+		preachText: SelectedBible[] | string;
 		date: Date;
 		participants: ClientFellowshipParticipantV2[];
 	};
@@ -118,7 +119,7 @@ export interface CompactClientFellowshipV2 extends BaseFellowshipV2 {
 	info: {
 		title: string;
 		preacher: string;
-		preachText: string;
+		preachText: SelectedBible[] | string;
 		date: Date;
 		participants: ServerFellowshipParticipantV2[];
 	};
@@ -131,7 +132,7 @@ export interface CreateFellowshipInputV2
 	info: {
 		title: string;
 		preacher: string;
-		preachText: string;
+		preachText: SelectedBible[] | string;
 		date: Date;
 		participants: ServerFellowshipParticipantV2[];
 	};

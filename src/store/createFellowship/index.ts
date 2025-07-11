@@ -62,7 +62,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 		date: new Date(),
 		title: '',
 		preacher: '',
-		preachText: '',
+		preachText: [],
 		participants: [],
 	},
 	roles: {
@@ -262,7 +262,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 				date: new Date(),
 				title: '',
 				preacher: '',
-				preachText: '',
+				preachText: [],
 				participants: [],
 			},
 			roles: {
