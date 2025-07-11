@@ -85,7 +85,7 @@ export function BibleContent({ onScrollDown }: Props) {
         data={verses}
         keyExtractor={(item) => item.verse.toString()}
         renderItem={(item) => renderVerse({ item: item.item, handleOpenSheet: handleOpen, handleCloseSheet: handleClose })}
-        contentContainerStyle={{ paddingBottom: 72 }}
+        contentContainerStyle={{ paddingBottom: 260 }}
         removeClippedSubviews={true}
         estimatedItemSize={58}
         extraData={[currentVerse]}
