@@ -25,10 +25,15 @@ export const commentKeys = {
  * @param postId 게시글 ID
  * @returns 댓글 목록과 로딩 상태
  */
-export function useComments(groupId: string, postId: string) {
+export function useComments(
+	groupId: string,
+	postId: string,
+	enabled?: boolean,
+) {
 	return useQuery({
 		queryKey: commentKeys.commentsByPost(groupId, postId),
 		queryFn: () => fetchCommentsByPostId({ groupId, postId }),
+		enabled,
 	});
 }
 

@@ -80,7 +80,7 @@ function renderActivityItem({ item }: { item: Feed }) {
     case 'fellowship':
       return <FellowshipFeedItem item={item as FellowshipFeed} />;
     case 'posts':
-      return <PostFeedItem item={item as PostsFeed} />;
+      return <PostFeedItem item={item as PostsFeed} isCommentVisible={false} />;
     default:
       return null;
   }

@@ -27,7 +27,7 @@ import * as Haptics from 'expo-haptics';
 import { useUpdatePostViewCount } from '../hooks/useUpdatePostViewCount';
 import Divider from '@/shared/components/divider';
 
-export function PostFeedItem({ item }: { item: PostsFeed }) {
+export function PostFeedItem({ item, isCommentVisible = true }: { item: PostsFeed, isCommentVisible?: boolean }) {
   const { user } = useAuthStore();
   const { group } = useGroup(item.identifier.groupId);
   const { updateCurrentGroup } = useAuthStore();
@@ -90,7 +90,7 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
     );
   }, [user, reactionMetadata, isLiked, reactionToggleMutation, showError]);
 
-  const { data: comments } = useComments(groupId, postId);
+  const { data: comments } = useComments(groupId, postId, isCommentVisible);
 
   return (
     <VStack>
@@ -175,29 +175,33 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
           </HStack>
         </View>
       </AnimatedPressable>
-      {comments?.length ? <Divider className="my-2" /> : null}
-      <Pressable onPress={handlePress}>
-        {comments?.slice(0, 2).map(comments =>
-          <VStack className="py-3 px-4" key={comments.id}>
-            <HStack space="xl" className="items-start justify-between">
-              <HStack space="sm" className="items-start flex-1">
-                <Avatar size="2xs" photoUrl={authorMember?.photoUrl || undefined} className="mt-[2px]" />
-                <VStack className="gap-px flex-1">
-                  <Text size="lg" weight="semi-bold" className="text-typography-700">
-                    {comments.author.displayName}
+      {isCommentVisible &&
+        <>
+          {comments?.length ? <Divider className="my-2" /> : null}
+          <Pressable onPress={handlePress}>
+            {comments?.slice(0, 2).map(comments =>
+              <VStack className="py-3 px-4" key={comments.id}>
+                <HStack space="xl" className="items-start justify-between">
+                  <HStack space="sm" className="items-start flex-1">
+                    <Avatar size="2xs" photoUrl={authorMember?.photoUrl || undefined} className="mt-[2px]" />
+                    <VStack className="gap-px flex-1">
+                      <Text size="lg" weight="semi-bold" className="text-typography-700">
+                        {comments.author.displayName}
+                      </Text>
+                      <Text size="lg" className="text-typography-600" numberOfLines={1}>
+                        {comments.content}
+                      </Text>
+                    </VStack>
+                  </HStack>
+                  <Text size="md" className="text-typography-400 mt-[2px]">
+                    {formatRelativeTime(comments.createdAt)}
                   </Text>
-                  <Text size="lg" className="text-typography-600" numberOfLines={1}>
-                    {comments.content}
-                  </Text>
-                </VStack>
-              </HStack>
-              <Text size="md" className="text-typography-400 mt-[2px]">
-                {formatRelativeTime(comments.createdAt)}
-              </Text>
-            </HStack>
-          </VStack>
-        )}
-      </Pressable>
+                </HStack>
+              </VStack>
+            )}
+          </Pressable>
+        </>
+      }
     </VStack>
 
   );
