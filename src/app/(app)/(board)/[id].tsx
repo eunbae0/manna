@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import {
 	TextInput,
 	Alert,
@@ -56,8 +56,7 @@ import {
 } from '@/features/board/hooks/useComments';
 import {
 	useReactions,
-	useAddReaction,
-	useRemoveReaction,
+	useReactionToggle,
 } from '@/features/board/hooks/useReactions';
 import { CommentItem } from '@/features/board/components/CommentItem';
 import AnimatedPressable from '@/components/common/animated-pressable';
@@ -70,6 +69,7 @@ import {
 } from '@/components/common/bottom-sheet';
 import { goBackOrReplaceHome, openProfile } from '@/shared/utils/router';
 import TextWithLinks from '@/shared/components/text-with-links';
+import * as Haptics from 'expo-haptics';
 
 /**
  * 로딩 상태 컴포넌트
@@ -152,66 +152,54 @@ export default function BoardPostDetailScreen() {
 	} = useComments(currentGroup?.groupId || '', postId || '');
 
 	// 게시글 반응(좋아요) 정보 가져오기
-	const reactionMetadata: PostReactionMetadata = {
-		targetType: 'post',
-		groupId: currentGroup?.groupId || '',
-		postId: postId || '',
-	};
+	const reactionMetadata: PostReactionMetadata = useMemo(() => {
+		return {
+			targetType: 'post',
+			groupId: currentGroup?.groupId || '',
+			postId: postId || '',
+		};
+	}, [currentGroup?.groupId, postId]);
 
 	const {
 		data: reactions,
-		isLoading: isReactionsLoading,
 		refetch: refetchReactions,
 	} = useReactions(reactionMetadata);
 
 	// 현재 사용자가 좋아요를 눌렀는지 확인
-	const isLiked = reactions
-		? Object.values(reactions).some((reactions) =>
-			reactions.some(
-				(reaction) =>
-					reaction.userId === user?.id && reaction.type === 'like',
-			),
-		)
-		: false;
+	const isLiked = useMemo(() => {
+		return reactions
+			? Object.values(reactions).some((reactions) =>
+				reactions.some(
+					(reaction) =>
+						reaction.userId === user?.id && reaction.type === 'like',
+				),
+			)
+			: false;
+	}, [reactions, user]);
 
 	// 반응(좋아요) 추가/제거 뮤테이션
-	const addReactionMutation = useAddReaction();
-	const removeReactionMutation = useRemoveReaction();
+	const reactionToggleMutation = useReactionToggle();
 
 	// 좋아요 버튼 처리
-	const handleLike = () => {
+	const handleLike = useCallback(() => {
 		if (!post || !user || !currentGroup?.groupId) return;
 
-		if (isLiked) {
-			// 좋아요 취소
-			removeReactionMutation.mutate(
-				{
-					metadata: reactionMetadata,
-					userId: user.id,
-					reactionType: 'like' as ReactionType,
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+
+		reactionToggleMutation.mutate(
+			{
+				metadata: reactionMetadata,
+				userId: user.id,
+				reactionType: 'like' as ReactionType,
+				currentLikeState: isLiked,
+			},
+			{
+				onError: () => {
+					showError('반응 남기기에 실패했어요.');
 				},
-				{
-					onError: () => {
-						showError('좋아요를 취소하지 못했어요');
-					},
-				},
-			);
-		} else {
-			// 좋아요 추가
-			addReactionMutation.mutate(
-				{
-					metadata: reactionMetadata,
-					userId: user.id,
-					reactionType: 'like' as ReactionType,
-				},
-				{
-					onError: () => {
-						showError('좋아요를 추가하지 못했어요');
-					},
-				},
-			);
-		}
-	};
+			},
+		);
+	}, [post, user, currentGroup?.groupId, reactionMetadata, isLiked]);
 
 	// 댓글 생성 뮤테이션
 	const createCommentMutation = useCreateComment();

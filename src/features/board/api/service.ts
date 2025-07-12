@@ -80,6 +80,10 @@ export interface ClientReaction {
 	member: Author;
 }
 
+export type ClientReactionSummary = {
+	[key in ReactionType]?: ClientReaction[];
+};
+
 /**
  * Firestore 게시판 서비스
  */
@@ -961,7 +965,7 @@ export class FirestoreBoardService {
 	 */
 	async getReactions(
 		metadata: ReactionMetadata,
-	): Promise<{ [key in ReactionType]?: ClientReaction[] }> {
+	): Promise<ClientReactionSummary> {
 		try {
 			// 대상 문서 참조 가져오기
 			let targetRef: FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData>;
@@ -989,7 +993,7 @@ export class FirestoreBoardService {
 			}
 
 			// 먼저 모든 반응을 수집
-			const reactionsByType: { [key in ReactionType]?: ClientReaction[] } = {};
+			const reactionsByType: ClientReactionSummary = {};
 
 			// 반응 타입별로 그룹화
 			for (const doc of targetDoc.docs) {

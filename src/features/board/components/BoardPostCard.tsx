@@ -36,13 +36,12 @@ import {
 } from '@/features/board/types';
 import {
 	useReactions,
-	useAddReaction,
-	useRemoveReaction,
-	useUpdateBoardPost,
 	useDeleteBoardPost,
+	useReactionToggle,
 } from '../hooks';
 import { usePinPostUtils } from '../utils/pin';
 import { checkPinnedPost } from '../api';
+import { useCallback, useMemo } from 'react';
 
 interface BoardPostCardProps {
 	post: BoardPost;
@@ -176,11 +175,13 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 		);
 	};
 
-	const reactionMetadata: PostReactionMetadata = {
-		targetType: 'post',
-		groupId: currentGroup?.groupId || '',
-		postId: post.id || '',
-	};
+	const reactionMetadata: PostReactionMetadata = useMemo(() => {
+		return {
+			targetType: 'post',
+			groupId: currentGroup?.groupId || '',
+			postId: post.id || '',
+		};
+	}, [currentGroup?.groupId, post.id]);
 
 	const { data: reactions, isLoading: isReactionsLoading } =
 		useReactions(reactionMetadata);
@@ -194,42 +195,29 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 		)
 		: false;
 
-	const addReactionMutation = useAddReaction();
-	const removeReactionMutation = useRemoveReaction();
+	console.log(reactions)
 
-	const handleLike = () => {
+	const reactionToggleMutation = useReactionToggle()
+
+	const handleLike = useCallback(() => {
 		if (!post || !user || !currentGroup?.groupId) return;
 
-		if (isLiked) {
-			// 좋아요 취소
-			removeReactionMutation.mutate(
-				{
-					metadata: reactionMetadata,
-					userId: user.id,
-					reactionType: 'like' as ReactionType,
+		// 좋아요 취소
+		reactionToggleMutation.mutate(
+			{
+				metadata: reactionMetadata,
+				userId: user.id,
+				reactionType: 'like' as ReactionType,
+				currentLikeState: isLiked,
+			},
+			{
+				onError: () => {
+					showError('좋아요를 취소하지 못했어요');
 				},
-				{
-					onError: () => {
-						showError('좋아요를 취소하지 못했어요');
-					},
-				},
-			);
-		} else {
-			// 좋아요 추가
-			addReactionMutation.mutate(
-				{
-					metadata: reactionMetadata,
-					userId: user.id,
-					reactionType: 'like' as ReactionType,
-				},
-				{
-					onError: () => {
-						showError('좋아요를 추가하지 못했어요');
-					},
-				},
-			);
-		}
-	};
+			},
+		);
+
+	}, [post, user, currentGroup?.groupId, reactionMetadata, isLiked]);
 
 	return (
 		<>

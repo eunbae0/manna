@@ -1,8 +1,6 @@
 import type {
 	BoardPost,
 	Comment,
-	CreateBoardPostRequest,
-	CreateCommentRequest,
 	PaginatedResponse,
 	UpdateBoardPostRequest,
 	UpdateCommentRequest,
@@ -13,16 +11,10 @@ import type {
 	BoardPostQueryOptions,
 	CreateBoardPostInput,
 	CreateCommentInput,
-	UpdateBoardPostInput,
-	UpdateCommentInput,
 } from './types';
 import { handleApiError } from '@/api/errors';
 import { withApiLogging } from '@/api/utils/logger';
-import {
-	type ClientReaction,
-	type FirestoreReaction,
-	getBoardService,
-} from './service';
+import { type ClientReactionSummary, getBoardService } from './service';
 
 /**
  * 게시글 상세 조회
@@ -278,9 +270,7 @@ export const removeReaction = withApiLogging(
  * @returns 반응 집계 정보
  */
 export const getReactions = withApiLogging(
-	async (
-		metadata: ReactionMetadata,
-	): Promise<{ [key in ReactionType]?: ClientReaction[] }> => {
+	async (metadata: ReactionMetadata): Promise<ClientReactionSummary> => {
 		try {
 			const boardService = getBoardService();
 			const reactions = await boardService.getReactions(metadata);

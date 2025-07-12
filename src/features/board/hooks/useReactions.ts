@@ -1,8 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	type InfiniteData,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { addReaction, getReactions, removeReaction } from '../api';
-import type { ReactionMetadata, ReactionType } from '../types';
+import type { BoardPost, ReactionMetadata, ReactionType } from '../types';
 import { boardKeys } from './useBoardPosts';
 import { commentKeys } from './useComments';
+import type { ResponseData, Feed } from '#/functions/src/caller/types';
+import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
 
 // Query keys
 export const reactionKeys = {
@@ -30,11 +37,7 @@ export function useReactions(metadata: ReactionMetadata) {
 	});
 }
 
-/**
- * 반응 추가 훅
- * @returns 반응 추가 뮤테이션
- */
-export function useAddReaction() {
+export function useReactionToggle() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -42,12 +45,19 @@ export function useAddReaction() {
 			metadata,
 			userId,
 			reactionType,
+			currentLikeState,
 		}: {
 			metadata: ReactionMetadata;
 			userId: string;
 			reactionType: ReactionType;
-		}) => addReaction(metadata, userId, reactionType),
-		onSuccess: (_, { metadata }) => {
+			currentLikeState: boolean;
+		}) => {
+			if (currentLikeState) {
+				return removeReaction(metadata, userId, reactionType);
+			}
+			return addReaction(metadata, userId, reactionType);
+		},
+		onSuccess: (_, { metadata, currentLikeState }) => {
 			// 해당 대상의 반응 캐시 무효화
 			queryClient.invalidateQueries({
 				queryKey: reactionKeys.reactionsByTarget(metadata),
@@ -70,50 +80,44 @@ export function useAddReaction() {
 					),
 				});
 			}
+
+			queryClient.setQueryData<InfiniteData<ResponseData>>(
+				[FEEDS_QUERY_KEY],
+				(oldData) =>
+					updateFeedsFunction(oldData, metadata.postId, currentLikeState),
+			);
 		},
 	});
 }
 
-/**
- * 반응 제거 훅
- * @returns 반응 제거 뮤테이션
- */
-export function useRemoveReaction() {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: ({
-			metadata,
-			userId,
-			reactionType,
-		}: {
-			metadata: ReactionMetadata;
-			userId: string;
-			reactionType: ReactionType;
-		}) => removeReaction(metadata, userId, reactionType),
-		onSuccess: (_, { metadata }) => {
-			// 해당 대상의 반응 캐시 무효화
-			queryClient.invalidateQueries({
-				queryKey: reactionKeys.reactionsByTarget(metadata),
-			});
-
-			// 대상 타입에 따라 관련 캐시 무효화
-			if (metadata.targetType === 'post') {
-				queryClient.invalidateQueries({
-					queryKey: boardKeys.post(metadata.groupId, metadata.postId),
-				});
-				queryClient.invalidateQueries({
-					queryKey: boardKeys.infinitePosts(metadata.groupId),
-				});
-			} else if (metadata.targetType === 'comment') {
-				queryClient.invalidateQueries({
-					queryKey: commentKeys.comment(
-						metadata.groupId,
-						metadata.postId,
-						metadata.commentId,
-					),
-				});
-			}
-		},
-	});
+function updateFeedsFunction(
+	oldData: InfiniteData<ResponseData> | undefined,
+	postId: string,
+	currentLikeState: boolean,
+) {
+	if (!oldData) return;
+	return {
+		...oldData,
+		pages: oldData.pages.map((p) => {
+			return {
+				...p,
+				feeds: p.feeds.map((item) =>
+					item.identifier.id === postId
+						? ({
+								...item,
+								data: {
+									...item.data,
+									reactionSummary: {
+										...(item.data as BoardPost).reactionSummary,
+										like:
+											((item.data as BoardPost).reactionSummary?.like || 0) +
+											(currentLikeState ? -1 : 1),
+									},
+								} as BoardPost,
+							} as Feed)
+						: item,
+				),
+			};
+		}),
+	};
 }
