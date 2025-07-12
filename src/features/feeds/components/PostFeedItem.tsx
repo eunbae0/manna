@@ -96,7 +96,7 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
     <VStack>
       <AnimatedPressable onPress={handlePress}>
         <View className="bg-white rounded-xl p-4">
-          <HStack space="sm" className="items-center mb-2">
+          <HStack space="sm" className="items-center mb-1">
             <Avatar size="md" photoUrl={authorMember?.photoUrl || undefined} />
             <VStack className="gap-[2px] flex-1">
               <HStack space="sm" className="items-center">
@@ -127,9 +127,14 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
             </VStack>
           </HStack>
 
-          <Text size="xl" className="mt-2 text-typography-800">
-            {item.data.content}
-          </Text>
+          <VStack>
+            <Text size="xl" weight="semi-bold" className="mt-2 text-typography-800">
+              {item.data.title}
+            </Text>
+            <Text size="xl" weight="regular" className="mt-2 text-typography-700">
+              {item.data.content}
+            </Text>
+          </VStack>
 
           <HStack className="mt-3 pt-2">
             <HStack space="xl" className="items-center">
@@ -173,7 +178,7 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
       {comments?.length ? <Divider className="my-2" /> : null}
       <Pressable onPress={handlePress}>
         {comments?.slice(0, 2).map(comments =>
-          <VStack className="py-2 px-4" key={comments.id}>
+          <VStack className="py-3 px-4" key={comments.id}>
             <HStack space="xl" className="items-start justify-between">
               <HStack space="sm" className="items-start flex-1">
                 <Avatar size="2xs" photoUrl={authorMember?.photoUrl || undefined} className="mt-[2px]" />
