@@ -10,10 +10,21 @@ import { Box } from '#/components/ui/box';
 import { HomeRecentGroupActivity } from '../components/HomeRecentGroupActivity';
 import { useInfiniteUserFeeds } from '@/features/feeds/hooks/useFeeds';
 import { useRefreshControl } from '@/shared/hooks/useRefreshControl';
+import { useNotifications } from '@/features/notification/hooks/useNotifications';
+import { useCallback } from 'react';
 
 export default function MainHomeScreen() {
-  const { refetch } = useInfiniteUserFeeds();
-  const { isRefreshing, onRefresh } = useRefreshControl(refetch);
+  const { refetch: refetchFeeds } = useInfiniteUserFeeds();
+  const { refetch: refetchNotifications } = useNotifications();
+
+  const handleRefresh = useCallback(() => {
+    return Promise.all([
+      refetchFeeds(),
+      refetchNotifications(),
+    ]);
+  }, [refetchFeeds, refetchNotifications]);
+
+  const { isRefreshing, onRefresh } = useRefreshControl(handleRefresh);
 
   return (
     <VStack>
