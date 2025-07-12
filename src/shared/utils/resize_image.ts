@@ -6,6 +6,7 @@ export const convertToWebp = async (uri: string) => {
 		const image = await context.renderAsync();
 		const result = await image.saveAsync({
 			format: ImageManipulator.SaveFormat.WEBP,
+			compress: 0.8,
 		});
 		return result.uri;
 	} catch (error) {
