@@ -4,6 +4,7 @@ import {
 	Alert,
 	ActivityIndicator,
 	RefreshControl,
+	Keyboard,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -225,8 +226,10 @@ export default function BoardPostDetailScreen() {
 					showSuccess('댓글이 등록되었어요');
 					// 댓글 입력 후 키보드 닫기
 					commentInputRef.current?.blur();
+					Keyboard.dismiss();
 				},
 				onError: () => {
+					Keyboard.dismiss();
 					showError('댓글을 등록하지 못했어요');
 				},
 			},
@@ -254,9 +257,11 @@ export default function BoardPostDetailScreen() {
 			},
 			{
 				onSuccess: () => {
+					Keyboard.dismiss();
 					showSuccess('댓글이 수정되었어요');
 				},
 				onError: () => {
+					Keyboard.dismiss();
 					showError('댓글을 수정하지 못했어요');
 				},
 			},
@@ -445,7 +450,6 @@ export default function BoardPostDetailScreen() {
 			</SafeAreaView>
 		);
 	}
-	console.log(post?.elements?.image)
 
 	const categoryLabel = post.category === 'NOTICE' ? '공지사항' : '자유게시판';
 	const categoryColor =
@@ -483,31 +487,30 @@ export default function BoardPostDetailScreen() {
 						</Box>
 
 						{/* 작성자 정보 */}
-						<HStack className="mb-4 items-center justify-between">
+						<HStack className="mb-6 items-center justify-between">
 							<HStack space="sm" className="items-center">
 								<AnimatedPressable onPress={() => openProfile(post.author.id)}>
-									<HStack space="sm" className="items-center">
-										<Avatar size="xs" photoUrl={post.author.photoUrl || ''} />
-										<HStack space="xs" className="items-center">
-											<Text size="sm" className="font-pretendard-bold">
-												{post.author.displayName || '이름없음'}
+									<HStack space="md" className="items-center">
+										<Avatar size="md" photoUrl={post.author.photoUrl || ''} />
+										<VStack space="xs">
+											<HStack space="xs" className="items-center">
+												<Text size="lg" className="font-pretendard-bold">
+													{post.author.displayName || '이름없음'}
+												</Text>
+												{post.author.role === 'leader' && (
+													<Icon
+														as={Crown}
+														size="sm"
+														className="text-yellow-500"
+													/>
+												)}
+											</HStack>
+											<Text className="text-typography-500" size="md">
+												{formatRelativeTime(post.createdAt)}
 											</Text>
-											{post.author.role === 'leader' && (
-												<Icon
-													as={Crown}
-													size="sm"
-													className="text-yellow-500"
-												/>
-											)}
-										</HStack>
+										</VStack>
 									</HStack>
 								</AnimatedPressable>
-								<HStack space="xs" className="items-center">
-									<Box className="w-1 h-1 rounded-full bg-gray-300" />
-									<Text className="text-typography-500" size="sm">
-										{formatRelativeTime(post.createdAt)}
-									</Text>
-								</HStack>
 							</HStack>
 							{post.isPinned && (
 								<HStack space="xs" className="items-center">
@@ -523,17 +526,17 @@ export default function BoardPostDetailScreen() {
 						</HStack>
 
 						{/* 게시글 제목 */}
-						<Text size="2xl" className="font-pretendard-bold mb-2">
+						<Text size="2xl" className="font-pretendard-bold mb-4">
 							{post.title}
 						</Text>
 
 						{/* 게시글 내용 */}
 						<Box className="mb-6">
-							<TextWithLinks text={post?.content || ''} size="lg" className="text-typography-700" />
+							<TextWithLinks text={post?.content || ''} size="xl" className="text-typography-700" />
 						</Box>
 
 						{/* 게시글 이미지 */}
-						<Box className="mb-6">
+						<VStack space="sm" className="mb-6">
 							{post?.elements?.image?.sort((a, b) => a.position - b.position).map((i) => {
 								const image = i as ImageElement
 								return (
@@ -545,7 +548,7 @@ export default function BoardPostDetailScreen() {
 									/>
 								)
 							})}
-						</Box>
+						</VStack>
 
 						{/* 게시글 통계 */}
 						{reactions?.like && reactions?.like.length > 0 && (
@@ -607,8 +610,8 @@ export default function BoardPostDetailScreen() {
 						<Divider />
 
 						{/* 댓글 섹션 */}
-						<VStack className="py-4 mb-4">
-							<Text size="lg" className="font-pretendard-bold mb-2">
+						<VStack className="py-4 mb-8">
+							<Text size="xl" className="font-pretendard-bold mb-2">
 								댓글 {post.commentCount}개
 							</Text>
 

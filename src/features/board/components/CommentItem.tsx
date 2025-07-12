@@ -3,7 +3,7 @@ import {
 	BottomSheetListHeader,
 } from '@/components/common/bottom-sheet';
 import { useState } from 'react';
-import { Alert, type ViewProps } from 'react-native';
+import { Alert, View, type ViewProps } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { Avatar } from '@/components/common/avatar';
 import { VStack } from '#/components/ui/vstack';
@@ -70,28 +70,27 @@ export const CommentItem = ({
 
 	return (
 		<HStack space="md" className="py-4" {...props}>
-			<Avatar
-				size="sm"
-				photoUrl={comment.author.photoUrl || ''}
-			/>
-			<VStack space="xs" className="flex-1">
+			<View className="mt-1">
+				<Avatar
+					size="md"
+					photoUrl={comment.author.photoUrl || ''}
+				/>
+			</View>
+			<VStack space="sm" className="flex-1">
 				<HStack space="sm" className="items-center justify-between">
-					<HStack space="sm" className="items-center">
+					<VStack className='gap-px'>
 						<HStack space="xs" className="items-center">
-							<Text size="md" className="font-pretendard-bold">
+							<Text size="lg" weight="semi-bold">
 								{comment.author.displayName || '이름없음'}
 							</Text>
 							{comment.author.role === 'leader' && (
 								<Icon as={Crown} size="xs" className="text-yellow-500" />
 							)}
 						</HStack>
-						<HStack space="xs" className="items-center">
-							<Box className="w-1 h-1 rounded-full bg-gray-300" />
-							<Text className="text-typography-500" size="sm">
-								{formatRelativeTime(comment.createdAt)}
-							</Text>
-						</HStack>
-					</HStack>
+						<Text className="text-typography-500" size="md">
+							{formatRelativeTime(comment.createdAt)}
+						</Text>
+					</VStack>
 					{/* 댓글 작성자인 경우에만 더보기 메뉴 표시 */}
 					{isCurrentUser && (
 						<PopupMenu
@@ -102,7 +101,7 @@ export const CommentItem = ({
 									<Button
 										variant="icon"
 										size="sm"
-										className="absolute -top-5 -right-2"
+										className="absolute -top-8 -right-2"
 										{...triggerProps}
 									>
 										<ButtonIcon as={MoreHorizontal} size="sm" />
@@ -136,7 +135,7 @@ export const CommentItem = ({
 						</PopupMenu>
 					)}
 				</HStack>
-				<Text size="lg" className="text-typography-700">{comment.content}</Text>
+				<Text size="xl" className="text-typography-700">{comment.content}</Text>
 			</VStack>
 
 			{/* 댓글 수정 바텀시트 */}
