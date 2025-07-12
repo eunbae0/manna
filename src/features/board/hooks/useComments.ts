@@ -8,6 +8,7 @@ import {
 import type { CreateCommentInput } from '../api/types';
 import type { Comment, UpdateCommentRequest } from '../types';
 import { boardKeys } from './useBoardPosts';
+import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
 
 // Query keys
 export const commentKeys = {
@@ -65,6 +66,11 @@ export function useCreateComment() {
 			queryClient.invalidateQueries({
 				queryKey: boardKeys.post(metadata.groupId, commentData.postId),
 			});
+
+			// 피드 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: [FEEDS_QUERY_KEY],
+			});
 		},
 	});
 }
@@ -88,6 +94,16 @@ export function useUpdateComment() {
 			// 해당 게시글의 댓글 목록 캐시 무효화
 			queryClient.invalidateQueries({
 				queryKey: commentKeys.commentsByPost(metadata.groupId, metadata.postId),
+			});
+
+			// 게시글 상세 정보 캐시 무효화 (댓글 수 업데이트를 위해)
+			queryClient.invalidateQueries({
+				queryKey: boardKeys.post(metadata.groupId, metadata.postId),
+			});
+
+			// 피드 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: [FEEDS_QUERY_KEY],
 			});
 		},
 	});
@@ -117,8 +133,9 @@ export function useDeleteComment() {
 				queryKey: boardKeys.post(metadata.groupId, metadata.postId),
 			});
 
+			// 피드 캐시 무효화
 			queryClient.invalidateQueries({
-				queryKey: commentKeys.commentsByPost(metadata.groupId, metadata.postId),
+				queryKey: [FEEDS_QUERY_KEY],
 			});
 		},
 	});

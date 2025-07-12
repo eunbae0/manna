@@ -1,5 +1,18 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 
+export const convertToWebp = async (uri: string) => {
+	try {
+		const context = ImageManipulator.ImageManipulator.manipulate(uri);
+		const image = await context.renderAsync();
+		const result = await image.saveAsync({
+			format: ImageManipulator.SaveFormat.WEBP,
+		});
+		return result.uri;
+	} catch (error) {
+		throw new Error(`이미지 WebP 변환 오류: ${error}`);
+	}
+};
+
 export const resizeImage = async (
 	uri: string,
 	width: number | undefined = 128,

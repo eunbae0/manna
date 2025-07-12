@@ -14,9 +14,10 @@ import {
 	startAfter,
 	endBefore,
 	increment,
+	Timestamp,
 } from '@react-native-firebase/firestore';
 import type { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
-import { database } from '@/firebase/config';
+import { database, storage } from '@/firebase/config';
 import type {
 	CreateBoardPostInput,
 	UpdateBoardPostInput,
@@ -38,6 +39,7 @@ import {
 	type FirestoreAuthor,
 	type Author,
 	type ReactionMetadata,
+	type ImageElement,
 } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -46,6 +48,10 @@ import {
 } from '@/api/prayer-request/types';
 import type { GroupMember } from '@/api/group/types';
 import { DELETED_MEMBER_DISPLAY_NAME } from '@/shared/constants';
+import { uploadImageAsync } from '@/shared/utils/firebase';
+import { convertToWebp } from '@/shared/utils/resize_image';
+import { FIREBASE_STORAGE_IMAGE_BASE_URL } from '@/shared/constants/firebase';
+import { deleteObject, ref } from '@react-native-firebase/storage';
 
 // Firestore 타입 정의
 interface FirestoreBoardPost
@@ -160,7 +166,8 @@ export class FirestoreBoardService {
 			reactionSummary: post.reactionSummary as {
 				[key in ReactionType]?: number;
 			},
-			createdAt: post.createdAt.toDate(),
+			elements: post.elements,
+			createdAt: post.createdAt?.toDate(),
 			updatedAt: post.updatedAt?.toDate(),
 		};
 	}
@@ -401,7 +408,7 @@ export class FirestoreBoardService {
 			);
 
 			// 기본 게시글 데이터 생성
-			const postToCreate: Partial<FirestoreBoardPost> = {
+			const postToCreate: FirestoreBoardPost = {
 				id: postId,
 				title: postData.title,
 				content: postData.content || '',
@@ -414,6 +421,7 @@ export class FirestoreBoardService {
 				// attachments: postData.attachments
 				// 	? postData.attachments.map((url) => ({ url }))
 				// 	: [],
+				elements: postData.elements,
 				tags: postData.tags || [],
 				author: {
 					id: postData.userId,
@@ -422,40 +430,36 @@ export class FirestoreBoardService {
 				createdAt: serverTimestamp() as FirebaseFirestoreTypes.Timestamp,
 			};
 
+			console.log(postData.elements);
 			// 게시글 저장
 			await setDoc(postRef, postToCreate);
 
 			// 콘텐츠 요소가 있는 경우 처리
-			if (postData.elements && postData.elements.length > 0) {
-				const elementsCollectionRef = collection(
-					postRef,
-					this.elementsCollectionPath,
-				);
+			// if (postData.elements && Object.values(postData.elements).length > 0) {
+			// 	const elementsCollectionRef = collection(
+			// 		postRef,
+			// 		this.elementsCollectionPath,
+			// 	);
 
-				// 각 콘텐츠 요소 저장
-				for (const element of postData.elements) {
-					const elementId = uuidv4();
-					const elementRef = doc(elementsCollectionRef, elementId);
-					const elementData = {
-						...element,
-						id: elementId,
-						createdAt: serverTimestamp(),
-					};
+			// 	// 각 콘텐츠 요소 저장
+			// 	for (const element of Object.values(postData.elements)) {
+			// 		const elementId = uuidv4();
+			// 		const elementRef = doc(elementsCollectionRef, elementId);
+			// 		const elementData = {
+			// 			...element,
+			// 			id: elementId,
+			// 			createdAt: serverTimestamp(),
+			// 		};
 
-					await setDoc(elementRef, elementData);
-				}
-			}
-
-			// 생성된 게시글 조회
-			const createdPostDoc = await getDoc(postRef);
-			if (!createdPostDoc.exists()) {
-				throw new Error('Failed to create post');
-			}
+			// 		await setDoc(elementRef, elementData);
+			// 	}
+			// }
 
 			// 생성된 게시글 반환
-			return await this.convertToClientBoardPost(
-				createdPostDoc.data() as FirestoreBoardPost,
-			);
+			return await this.convertToClientBoardPost({
+				...postToCreate,
+				createdAt: Timestamp.now(),
+			});
 		} catch (error) {
 			console.error('Error creating board post:', error);
 			throw error;
@@ -510,6 +514,11 @@ export class FirestoreBoardService {
 			// 	updateData.attachments = postData.attachments.map((url) => ({ url }));
 			// }
 
+			if (postData.elements?.image) {
+				updateData.elements = {
+					image: postData.elements.image,
+				};
+			}
 			// 태그 업데이트
 			if (postData.tags !== undefined) {
 				updateData.tags = postData.tags;
@@ -519,31 +528,31 @@ export class FirestoreBoardService {
 			await updateDoc(postRef, updateData);
 
 			// 콘텐츠 요소 업데이트
-			if (postData.elements !== undefined) {
-				const elementsCollectionRef = collection(
-					postRef,
-					this.elementsCollectionPath,
-				);
-				const existingElementsQuery = query(elementsCollectionRef);
-				const existingElementsSnapshot = await getDocs(existingElementsQuery);
+			// if (postData.elements !== undefined) {
+			// 	const elementsCollectionRef = collection(
+			// 		postRef,
+			// 		this.elementsCollectionPath,
+			// 	);
+			// 	const existingElementsQuery = query(elementsCollectionRef);
+			// 	const existingElementsSnapshot = await getDocs(existingElementsQuery);
 
-				// 기존 콘텐츠 요소 삭제
-				for (const doc of existingElementsSnapshot.docs) {
-					await deleteDoc(doc.ref);
-				}
+			// 	// 기존 콘텐츠 요소 삭제
+			// 	for (const doc of existingElementsSnapshot.docs) {
+			// 		await deleteDoc(doc.ref);
+			// 	}
 
-				for (const element of postData.elements) {
-					const elementId = uuidv4();
-					const elementRef = doc(elementsCollectionRef, elementId);
-					const elementData = {
-						...element,
-						id: elementId,
-						createdAt: serverTimestamp(),
-					};
+			// 	for (const element of Object.values(postData.elements)) {
+			// 		const elementId = uuidv4();
+			// 		const elementRef = doc(elementsCollectionRef, elementId);
+			// 		const elementData = {
+			// 			...element,
+			// 			id: elementId,
+			// 			createdAt: serverTimestamp(),
+			// 		};
 
-					await setDoc(elementRef, elementData);
-				}
-			}
+			// 		await setDoc(elementRef, elementData);
+			// 	}
+			// }
 		} catch (error) {
 			console.error('Error updating board post:', error);
 			throw error;
@@ -1016,6 +1025,35 @@ export class FirestoreBoardService {
 			console.error('Error getting reactions:', error);
 			throw error;
 		}
+	}
+
+	async uploadImage(
+		metadata: {
+			userId: string;
+			groupId: string;
+		},
+		url: string,
+	): Promise<{ photoUrl: string; imageId: string }> {
+		const imageId = uuidv4();
+		const path = `${FIREBASE_STORAGE_IMAGE_BASE_URL}/groups/${metadata.groupId}/users/${metadata.userId}/posts`;
+
+		const resizedPhotoUrl = await convertToWebp(url);
+		const photoUrl = await uploadImageAsync(
+			resizedPhotoUrl,
+			`${path}/${imageId}`,
+		);
+		return { photoUrl, imageId };
+	}
+
+	async deleteImage(metadata: {
+		userId: string;
+		groupId: string;
+		imageId: string;
+	}): Promise<void> {
+		const path = `${FIREBASE_STORAGE_IMAGE_BASE_URL}/groups/${metadata.groupId}/users/${metadata.userId}/posts/${metadata.imageId}`;
+		const desertRef = ref(storage, path);
+
+		return await deleteObject(desertRef);
 	}
 }
 

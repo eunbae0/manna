@@ -349,3 +349,48 @@ export const deleteComment = withApiLogging(
 	'deleteComment',
 	'board',
 );
+
+/**
+ * 게시글 이미지 업로드
+ * @param metadata 게시글 ID, 사용자 ID
+ * @param url 이미지 URL
+ * @returns 업로드된 이미지 URL
+ */
+export const uploadPostImage = withApiLogging(
+	async (
+		metadata: { groupId: string; userId: string },
+		url: string,
+	): Promise<{ photoUrl: string; imageId: string }> => {
+		try {
+			const boardService = getBoardService();
+			return await boardService.uploadImage(metadata, url);
+		} catch (error) {
+			throw handleApiError(error, 'uploadPostImage', 'board');
+		}
+	},
+	'uploadPostImage',
+	'board',
+);
+
+/**
+ * 게시글 이미지 삭제
+ * @param path 이미지 경로
+ * @returns 업로드된 이미지 URL
+ */
+export const deletePostImage = withApiLogging(
+	async (metadata: {
+		userId: string;
+		groupId: string;
+		imageId: string;
+	}): Promise<void> => {
+		try {
+			const boardService = getBoardService();
+			await boardService.deleteImage(metadata);
+			return;
+		} catch (error) {
+			throw handleApiError(error, 'deletePostImage', 'board');
+		}
+	},
+	'deleteImage',
+	'board',
+);

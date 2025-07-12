@@ -3,7 +3,6 @@ import {
 	TextInput,
 	Alert,
 	ActivityIndicator,
-	FlatList,
 	RefreshControl,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -36,6 +35,7 @@ import Header from '@/components/common/Header';
 import type {
 	ReactionType,
 	PostReactionMetadata,
+	ImageElement,
 } from '@/features/board/types';
 import { UserRole } from '@/features/board/types';
 import type { ClientReaction } from '@/features/board/api/service';
@@ -70,6 +70,8 @@ import {
 import { goBackOrReplaceHome, openProfile } from '@/shared/utils/router';
 import TextWithLinks from '@/shared/components/text-with-links';
 import * as Haptics from 'expo-haptics';
+import { Image } from 'expo-image'
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 /**
  * 로딩 상태 컴포넌트
@@ -199,7 +201,7 @@ export default function BoardPostDetailScreen() {
 				},
 			},
 		);
-	}, [post, user, currentGroup?.groupId, reactionMetadata, isLiked]);
+	}, [post, user, currentGroup?.groupId, reactionMetadata, isLiked, reactionToggleMutation, showError]);
 
 	// 댓글 생성 뮤테이션
 	const createCommentMutation = useCreateComment();
@@ -423,6 +425,7 @@ export default function BoardPostDetailScreen() {
 		handleClose: handlePostSettingClose,
 	} = useBottomSheet();
 
+
 	// 로딩 상태 표시
 	if (isPostLoading) {
 		return (
@@ -442,6 +445,7 @@ export default function BoardPostDetailScreen() {
 			</SafeAreaView>
 		);
 	}
+	console.log(post?.elements?.image)
 
 	const categoryLabel = post.category === 'NOTICE' ? '공지사항' : '자유게시판';
 	const categoryColor =
@@ -526,6 +530,21 @@ export default function BoardPostDetailScreen() {
 						{/* 게시글 내용 */}
 						<Box className="mb-6">
 							<TextWithLinks text={post?.content || ''} size="lg" className="text-typography-700" />
+						</Box>
+
+						{/* 게시글 이미지 */}
+						<Box className="mb-6">
+							{post?.elements?.image?.sort((a, b) => a.position - b.position).map((i) => {
+								const image = i as ImageElement
+								return (
+									<Image
+										key={image.position}
+										source={getImageSourceForSignedImageUrl(image.url)}
+										style={{ width: '100%', height: 300, aspectRatio: 1, borderRadius: 8, borderWidth: 1, borderColor: '#ECECEC' }}
+										contentFit='contain'
+									/>
+								)
+							})}
 						</Box>
 
 						{/* 게시글 통계 */}

@@ -9,7 +9,10 @@ import type {
 	ReactionSummary,
 	ReactionType,
 } from './base';
-import type { ContentElementUnion } from './content-elements';
+import type {
+	ContentElementType,
+	ContentElementUnion,
+} from './content-elements';
 
 // 게시글 엔티티
 // Firestore 콜렉션 구조: posts/{postId}
@@ -29,7 +32,9 @@ export interface BoardPost extends BaseEntity {
 	reactions?: ReactionSummary[]; // 게시글에 대한 반응 집계 정보 (UI 표시용)
 
 	// 리치 콘텐츠 요소들 - 텍스트, 이미지, 비디오, 투표, 일정 등
-	elements?: Array<ContentElementUnion>;
+	elements?: {
+		[key in ContentElementType]?: ContentElementUnion[];
+	};
 }
 
 // 게시글 생성/수정 요청 타입
@@ -42,7 +47,9 @@ export interface CreateBoardPostRequest {
 	tags?: string[];
 
 	// 리치 콘텐츠 요소들
-	elements?: Array<ContentElementUnion>;
+	elements?: {
+		[key in ContentElementType]?: ContentElementUnion[];
+	};
 }
 
 export interface UpdateBoardPostRequest

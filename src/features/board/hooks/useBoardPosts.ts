@@ -118,6 +118,11 @@ export function useDeleteBoardPost() {
 			queryClient.invalidateQueries({
 				queryKey: boardKeys.infinitePosts(metadata.groupId),
 			});
+
+			// 피드 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: [FEEDS_QUERY_KEY],
+			});
 		},
 	});
 }

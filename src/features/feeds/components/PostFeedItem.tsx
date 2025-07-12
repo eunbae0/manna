@@ -1,4 +1,4 @@
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { Avatar } from '@/components/common/avatar';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
@@ -19,6 +19,7 @@ import {
   useReactionToggle,
 } from '@/features/board/hooks';
 import type {
+  ImageElement,
   PostReactionMetadata,
   ReactionType,
 } from '@/features/board/types';
@@ -26,6 +27,8 @@ import { useToastStore } from '@/store/toast';
 import * as Haptics from 'expo-haptics';
 import { useUpdatePostViewCount } from '../hooks/useUpdatePostViewCount';
 import Divider from '@/shared/components/divider';
+import { Image } from 'expo-image';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 export function PostFeedItem({ item, isCommentVisible = true }: { item: PostsFeed, isCommentVisible?: boolean }) {
   const { user } = useAuthStore();
@@ -94,7 +97,7 @@ export function PostFeedItem({ item, isCommentVisible = true }: { item: PostsFee
 
   return (
     <VStack>
-      <AnimatedPressable onPress={handlePress}>
+      <Pressable onPress={handlePress}>
         <View className="bg-white rounded-xl p-4">
           <HStack space="sm" className="items-center mb-1">
             <Avatar size="md" photoUrl={authorMember?.photoUrl || undefined} />
@@ -134,6 +137,21 @@ export function PostFeedItem({ item, isCommentVisible = true }: { item: PostsFee
             <Text size="xl" weight="regular" className="mt-2 text-typography-700">
               {item.data.content}
             </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <HStack space="sm" className="mt-4">
+                {item.data.elements?.image?.map((i) => {
+                  const image = i as ImageElement
+                  return (
+                    <Image
+                      key={image.position}
+                      source={getImageSourceForSignedImageUrl(image.url)}
+                      style={{ width: 160, height: 160, borderRadius: 8, borderWidth: 1, borderColor: '#ECECEC' }}
+                      contentFit="cover"
+                    />
+                  )
+                })}
+              </HStack>
+            </ScrollView>
           </VStack>
 
           <HStack className="mt-3 pt-2">
@@ -174,7 +192,7 @@ export function PostFeedItem({ item, isCommentVisible = true }: { item: PostsFee
             </HStack>
           </HStack>
         </View>
-      </AnimatedPressable>
+      </Pressable>
       {isCommentVisible &&
         <>
           {comments?.length ? <Divider className="my-2" /> : null}

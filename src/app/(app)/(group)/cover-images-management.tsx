@@ -1,6 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,6 +18,7 @@ import { useToastStore } from '@/store/toast';
 import Heading from '@/shared/components/heading';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
+import { AnimatedProgress } from '@/shared/components/animated-progress';
 
 const MAX_IMAGE_COUNT = 3;
 
@@ -31,7 +31,7 @@ export default function CoverImagesManagement() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
   const [uploadingImages, setUploadingImages] = useState<{ uri: string; loading: boolean }[]>([]);
-  const loadingProgress = useSharedValue(0);
+
 
   // Initialize images state from group data when loaded
   useEffect(() => {
@@ -70,18 +70,6 @@ export default function CoverImagesManagement() {
     }
   };
 
-  // Start loading animation
-  const startLoadingAnimation = () => {
-    loadingProgress.value = 0;
-    loadingProgress.value = withRepeat(
-      withTiming(1, {
-        duration: 2000,
-        easing: Easing.linear
-      }),
-      -1, // -1 for infinite repetitions
-      false // 순환하지 않고 다시 0부터 시작
-    );
-  };
 
   const handleAddImage = async () => {
     if (images.length >= MAX_IMAGE_COUNT) {
@@ -131,9 +119,6 @@ export default function CoverImagesManagement() {
 
         // Add placeholder to images list
         setImages([...images, tempImage]);
-
-        // Start loading animation
-        startLoadingAnimation();
 
         // Add to loading images list
         setUploadingImages([...uploadingImages, { uri: tempImageId, loading: true }]);
@@ -228,27 +213,6 @@ export default function CoverImagesManagement() {
     setIsReordering(!isReordering);
   };
 
-  // 로딩 애니메이션 스타일 정의
-  const loadingBarStyle = useAnimatedStyle(() => {
-    // 0-0.5: 왼쪽에서 오른쪽으로 늘어남, 0.5-1: 오른쪽을 기준으로 줄어듬
-    const progress = loadingProgress.value;
-
-    if (progress <= 0.5) {
-      // 왼쪽에서 오른쪽으로 늘어나는 과정 (0-0.5 구간을 0-1로 변환)
-      const expandProgress = progress * 2;
-      return {
-        width: `${expandProgress * 100}%`,
-        left: 0,
-      };
-    }
-    // 오른쪽을 기준으로 줄어드는 과정 (0.5-1 구간을 1-0으로 변환)
-    const shrinkProgress = (1 - progress) * 2;
-    return {
-      width: `${shrinkProgress * 100}%`,
-      right: 0,
-      left: 'auto',
-    };
-  });
 
   if (isLoading) {
     return (
@@ -321,12 +285,7 @@ export default function CoverImagesManagement() {
                       <Text size="sm" className="text-typography-600 mt-2 px-4 text-center">
                         이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
                       </Text>
-                      <View className="h-1 w-[80%] bg-gray-300 mt-4 overflow-hidden">
-                        <Animated.View
-                          className="h-1 bg-primary-500 absolute left-0"
-                          style={loadingBarStyle}
-                        />
-                      </View>
+                      <AnimatedProgress />
                     </View>
                   ) : (
                     <Image
@@ -371,12 +330,7 @@ export default function CoverImagesManagement() {
                       <Text size="sm" className="text-typography-600 mt-2 px-4 text-center">
                         이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
                       </Text>
-                      <View className="h-1 w-[80%] bg-gray-300 mt-4 overflow-hidden">
-                        <Animated.View
-                          className="h-1 bg-primary-500 absolute left-0"
-                          style={loadingBarStyle}
-                        />
-                      </View>
+                      <AnimatedProgress />
                     </View>
                   ) : (
                     <>
