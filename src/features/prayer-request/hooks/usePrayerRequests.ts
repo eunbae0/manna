@@ -9,7 +9,10 @@ import {
 	fetchGroupPrayerRequests,
 	togglePrayerRequestReaction,
 } from '@/api/prayer-request';
-import type { ClientPrayerRequest, ServerPrayerRequest } from '@/api/prayer-request/types';
+import type {
+	ClientPrayerRequest,
+	ServerPrayerRequest,
+} from '@/api/prayer-request/types';
 import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
 import * as Haptics from 'expo-haptics';
 import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
@@ -97,8 +100,6 @@ export function usePrayerRequestToggleLike({
 
 			performLikeAnimation();
 
-			console.log(updatedReaction);
-
 			Promise.all([
 				queryClient.invalidateQueries({
 					queryKey: [PRAYER_REQUESTS_QUERY_KEY, currentGroup?.groupId || ''],
@@ -115,23 +116,27 @@ export function usePrayerRequestToggleLike({
 						if (!oldData) return;
 						return {
 							...oldData,
-							pages: oldData.pages.map(p => {
+							pages: oldData.pages.map((p) => {
 								return {
 									...p,
 									feeds: p.feeds.map((item) =>
 										item.identifier.id === prayerRequestId
-											? {
+											? ({
 													...item,
-													data: { ...item.data, reactions: updatedReaction } as ServerPrayerRequest,
-												} as Feed
-											: item
-									)
-							}}
-						)}	
-					}
-				)
+													data: {
+														...item.data,
+														reactions: updatedReaction,
+													} as ServerPrayerRequest,
+												} as Feed)
+											: item,
+									),
+								};
+							}),
+						};
+					},
+				),
 			]);
-		
+
 			// // tracking amplitude
 			// trackAmplitudeEvent('기도제목 좋아요', {
 			// 	screen: 'Tab_Home',

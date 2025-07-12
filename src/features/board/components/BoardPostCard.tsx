@@ -195,8 +195,6 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 		)
 		: false;
 
-	console.log(reactions)
-
 	const reactionToggleMutation = useReactionToggle()
 
 	const handleLike = useCallback(() => {
