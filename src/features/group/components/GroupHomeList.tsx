@@ -65,6 +65,8 @@ import FellowshipCard from '../../fellowship/components/home/FellowshipCard';
 import FellowshipCardSkeleton from '../../fellowship/components/home/FellowshipCardSkeleton';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Icon } from '#/components/ui/icon';
+import { PostFeedItem } from '@/features/feeds/components/PostFeedItem';
+import { FeedItemListSkeleton } from '@/features/feeds/components/FeedItemSkeleton';
 // 화면 포커스 감지를 위해 useFocusEffect 사용
 
 function GroupHomeList() {
@@ -281,21 +283,21 @@ function GroupHomeList() {
 		return (
 			<VStack className="mt-3 py-1 items-center justify-center">
 				<HStack className="justify-between pl-4 pr-1 items-center w-full">
-					<Heading size="xl">최근 나눔</Heading>
-					<Button variant="text" size='sm' onPress={handleViewMoreFellowships}>
+					<Heading size="2xl">최근 나눔</Heading>
+					<Button variant="text" size='md' onPress={handleViewMoreFellowships}>
 						<ButtonText>더보기</ButtonText>
 						<ButtonIcon as={ChevronRight} />
 					</Button>
 				</HStack>
 				{isFellowshipLoading ? (
 					<ScrollView horizontal scrollEnabled={false}>
-						<HStack space="md" className="ml-4 my-4 justify-start">
+						<HStack space="md" className="ml-5 my-4 justify-start">
 							<FellowshipCardSkeleton />
 							<FellowshipCardSkeleton />
 						</HStack>
 					</ScrollView>
 				) : isFellowshipError ? (
-					<VStack space="xs" className="px-4 pt-10 pb-6">
+					<VStack space="xs" className="px-5 pt-10 pb-6">
 						<Text className="text-center text-error-500">
 							나눔을 불러오는 중 오류가 발생했어요.
 						</Text>
@@ -309,7 +311,7 @@ function GroupHomeList() {
 						</Button>
 					</VStack>
 				) : fellowships.length === 0 ? (
-					<VStack space="xl" className="px-4 pt-10 pb-6 text-typography-500">
+					<VStack space="xl" className="px-5 pt-10 pb-6 text-typography-500">
 						<Text className="text-center">
 							그룹의 첫 나눔을 만들어보세요.
 						</Text>
@@ -319,7 +321,7 @@ function GroupHomeList() {
 						</Button>
 					</VStack>
 				) : (
-					<ScrollView className="w-full px-4 pt-4 pb-4" horizontal showsHorizontalScrollIndicator={false}>
+					<ScrollView className="w-full px-5 pt-3 pb-4" horizontal showsHorizontalScrollIndicator={false}>
 						<HStack space="md">
 							{fellowships.map((item) => (
 								<FellowshipCard key={item.identifiers.id} fellowship={item} />
@@ -335,8 +337,8 @@ function GroupHomeList() {
 		return (
 			<VStack className="mt-3 py-1 items-center justify-center">
 				<HStack className="justify-between pl-4 pr-1 items-center w-full">
-					<Heading size="xl">최근 기도 제목</Heading>
-					<Button variant="text" size='sm' onPress={handleViewMorePrayerRequests}>
+					<Heading size="2xl">최근 기도 제목</Heading>
+					<Button variant="text" size='md' onPress={handleViewMorePrayerRequests}>
 						<ButtonText>더보기</ButtonText>
 						<ButtonIcon as={ChevronRight} />
 					</Button>
@@ -344,7 +346,7 @@ function GroupHomeList() {
 				{isLoading ? (
 					<PrayerRequestSkeleton />
 				) : isPrayerRequestError ? (
-					<VStack space="xs" className="px-4 pt-10 pb-6">
+					<VStack space="xs" className="px-5 pt-10 pb-6">
 						<Text className="text-center text-error-500">
 							기도 제목을 불러오는 중 오류가 발생했어요.
 						</Text>
@@ -358,13 +360,13 @@ function GroupHomeList() {
 						</Button>
 					</VStack>
 				) : recentPrayerRequests.length === 0 ? (
-					<VStack space="xs" className="px-4 pt-10 pb-6 text-typography-500">
+					<VStack space="xs" className="px-5 pt-10 pb-6 text-typography-500">
 						<Text className="text-center">
 							첫 기도 제목을 작성해보세요.
 						</Text>
 					</VStack>
 				) : (
-					<VStack className="w-full">
+					<VStack className="w-full px-1">
 						{recentPrayerRequests.map((item, index) => (
 							<React.Fragment key={item.id}>
 								<PrayerRequestCard prayerRequest={item} />
@@ -387,43 +389,55 @@ function GroupHomeList() {
 		return (
 			<VStack space="md" className="pt-8">
 				<HStack className="justify-between pl-4 pr-1 items-center">
-					<Heading size="xl">게시판 최근 글</Heading>
-					<Button variant="text" size='sm' onPress={handleViewMoreBoardPosts}>
+					<Heading size="2xl">게시판 최근 글</Heading>
+					<Button variant="text" size='md' onPress={handleViewMoreBoardPosts}>
 						<ButtonText>더보기</ButtonText>
 						<ButtonIcon as={ChevronRight} />
 					</Button>
 				</HStack>
-				<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-					<HStack space="md" className="px-4">
-						{isBoardLoading ? (
-							<HomeBoardPostSkeleton />
-						) : isBoardError ? (
-							<VStack space="xs" className="py-10 pl-24 items-center justify-center w-full">
-								<Text className="text-center text-error-500">
-									게시글을 불러오는 중 오류가 발생했어요.
-								</Text>
-								<Button
-									variant="outline"
-									size="sm"
-									className="self-center mt-4"
-									onPress={() => refetchBoardPosts()}
-								>
-									<Text>다시 시도하기</Text>
-								</Button>
-							</VStack>
-						) : recentPosts.length === 0 ? (
-							<VStack space="xs" className="py-10 pl-4 items-center justify-center w-full text-typography-500">
-								<Text className="text-center">
-									게시글이 없어요.
-								</Text>
-							</VStack>
-						) : (
-							recentPosts.map((post) => (
-								<HomeBoardPostCard key={post.id} post={post} />
-							))
-						)}
-					</HStack>
-				</ScrollView>
+				<VStack space="md" className="px-1">
+					{isBoardLoading ? (
+						<FeedItemListSkeleton />
+					) : isBoardError ? (
+						<VStack space="xs" className="py-10 pl-24 items-center justify-center w-full">
+							<Text className="text-center text-error-500">
+								게시글을 불러오는 중 오류가 발생했어요.
+							</Text>
+							<Button
+								variant="outline"
+								size="sm"
+								className="self-center mt-4"
+								onPress={() => refetchBoardPosts()}
+							>
+								<Text>다시 시도하기</Text>
+							</Button>
+						</VStack>
+					) : recentPosts.length === 0 ? (
+						<VStack space="xs" className="py-10 pl-5 items-center justify-center w-full text-typography-500">
+							<Text className="text-center">
+								게시글이 없어요.
+							</Text>
+						</VStack>
+					) : (
+						recentPosts.map((post) => (
+							<PostFeedItem
+								key={post.id}
+								item={{
+									identifier: {
+										id: post.id,
+										groupId: post.groupId,
+									},
+									metadata: {
+										type: 'posts',
+										timestamp: post.createdAt?.getTime() || Date.now(),
+									},
+									data: post,
+								}}
+								isCommentVisible={false}
+							/>
+						))
+					)}
+				</VStack>
 			</VStack>
 		);
 	}, [recentPosts, isBoardLoading, isBoardError, handleViewMoreBoardPosts, refetchBoardPosts]);
