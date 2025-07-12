@@ -83,15 +83,21 @@ export function BibleSelector({
     }
   }, [step]);
 
+
+
   const clearSelectorState = useCallback(() => {
     clearSelectedVerses();
-    setSelectedBook(null);
-    setCurrentChapter(1);
     setCurrentType('OT');
     setStep('book');
     setListType('Group');
     closeSelector();
-  }, [closeSelector, clearSelectedVerses, setCurrentChapter]);
+  }, [closeSelector, clearSelectedVerses]);
+
+  const clearAllBibleState = useCallback(() => {
+    setSelectedBook(null);
+    setCurrentChapter(1);
+    clearSelectorState();
+  }, [setCurrentChapter, clearSelectorState])
 
   const handlePressChapterListItem = useCallback((chapter: number) => {
     if (!selectedBook) {
@@ -107,15 +113,15 @@ export function BibleSelector({
 
     setCurrentBook(selectedBook);
     setCurrentChapter(Number(chapter));
-    closeSelector();
+
+    clearSelectorState();
 
     const bookName = bookIndex.find((book) => book.id === selectedBook)?.name_kr;
 
     setTimeout(() => {
       showInfo(`${bookName} ${chapter}장으로 이동했어요.`);
     }, 50);
-  }, [bookIndex, isSelectMode, selectedBook, closeSelector, setCurrentBook, setCurrentChapter, showInfo]);
-
+  }, [bookIndex, isSelectMode, selectedBook, closeSelector, setCurrentChapter, clearSelectorState, showInfo]);
 
   const handlePressVerseListItem = useCallback((verse: number) => {
     if (!selectedBook || !currentChapter) {
@@ -151,7 +157,7 @@ export function BibleSelector({
 
     setSelectedBible?.(formattedBible)
 
-    clearSelectorState();
+    clearAllBibleState();
 
     setTimeout(() => {
       showInfo(`${formattedBible.title}을 추가했어요.`);
