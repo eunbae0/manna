@@ -18,6 +18,7 @@ import type {
 	PaginatedResponse,
 	UpdateBoardPostRequest,
 } from '../types';
+import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
 
 // Query keys
 export const boardKeys = {
@@ -56,6 +57,11 @@ export function useCreateBoardPost() {
 			queryClient.invalidateQueries({
 				queryKey: boardKeys.infinitePosts(newPost.groupId),
 			});
+
+			// 피드 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: [FEEDS_QUERY_KEY],
+			});
 		},
 	});
 }
@@ -83,6 +89,11 @@ export function useUpdateBoardPost() {
 			// 무한 스크롤 게시글 목록 캐시 무효화
 			queryClient.invalidateQueries({
 				queryKey: boardKeys.infinitePosts(metadata.groupId),
+			});
+
+			// 피드 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: [FEEDS_QUERY_KEY],
 			});
 		},
 	});

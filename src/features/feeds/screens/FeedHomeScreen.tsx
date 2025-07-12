@@ -1,5 +1,5 @@
+import { RefreshControl } from 'react-native';
 import { VStack } from '#/components/ui/vstack';
-import Heading from '@/shared/components/heading';
 import { FlashList } from '@shopify/flash-list';
 import { FellowshipFeedItem } from '@/features/feeds/components/FellowshipFeedItem';
 import { PostFeedItem } from '@/features/feeds/components/PostFeedItem';
@@ -13,17 +13,15 @@ import type {
   PrayerRequestsFeed,
 } from '../api/types';
 import Divider from '@/shared/components/divider';
-import { RefreshControl } from 'react-native';
 import { FeedItemListSkeleton } from '../components/FeedItemSkeleton';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { RefreshCcw } from 'lucide-react-native';
+import { FeedHomeHeader } from './FeedHomeHeader';
 
 export default function FeedHomeScreen() {
   return (
     <VStack space="sm" className="w-full flex-1">
-      <Heading size="2xl" className="px-5 pt-4 pb-3">
-        최근 피드
-      </Heading>
+      <FeedHomeHeader />
       <FeedItemList />
     </VStack>
   );
