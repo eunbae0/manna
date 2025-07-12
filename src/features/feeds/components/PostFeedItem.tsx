@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
 import { Avatar } from '@/components/common/avatar';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { useAuthStore } from '@/store/auth';
 import { getCategoryLabel } from '@/features/board/utils/getCategoryLabel';
 import {
+  useComments,
   useReactions,
   useReactionToggle,
 } from '@/features/board/hooks';
@@ -24,6 +25,7 @@ import type {
 import { useToastStore } from '@/store/toast';
 import * as Haptics from 'expo-haptics';
 import { useUpdatePostViewCount } from '../hooks/useUpdatePostViewCount';
+import Divider from '@/shared/components/divider';
 
 export function PostFeedItem({ item }: { item: PostsFeed }) {
   const { user } = useAuthStore();
@@ -33,40 +35,43 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
   const { updatePostViewCount } = useUpdatePostViewCount();
 
   const postId = item.identifier.id;
+  const groupId = item.identifier.groupId;
 
   const authorMember = useMemo(() => {
     return group?.members.find((member) => member.id === item.data.author.id);
   }, [group, item]);
 
   const handlePress = useCallback(() => {
-    updateCurrentGroup({ groupId: item.identifier.groupId });
+    updateCurrentGroup({ groupId });
     router.push(`/(app)/(board)/${postId}`);
     updatePostViewCount(postId);
-  }, [item, postId, updateCurrentGroup, updatePostViewCount]);
+  }, [groupId, postId, updateCurrentGroup, updatePostViewCount]);
 
   const reactionMetadata: PostReactionMetadata = useMemo(() => {
     return {
       targetType: 'post',
-      groupId: group?.id || '',
-      postId: postId || '',
+      groupId,
+      postId,
     };
-  }, [group?.id, postId]);
+  }, [groupId, postId]);
 
   const { data: reactions } = useReactions(reactionMetadata);
 
   const reactionToggleMutation = useReactionToggle();
 
-  const isLiked = reactions
-    ? Object.values(reactions).some((reactions) =>
-      reactions.some(
-        (reaction) =>
-          reaction.userId === user?.id && reaction.type === 'like',
-      ),
-    )
-    : false;
+  const isLiked = useMemo(() => {
+    return reactions
+      ? Object.values(reactions).some((reactions) =>
+        reactions.some(
+          (reaction) =>
+            reaction.userId === user?.id && reaction.type === 'like',
+        ),
+      )
+      : false;
+  }, [reactions, user]);
 
   const handlePressLike = useCallback(() => {
-    if (!user || !group?.id) return;
+    if (!user) return;
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
 
@@ -83,84 +88,112 @@ export function PostFeedItem({ item }: { item: PostsFeed }) {
         },
       },
     );
-  }, [user, group?.id, reactionMetadata, isLiked]);
+  }, [user, reactionMetadata, isLiked, reactionToggleMutation, showError]);
+
+  const { data: comments } = useComments(groupId, postId);
 
   return (
-    <AnimatedPressable onPress={handlePress}>
-      <View className="bg-white rounded-xl p-4">
-        <HStack space="sm" className="items-center mb-2">
-          <Avatar size="md" photoUrl={authorMember?.photoUrl || undefined} />
-          <VStack className="gap-[2px] flex-1">
-            <HStack space="sm" className="items-center">
-              <Text
-                size="lg"
-                weight="semi-bold"
-                className="text-typography-800"
-              >
-                {authorMember?.displayName}
-              </Text>
-              <View className="bg-primary-200/50 px-2 py-1 rounded-full items-center">
-                <Text size="xs" className="text-primary-600">
-                  {group?.groupName}
+    <VStack>
+      <AnimatedPressable onPress={handlePress}>
+        <View className="bg-white rounded-xl p-4">
+          <HStack space="sm" className="items-center mb-2">
+            <Avatar size="md" photoUrl={authorMember?.photoUrl || undefined} />
+            <VStack className="gap-[2px] flex-1">
+              <HStack space="sm" className="items-center">
+                <Text
+                  size="lg"
+                  weight="semi-bold"
+                  className="text-typography-800"
+                >
+                  {authorMember?.displayName}
                 </Text>
-              </View>
+                <View className="bg-primary-200/50 px-2 py-1 rounded-full items-center">
+                  <Text size="xs" className="text-primary-600">
+                    {group?.groupName}
+                  </Text>
+                </View>
+              </HStack>
+              <HStack className="gap-[2px] items-center">
+                <Text size="md" className="text-typography-500">
+                  {formatRelativeTime(item.metadata.timestamp)}
+                </Text>
+                <Text size="md" className="text-typography-400">
+                  •
+                </Text>
+                <Text size="md" className="text-typography-500">
+                  {getCategoryLabel(item.data.category)}
+                </Text>
+              </HStack>
+            </VStack>
+          </HStack>
+
+          <Text size="xl" className="mt-2 text-typography-800">
+            {item.data.content}
+          </Text>
+
+          <HStack className="mt-3 pt-2">
+            <HStack space="xl" className="items-center">
+              <AnimatedPressable onPress={handlePressLike}>
+                <HStack space="xs" className="items-center">
+                  <Icon
+                    as={ThumbsUp}
+                    size="lg"
+                    className={
+                      isLiked ? 'text-primary-500' : 'text-typography-500'
+                    }
+                    fill={isLiked ? '#362303' : ''}
+                  />
+                  <Text size="lg" className="text-typography-500">
+                    {item.data.reactionSummary?.like || 0}
+                  </Text>
+                </HStack>
+              </AnimatedPressable>
+              <AnimatedPressable onPress={handlePress}>
+                <HStack space="xs" className="items-center">
+                  <Icon
+                    as={MessageCircle}
+                    size="lg"
+                    className="text-typography-500"
+                  />
+                  <Text size="lg" className="text-typography-500">
+                    {item.data.commentCount || 0}
+                  </Text>
+                </HStack>
+              </AnimatedPressable>
+              <HStack space="xs" className="items-center">
+                <Icon as={Eye} size="lg" className="text-typography-500" />
+                <Text size="lg" className="text-typography-500">
+                  {item.data.viewCount || 0}
+                </Text>
+              </HStack>
             </HStack>
-            <HStack className="gap-[2px] items-center">
-              <Text size="md" className="text-typography-500">
-                {formatRelativeTime(item.metadata.timestamp)}
-              </Text>
-              <Text size="md" className="text-typography-400">
-                •
-              </Text>
-              <Text size="md" className="text-typography-500">
-                {getCategoryLabel(item.data.category)}
+          </HStack>
+        </View>
+      </AnimatedPressable>
+      {comments?.length ? <Divider className="my-2" /> : null}
+      <Pressable onPress={handlePress}>
+        {comments?.slice(0, 2).map(comments =>
+          <VStack className="py-2 px-4" key={comments.id}>
+            <HStack space="xl" className="items-start justify-between">
+              <HStack space="sm" className="items-start flex-1">
+                <Avatar size="2xs" photoUrl={authorMember?.photoUrl || undefined} className="mt-[2px]" />
+                <VStack className="gap-px flex-1">
+                  <Text size="lg" weight="semi-bold" className="text-typography-700">
+                    {comments.author.displayName}
+                  </Text>
+                  <Text size="lg" className="text-typography-600" numberOfLines={1}>
+                    {comments.content}
+                  </Text>
+                </VStack>
+              </HStack>
+              <Text size="md" className="text-typography-400 mt-[2px]">
+                {formatRelativeTime(comments.createdAt)}
               </Text>
             </HStack>
           </VStack>
-        </HStack>
+        )}
+      </Pressable>
+    </VStack>
 
-        <Text size="xl" className="mt-2 text-typography-800">
-          {item.data.content}
-        </Text>
-
-        <HStack className="mt-3 pt-2">
-          <HStack space="xl" className="items-center">
-            <AnimatedPressable onPress={handlePressLike}>
-              <HStack space="xs" className="items-center">
-                <Icon
-                  as={ThumbsUp}
-                  size="lg"
-                  className={
-                    isLiked ? 'text-primary-500' : 'text-typography-500'
-                  }
-                  fill={isLiked ? '#362303' : ''}
-                />
-                <Text size="lg" className="text-typography-500">
-                  {item.data.reactionSummary?.like || 0}
-                </Text>
-              </HStack>
-            </AnimatedPressable>
-            <AnimatedPressable onPress={handlePress}>
-              <HStack space="xs" className="items-center">
-                <Icon
-                  as={MessageCircle}
-                  size="lg"
-                  className="text-typography-500"
-                />
-                <Text size="lg" className="text-typography-500">
-                  {item.data.commentCount || 0}
-                </Text>
-              </HStack>
-            </AnimatedPressable>
-            <HStack space="xs" className="items-center">
-              <Icon as={Eye} size="lg" className="text-typography-500" />
-              <Text size="lg" className="text-typography-500">
-                {item.data.viewCount || 0}
-              </Text>
-            </HStack>
-          </HStack>
-        </HStack>
-      </View>
-    </AnimatedPressable>
   );
 }
