@@ -10,7 +10,6 @@ import type { PrayerRequestsFeed } from '../api/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { VStack } from '#/components/ui/vstack';
 import { useGroup } from '@/features/group/hooks/useGroup';
-import { router } from 'expo-router';
 import { useAuthStore } from '@/store/auth';
 import Animated, { runOnJS, useAnimatedStyle } from 'react-native-reanimated';
 import { usePrayerRequestToggleLike } from '@/features/prayer-request/hooks/usePrayerRequests';
@@ -20,16 +19,11 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export function PrayerRequestFeedItem({ item }: { item: PrayerRequestsFeed }) {
   const { group } = useGroup(item.identifier.groupId);
-  const { updateCurrentGroup, user } = useAuthStore()
+  const { user } = useAuthStore()
 
   const authorMember = useMemo(() => {
     return group?.members.find((member) => member.id === item.data.member.id)
   }, [group, item])
-
-  const handlePress = useCallback(() => {
-    updateCurrentGroup({ groupId: item.identifier.groupId });
-    router.push(`/(app)/(board)/${item.identifier.id}`);
-  }, [item, updateCurrentGroup]);
 
   const hasLiked = item.data.reactions?.some(
     (reaction) => reaction.type === 'LIKE' && reaction.member.id === user?.id,
@@ -48,7 +42,7 @@ export function PrayerRequestFeedItem({ item }: { item: PrayerRequestsFeed }) {
     .maxDuration(250)
     .numberOfTaps(2)
     .onEnd(() => {
-      runOnJS(toggleLike)('Double_Tab');
+      runOnJS(toggleLike)();
     });
 
   return (
@@ -80,7 +74,7 @@ export function PrayerRequestFeedItem({ item }: { item: PrayerRequestsFeed }) {
 
           <HStack className="mt-3 pt-2">
             <HStack space="xl" className="items-center">
-              <AnimatedPressable onPress={() => toggleLike('Click')}>
+              <AnimatedPressable onPress={() => toggleLike()}>
                 <HStack space="xs" className="items-center">
                   <Animated.View
                     style={useAnimatedStyle(() => ({

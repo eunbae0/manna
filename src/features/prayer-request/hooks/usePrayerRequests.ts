@@ -1,5 +1,5 @@
 import {
-	QueryClient,
+	type InfiniteData,
 	useInfiniteQuery,
 	useMutation,
 	useQueryClient,
@@ -9,12 +9,11 @@ import {
 	fetchGroupPrayerRequests,
 	togglePrayerRequestReaction,
 } from '@/api/prayer-request';
-import type { ClientPrayerRequest } from '@/api/prayer-request/types';
+import type { ClientPrayerRequest, ServerPrayerRequest } from '@/api/prayer-request/types';
 import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
-import type { AmplitudeEventType } from '@/shared/constants/amplitude';
-import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import * as Haptics from 'expo-haptics';
 import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
+import type { Feed, ResponseData } from '@/features/feeds/api/types';
 
 export const ALL_PRAYER_REQUESTS_QUERY_KEY = 'all-prayer-requests';
 /**
@@ -85,19 +84,20 @@ export function usePrayerRequestToggleLike({
 	const { currentGroup } = useAuthStore();
 
 	const { mutate: toggleLike } = useMutation({
-		mutationFn: async (eventType: keyof typeof AmplitudeEventType) => {
-			await togglePrayerRequestReaction(groupId, prayerRequestId, {
+		mutationFn: async () => {
+			return await togglePrayerRequestReaction(groupId, prayerRequestId, {
 				type: 'LIKE',
 				member: {
 					id: userId,
 				},
 			});
-			return eventType;
 		},
-		onSuccess: (eventType: keyof typeof AmplitudeEventType) => {
+		onSuccess: (updatedReaction) => {
 			Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
 			performLikeAnimation();
+
+			console.log(updatedReaction);
 
 			Promise.all([
 				queryClient.invalidateQueries({
@@ -109,16 +109,34 @@ export function usePrayerRequestToggleLike({
 						currentGroup?.groupId || '',
 					],
 				}),
-				queryClient.invalidateQueries({
-					queryKey: [FEEDS_QUERY_KEY],
-				}),
+				queryClient.setQueryData<InfiniteData<ResponseData>>(
+					[FEEDS_QUERY_KEY],
+					(oldData) => {
+						if (!oldData) return;
+						return {
+							...oldData,
+							pages: oldData.pages.map(p => {
+								return {
+									...p,
+									feeds: p.feeds.map((item) =>
+										item.identifier.id === prayerRequestId
+											? {
+													...item,
+													data: { ...item.data, reactions: updatedReaction } as ServerPrayerRequest,
+												} as Feed
+											: item
+									)
+							}}
+						)}	
+					}
+				)
 			]);
-
-			// tracking amplitude
-			trackAmplitudeEvent('기도제목 좋아요', {
-				screen: 'Tab_Home',
-				eventType,
-			});
+		
+			// // tracking amplitude
+			// trackAmplitudeEvent('기도제목 좋아요', {
+			// 	screen: 'Tab_Home',
+			// 	eventType,
+			// });
 		},
 	});
 	return {

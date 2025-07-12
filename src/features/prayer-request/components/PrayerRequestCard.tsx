@@ -70,7 +70,7 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 		.maxDuration(250)
 		.numberOfTaps(2)
 		.onEnd(() => {
-			runOnJS(toggleLike)('Double_Tab');
+			runOnJS(toggleLike)();
 		});
 
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
@@ -164,7 +164,7 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 							{prayerRequest.value}
 						</Text>
 						<Pressable
-							onPress={() => toggleLike('Click')}
+							onPress={() => toggleLike()}
 							className="ml-auto mr-4"
 						>
 							<HStack space="xs" className="items-center">

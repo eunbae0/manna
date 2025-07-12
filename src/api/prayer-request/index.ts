@@ -188,10 +188,10 @@ export const togglePrayerRequestReaction = withApiLogging(
 		groupId: string,
 		prayerRequestId: string,
 		reaction: ServerPrayerRequestReaction,
-	): Promise<void> => {
+	): Promise<ServerPrayerRequestReaction[]> => {
 		try {
 			const prayerRequestService = getPrayerRequestService();
-			await prayerRequestService.addReaction(
+			return await prayerRequestService.addReaction(
 				groupId,
 				prayerRequestId,
 				reaction,

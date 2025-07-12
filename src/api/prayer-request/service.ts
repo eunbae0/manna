@@ -320,7 +320,7 @@ export class FirestorePrayerRequestService {
 		groupId: string,
 		prayerRequestId: string,
 		reaction: ServerPrayerRequestReaction,
-	): Promise<void> {
+	): Promise<ServerPrayerRequestReaction[]> {
 		const prayerRequest = await this.getPrayerRequestById(
 			groupId,
 			prayerRequestId,
@@ -351,6 +351,8 @@ export class FirestorePrayerRequestService {
 		await this.updatePrayerRequest(groupId, prayerRequestId, {
 			reactions: updatedReactions,
 		});
+
+		return updatedReactions;
 	}
 }
 
