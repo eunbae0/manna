@@ -88,6 +88,7 @@ function FeedItemList() {
       }
       ListHeaderComponent={<Divider size="lg" />}
       ListEmptyComponent={<Text className="text-center py-10">새 글이 없어요.</Text>}
+      extraData={[feeds]}
     />
   );
 }
