@@ -59,18 +59,17 @@ export function BibleSelector({
   }, [bookIndex, currentBookId]);
 
   const [currentType, setCurrentType] = useState<'OT' | 'NT'>(currentBookType);
-  const [selectedBook, setSelectedBook] = useState<string | null>(null);
   const [step, setStep] = useState<'book' | 'chapter' | 'verse'>('book');
 
   const handlePressBookListItem = useCallback((bookId: string) => {
-    setSelectedBook(bookId);
+    setCurrentBook(bookId);
     setStep('chapter');
-  }, []);
+  }, [setCurrentBook]);
 
   const selectedBookName = useMemo(() => {
-    const book = bookIndex.find((book) => book.id === selectedBook);
+    const book = bookIndex.find((book) => book.id === currentBookId);
     return book?.name_kr || '';
-  }, [bookIndex, selectedBook]);
+  }, [bookIndex, currentBookId]);
 
   const headerLabel = useMemo(() => {
     switch (step) {
@@ -94,37 +93,36 @@ export function BibleSelector({
   }, [closeSelector, clearSelectedVerses]);
 
   const clearAllBibleState = useCallback(() => {
-    setSelectedBook(null);
     setCurrentChapter(1);
     clearSelectorState();
   }, [setCurrentChapter, clearSelectorState])
 
-  const handlePressChapterListItem = useCallback((chapter: number) => {
-    if (!selectedBook) {
+  const handlePressChapterListItem = useCallback(async (chapter: number) => {
+    if (!currentBookId) {
       closeSelector();
       return;
     }
 
     if (isSelectMode) {
-      setCurrentChapter(Number(chapter));
+      await setCurrentChapter(Number(chapter));
       setStep('verse');
       return;
     }
 
-    setCurrentBook(selectedBook);
-    setCurrentChapter(Number(chapter));
+    setCurrentBook(currentBookId);
+    await setCurrentChapter(Number(chapter));
 
     clearSelectorState();
 
-    const bookName = bookIndex.find((book) => book.id === selectedBook)?.name_kr;
+    const bookName = bookIndex.find((book) => book.id === currentBookId)?.name_kr;
 
     setTimeout(() => {
       showInfo(`${bookName} ${chapter}장으로 이동했어요.`);
     }, 50);
-  }, [bookIndex, isSelectMode, selectedBook, closeSelector, setCurrentChapter, clearSelectorState, showInfo]);
+  }, [bookIndex, isSelectMode, currentBookId, closeSelector, setCurrentBook, setCurrentChapter, clearSelectorState, showInfo]);
 
   const handlePressVerseListItem = useCallback((verse: number) => {
-    if (!selectedBook || !currentChapter) {
+    if (!currentBookId || !currentChapter) {
       closeSelector();
       return;
     }
@@ -133,7 +131,7 @@ export function BibleSelector({
       return;
     }
     addSelectedVerses(Number(verse));
-  }, [selectedBook, currentChapter, closeSelector, selectedVerses, addSelectedVerses, removeSelectedVerses]);
+  }, [currentBookId, currentChapter, closeSelector, selectedVerses, addSelectedVerses, removeSelectedVerses]);
 
   const handlePressAddVerses = useCallback(() => {
     if (!selectedVerses.length) {
@@ -141,15 +139,15 @@ export function BibleSelector({
       return;
     }
 
-    if (!selectedBook || !currentChapter) {
+    if (!currentBookId || !currentChapter) {
       closeSelector();
       return;
     }
-    const bookName = bookIndex.find((book) => book.id === selectedBook)?.name_kr || '';
+    const bookName = bookIndex.find((book) => book.id === currentBookId)?.name_kr || '';
 
     const formattedBible = formatToSelectedBible({
       bookName,
-      bookId: selectedBook,
+      bookId: currentBookId,
       chapter: currentChapter,
       verses,
       selectedVerses,
@@ -162,7 +160,7 @@ export function BibleSelector({
     setTimeout(() => {
       showInfo(`${formattedBible.title}을 추가했어요.`);
     }, 50);
-  }, [bookIndex, selectedBook, currentChapter, closeSelector, selectedVerses, verses, showInfo, clearSelectorState, setSelectedBible]);
+  }, [bookIndex, currentBookId, currentChapter, closeSelector, selectedVerses, verses, showInfo, setSelectedBible, clearAllBibleState]);
 
   return (
     <BibleSelectorBottomSheetContainer
@@ -181,7 +179,7 @@ export function BibleSelector({
 
             {step === 'book' && <HStack space="xs" className='pl-5 pr-3'>
               <SegmentedControl
-                defaultValue="OT"
+                defaultValue={currentBookType}
                 onValueChange={(value) => setCurrentType(value as 'OT' | 'NT')}
                 className='flex-1'
               >
@@ -239,7 +237,7 @@ export function BibleSelector({
           )}
           {step === 'chapter' && (
             <BibleSelectorChapterList
-              selectedBook={selectedBook}
+              selectedBook={currentBookId}
               handlePressListItem={handlePressChapterListItem}
             />
           )}

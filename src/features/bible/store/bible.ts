@@ -35,7 +35,7 @@ interface BibleState {
 	loadBooksIndex: () => Promise<void>;
 	loadVerses: (bookId: string, chapter: number) => Promise<void>;
 	setCurrentBook: (bookId: string) => void;
-	setCurrentChapter: (chapter: number) => void;
+	setCurrentChapter: (chapter: number) => Promise<void>;
 	setCurrentVerse: (verse: number | null) => void;
 	goToNextChapter: (showInfoToast: (message: string) => void) => Promise<void>;
 	goToPrevChapter: (showInfoToast: (message: string) => void) => Promise<void>;
@@ -128,17 +128,16 @@ export const useBibleStore = create<BibleState>((set, get) => ({
 	},
 
 	// Navigation actions
-	setCurrentBook: (bookId: string) => {
+	setCurrentBook: (bookId) => {
 		set({ currentBookId: bookId });
-		get().loadVerses(bookId, 1);
 	},
 
-	setCurrentChapter: (chapter: number) => {
+	setCurrentChapter: async (chapter) => {
 		const { currentBookId } = get();
 		if (!currentBookId) return;
 
 		set({ currentChapter: chapter });
-		get().loadVerses(currentBookId, chapter);
+		return await get().loadVerses(currentBookId, chapter);
 	},
 
 	setCurrentVerse: (verse) => {
