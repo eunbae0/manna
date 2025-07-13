@@ -215,10 +215,11 @@ export function AnswerField({ member, answer, updateAnswer }: { member: ClientFe
               placeholder="답변을 입력해주세요"
               onChangeText={handleTextChange}
               multiline
+              scrollEnabled={false}
               textAlignVertical="top"
               className={cn(
                 TEXT_INPUT_STYLE,
-                'flex-1 min-h-28 text-lg py-2 rounded-lg',
+                'flex-1 min-h-28 text-lg pt-2 pb-3 rounded-lg',
               )}
             />
             {isRecordingMode && (

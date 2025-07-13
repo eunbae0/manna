@@ -14,13 +14,11 @@ import Header from '@/components/common/Header';
 import {
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
-import { Divider } from '#/components/ui/divider';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
-import { usePreventBackWithConfirm } from '@/shared/hooks/usePreventBackWithConfirm';
-import { ExitConfirmModal } from '@/components/common/exit-confirm-modal';
 import { useAnswerRecordingStore } from '@/store/fellowship/answer-recording';
 import { AnswerField } from '@/features/fellowship/components/AnswerField';
+import Divider from '@/shared/components/divider';
 
 export default function AnswerScreen() {
   const { id, contentType, answerId } = useLocalSearchParams<{
@@ -142,21 +140,21 @@ export default function AnswerScreen() {
         <KeyboardAvoidingView className="flex-1">
           <VStack space="xs" className="flex-1">
             <Header />
-            {!isPrayerRequest && (
-              <>
-                <VStack space="md" className="px-4 pt-2 pb-4">
-                  <Heading size="2xl">현재 질문</Heading>
-                  <Text size="lg">
-                    {fellowship.content.categories[contentType].items[answerId].title}
-                  </Text>
-                </VStack>
+            <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1" keyboardShouldPersistTaps="handled">
+              {!isPrayerRequest && (
+                <>
+                  <VStack space="md" className="px-4 pt-2 pb-4">
+                    <Heading size="2xl">현재 질문</Heading>
+                    <Text size="lg">
+                      {fellowship.content.categories[contentType].items[answerId].title}
+                    </Text>
+                  </VStack>
 
-                <Divider className="h-1 bg-background-100" />
-              </>
-            )}
-            <VStack space="4xl" className="mx-4 mt-2 mb-4 flex-1">
-              <VStack space="xl" className="flex-1">
-                <KeyboardAwareScrollView showsVerticalScrollIndicator={false} className="flex-1">
+                  <Divider size="lg" className="my-2" />
+                </>
+              )}
+              <VStack space="4xl" className="mx-4 mt-2 mb-4 flex-1">
+                <VStack space="xl" className="flex-1">
                   <VStack space="2xl" className="pt-2">
                     <HStack className="justify-between items-center">
                       <Heading size="2xl">{isPrayerRequest ? '기도제목 작성' : '나눔 답변 작성'}</Heading>
@@ -186,9 +184,9 @@ export default function AnswerScreen() {
                       ))}
                     </VStack>
                   </VStack>
-                </KeyboardAwareScrollView>
+                </VStack>
               </VStack>
-            </VStack>
+            </KeyboardAwareScrollView>
           </VStack>
         </KeyboardAvoidingView>
       </SafeAreaView>

@@ -15,6 +15,7 @@ export const KeyboardAwareScrollView = ({
 		<RNKeyboardAwareScrollView
 			keyboardShouldPersistTaps={keyboardShouldPersistTaps}
 			bottomOffset={bottomOffset || BOTTOM_OFFSET}
+			disableScrollOnKeyboardHide
 			{...rest}
 		>
 			{children}
