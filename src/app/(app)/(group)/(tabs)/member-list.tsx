@@ -11,7 +11,6 @@ import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { router } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
 import { MemberListItem } from '@/features/profile/components/MemberListItem';
-import Heading from '@/shared/components/heading';
 
 export default function MemberListScreen() {
 	const { currentGroup } = useAuthStore();
@@ -35,7 +34,7 @@ export default function MemberListScreen() {
 	return (
 		<>
 			<VStack space="sm" className="flex-1">
-				<Heading size="2xl" className="px-4 pt-4">그룹원 목록</Heading>
+				<Header label="그룹원 목록" />
 				{members && members.length > 0 ? (
 					<View className="flex-1 px-5">
 						<FlashList

@@ -186,7 +186,7 @@ export default function ManageMyGroupScreen() {
 
 	return (
 		<View className='flex-1'>
-			<Heading size="2xl" className="px-4 py-4">내 그룹 관리</Heading>
+			<Header label="내 그룹 관리" />
 			<VStack space="lg" className="flex-1 px-4 py-5 justify-between">
 				<VStack space="lg" className='flex-1'>
 					<Heading size="xl">내가 가입한 그룹</Heading>
