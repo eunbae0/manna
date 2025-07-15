@@ -11,7 +11,8 @@ import { HomeRecentGroupActivity } from '../components/HomeRecentGroupActivity';
 import { useInfiniteUserFeeds } from '@/features/feeds/hooks/useFeeds';
 import { useRefreshControl } from '@/shared/hooks/useRefreshControl';
 import { useNotifications } from '@/features/notification/hooks/useNotifications';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
+import { useTabPressScrollToTop } from '@/shared/hooks/useTabPressScrollToTop';
 
 export default function MainHomeScreen() {
   const { refetch: refetchFeeds } = useInfiniteUserFeeds();
@@ -26,10 +27,13 @@ export default function MainHomeScreen() {
 
   const { isRefreshing, onRefresh } = useRefreshControl(handleRefresh);
 
+  const scrollViewRef = useTabPressScrollToTop<ScrollView>()
+
   return (
     <VStack>
       <HomeHeader />
       <ScrollView
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl

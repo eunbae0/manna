@@ -17,12 +17,15 @@ import { FeedItemListSkeleton } from '../components/FeedItemSkeleton';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { RefreshCcw } from 'lucide-react-native';
 import { FeedHomeHeader } from './FeedHomeHeader';
+import { useTabPressScrollToTop } from '@/shared/hooks/useTabPressScrollToTop';
 
 export default function FeedHomeScreen() {
+  const feedListRef = useTabPressScrollToTop<FlashList<Feed>>()
+
   return (
     <VStack space="sm" className="w-full flex-1">
       <FeedHomeHeader />
-      <FeedItemList />
+      <FeedItemList ref={feedListRef} />
     </VStack>
   );
 }
@@ -40,7 +43,7 @@ function renderItem({ item }: { item: Feed }) {
   }
 }
 
-function FeedItemList() {
+function FeedItemList({ ref }: { ref: React.Ref<FlashList<Feed>> }) {
   const {
     data,
     isLoading,
@@ -58,8 +61,10 @@ function FeedItemList() {
 
   if (error)
     return (
-      <VStack space="xl" className="py-10 items-center" >
-        <Text size="lg" className="text-center">피드를 불러오는데 실패했어요.</Text>
+      <VStack space="xl" className="py-10 items-center">
+        <Text size="lg" className="text-center">
+          피드를 불러오는데 실패했어요.
+        </Text>
         <Button variant="outline" size="md" onPress={() => refetch()}>
           <ButtonText>다시 시도하기</ButtonText>
           <ButtonIcon as={RefreshCcw} size="lg" />
@@ -69,10 +74,13 @@ function FeedItemList() {
 
   return (
     <FlashList
+      ref={ref}
       data={feeds}
       renderItem={renderItem}
       estimatedItemSize={120}
-      refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
+      refreshControl={
+        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+      }
       onEndReached={() => {
         if (hasNextPage && !isFetchingNextPage) fetchNextPage();
       }}
@@ -85,7 +93,9 @@ function FeedItemList() {
         ) : null
       }
       ListHeaderComponent={<Divider size="lg" />}
-      ListEmptyComponent={<Text className="text-center py-10">새 글이 없어요.</Text>}
+      ListEmptyComponent={
+        <Text className="text-center py-10">새 글이 없어요.</Text>
+      }
       extraData={[feeds]}
     />
   );
