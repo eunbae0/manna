@@ -73,6 +73,8 @@ import TextWithLinks from '@/shared/components/text-with-links';
 import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image'
 import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
+import ImageModal from 'react-native-image-modal'
+
 
 /**
  * 로딩 상태 컴포넌트
@@ -540,11 +542,19 @@ export default function BoardPostDetailScreen() {
 							{post?.elements?.image?.sort((a, b) => a.position - b.position).map((i) => {
 								const image = i as ImageElement
 								return (
-									<Image
+									// @ts-expect-error: source prop is not necessary
+									<ImageModal
 										key={image.position}
-										source={getImageSourceForSignedImageUrl(image.url)}
 										style={{ width: '100%', height: 300, aspectRatio: 1, borderRadius: 8, borderWidth: 1, borderColor: '#ECECEC' }}
-										contentFit='contain'
+										resizeMode='contain'
+										renderImageComponent={({ style }) => (
+											<Image
+												key={image.position}
+												source={getImageSourceForSignedImageUrl(image.url)}
+												style={style}
+												contentFit='contain'
+											/>
+										)}
 									/>
 								)
 							})}
