@@ -1,7 +1,8 @@
 import { Icon } from '#/components/ui/icon';
 import AnimatedPressable from '@/components/common/animated-pressable';
+import { cn } from '@/shared/utils/cn';
 import { useSpeechRecognitionEvent } from 'expo-speech-recognition';
-import { CircleStop, Mic } from 'lucide-react-native';
+import { CircleStop, Mic, Square } from 'lucide-react-native';
 import {
   type ButtonProps,
   Image,
@@ -21,18 +22,16 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const MIN_SCALE = 1;
-const MAX_SCALE = 1.5;
+const MAX_SCALE = 1.2;
 
 /**
  * This is an example component that uses the `volumechange` event to animate the volume metering of a user's voice.
  */
 export function VolumeMeteringButton({
-  isCurrentMember,
   isRecording,
   onPress,
   ...props
 }: {
-  isCurrentMember: boolean;
   isRecording: boolean;
   onPress: () => void;
 } & ViewProps) {
@@ -50,9 +49,6 @@ export function VolumeMeteringButton({
   useSpeechRecognitionEvent('end', reset);
 
   useSpeechRecognitionEvent('volumechange', (event) => {
-    // Don't animate anything if the volume is too low
-    if (!isCurrentMember) return;
-
     if (event.value <= 1) {
       return;
     }
@@ -91,27 +87,36 @@ export function VolumeMeteringButton({
   }));
 
   const pulseStyle = useAnimatedStyle(() => ({
-    opacity: pulseOpacity.value,
+    // opacity: pulseOpacity.value,
+    opacity: 1,
     transform: [{ scale: pulseScale.value }],
   }));
 
   return (
-    <AnimatedPressable onPress={onPress} {...props}>
-      <View className="w-12 h-12 items-center justify-center">
+    <AnimatedPressable onPress={onPress} {...props} withHaptic>
+      <View className="w-9 h-9 items-center justify-center">
         <View style={styles.absoluteCenteredContainer}>
           <Animated.View
-            className="rounded-full bg-primary-100 border border-primary-200 w-12 h-12"
+            className="rounded-full w-9 h-9"
             style={volumeScaleStyle}
           />
         </View>
-        <View style={styles.absoluteCenteredContainer}>
+
+        {isRecording && <View style={styles.absoluteCenteredContainer}>
           <Animated.View
-            className="rounded-full border border-primary-200 w-12 h-12"
+            className="rounded-full bg-primary-500 w-9 h-9"
+          // style={pulseStyle}
+          />
+        </View>}
+
+        {isRecording && <View style={styles.absoluteCenteredContainer}>
+          <Animated.View
+            className="rounded-full border border-primary-500/40 w-9 h-9"
             style={pulseStyle}
           />
-        </View>
+        </View>}
         <View className="justify-center items-center">
-          <Icon as={isRecording ? CircleStop : Mic} className="text-primary-400" />
+          <Icon as={isRecording ? Square : Mic} size={isRecording ? "sm" : "lg"} fill={isRecording ? "white" : ""} className={cn(isRecording ? "text-white" : "text-typography-600")} />
         </View>
       </View>
     </AnimatedPressable>

@@ -1,74 +1,33 @@
 import { create } from 'zustand';
 import { ExpoSpeechRecognitionModule } from 'expo-speech-recognition';
-import type { ClientFellowshipParticipantV2 } from '@/features/fellowship/api/types';
 import { useToastStore } from '../toast';
 import { openAppSettings } from '@/shared/utils/app/open_app_settings';
 
-type TranscriptItem = {
-	member: ClientFellowshipParticipantV2;
-	transcript: string;
-};
-
 interface AnswerRecordingState {
+	id: string | null;
 	isRecording: boolean;
-	isRecordingMode: boolean;
-	currentMember: ClientFellowshipParticipantV2 | null;
-	liveTranscript: TranscriptItem[];
+	liveTranscript: string;
 
-	toggleRecordingMode: () => Promise<void>;
-	startListening: (member: ClientFellowshipParticipantV2) => void;
-	stopListening: () => void;
-	updateTranscript: (
-		member: ClientFellowshipParticipantV2,
-		transcript: string,
-	) => void;
-	clearTranscriptForMember: (memberId: string) => void;
-	setIsRecording: (isRecording: boolean) => void;
-	setCurrentMember: (member: ClientFellowshipParticipantV2 | null) => void;
+	startListening: (id: string) => Promise<void>;
+	stopListening: (id: string) => void;
+	updateTranscript: (transcript: string) => void;
 	reset: () => void;
+	onUnMount: () => void;
 }
 
 export const useAnswerRecordingStore = create<AnswerRecordingState>(
 	(set, get) => ({
 		isRecording: false,
-		isRecordingMode: false,
-		currentMember: null,
-		liveTranscript: [],
+		id: null,
+		liveTranscript: '',
 
-		toggleRecordingMode: async () => {
-			const { showInfo } = useToastStore.getState();
-			const result =
-				await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+		startListening: async (id: string) => {
+			const hasPermission = await getRecordingPermission();
+			if (!hasPermission) return;
 
-			switch (result.status) {
-				case 'granted':
-					set((state) => ({ isRecordingMode: !state.isRecordingMode }));
-					break;
-				case 'denied':
-					showInfo(
-						'음성 인식 권한이 필요해요. 설정에서 [마이크]와 [음성 인식] 권한을 모두 허가해주세요',
-					);
-					setTimeout(() => {
-						openAppSettings();
-					}, 1300);
-					break;
-				case 'undetermined':
-					showInfo('음성 인식 권한이 필요해요');
-					break;
-			}
-		},
+			if (id === get().id) return;
 
-		startListening: (member) => {
-			set({ currentMember: member });
-			// 트랜스크립트 초기화 로직
-			set((state) => ({
-				liveTranscript:
-					state.liveTranscript.findIndex(
-						(item) => item.member.id === member.id,
-					) === -1
-						? [...state.liveTranscript, { member, transcript: '' }]
-						: state.liveTranscript,
-			}));
+			set({ id, isRecording: true, liveTranscript: '' });
 
 			ExpoSpeechRecognitionModule.start({
 				lang: 'ko-KR',
@@ -95,37 +54,53 @@ export const useAnswerRecordingStore = create<AnswerRecordingState>(
 			console.log('녹음 시작');
 		},
 
-		stopListening: () => {
+		stopListening: (id: string) => {
+			if (get().id !== id) return;
 			ExpoSpeechRecognitionModule.stop();
+			set({ id: null, isRecording: false });
 			console.log('녹음 중지');
 		},
 
-		updateTranscript: (member, transcript) => {
-			set((state) => ({
-				liveTranscript: state.liveTranscript.map((item) =>
-					item.member.id === member.id ? { ...item, transcript } : item,
-				),
-			}));
+		updateTranscript: (transcript: string) => {
+			set({
+				liveTranscript: transcript,
+			});
 		},
-
-		clearTranscriptForMember: (memberId) => {
-			set((state) => ({
-				liveTranscript: state.liveTranscript.filter(
-					(item) => item.member.id !== memberId,
-				),
-			}));
-		},
-
-		setIsRecording: (isRecording) => set({ isRecording }),
-		setCurrentMember: (member) => set({ currentMember: member }),
 
 		reset: () => {
 			set({
 				isRecording: false,
-				isRecordingMode: false,
-				currentMember: null,
-				liveTranscript: [],
+				id: null,
+				liveTranscript: '',
 			});
+		},
+
+		onUnMount: () => {
+			ExpoSpeechRecognitionModule.stop();
+			get().reset();
 		},
 	}),
 );
+
+async function getRecordingPermission() {
+	const { showInfo } = useToastStore.getState();
+	const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+
+	switch (result.status) {
+		case 'granted':
+			return true;
+		case 'denied':
+			showInfo(
+				'음성 인식 권한이 필요해요. 설정에서 [마이크]와 [음성 인식] 권한을 모두 허가해주세요',
+			);
+			setTimeout(() => {
+				openAppSettings();
+			}, 1300);
+			return false;
+		case 'undetermined':
+			showInfo('음성 인식 권한이 필요해요');
+			return false;
+		default:
+			return false;
+	}
+}
