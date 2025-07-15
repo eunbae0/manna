@@ -7,6 +7,8 @@ import type { SelectedBible } from '@/features/bible/types/selectedBible';
 import { Plus } from 'lucide-react-native';
 import { X } from 'lucide-react-native';
 import { cn } from '@/shared/utils/cn';
+import AnimatedPressable from '@/components/common/animated-pressable';
+import { useRedirectBible } from '@/shared/hooks/useRedirectBible';
 
 type Props = {
   selectedBible: SelectedBible[];
@@ -29,6 +31,8 @@ export function SelectedBibleList({
     setSelectedBible?.((prev) => prev.filter((v) => v.title !== verse.title));
     deleteBible?.(verse);
   };
+
+  const { redirectToBible } = useRedirectBible();
   return (
     <>
       {selectedBible.map((verse) => (
@@ -54,25 +58,38 @@ export function SelectedBibleList({
           </HStack>
           <VStack className="gap-px">
             {verse.content.map((content) => (
-              <VStack key={content.verse}>
-                <HStack space="xs">
-                  <Text
-                    size="sm"
-                    weight="medium"
-                    className="text-primary-600/55"
-                  >
-                    {' '}
-                    {content.verse}.
-                  </Text>
-                  <Text
-                    size="sm"
-                    weight="regular"
-                    className="text-typography-600 flex-1"
-                  >
-                    {content.text}
-                  </Text>
-                </HStack>
-              </VStack>
+              <AnimatedPressable
+                scale="sm"
+                disabled={!isReadonly}
+                key={content.verse}
+                onPress={() => {
+                  redirectToBible({
+                    book: content.bookId,
+                    chapter: content.chapter,
+                    verse: content.verse,
+                  });
+                }}
+              >
+                <VStack key={content.verse}>
+                  <HStack space="xs">
+                    <Text
+                      size="sm"
+                      weight="medium"
+                      className="text-primary-600/55"
+                    >
+                      {' '}
+                      {content.verse}.
+                    </Text>
+                    <Text
+                      size="sm"
+                      weight="regular"
+                      className="text-typography-600 flex-1"
+                    >
+                      {content.text}
+                    </Text>
+                  </HStack>
+                </VStack>
+              </AnimatedPressable>
             ))}
           </VStack>
         </VStack>

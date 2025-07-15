@@ -246,7 +246,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
           >
             <VStack className="flex-1">
               <VStack space="xs" className="px-5">
-                <AnimatedPressable scale="sm" onPress={handlePressDate}>
+                <AnimatedPressable disabled={!isEditing} scale="sm" onPress={handlePressDate}>
                   <HStack space="sm" className="items-center">
                     <Text
                       size="lg"
