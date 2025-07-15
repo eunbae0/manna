@@ -11,6 +11,7 @@ import { useToastStore } from '@/store/toast';
 import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
 import { FELLOWSHIPS_QUERY_KEY } from '../constants/queyKeys';
+import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
 
 export const FELLOWSHIP_QUERY_KEY = 'fellowship';
 
@@ -106,6 +107,11 @@ export function useFellowship(id: string | undefined) {
 			});
 			queryClient.invalidateQueries({
 				queryKey: [FELLOWSHIPS_QUERY_KEY],
+			});
+
+			// 피드 쿼리 무효화
+			queryClient.invalidateQueries({
+				queryKey: [FEEDS_QUERY_KEY],
 			});
 		},
 		onError: (error) => {

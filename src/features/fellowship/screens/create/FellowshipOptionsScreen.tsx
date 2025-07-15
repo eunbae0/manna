@@ -12,6 +12,7 @@ import { KeyboardDismissView } from '@/components/common/keyboard-view/KeyboardD
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 import { FELLOWSHIPS_QUERY_KEY } from '../../constants/queyKeys';
 import { useQueryClient } from '@tanstack/react-query';
+import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
 
 export default function FellowshipContentScreen() {
 	const { currentGroup } = useAuthStore();
@@ -97,6 +98,10 @@ export default function FellowshipContentScreen() {
 							});
 							queryClient.invalidateQueries({
 								queryKey: [FELLOWSHIPS_QUERY_KEY],
+							});
+							// 피드 쿼리 무효화
+							queryClient.invalidateQueries({
+								queryKey: [FEEDS_QUERY_KEY],
 							});
 						}}
 					>
