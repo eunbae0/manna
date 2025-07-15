@@ -19,11 +19,13 @@ export function formatToSelectedBible({
 	return {
 		title: `${bookName} ${chapter}장 ${formatSelectedVerses(selectedVerses)}`,
 		version: 'KRV',
-		content: selectedVerses.map((selectedVerse) => ({
-			bookId,
-			chapter,
-			verse: selectedVerse,
-			text: verses.find((v) => v.verse === selectedVerse)?.text || '',
-		})),
+		content: selectedVerses
+			.sort((a, b) => a - b)
+			.map((selectedVerse) => ({
+				bookId,
+				chapter,
+				verse: selectedVerse,
+				text: verses.find((v) => v.verse === selectedVerse)?.text || '',
+			})),
 	};
 }
