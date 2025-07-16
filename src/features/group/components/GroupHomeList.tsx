@@ -237,6 +237,11 @@ function GroupHomeList() {
 		router.push('/(app)/(board)/board-index');
 	}, []);
 
+	const handlePressCreateBoard = useCallback(() => {
+		trackAmplitudeEvent('게시글 작성하기 클릭', { screen: 'Tab_Home' });
+		router.push('/(app)/(board)/create');
+	}, []);
+
 	// 최근 나눔
 	const {
 		data: fellowshipData,
@@ -281,7 +286,7 @@ function GroupHomeList() {
 	// 섹션 렌더링 컴포넌트
 	const renderFellowshipSection = useCallback(() => {
 		return (
-			<VStack className="mt-3 py-1 items-center justify-center">
+			<VStack className="mt-4 py-1 items-center justify-center">
 				<HStack className="justify-between pl-4 pr-1 items-center w-full">
 					<Heading size="2xl">최근 나눔</Heading>
 					<Button variant="text" size='md' onPress={handleViewMoreFellowships}>
@@ -311,14 +316,16 @@ function GroupHomeList() {
 						</Button>
 					</VStack>
 				) : fellowships.length === 0 ? (
-					<VStack space="xl" className="px-5 pt-10 pb-6 text-typography-500">
-						<Text className="text-center">
-							그룹의 첫 나눔을 만들어보세요.
+					<VStack className="px-5 pt-10 pb-6 gap-7">
+						<Text size="md" weight="medium" className="text-typography-500 text-center">
+							그룹의 첫 나눔을 만들어보세요
 						</Text>
-						<Button variant="outline" action="secondary" onPress={handlePressCreateFellowship}>
-							<ButtonText className="font-pretendard-semi-bold">나눔 만들기</ButtonText>
-							<ButtonIcon as={Plus} />
-						</Button>
+						<AnimatedPressable onPress={handlePressCreateFellowship}>
+							<HStack space="xs" className="items-center px-4 py-2 bg-background-50 rounded-full self-center">
+								<Text weight="semi-bold" size="lg" className="text-typography-600">나눔 만들기</Text>
+								<Icon as={Plus} size="md" className="text-typography-600" />
+							</HStack>
+						</AnimatedPressable>
 					</VStack>
 				) : (
 					<ScrollView className="w-full px-5 pt-3 pb-4" horizontal showsHorizontalScrollIndicator={false}>
@@ -335,7 +342,7 @@ function GroupHomeList() {
 
 	const renderPrayerRequestSection = useCallback(() => {
 		return (
-			<VStack className="mt-3 py-1 items-center justify-center">
+			<VStack className="mt-4 py-1 items-center justify-center">
 				<HStack className="justify-between pl-4 pr-1 items-center w-full">
 					<Heading size="2xl">최근 기도 제목</Heading>
 					<Button variant="text" size='md' onPress={handleViewMorePrayerRequests}>
@@ -360,9 +367,9 @@ function GroupHomeList() {
 						</Button>
 					</VStack>
 				) : recentPrayerRequests.length === 0 ? (
-					<VStack space="xs" className="px-5 pt-10 pb-6 text-typography-500">
-						<Text className="text-center">
-							첫 기도 제목을 작성해보세요.
+					<VStack className="px-5 pt-10 pb-5 gap-7">
+						<Text size="md" weight="medium" className="text-typography-500 text-center">
+							그룹의 첫 기도 제목을 작성해보세요
 						</Text>
 					</VStack>
 				) : (
@@ -377,17 +384,19 @@ function GroupHomeList() {
 						))}
 					</VStack>
 				)}
-				<Button variant="outline" action="secondary" onPress={handlePressAddButton}>
-					<ButtonText className="font-pretendard-semi-bold">기도 제목 작성하기</ButtonText>
-					<ButtonIcon as={Pen} />
-				</Button>
+				<AnimatedPressable className="mt-4" onPress={handlePressAddButton}>
+					<HStack space="sm" className="items-center px-4 py-2 bg-background-50 rounded-full self-center">
+						<Text weight="semi-bold" size="lg" className="text-typography-600">기도 제목 작성하기</Text>
+						<Icon as={Pen} size="sm" className="text-typography-600" />
+					</HStack>
+				</AnimatedPressable>
 			</VStack>
 		);
 	}, [recentPrayerRequests, isLoading, isPrayerRequestError, handleViewMorePrayerRequests, refetchPrayerRequests, handlePressAddButton]);
 
 	const renderBoardSection = useCallback(() => {
 		return (
-			<VStack space="md" className="pt-8">
+			<VStack space="md" className="pt-12">
 				<HStack className="justify-between pl-4 pr-1 items-center">
 					<Heading size="2xl">게시판 최근 글</Heading>
 					<Button variant="text" size='md' onPress={handleViewMoreBoardPosts}>
@@ -413,10 +422,16 @@ function GroupHomeList() {
 							</Button>
 						</VStack>
 					) : recentPosts.length === 0 ? (
-						<VStack space="xs" className="py-10 pl-5 items-center justify-center w-full text-typography-500">
-							<Text className="text-center">
-								게시글이 없어요.
+						<VStack className="px-5 pt-10 pb-6 gap-7">
+							<Text size="md" weight="medium" className="text-typography-500 text-center">
+								그룹의 첫 게시글을 작성해보세요
 							</Text>
+							<AnimatedPressable onPress={handlePressCreateBoard}>
+								<HStack space="sm" className="items-center px-4 py-2 bg-background-50 rounded-full self-center">
+									<Text weight="semi-bold" size="lg" className="text-typography-600">게시글 작성하기</Text>
+									<Icon as={Pen} size="sm" className="text-typography-600" />
+								</HStack>
+							</AnimatedPressable>
 						</VStack>
 					) : (
 						recentPosts.map((post) => (
@@ -440,7 +455,7 @@ function GroupHomeList() {
 				</VStack>
 			</VStack>
 		);
-	}, [recentPosts, isBoardLoading, isBoardError, handleViewMoreBoardPosts, refetchBoardPosts]);
+	}, [recentPosts, isBoardLoading, isBoardError, handleViewMoreBoardPosts, handlePressCreateBoard, refetchBoardPosts]);
 
 	// 섹션 렌더링 맵
 	const sectionRenderers = {
@@ -532,7 +547,7 @@ function GroupHomeList() {
 						})
 					}
 				</VStack>
-				<AnimatedPressable onPress={handlePressMainScreenSetting}>
+				<AnimatedPressable className='mt-8 mb-2' onPress={handlePressMainScreenSetting}>
 					<HStack space="sm" className="items-center px-4 py-2 bg-background-50 rounded-full self-center">
 						<Icon as={Settings} className='text-typography-600' />
 						<Text size="lg" weight="semi-bold" className="text-typography-600">홈 화면 순서 편집</Text>

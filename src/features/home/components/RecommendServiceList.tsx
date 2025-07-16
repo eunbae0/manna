@@ -51,7 +51,7 @@ const RECOMMEND_SERVICE_LIST: Array<ServiceListItem> = [
 export function RecommendServiceList() {
   const { user } = useAuthStore();
   return (
-    <VStack space="md" className="py-1 items-center justify-center w-full">
+    <VStack space="lg" className="py-1 items-center justify-center w-full">
       <Heading size="2xl" className="px-5 w-full">
         {user?.displayName}님을 위한 추천 서비스
       </Heading>

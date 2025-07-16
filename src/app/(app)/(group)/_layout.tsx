@@ -9,8 +9,9 @@ export default function GroupLayout() {
 			}}
 		>
 			<Stack.Screen name="(tabs)/home" />
-			<Stack.Screen name="create-group" />
+			<Stack.Screen name="group-selection" />
 			<Stack.Screen name="join-group" />
+			<Stack.Screen name="create-group" />
 			<Stack.Screen name="(manage-group)" />
 			<Stack.Screen name="member-list" />
 			<Stack.Screen name="cover-images-management" />

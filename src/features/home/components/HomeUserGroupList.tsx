@@ -39,7 +39,9 @@ export function HomeUserGroupList({ groups }: Props) {
 }
 
 function GroupItem({ group }: { group: ClientGroup }) {
-  const { uri } = group.coverImages[0];
+  const hasCoverImage = group.coverImages?.length;
+
+  const { uri } = group.coverImages?.[0] || {};
   const { updateCurrentGroup } = useAuthStore();
 
   const handlePressGroupItem = useCallback(() => {
@@ -52,13 +54,21 @@ function GroupItem({ group }: { group: ClientGroup }) {
   return (
     <AnimatedPressable onPress={handlePressGroupItem}>
       <VStack space="sm" className="items-center pr-4">
-        <Image
+        {hasCoverImage ? <Image
           source={getImageSourceForSignedImageUrl(uri)}
           contentFit="cover"
           style={{ width: 120, height: 80, borderRadius: 14 }}
           priority="high"
           cachePolicy="memory-disk"
-        />
+        /> : (
+          <View style={{ width: 120, height: 80, borderRadius: 14 }} className='items-center justify-center bg-primary-100'>
+            <Image
+              source={require('../../../../assets/images/icons/manna_icon_beige.png')}
+              style={{ width: 58, height: 40, opacity: 0.8 }}
+              contentFit="cover"
+            />
+          </View>
+        )}
         <Text size="sm" weight="medium" className="text-typography-800">{group.groupName}</Text>
       </VStack>
     </AnimatedPressable>

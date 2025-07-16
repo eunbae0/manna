@@ -21,9 +21,6 @@ import { ChevronRight, RefreshCcw } from 'lucide-react-native';
 import { HomeFeedItemListSkeleton } from '@/features/feeds/components/FeedItemSkeleton';
 
 export function HomeRecentGroupActivity() {
-  const handlePressMore = useCallback(() => {
-    router.push('/(app)/(tabs)/feed');
-  }, []);
   return (
     <VStack space="sm" className="w-full">
       <Heading size="2xl" className="px-5">
@@ -32,11 +29,7 @@ export function HomeRecentGroupActivity() {
       <View className="w-full px-2">
         <HomeRecentGroupActivityList />
       </View>
-      <Divider className="my-1" />
-      <Button variant="text" size="lg" fullWidth onPress={handlePressMore}>
-        <ButtonText>피드 더보기</ButtonText>
-        <ButtonIcon as={ChevronRight} size="lg" />
-      </Button>
+
     </VStack>
   );
 }
@@ -45,6 +38,10 @@ function HomeRecentGroupActivityList() {
   const { data, isLoading, error, refetch } = useInfiniteUserFeeds();
   const feeds = data?.pages.flatMap((page) => page.feeds);
   const slicedFeeds = feeds?.slice(0, 3);
+
+  const handlePressMore = useCallback(() => {
+    router.push('/(app)/(tabs)/feed');
+  }, []);
 
   if (isLoading) {
     return <HomeFeedItemListSkeleton />
@@ -68,7 +65,16 @@ function HomeRecentGroupActivityList() {
       estimatedItemSize={150}
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={() => <Divider className="my-2" />}
-      ListEmptyComponent={<Text className="text-center py-10">최근 소그룹의 활동이 없어요.</Text>}
+      ListEmptyComponent={<Text weight="medium" className="text-typography-500 text-center pt-16 pb-14">최근 소그룹의 활동이 없어요.</Text>}
+      ListFooterComponent={
+        slicedFeeds && slicedFeeds.length > 0 ? <View className="w-full px-2">
+          <Divider className="my-1" />
+          <Button variant="text" size="lg" fullWidth onPress={handlePressMore}>
+            <ButtonText>피드 더보기</ButtonText>
+            <ButtonIcon as={ChevronRight} size="lg" />
+          </Button>
+        </View>
+          : null}
     />
   )
 }

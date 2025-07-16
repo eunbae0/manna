@@ -4,7 +4,7 @@ import GroupLandingScreen, {
 } from '@/features/group/screens/GroupLandingScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function EmptyGroupScreen() {
+export default function GroupSelectionScreen() {
 	const handleOptionPress = (option: GroupLandingOption) => {
 		if (option === 'create') {
 			router.push('/(app)/(group)/create-group');

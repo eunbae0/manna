@@ -13,7 +13,7 @@ export default function NameStepScreen() {
 	const { setStep, updateUserData, userData } = useOnboardingStore();
 	const [name, setName] = useState(userData.displayName || '');
 
-	const ref = useRef<TextInput>();
+	const ref = useRef<TextInput>(null);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -32,7 +32,7 @@ export default function NameStepScreen() {
 				<VStack className="gap-10">
 					<VStack space="sm">
 						<Heading size="2xl">소그룹에 가입하신 것을 환영해요 🙌</Heading>
-						<Text className="text-typography-600">
+						<Text size="lg" weight="medium" className="text-typography-600">
 							회원가입을 완료하기 위해 정보를 입력해주세요
 						</Text>
 					</VStack>

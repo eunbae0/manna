@@ -12,10 +12,13 @@ import { useAuthStore } from "@/store/auth";
 import AnimatedPressable from "@/components/common/animated-pressable";
 import { Icon } from "#/components/ui/icon";
 import { VStack } from "#/components/ui/vstack";
+import { View } from "react-native";
 
 export function FeedHomeHeader() {
   const { user, updateCurrentGroup } = useAuthStore();
   const { groups } = useGroups(user?.groups || []);
+
+  const hasGroup = user?.groups;
 
   const { BottomSheetContainer, handleOpen, handleClose } = useBottomSheet();
 
@@ -27,16 +30,23 @@ export function FeedHomeHeader() {
     }, 100);
   }, [handleClose, updateCurrentGroup]);
 
+  const handlePressWriteButton = () => {
+    handleOpen();
+  }
+
   return (
     <>
       <HStack className="w-full pl-5 pr-3 pt-2 pb-2 items-center justify-between">
         <Heading size="2xl" className="">
           최근 피드
         </Heading>
-        <Button variant="text" size="md" onPress={handleOpen}>
-          <ButtonText>글쓰기</ButtonText>
-          <ButtonIcon as={PenLine} />
-        </Button>
+        {hasGroup ?
+          <Button variant="text" size="md" onPress={handlePressWriteButton}>
+            <ButtonText>글쓰기</ButtonText>
+            <ButtonIcon as={PenLine} />
+          </Button>
+          : <View className="h-9" />
+        }
       </HStack>
       <BottomSheetContainer>
         <VStack space="md" className="pt-4 pb-12">

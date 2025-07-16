@@ -142,25 +142,29 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 								: prayerRequest.member?.photoUrl || ''
 						}
 					/>
-					<VStack className="flex-1">
-						<HStack className="items-center justify-between mr-1">
-							<HStack space="sm" className="items-center">
-								<Text size="lg" className="font-pretendard-bold">
+					<VStack space="md" className="flex-1">
+						<HStack className="justify-between items-start mr-1">
+							<VStack className="gap-[2px] flex-1">
+								<Text
+									size="lg"
+									weight="semi-bold"
+									className="text-typography-800"
+								>
 									{prayerRequest.isAnonymous
 										? '익명'
 										: prayerRequest.member.displayName || '이름없음'}
 								</Text>
-								<Text className="text-typography-500" size="sm">
+								<Text size="md" className="text-typography-500">
 									{formatRelativeTime(prayerRequest.createdAt)}
 								</Text>
-							</HStack>
+							</VStack>
 							{isOwner && (
-								<Button onPress={handlePressMoreButton} variant="icon">
+								<Button className="absolute -top-2 right-0" onPress={handlePressMoreButton} size="sm" variant="icon">
 									<ButtonIcon as={MoreHorizontal} />
 								</Button>
 							)}
 						</HStack>
-						<Text size="lg" className="pr-12">
+						<Text size="xl" className="text-typography-800 pr-12">
 							{prayerRequest.value}
 						</Text>
 						<Pressable

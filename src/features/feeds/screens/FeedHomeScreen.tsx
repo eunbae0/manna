@@ -15,9 +15,12 @@ import type {
 import Divider from '@/shared/components/divider';
 import { FeedItemListSkeleton } from '../components/FeedItemSkeleton';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
-import { RefreshCcw } from 'lucide-react-native';
+import { ChevronRight, RefreshCcw } from 'lucide-react-native';
 import { FeedHomeHeader } from './FeedHomeHeader';
 import { useTabPressScrollToTop } from '@/shared/hooks/useTabPressScrollToTop';
+import { useMemo } from 'react';
+import { useAuthStore } from '@/store/auth';
+import { router } from 'expo-router';
 
 export default function FeedHomeScreen() {
   const feedListRef = useTabPressScrollToTop<FlashList<Feed>>()
@@ -54,8 +57,17 @@ function FeedItemList({ ref }: { ref: React.Ref<FlashList<Feed>> }) {
     refetch,
     isRefetching,
   } = useInfiniteUserFeeds();
+  const { user } = useAuthStore()
 
   const feeds = data?.pages.flatMap((page) => page.feeds) ?? [];
+
+  const hasGroup = user?.groups;
+
+  const emptyLabel = useMemo(() => {
+    return hasGroup ?
+      { title: "새 글이 없어요", desc: "끌어당겨 새로고침하거나, 우측 상단의 글쓰기 버튼을 눌러 새 글을 작성해보세요." }
+      : { title: "참여 중인 그룹이 없어요", desc: "그룹을 만들거나 기존 그룹에 참여해보세요." }
+  }, [hasGroup])
 
   if (isLoading) return <FeedItemListSkeleton />;
 
@@ -94,7 +106,18 @@ function FeedItemList({ ref }: { ref: React.Ref<FlashList<Feed>> }) {
       }
       ListHeaderComponent={<Divider size="lg" />}
       ListEmptyComponent={
-        <Text className="text-center py-10">새 글이 없어요.</Text>
+        <VStack space="4xl" className="text-center pt-14 pb-12 items-center px-12">
+          <VStack space="sm" className="text-center items-center">
+            <Text size="lg" weight="semi-bold" className="text-typography-600">{emptyLabel.title}</Text>
+            <Text weight="medium" className="text-typography-500">{emptyLabel.desc}</Text>
+          </VStack>
+          {!hasGroup && (
+            <Button size="md" onPress={() => router.push('/(app)/(group)/group-selection')}>
+              <ButtonText>그룹에 참여하기</ButtonText>
+              <ButtonIcon as={ChevronRight} />
+            </Button>
+          )}
+        </VStack>
       }
       extraData={[feeds]}
     />
