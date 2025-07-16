@@ -1,11 +1,9 @@
-import { Alert, Linking, Platform, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { Heading } from '@/shared/components/heading';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '@/shared/components/text';
-
 import { VStack } from '#/components/ui/vstack';
 import { useAuthStore } from '@/store/auth';
 import {
@@ -21,11 +19,11 @@ import {
 	Megaphone,
 } from 'lucide-react-native';
 import { Avatar } from '@/components/common/avatar';
-import { APP_STORE_REVIEW_URL, PLAY_STORE_URL } from '@/shared/constants/app';
 import { ListItem } from '@/shared/components/ListItem';
 import { getCurrentAppVersion } from '@/shared/utils/app/app_version';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { openAppStoreReview } from '@/shared/utils/revies';
 
 export default function TabFourScreen() {
 	const { user } = useAuthStore();
@@ -181,21 +179,6 @@ export default function TabFourScreen() {
 			</VStack>
 		</ScrollView>
 	);
-}
-
-function openAppStoreReview() {
-	const url = Platform.OS === 'ios' ? APP_STORE_REVIEW_URL : PLAY_STORE_URL;
-
-	Linking.canOpenURL(url).then((supported) => {
-		if (supported) {
-			Linking.openURL(url);
-		} else {
-			Alert.alert(
-				'알림',
-				'스토어를 열 수 없어요. 앱이 아직 스토어에 등록되지 않았을 수 있습니다.',
-			);
-		}
-	});
 }
 
 function VersionListItem() {
