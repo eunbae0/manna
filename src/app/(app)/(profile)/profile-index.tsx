@@ -43,6 +43,7 @@ import { FELLOWSHIP_QUERY_KEY } from '@/features/fellowship/hooks/useFellowship'
 import { ALL_PRAYER_REQUESTS_QUERY_KEY } from '@/features/prayer-request/hooks/usePrayerRequests';
 import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
+import { Image } from 'expo-image';
 
 interface ActivityItemProps {
 	icon: React.ComponentType;
@@ -115,10 +116,10 @@ export default function ProfileScreen() {
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 	const { showToast } = useToastStore();
 
-	const [displayName, setDisplayName] = useState(user?.displayName || '');
-	const [photoUrl, setPhotoUrl] = useState(user?.photoUrl || '');
+	const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
+	const [photoUrl, setPhotoUrl] = useState(currentUser?.photoUrl || '');
 
-	const [statusMessage, setStatusMessage] = useState(user?.statusMessage || '');
+	const [statusMessage, setStatusMessage] = useState(currentUser?.statusMessage || '');
 
 	// 프로필 정보가 변경되었는지 확인
 	const isDisplayNameChanged = useMemo(() => {
@@ -187,7 +188,7 @@ export default function ProfileScreen() {
 
 			return await updateUserProfile(user.id, updateData);
 		},
-		onSuccess: () => {
+		onSuccess: async () => {
 			if (!user?.id) return;
 			// 캐시 무효화 및 사용자 정보 업데이트
 			queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) });
@@ -208,6 +209,8 @@ export default function ProfileScreen() {
 				queryKey: [ALL_PRAYER_REQUESTS_QUERY_KEY],
 				refetchType: 'all',
 			});
+
+
 
 			setIsPhotoUrlChanged(false);
 			handleClose();
@@ -370,9 +373,8 @@ export default function ProfileScreen() {
 				</VStack>
 			</ScrollView>
 			<BottomSheetContainer>
-				<BottomSheetListLayout>
+				<VStack className="px-5 pt-2 pb-4">
 					<BottomSheetListHeader label="프로필 수정" onPress={handleClose} />
-
 					<VStack className="gap-12">
 						<VStack space="lg">
 							<VStack space="lg" className="items-center">
@@ -385,6 +387,7 @@ export default function ProfileScreen() {
 										pickImage();
 									}}
 									className="relative"
+									withHaptic
 								>
 									<Avatar
 										size="3xl"
@@ -435,7 +438,6 @@ export default function ProfileScreen() {
 							)}
 							<Button
 								size="lg"
-								rounded
 								action="primary"
 								onPress={() => {
 									trackAmplitudeEvent('프로필 업데이트', {
@@ -456,7 +458,7 @@ export default function ProfileScreen() {
 							</Button>
 						</VStack>
 					</VStack>
-				</BottomSheetListLayout>
+				</VStack>
 			</BottomSheetContainer>
 		</SafeAreaView>
 	);
