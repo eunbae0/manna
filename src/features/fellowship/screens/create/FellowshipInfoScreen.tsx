@@ -109,7 +109,7 @@ export default function FellowshipInfoScreen() {
 	});
 
 	// const [preachText, setPreachText] = useState<string>(info.preachText || '');
-	const [preachText, setPreachText] = useState<SelectedBible[]>(info.preachText || []);
+	const [preachText, setPreachText] = useState<string | SelectedBible[]>(info.preachText || []);
 	const [preacher, setPreacher] = useState<string>(info.preacher || '');
 	const [participants, setParticipants] = useState<
 		ClientFellowshipParticipantV2[]
@@ -342,7 +342,7 @@ export default function FellowshipInfoScreen() {
 												className="text-typography-700 w-2/3 text-right"
 												numberOfLines={1}
 											>
-												{preachText.length === 0 ? '없음' : preachText.length === 1 ? preachText[0].title : `${preachText.length}개`}
+												{typeof preachText === 'string' ? preachText : preachText.length === 0 ? '없음' : preachText.length === 1 ? preachText[0].title : `${preachText.length}개`}
 											</Text>
 											<Animated.View style={[preachTextIconStyle]}>
 												<Icon
@@ -361,7 +361,7 @@ export default function FellowshipInfoScreen() {
 										onLayout={onPreachTextContentLayout}
 									>
 										<SelectedBibleList
-											selectedBible={preachText}
+											selectedBible={typeof preachText === 'string' ? [] : preachText}
 											setSelectedBible={setPreachText}
 											handleOpenBibleSelector={handleOpenBibleSelector}
 										/>
@@ -653,7 +653,12 @@ export default function FellowshipInfoScreen() {
 				closeSelector={handleCloseBibleSelector}
 				mode="select"
 				setSelectedBible={(selectedBible) => {
-					setPreachText((prev) => [...prev, selectedBible]);
+					setPreachText((prev) => {
+						if (typeof prev === 'string') {
+							return [selectedBible];
+						}
+						return [...prev, selectedBible];
+					});
 				}}
 			/>
 		</KeyboardDismissView>
