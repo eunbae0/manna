@@ -1,38 +1,38 @@
-import { Pressable, View } from "react-native";
+import Carousel from "react-native-reanimated-carousel";
+import { useWindowDimensions, View } from "react-native";
+import { useState } from "react";
+import { HomeBannerItem } from "./HomeBannerItem";
 import { Text } from "@/shared/components/text";
-import { VStack } from "#/components/ui/vstack";
-import { HStack } from "#/components/ui/hstack";
-import { Icon } from "#/components/ui/icon";
-import { ChevronRight } from "lucide-react-native";
-import LottieView from "lottie-react-native";
-import { router } from "expo-router";
+import { BANNER_DATA, HOME_BANNER_AUTO_PLAY_INTERVAL } from "../constants/homeBanner";
 
 export function HomeBanner() {
+  const { width } = useWindowDimensions();
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <Pressable onPress={() => { router.push('/(app)/(tabs)/note') }}>
-      <View className="relative bg-background-100/70 mx-4 h-24 rounded-3xl overflow-hidden border border-primary-100">
-        <HStack className="w-full h-24 pl-5 pr-2 items-center justify-between">
-          <VStack space="xs">
-            <Text size="lg" className="text-typography-700">성경 본문 추가 가능!</Text>
-            <HStack className="gap-px items-center">
-              <Text size="xl" weight="bold" className="text-typography-900">지금 설교 노트를 작성해보세요</Text>
-              <Icon as={ChevronRight} className="text-typography-900" />
-            </HStack>
-          </VStack>
-          <LottieView
-            source={require('../../../../assets/lotties/notes.json')}
-            autoPlay
-            loop
-            style={{
-              width: 58,
-              height: 58,
-            }}
+    <View className="relative">
+      <Carousel
+        width={width}
+        height={80}
+        data={BANNER_DATA}
+        onSnapToItem={(index) => setActiveIndex(index)}
+        autoPlay={BANNER_DATA.length > 1}
+        autoPlayInterval={HOME_BANNER_AUTO_PLAY_INTERVAL}
+        renderItem={({ item }) => (
+          <HomeBannerItem
+            title={item.title}
+            description={item.description}
+            lottieView={item.lottieView}
+            onPress={item.onPress}
           />
-        </HStack>
-        <View className="absolute bottom-2 right-3 bg-black opacity-30 rounded-full px-[6px] py-px" >
-          <Text size="xs" className="text-typography-0">1 / 1</Text>
-        </View>
+        )}
+      />
+      <View className="absolute bottom-3 right-7 bg-black opacity-30 rounded-full px-[6px] py-px">
+        <Text size="xs" className="text-typography-0">
+          {activeIndex + 1} / {BANNER_DATA.length}
+        </Text>
       </View>
-    </Pressable>
+    </View>
+
   )
 }
