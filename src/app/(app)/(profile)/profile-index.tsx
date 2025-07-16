@@ -210,7 +210,11 @@ export default function ProfileScreen() {
 				refetchType: 'all',
 			});
 
-
+			// 이미지 캐시 초기화 (유저의 photo url의 cache key가 동일함)
+			await Promise.all([
+				Image.clearDiskCache(),
+				Image.clearMemoryCache(),
+			]);
 
 			setIsPhotoUrlChanged(false);
 			handleClose();
