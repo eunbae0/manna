@@ -299,7 +299,7 @@ export default function ProfileScreen() {
 							>
 								{user.displayName || '이름 없음'}
 							</Text>
-							{isLeader ? (
+							{!isCurrentUser && (isLeader ? (
 								<Box className="px-3 py-1 bg-primary-100 rounded-full">
 									<Text
 										size="xs"
@@ -317,7 +317,7 @@ export default function ProfileScreen() {
 										그룹원
 									</Text>
 								</Box>
-							)}
+							))}
 							<Text size="md" className="text-typography-600 text-center mt-2">
 								{user?.statusMessage || '상태메세지가 없어요.'}
 							</Text>

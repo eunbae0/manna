@@ -109,7 +109,7 @@ export default function FellowshipInfoScreen() {
 	});
 
 	// const [preachText, setPreachText] = useState<string>(info.preachText || '');
-	const [preachText, setPreachText] = useState<SelectedBible[]>([]);
+	const [preachText, setPreachText] = useState<SelectedBible[]>(info.preachText || []);
 	const [preacher, setPreacher] = useState<string>(info.preacher || '');
 	const [participants, setParticipants] = useState<
 		ClientFellowshipParticipantV2[]
@@ -314,6 +314,7 @@ export default function FellowshipInfoScreen() {
 									scale={0.98}
 									onPress={() => {
 										if (!preachTextExpanded && preachText.length === 0) {
+											Keyboard.dismiss();
 											handleOpenBibleSelector();
 										}
 										togglePreachText();

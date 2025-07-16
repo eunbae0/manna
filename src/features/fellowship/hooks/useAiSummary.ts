@@ -1,14 +1,16 @@
 import { GEMINI_API_URL } from '@/shared/constants/url';
 import { useMutation } from '@tanstack/react-query';
-import { FELLOWSHIP_AI_SUMMARY_PROMPT } from '../constants/aiSummary';
 
-export function useAiSummary() {
+export function useAiSummary(prompt: string) {
 	return useMutation({
-		mutationFn: (text: string) => generateAiSummary(text),
+		mutationFn: (text: string) => generateAiSummary(text, prompt),
 	});
 }
 
-async function generateAiSummary(text: string): Promise<string[]> {
+async function generateAiSummary(
+	text: string,
+	prompt: string,
+): Promise<string[]> {
 	const response = await fetch(GEMINI_API_URL, {
 		method: 'POST',
 		headers: {
@@ -19,7 +21,7 @@ async function generateAiSummary(text: string): Promise<string[]> {
 				{
 					parts: [
 						{
-							text: FELLOWSHIP_AI_SUMMARY_PROMPT.replace('{text}', text),
+							text: prompt.replace('{text}', text),
 						},
 					],
 				},

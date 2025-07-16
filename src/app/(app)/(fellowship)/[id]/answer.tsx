@@ -4,11 +4,10 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
 import { Heading } from '@/shared/components/heading';
 import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
-import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import Header from '@/components/common/Header';
 import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScrollView';
 import { KeyboardToolbar } from '@/shared/components/KeyboardToolbar';
-import { AnswerField } from '@/features/fellowship/components/AnswerField';
+import { AnswerField } from '@/features/fellowship/components/answer/AnswerField';
 import Divider from '@/shared/components/divider';
 
 export default function AnswerScreen() {
