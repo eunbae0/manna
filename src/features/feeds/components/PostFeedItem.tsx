@@ -201,7 +201,7 @@ export function PostFeedItem({ item, isCommentVisible = true }: { item: PostsFee
               <VStack className="py-3 px-4" key={comments.id}>
                 <HStack space="xl" className="items-start justify-between">
                   <HStack space="sm" className="items-start flex-1">
-                    <Avatar size="2xs" photoUrl={authorMember?.photoUrl || undefined} className="mt-[2px]" />
+                    <Avatar size="2xs" photoUrl={comments.author.photoUrl || undefined} className="mt-[2px]" />
                     <VStack className="gap-px flex-1">
                       <Text size="lg" weight="semi-bold" className="text-typography-700">
                         {comments.author.displayName}
