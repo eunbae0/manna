@@ -65,7 +65,7 @@ function FeedItemList({ ref }: { ref: React.Ref<FlashList<Feed>> }) {
 
   const emptyLabel = useMemo(() => {
     return hasGroup ?
-      { title: "새 글이 없어요", desc: "끌어당겨 새로고침하거나, 우측 상단의 글쓰기 버튼을 눌러 새 글을 작성해보세요." }
+      { title: "새 글이 없어요", desc: "끌어당겨 새로고침하거나,\n우측 상단의 글쓰기 버튼을 눌러 새 글을 작성해보세요." }
       : { title: "참여 중인 그룹이 없어요", desc: "그룹을 만들거나 기존 그룹에 참여해보세요." }
   }, [hasGroup])
 
@@ -107,9 +107,9 @@ function FeedItemList({ ref }: { ref: React.Ref<FlashList<Feed>> }) {
       ListHeaderComponent={<Divider size="lg" />}
       ListEmptyComponent={
         <VStack space="4xl" className="text-center pt-14 pb-12 items-center px-12">
-          <VStack space="sm" className="text-center items-center">
-            <Text size="lg" weight="semi-bold" className="text-typography-600">{emptyLabel.title}</Text>
-            <Text weight="medium" className="text-typography-500">{emptyLabel.desc}</Text>
+          <VStack space="md" className="text-center items-center">
+            <Text size="xl" weight="semi-bold" className="text-typography-600">{emptyLabel.title}</Text>
+            <Text weight="medium" className="text-typography-500 text-center leading-6">{emptyLabel.desc}</Text>
           </VStack>
           {!hasGroup && (
             <Button size="md" onPress={() => router.push('/(app)/(group)/group-selection')}>

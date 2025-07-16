@@ -7,6 +7,7 @@ import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
+import { BG_TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 const MAX_NICKNAME_LENGTH = 10
 
@@ -48,7 +49,7 @@ export default function NameStepScreen() {
 							onChangeText={handleChangeNameText}
 							placeholder="그룹원들에게 보여질 이름이에요"
 							maxLength={MAX_NICKNAME_LENGTH}
-							className="rounded-xl px-4 py-5 text-xl bg-background-100 focus:bg-background-200/70 font-pretendard-Regular"
+							className={BG_TEXT_INPUT_STYLE}
 						/>
 					</VStack>
 				</VStack>

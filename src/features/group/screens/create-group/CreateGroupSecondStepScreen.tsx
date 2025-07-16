@@ -39,22 +39,21 @@ export default function CreateGroupSecondStepScreen({ group }: Props) {
 				<VStack className="px-5 py-6">
 					<VStack className="gap-20">
 						<VStack space="md">
-							<Heading className="text-[24px]">
-								소그룹 코드를 발급했어요.
+							<Heading size="3xl">
+								소그룹 코드를 발급했어요
 							</Heading>
-							<Text size="lg" className="text-typography-600">
-								코드를 공유해 친구를 초대해보세요
+							<Text size="lg" weight="medium" className="text-typography-600">
+								초대 코드를 공유해 친구를 초대해보세요
 							</Text>
 						</VStack>
-						<VStack space="md">
-							<Box className="w-full rounded-2xl bg-background-0 border-primary-600 border-2 p-4">
-								<Text className="text-3xl font-pretendard-semi-bold text-primary-900  text-center">
+						<VStack space="xl">
+							<Box className="w-full rounded-2xl bg-background-50 border-background-300 border-2 p-4">
+								<Text size="3xl" weight="medium" className="text-typography-800 text-center">
 									{group?.inviteCode ?? ''}
 								</Text>
 							</Box>
 							<HStack space="sm">
 								<Button
-									variant="outline"
 									onPress={copyInviteCode}
 									className="flex-1"
 								>
@@ -81,7 +80,7 @@ export default function CreateGroupSecondStepScreen({ group }: Props) {
 					</VStack>
 				</VStack>
 			</VStack>
-			<Button size="lg" className="mx-5 mb-6" rounded onPress={handlePressNext}>
+			<Button size="lg" className="mx-5 mb-5" onPress={handlePressNext}>
 				<ButtonText>완료</ButtonText>
 			</Button>
 		</>

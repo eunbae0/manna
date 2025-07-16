@@ -3,9 +3,9 @@ import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 import { Heading } from '@/shared/components/heading';
 import { Input, InputField } from '#/components/ui/input';
-import { Button, ButtonText } from '@/components/common/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useRef, useEffect } from 'react';
-import { Keyboard, type TextInput } from 'react-native';
+import { Keyboard, TextInput } from 'react-native';
 import { createGroup } from '@/api/group';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth';
@@ -15,9 +15,10 @@ import { useOnboardingStore } from '@/store/onboarding';
 import { GROUPS_QUERY_KEY } from '../../hooks/useGroups';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { HStack } from '#/components/ui/hstack';
-import { AlertCircle } from 'lucide-react-native';
+import { AlertCircle, ChevronRight, Undo2 } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '@/shared/components/text';
+import { BG_TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
 type Props = {
 	setStep: Dispatch<SetStateAction<CreateGroupStep>>;
@@ -104,16 +105,12 @@ export default function CreateGroupFirstStepScreen({
 						<Heading className="text-[24px]">
 							소그룹 이름을 입력해주세요
 						</Heading>
-						<Input size="xl">
-							<InputField
-								//@ts-ignore
-								ref={ref}
-								value={groupName}
-								onChangeText={setGroupName}
-								placeholder="ex. OO 순, OO 사랑방"
-								className="font-pretendard-Medium"
-							/>
-						</Input>
+						<TextInput
+							ref={ref}
+							value={groupName}
+							onChangeText={setGroupName}
+							placeholder="ex. OO 순, OO 사랑방"
+							className={BG_TEXT_INPUT_STYLE} />
 					</VStack>
 				</VStack>
 			</VStack>
@@ -122,21 +119,25 @@ export default function CreateGroupFirstStepScreen({
 				className="rounded-full mx-5 mb-6"
 				onPress={handlePressNext}
 				disabled={!groupName.trim()}
-				rounded
 			>
 				<ButtonText>다음</ButtonText>
 			</Button>
 			<BottomSheetContainer>
 				<VStack className="items-center justify-center pt-6 pb-5 px-4 gap-10">
-					<VStack className="items-center justify-center" space="lg">
+					<VStack className="items-center justify-center" space="2xl">
 						<Icon as={AlertCircle} size="xl" className="text-yellow-500" />
-						<VStack className="items-start" space="sm">
-							<Heading size="xl" className="text-start font-pretendard-bold">
+						<VStack className="items-center" space="md">
+							<Heading size="2xl" className="text-center font-pretendard-bold">
 								아래 정보로 소그룹을 생성할게요
 							</Heading>
-							<Text size="lg" className="text-start text-typography-500">
-								소그룹 이름: {groupName}
-							</Text>
+							<HStack className='items-center'>
+								<Text size="xl" className="text-center text-typography-500">
+									소그룹 이름: {" "}
+								</Text>
+								<Text weight='medium' size="xl" className="text-center text-typography-600">
+									{groupName}
+								</Text>
+							</HStack>
 						</VStack>
 					</VStack>
 					<HStack className="w-full" space="sm">
@@ -149,6 +150,7 @@ export default function CreateGroupFirstStepScreen({
 							className="flex-1"
 						>
 							<ButtonText>다시 입력하기</ButtonText>
+							<ButtonIcon as={Undo2} />
 						</Button>
 						<Button
 							onPress={() => submitPrayerRequest()}
@@ -158,6 +160,7 @@ export default function CreateGroupFirstStepScreen({
 							className="flex-1"
 						>
 							<ButtonText>생성하기</ButtonText>
+							<ButtonIcon as={ChevronRight} />
 						</Button>
 					</HStack>
 				</VStack>
