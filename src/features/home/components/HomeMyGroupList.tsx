@@ -10,7 +10,7 @@ export function HomeMyGroupList() {
   const userGroups = user?.groups;
 
   return (
-    <VStack space="xl" className="px-5 mt-3 py-1 items-center justify-center">
+    <VStack space="xl" className="px-5 mt-5 py-1 items-center justify-center">
       <Heading size="2xl" className="w-full">나의 소그룹</Heading>
       {userGroups ?
         <HomeUserGroupList groups={userGroups} /> :

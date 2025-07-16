@@ -38,13 +38,13 @@ export default function PendingSubmitScreen() {
 	return (
 		<VStack className="flex-1 h-full items-center justify-center px-4">
 			<VStack className="flex-1 items-center justify-center gap-8">
-				<VStack space="md" className="items-center">
-					<Heading size="2xl">
+				<VStack space="lg" className="items-center">
+					<Heading size="3xl">
 						{userData.displayName
 							? `${userData.displayName}님을 맞이할 준비를 하고 있어요`
 							: '회원님을 맞이할 준비를 하고 있어요'}
 					</Heading>
-					<Text className="text-typography-500 text-center">
+					<Text size="lg" weight="medium" className="text-typography-600 text-center">
 						잠시만 기다려주세요 🙂
 					</Text>
 				</VStack>

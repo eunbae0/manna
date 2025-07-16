@@ -44,7 +44,7 @@ function OnboardingScreen() {
 	};
 
 	return (
-		<SafeAreaView className="h-full">
+		<SafeAreaView className="bg-white h-full">
 			<KeyboardAvoidingView>{switchStep(currentStep)}</KeyboardAvoidingView>
 		</SafeAreaView>
 	);

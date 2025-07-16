@@ -6,7 +6,7 @@ import { Text } from '@/shared/components/text';
 import { cn } from '@/shared/utils/cn';
 
 // Define heading size type
-type HeadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+type HeadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 
 // Heading base component with size variants
 const headingStyles = cva('font-pretendard-bold', {
@@ -19,6 +19,7 @@ const headingStyles = cva('font-pretendard-bold', {
 			xl: 'text-xl',
 			'2xl': 'text-2xl',
 			'3xl': 'text-3xl',
+			'4xl': 'text-4xl',
 		},
 		align: {
 			left: 'text-left',

@@ -12,7 +12,7 @@ import { Box } from '#/components/ui/box';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { Icon } from '#/components/ui/icon';
 import { HStack } from '#/components/ui/hstack';
-import Image from 'expo-image';
+import { Image } from 'expo-image';
 import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 export default function ImageStepScreen() {
@@ -57,10 +57,10 @@ export default function ImageStepScreen() {
 		<VStack className="flex-1 h-full">
 			<Header onPressBackButton={() => setStep('NAME')} />
 			<VStack className="flex-1 px-4 mt-8 gap-12">
-				<VStack className="gap-12">
+				<VStack className="gap-16">
 					<VStack space="sm">
-						<Heading size="2xl">프로필 이미지를 설정해보세요</Heading>
-						<Text className="text-typography-600">
+						<Heading size="3xl">프로필 이미지를 설정해보세요</Heading>
+						<Text size="lg" weight="medium" className="text-typography-600">
 							그룹원들에게 보여지는 이미지에요.
 						</Text>
 					</VStack>
@@ -124,7 +124,7 @@ export default function ImageStepScreen() {
 				</VStack>
 			</VStack>
 			<VStack space="sm" className="mx-5 mb-6">
-				<Button size="lg" onPress={handlePressNext} rounded>
+				<Button size="lg" onPress={handlePressNext}>
 					<ButtonText>다음</ButtonText>
 				</Button>
 			</VStack>
