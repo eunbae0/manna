@@ -162,6 +162,7 @@ export const useBottomSheet = ({
 				detached={isModal}
 				onDismiss={onClose}
 				keyboardBehavior="interactive"
+				keyboardBlurBehavior='restore'
 				handleComponent={isModal ? null : BottomSheetHandleComponent}
 				bottomInset={isModal ? bottomInset : 0}
 				style={enableBackdrop ?
