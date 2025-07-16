@@ -20,6 +20,15 @@ export class FirestoreFeedService {
 		limit = 10,
 		groupIds = [],
 	}: RequestData): ReturnType<ReturnType<typeof httpsCallable<ResponseData>>> {
+		if (!groupIds || groupIds.length === 0) {
+			return Promise.resolve({
+				data: {
+					feeds: [],
+					lastVisible: null,
+					hasMore: false,
+				},
+			});
+		}
 		return functions.httpsCallable('getUserFeeds')({
 			lastVisible,
 			limit,
