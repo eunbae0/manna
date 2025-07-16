@@ -87,7 +87,6 @@ function RootLayout() {
 									headerShown: false,
 								}}
 							>
-								<Slot />
 								<Stack.Screen name="policy" />
 							</Stack>
 							<StatusBar style="auto" />
