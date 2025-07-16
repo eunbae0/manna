@@ -107,7 +107,7 @@ export default function ForgetPasswordScreen() {
 									<Button
 										onPress={() => router.push('/(auth)')}
 										size="xl"
-										className="rounded-full mb-5"
+										className="rounded-full mb-2"
 									>
 										<ButtonText>로그인 화면으로 돌아가기</ButtonText>
 									</Button>
@@ -116,7 +116,7 @@ export default function ForgetPasswordScreen() {
 										onPress={handleSendResetEmail}
 										disabled={email.length === 0 || isLoading}
 										size="xl"
-										className="rounded-full mb-5"
+										className="rounded-full mb-2"
 									>
 										<ButtonText>
 											{isLoading
