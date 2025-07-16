@@ -28,7 +28,11 @@ export function getUserFeeds() {
 				throw new HttpsError('unauthenticated', '로그인이 필요합니다.');
 			}
 
-			const { lastVisible = null, limit = 10, groupIds = [] } = request.data;
+			const { lastVisible = null, limit = 10, groupIds } = request.data;
+
+			if (!groupIds || groupIds.length === 0) {
+				throw new HttpsError('invalid-argument', 'groupIds가 필요합니다.');
+			}
 
 			try {
 				const fetchLimit = Math.max(limit, MAX_LIMIT);
