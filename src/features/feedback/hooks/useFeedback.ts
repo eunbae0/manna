@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/auth';
 import {
-	isDeveloper,
 	sendFeedbackMessage,
 	subscribeChatRoomMessages,
 	subscribeChatRooms,
 } from '@/api/feedback/service';
 import type { ChatRoom, FeedbackMessage } from '@/api/feedback/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useIsDeveloperAccount } from '@/shared/hooks/api/useIsDeveloperAccount';
 
 // 쿼리 키 상수
 const FEEDBACK_MESSAGES_KEY = ['feedback', 'messages'];
 const CHAT_ROOM_MESSAGES_KEY = ['feedback', 'chatRoom', 'messages'];
 const CHAT_ROOMS_KEY = ['feedback', 'chatRooms'];
-const DEVELOPER_STATUS_KEY = ['feedback', 'isDeveloper'];
+
 const SELECTED_CHAT_ROOM_KEY = ['feedback', 'selectedChatRoom'];
 
 export function useFeedback() {
@@ -22,16 +22,7 @@ export function useFeedback() {
 
 	// 개발자 계정 확인 쿼리
 	const { data: isDeveloperAccount = false, error: developerStatusError } =
-		useQuery({
-			queryKey: [...DEVELOPER_STATUS_KEY, user?.id],
-			queryFn: async () => {
-				if (!user) return false;
-				return isDeveloper(user.id);
-			},
-			enabled: !!user,
-			staleTime: Number.POSITIVE_INFINITY, // 개발자 상태는 세션 내에서 변경되지 않음
-			gcTime: Number.POSITIVE_INFINITY,
-		});
+		useIsDeveloperAccount();
 
 	// 선택된 채팅방 ID (사용자 자신의 ID가 기본값)
 	const [selectedChatRoomId, setSelectedChatRoomId] = useState<string>('');
