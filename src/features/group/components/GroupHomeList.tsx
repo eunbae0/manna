@@ -342,7 +342,7 @@ function GroupHomeList() {
 
 	const renderPrayerRequestSection = useCallback(() => {
 		return (
-			<VStack className="mt-4 py-1 items-center justify-center">
+			<VStack className="mt-4 pb-8 py-1 items-center justify-center">
 				<HStack className="justify-between pl-4 pr-1 items-center w-full">
 					<Heading size="2xl">최근 기도 제목</Heading>
 					<Button variant="text" size='md' onPress={handleViewMorePrayerRequests}>
@@ -396,7 +396,7 @@ function GroupHomeList() {
 
 	const renderBoardSection = useCallback(() => {
 		return (
-			<VStack space="md" className="pt-12">
+			<VStack space="md" className="pt-4">
 				<HStack className="justify-between pl-4 pr-1 items-center">
 					<Heading size="2xl">게시판 최근 글</Heading>
 					<Button variant="text" size='md' onPress={handleViewMoreBoardPosts}>
