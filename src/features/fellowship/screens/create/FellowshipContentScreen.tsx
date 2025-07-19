@@ -420,6 +420,15 @@ export default function FellowshipContentScreen() {
 											))}
 											<HStack space="sm" className="items-center">
 												<Button
+													className="flex-1"
+													onPress={() =>
+														handlePressRecommendedQuestions('iceBreaking')
+													}
+												>
+													<ButtonText>추천 질문 보기</ButtonText>
+													<ButtonIcon as={ThumbsUp} />
+												</Button>
+												<Button
 													variant="outline"
 													className="flex-1"
 													onPress={() => {
@@ -434,15 +443,6 @@ export default function FellowshipContentScreen() {
 												>
 													<ButtonText>항목 추가</ButtonText>
 													<ButtonIcon as={Plus} />
-												</Button>
-												<Button
-													className="flex-1"
-													onPress={() =>
-														handlePressRecommendedQuestions('iceBreaking')
-													}
-												>
-													<ButtonText>추천 질문 보기</ButtonText>
-													<ButtonIcon as={ThumbsUp} />
 												</Button>
 											</HStack>
 										</VStack>
@@ -534,6 +534,15 @@ export default function FellowshipContentScreen() {
 											))}
 											<HStack space="sm" className="items-center">
 												<Button
+													className="flex-1"
+													onPress={() =>
+														handlePressRecommendedQuestions('sermonTopic')
+													}
+												>
+													<ButtonText>추천 질문 보기</ButtonText>
+													<ButtonIcon as={ThumbsUp} />
+												</Button>
+												<Button
 													variant="outline"
 													className="flex-1"
 													onPress={() => {
@@ -548,15 +557,6 @@ export default function FellowshipContentScreen() {
 												>
 													<ButtonText>항목 추가</ButtonText>
 													<ButtonIcon as={Plus} />
-												</Button>
-												<Button
-													className="flex-1"
-													onPress={() =>
-														handlePressRecommendedQuestions('sermonTopic')
-													}
-												>
-													<ButtonText>추천 질문 보기</ButtonText>
-													<ButtonIcon as={ThumbsUp} />
 												</Button>
 											</HStack>
 										</VStack>
