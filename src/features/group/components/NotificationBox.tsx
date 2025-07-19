@@ -6,7 +6,7 @@ import { HStack } from '#/components/ui/hstack';
 import { Pressable, type PressableProps } from 'react-native';
 import { X } from 'lucide-react-native';
 import { Icon } from '#/components/ui/icon';
-import Animated, { } from 'react-native-reanimated';
+import Animated, {} from 'react-native-reanimated';
 
 type Props = {
 	title: string;
@@ -42,7 +42,9 @@ export default function NotificationBox({
 							}}
 						/>
 						<VStack>
-							<Text weight="semi-bold" size="md" className="text-primary-500">{title}</Text>
+							<Text weight="semi-bold" size="md" className="text-primary-500">
+								{title}
+							</Text>
 							<Text size="sm" weight="light" className="text-primary-500">
 								{description}
 							</Text>

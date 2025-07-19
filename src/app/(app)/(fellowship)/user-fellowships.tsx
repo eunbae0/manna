@@ -105,7 +105,9 @@ export default function UserFellowshipsScreen() {
 						}
 						renderItem={({ item }) => (
 							<AnimatedPressable
-								onPress={() => router.push(`/(app)/(fellowship)/${item.identifiers.id}`)}
+								onPress={() =>
+									router.push(`/(app)/(fellowship)/${item.identifiers.id}`)
+								}
 								className="px-4 py-3"
 							>
 								<VStack space="sm">
@@ -119,9 +121,7 @@ export default function UserFellowshipsScreen() {
 												{item.info.title}
 											</Text>
 											<Text size="sm" className="text-typography-500">
-												{item.info.date
-													? formatLocalDate(item.info.date)
-													: ''}
+												{item.info.date ? formatLocalDate(item.info.date) : ''}
 											</Text>
 										</VStack>
 										<Icon

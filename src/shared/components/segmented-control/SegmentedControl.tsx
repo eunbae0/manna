@@ -5,44 +5,50 @@ import type { ViewProps } from 'react-native';
 import { cn } from '@/shared/utils/cn';
 
 type SegmentedControlProps = {
-  children: ReactNode;
-  defaultValue?: string;
-  value?: string;
-  onValueChange?: (value: string | number) => void;
+	children: ReactNode;
+	defaultValue?: string;
+	value?: string;
+	onValueChange?: (value: string | number) => void;
 } & ViewProps;
 
 const SegmentedControl = ({
-  children,
-  defaultValue,
-  value,
-  onValueChange,
-  className,
-  ...props
+	children,
+	defaultValue,
+	value,
+	onValueChange,
+	className,
+	...props
 }: SegmentedControlProps) => {
-  const [selectedValue, setSelectedValue] = useState<string>(
-    value ?? defaultValue ?? '',
-  );
-  const isControlled = value !== undefined;
+	const [selectedValue, setSelectedValue] = useState<string>(
+		value ?? defaultValue ?? '',
+	);
+	const isControlled = value !== undefined;
 
-  const handleValueChange = (newValue: string) => {
-    if (!isControlled) {
-      setSelectedValue(newValue);
-    }
-    onValueChange?.(newValue);
-  };
+	const handleValueChange = (newValue: string) => {
+		if (!isControlled) {
+			setSelectedValue(newValue);
+		}
+		onValueChange?.(newValue);
+	};
 
-  const contextValue = {
-    selectedValue: isControlled ? value : selectedValue,
-    onValueChange: handleValueChange,
-  };
+	const contextValue = {
+		selectedValue: isControlled ? value : selectedValue,
+		onValueChange: handleValueChange,
+	};
 
-  return (
-    <SegmentedControlProvider value={contextValue}>
-      <HStack className={cn("bg-background-100 rounded-xl border-2 border-background-200/40", className)} {...props}>
-        {children}
-      </HStack>
-    </SegmentedControlProvider>
-  );
+	return (
+		<SegmentedControlProvider value={contextValue}>
+			<HStack
+				className={cn(
+					'bg-background-100 rounded-xl border-2 border-background-200/40',
+					className,
+				)}
+				{...props}
+			>
+				{children}
+			</HStack>
+		</SegmentedControlProvider>
+	);
 };
 
 export default SegmentedControl;

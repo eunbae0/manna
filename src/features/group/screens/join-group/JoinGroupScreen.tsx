@@ -90,7 +90,6 @@ export default function JoinGroupScreen() {
 		setJoinError(false);
 	};
 
-
 	const handleRetry = () => {
 		// 스캔 재시도를 위해 상태 초기화
 		hasScannedRef.current = false;

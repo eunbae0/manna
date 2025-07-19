@@ -7,7 +7,6 @@ import { PRIVACY_POLICY_URL } from '@/shared/constants/app';
 import { OfficialHomepageWebView } from '@/shared/components/webview';
 
 export default function PolicyScreen() {
-
 	return (
 		<SafeAreaView className="flex-1 bg-background-50">
 			<VStack className="flex-1 gap-5">

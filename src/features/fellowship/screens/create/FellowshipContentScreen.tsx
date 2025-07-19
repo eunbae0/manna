@@ -122,19 +122,26 @@ export default function FellowshipContentScreen() {
 	const sermonTextInputRef = useRef<TextInput>(null);
 
 	const [iceBreakingAnswers, setIceBreakingAnswers] = useState(
-		content.categories.iceBreaking.items && Object.values(content.categories.iceBreaking.items).length > 0
-			? Object.values(content.categories.iceBreaking.items).map(({ id, title }) => { return { id, title } })
-			: [
-				{ id: 'iceBreaking_temp', title: '' },
-			]);
+		content.categories.iceBreaking.items &&
+			Object.values(content.categories.iceBreaking.items).length > 0
+			? Object.values(content.categories.iceBreaking.items).map(
+					({ id, title }) => {
+						return { id, title };
+					},
+				)
+			: [{ id: 'iceBreaking_temp', title: '' }],
+	);
 
 	const [sermonTopicAnswers, setSermonTopicAnswers] = useState(
-		content.categories.sermonTopic.items && Object.values(content.categories.sermonTopic.items).length > 0
-			? Object.values(content.categories.sermonTopic.items).map(({ id, title }) => { return { id, title } })
-			: [
-				{ id: 'sermonTopic_temp', title: '' },
-			]);
-
+		content.categories.sermonTopic.items &&
+			Object.values(content.categories.sermonTopic.items).length > 0
+			? Object.values(content.categories.sermonTopic.items).map(
+					({ id, title }) => {
+						return { id, title };
+					},
+				)
+			: [{ id: 'sermonTopic_temp', title: '' }],
+	);
 
 	// 나눔 추천
 	const {
@@ -249,49 +256,61 @@ export default function FellowshipContentScreen() {
 
 	// local > store 업데이트
 	const updateFellowshipContent = () => {
-		const iceBreakingItems: Record<string, FellowshipContentItemV2> = {}
+		const iceBreakingItems: Record<string, FellowshipContentItemV2> = {};
 		iceBreakingAnswers.forEach(({ id, title }, index) => {
 			if (!title) return;
 			iceBreakingItems[id] = {
-				id, title, order: index, answers: {}
-			}
-		})
+				id,
+				title,
+				order: index,
+				answers: {},
+			};
+		});
 		if (Object.keys(iceBreakingItems).length === 0)
 			iceBreakingItems.iceBreaking_temp = {
-				id: 'iceBreaking_temp', title: '', order: 0, answers: {}
-			}
-		const sermonTopicItems: Record<string, FellowshipContentItemV2> = {}
+				id: 'iceBreaking_temp',
+				title: '',
+				order: 0,
+				answers: {},
+			};
+		const sermonTopicItems: Record<string, FellowshipContentItemV2> = {};
 		sermonTopicAnswers.forEach(({ id, title }, index) => {
 			if (!title) return;
 			sermonTopicItems[id] = {
-				id, title, order: index, answers: {}
-			}
-		})
+				id,
+				title,
+				order: index,
+				answers: {},
+			};
+		});
 		if (Object.keys(sermonTopicItems).length === 0)
 			sermonTopicItems.sermonTopic_temp = {
-				id: 'sermonTopic_temp', title: '', order: 0, answers: {}
-			}
+				id: 'sermonTopic_temp',
+				title: '',
+				order: 0,
+				answers: {},
+			};
 		updateFellowshipContentStore({
 			categories: {
 				iceBreaking: {
 					order: 0,
 					id: 'iceBreaking',
-					title: "아이스 브레이킹",
+					title: '아이스 브레이킹',
 					type: 'iceBreaking',
 					isActive: iceBreakingAnswers.length > 0,
-					items: iceBreakingItems
+					items: iceBreakingItems,
 				},
 				sermonTopic: {
 					order: 1,
 					id: 'sermonTopic',
-					title: "설교 나눔",
+					title: '설교 나눔',
 					type: 'sermonTopic',
 					isActive: sermonTopicAnswers.length > 0,
-					items: sermonTopicItems
+					items: sermonTopicItems,
 				},
 			},
 		});
-	}
+	};
 
 	return (
 		<>
@@ -341,7 +360,8 @@ export default function FellowshipContentScreen() {
 													weight="medium"
 													className="text-typography-700"
 												>
-													{iceBreakingAnswers.length === 1 && iceBreakingAnswers[0].title === ''
+													{iceBreakingAnswers.length === 1 &&
+													iceBreakingAnswers[0].title === ''
 														? '질문을 추가해보세요'
 														: `${iceBreakingAnswers.length}개`}
 												</Text>
@@ -454,7 +474,8 @@ export default function FellowshipContentScreen() {
 													weight="medium"
 													className="text-typography-700"
 												>
-													{sermonTopicAnswers.length === 1 && sermonTopicAnswers[0].title === ''
+													{sermonTopicAnswers.length === 1 &&
+													sermonTopicAnswers[0].title === ''
 														? '질문을 추가해보세요'
 														: `${sermonTopicAnswers.length}개`}
 												</Text>
@@ -571,7 +592,8 @@ export default function FellowshipContentScreen() {
 												updateFellowshipContentStore({
 													categories: {
 														prayerRequest: {
-															isActive: !content.categories.prayerRequest.isActive,
+															isActive:
+																!content.categories.prayerRequest.isActive,
 														},
 													},
 												});
@@ -681,53 +703,46 @@ export default function FellowshipContentScreen() {
 							<VStack space="lg" className="w-full">
 								{/* 아이스브레이킹 섹션 */}
 								<VStack space="sm" className="w-full">
-									{selectedFellowship?.content.categories.iceBreaking.items
-										&& (
-											<Text size="lg" className="font-pretendard-bold">
-												아이스브레이킹
-											</Text>
-										)}
-									{Object.values(selectedFellowship?.content.categories.iceBreaking.items).map(
-										({ id, title }) => (
-											<AnimatedPressable
-												scale="sm"
-												key={id}
-												onPress={() => {
-													setSelectedQuestions((prev) => {
-														const isSelected = prev.iceBreaking.includes(
-															title,
-														);
-														return {
-															...prev,
-															iceBreaking: isSelected
-																? prev.iceBreaking.filter(
-																	(q) => q !== title,
-																)
-																: [...prev.iceBreaking, title],
-														};
-													});
-												}}
-												className="w-full"
-											>
-												<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
-													<Text className="flex-1" size="md">
-														{title}
-													</Text>
-													{selectedQuestions.iceBreaking.includes(
-														title,
-													) ? (
-														<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
-															<Icon as={Check} size="sm" color="white" />
-														</HStack>
-													) : (
-														<HStack className="justify-center items-center w-6 h-6 border border-primary-500 rounded-md">
-															<Icon as={Check} size="sm" color="white" />
-														</HStack>
-													)}
-												</HStack>
-											</AnimatedPressable>
-										),
+									{selectedFellowship?.content.categories.iceBreaking.items && (
+										<Text size="lg" className="font-pretendard-bold">
+											아이스브레이킹
+										</Text>
 									)}
+									{Object.values(
+										selectedFellowship?.content.categories.iceBreaking.items,
+									).map(({ id, title }) => (
+										<AnimatedPressable
+											scale="sm"
+											key={id}
+											onPress={() => {
+												setSelectedQuestions((prev) => {
+													const isSelected = prev.iceBreaking.includes(title);
+													return {
+														...prev,
+														iceBreaking: isSelected
+															? prev.iceBreaking.filter((q) => q !== title)
+															: [...prev.iceBreaking, title],
+													};
+												});
+											}}
+											className="w-full"
+										>
+											<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
+												<Text className="flex-1" size="md">
+													{title}
+												</Text>
+												{selectedQuestions.iceBreaking.includes(title) ? (
+													<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
+														<Icon as={Check} size="sm" color="white" />
+													</HStack>
+												) : (
+													<HStack className="justify-center items-center w-6 h-6 border border-primary-500 rounded-md">
+														<Icon as={Check} size="sm" color="white" />
+													</HStack>
+												)}
+											</HStack>
+										</AnimatedPressable>
+									))}
 								</VStack>
 
 								{/* 설교 나눔 섹션 */}
@@ -737,46 +752,40 @@ export default function FellowshipContentScreen() {
 											설교 나눔
 										</Text>
 									)}
-									{Object.values(selectedFellowship?.content.categories.sermonTopic.items).map(
-										({ id, title }) => (
-											<AnimatedPressable
-												key={id}
-												onPress={() => {
-													setSelectedQuestions((prev) => {
-														const isSelected = prev.sermonTopic.includes(
-															title,
-														);
-														return {
-															...prev,
-															sermonTopic: isSelected
-																? prev.sermonTopic.filter(
-																	(q) => q !== title,
-																)
-																: [...prev.sermonTopic, title],
-														};
-													});
-												}}
-												className="w-full"
-											>
-												<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
-													<Text className="flex-1" size="md">
-														{title}
-													</Text>
-													{selectedQuestions.sermonTopic.includes(
-														title,
-													) ? (
-														<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
-															<Icon as={Check} size="sm" color="white" />
-														</HStack>
-													) : (
-														<HStack className="justify-center items-center w-6 h-6 border border-primary-500 rounded-md">
-															<Icon as={Check} size="sm" color="white" />
-														</HStack>
-													)}
-												</HStack>
-											</AnimatedPressable>
-										),
-									)}
+									{Object.values(
+										selectedFellowship?.content.categories.sermonTopic.items,
+									).map(({ id, title }) => (
+										<AnimatedPressable
+											key={id}
+											onPress={() => {
+												setSelectedQuestions((prev) => {
+													const isSelected = prev.sermonTopic.includes(title);
+													return {
+														...prev,
+														sermonTopic: isSelected
+															? prev.sermonTopic.filter((q) => q !== title)
+															: [...prev.sermonTopic, title],
+													};
+												});
+											}}
+											className="w-full"
+										>
+											<HStack className="w-full justify-between items-center p-3 border border-neutral-200 rounded-lg">
+												<Text className="flex-1" size="md">
+													{title}
+												</Text>
+												{selectedQuestions.sermonTopic.includes(title) ? (
+													<HStack className="justify-center items-center w-6 h-6 bg-primary-500 rounded-md">
+														<Icon as={Check} size="sm" color="white" />
+													</HStack>
+												) : (
+													<HStack className="justify-center items-center w-6 h-6 border border-primary-500 rounded-md">
+														<Icon as={Check} size="sm" color="white" />
+													</HStack>
+												)}
+											</HStack>
+										</AnimatedPressable>
+									))}
 								</VStack>
 
 								<HStack className="w-full mt-4" space="sm">
@@ -793,41 +802,43 @@ export default function FellowshipContentScreen() {
 										variant="solid"
 										onPress={() => {
 											// 선택된 질문들을 추가
-											const selectedIceBreaking =
-												Object.values(selectedFellowship.content.categories.iceBreaking.items)
-													.filter((item: { title: string }) =>
-														selectedQuestions.iceBreaking.includes(
-															item.title,
-														),
-													)
-													.map(({ title }) => ({
-														id: uuidv4(),
-														title,
-														answers: {},
-													}));
+											const selectedIceBreaking = Object.values(
+												selectedFellowship.content.categories.iceBreaking.items,
+											)
+												.filter((item: { title: string }) =>
+													selectedQuestions.iceBreaking.includes(item.title),
+												)
+												.map(({ title }) => ({
+													id: uuidv4(),
+													title,
+													answers: {},
+												}));
 
-											const selectedSermonTopic =
-												Object.values(selectedFellowship.content.categories.sermonTopic.items)
-													.filter((item: { title: string }) =>
-														selectedQuestions.sermonTopic.includes(
-															item.title,
-														),
-													)
-													.map(({ title }) => ({
-														id: uuidv4(),
-														title,
-														answers: {},
-													}));
+											const selectedSermonTopic = Object.values(
+												selectedFellowship.content.categories.sermonTopic.items,
+											)
+												.filter((item: { title: string }) =>
+													selectedQuestions.sermonTopic.includes(item.title),
+												)
+												.map(({ title }) => ({
+													id: uuidv4(),
+													title,
+													answers: {},
+												}));
 											if (selectedIceBreaking.length > 0) {
 												const updatedFields = [
-													...iceBreakingAnswers.filter(({ title }) => title !== ''),
+													...iceBreakingAnswers.filter(
+														({ title }) => title !== '',
+													),
 													...selectedIceBreaking,
 												];
 												setIceBreakingAnswers(updatedFields);
 											}
 											if (selectedSermonTopic.length > 0) {
 												const updatedSermonTopicFields = [
-													...sermonTopicAnswers.filter(({ title }) => title !== ''),
+													...sermonTopicAnswers.filter(
+														({ title }) => title !== '',
+													),
 													...selectedSermonTopic,
 												];
 												setSermonTopicAnswers(updatedSermonTopicFields);
@@ -871,11 +882,11 @@ export default function FellowshipContentScreen() {
 							{recommendedQuestions.map((category) => (
 								<AnimatedPressable
 									key={category.id}
-									scale='sm'
+									scale="sm"
 									onPress={() => handleSelectCategory(category.id)}
 									className={cn(
 										activeCategoryId === category.id &&
-										'border-b-2 border-primary-500',
+											'border-b-2 border-primary-500',
 									)}
 								>
 									<Text
@@ -904,12 +915,15 @@ export default function FellowshipContentScreen() {
 										return (
 											<AnimatedPressable
 												key={question.id}
-												scale='sm'
+												scale="sm"
 												onPress={() =>
 													handleToggleQuestion(activeCategoryId, question.id)
 												}
 											>
-												<HStack space="md" className="items-center justify-between py-3">
+												<HStack
+													space="md"
+													className="items-center justify-between py-3"
+												>
 													<HStack space="sm" className="items-center flex-1">
 														<Box className="w-2 h-2 bg-background-400 rounded-full" />
 														<Text size="lg" className="flex-1">

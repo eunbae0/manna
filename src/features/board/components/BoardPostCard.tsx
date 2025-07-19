@@ -34,11 +34,7 @@ import {
 	type PostReactionMetadata,
 	type ReactionType,
 } from '@/features/board/types';
-import {
-	useReactions,
-	useDeleteBoardPost,
-	useReactionToggle,
-} from '../hooks';
+import { useReactions, useDeleteBoardPost, useReactionToggle } from '../hooks';
 import { usePinPostUtils } from '../utils/pin';
 import { checkPinnedPost } from '../api';
 import { useCallback, useMemo } from 'react';
@@ -188,14 +184,14 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 
 	const isLiked = reactions
 		? Object.values(reactions).some((reactions) =>
-			reactions.some(
-				(reaction) =>
-					reaction.userId === user?.id && reaction.type === 'like',
-			),
-		)
+				reactions.some(
+					(reaction) =>
+						reaction.userId === user?.id && reaction.type === 'like',
+				),
+			)
 		: false;
 
-	const reactionToggleMutation = useReactionToggle()
+	const reactionToggleMutation = useReactionToggle();
 
 	const handleLike = useCallback(() => {
 		if (!post || !user || !currentGroup?.groupId) return;
@@ -214,7 +210,6 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 				},
 			},
 		);
-
 	}, [post, user, currentGroup?.groupId, reactionMetadata, isLiked]);
 
 	return (
@@ -292,9 +287,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 											size="xl"
 											fill={isLiked ? '#362303' : undefined}
 											className={
-												isLiked
-													? 'text-primary-500'
-													: 'text-typography-900'
+												isLiked ? 'text-primary-500' : 'text-typography-900'
 											}
 										/>
 										<Text

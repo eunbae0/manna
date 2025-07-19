@@ -71,7 +71,6 @@ function NotificationSkeleton() {
 
 	const skeletonData = Array(5).fill({ id: null });
 
-
 	return (
 		<View className="flex-1">
 			<FlashList
@@ -85,8 +84,6 @@ function NotificationSkeleton() {
 		</View>
 	);
 }
-
-
 
 /**
  * 그룹 정보를 포함한 필터 아이템 타입
@@ -178,8 +175,8 @@ export function NotificationList() {
 	const handleMarkAllAsRead = () => {
 		markAllAsRead();
 		showToast({
-			message: "모든 알림을 읽음으로 표시했어요.",
-			type: "success",
+			message: '모든 알림을 읽음으로 표시했어요.',
+			type: 'success',
 		});
 	};
 
@@ -234,9 +231,15 @@ export function NotificationList() {
 					{/* 모두 읽음 버튼 (읽지 않은 알림이 있을 때만 표시) */}
 					{unreadCount > 0 && (
 						<AnimatedPressable onPress={handleMarkAllAsRead}>
-							<HStack space="xs" className="items-center border border-primary-500 rounded-full px-3 py-1">
+							<HStack
+								space="xs"
+								className="items-center border border-primary-500 rounded-full px-3 py-1"
+							>
 								<Text size="sm">모두 읽음</Text>
-								<Icon size="xs" as={isMarkingAllAsRead ? LoaderCircle : Check} />
+								<Icon
+									size="xs"
+									as={isMarkingAllAsRead ? LoaderCircle : Check}
+								/>
 							</HStack>
 						</AnimatedPressable>
 					)}

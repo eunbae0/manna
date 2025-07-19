@@ -1,7 +1,4 @@
-import SegmentedControl from "./SegmentedControl";
-import SegmentedControlTrigger from "./SegmentedControlTrigger";
+import SegmentedControl from './SegmentedControl';
+import SegmentedControlTrigger from './SegmentedControlTrigger';
 
-export {
-  SegmentedControl,
-  SegmentedControlTrigger,
-}
+export { SegmentedControl, SegmentedControlTrigger };

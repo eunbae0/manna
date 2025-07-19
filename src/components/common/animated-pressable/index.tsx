@@ -113,7 +113,11 @@ function AnimatedPressable({
 	const scaleValue = typeof scale === 'string' ? scaleValues[scale] : scale;
 
 	// useScaleAnimation 훅을 사용하여 애니메이션 로직 구현
-	const { animatedStyle, handlePressIn: scaleHandlePressIn, handlePressOut: scaleHandlePressOut } = useScaleAnimation({
+	const {
+		animatedStyle,
+		handlePressIn: scaleHandlePressIn,
+		handlePressOut: scaleHandlePressOut,
+	} = useScaleAnimation({
 		enabled: animation,
 		scale: scaleValue,
 		damping,
@@ -152,16 +156,14 @@ function AnimatedPressable({
 			style={[animatedStyle, containerStyle]}
 			className={cn(
 				className,
-				withBackground && isPressed ? pressedBackgroundClass : ''
+				withBackground && isPressed ? pressedBackgroundClass : '',
 			)}
 		>
 			<Pressable
 				onPressIn={handlePressIn}
 				onPressOut={handlePressOut}
 				{...props}
-				className={cn(
-					pressableClassName,
-				)}
+				className={cn(pressableClassName)}
 			>
 				{children}
 			</Pressable>

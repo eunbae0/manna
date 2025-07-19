@@ -1,9 +1,5 @@
 import { useRef, useState } from 'react';
-import {
-	ActivityIndicator,
-	FlatList,
-	TextInput,
-} from 'react-native';
+import { ActivityIndicator, FlatList, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFeedback } from '@/features/feedback/hooks/useFeedback';
 import { useToastStore } from '@/store/toast';
@@ -113,9 +109,7 @@ export default function FeedbackScreen() {
 
 	return (
 		<SafeAreaView className="flex-1">
-			<KeyboardAvoidingView
-				className="flex-1"
-			>
+			<KeyboardAvoidingView className="flex-1">
 				<VStack className="flex-1">
 					<Header label="개발자에게 피드백 보내기" labelSize="xl" />
 					<HStack className="mt-1 px-4 py-2 bg-primary-100">

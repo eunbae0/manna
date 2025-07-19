@@ -9,7 +9,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
 import { BG_TEXT_INPUT_STYLE } from '@/components/common/text-input';
 
-const MAX_NICKNAME_LENGTH = 10
+const MAX_NICKNAME_LENGTH = 10;
 
 export default function NameStepScreen() {
 	const { setStep, updateUserData, userData } = useOnboardingStore();
@@ -29,8 +29,8 @@ export default function NameStepScreen() {
 	};
 
 	const handleChangeNameText = (text: string) => {
-		setName(text)
-	}
+		setName(text);
+	};
 
 	return (
 		<VStack className="flex-1 h-full">
@@ -43,7 +43,9 @@ export default function NameStepScreen() {
 						</Text>
 					</VStack>
 					<VStack space="sm">
-						<Text weight='medium' className="text-primary-600">이름</Text>
+						<Text weight="medium" className="text-primary-600">
+							이름
+						</Text>
 						<TextInput
 							value={name}
 							onChangeText={handleChangeNameText}

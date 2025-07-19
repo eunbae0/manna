@@ -47,8 +47,8 @@ type ImageState = {
 	localUrl: string;
 	firebaseUrl?: string;
 	imageId?: string;
-	state: "uploading" | "uploaded" | "failed";
-}
+	state: 'uploading' | 'uploaded' | 'failed';
+};
 
 /**
  * 게시글 작성 화면
@@ -150,15 +150,22 @@ export default function CreateBoardPostScreen() {
 						content: content.trim(),
 						category: selectedCategory,
 						elements: {
-							image: imageUrls.filter(state => state.state === 'uploaded' && state.firebaseUrl && state.imageId).map(
-								(state, index) =>
-								({
-									type: ContentElementType.IMAGE,
-									position: index,
-									url: state.firebaseUrl,
-									id: state.imageId,
-								} as ImageElement),
-							),
+							image: imageUrls
+								.filter(
+									(state) =>
+										state.state === 'uploaded' &&
+										state.firebaseUrl &&
+										state.imageId,
+								)
+								.map(
+									(state, index) =>
+										({
+											type: ContentElementType.IMAGE,
+											position: index,
+											url: state.firebaseUrl,
+											id: state.imageId,
+										}) as ImageElement,
+								),
 						},
 					},
 				},
@@ -185,15 +192,22 @@ export default function CreateBoardPostScreen() {
 				groupId: currentGroup.groupId,
 				userId: user.id,
 				elements: {
-					image: imageUrls.filter(state => state.state === 'uploaded' && state.firebaseUrl && state.imageId).map(
-						(state, index) =>
-						({
-							type: ContentElementType.IMAGE,
-							position: index,
-							url: state.firebaseUrl,
-							id: state.imageId,
-						} as ImageElement),
-					),
+					image: imageUrls
+						.filter(
+							(state) =>
+								state.state === 'uploaded' &&
+								state.firebaseUrl &&
+								state.imageId,
+						)
+						.map(
+							(state, index) =>
+								({
+									type: ContentElementType.IMAGE,
+									position: index,
+									url: state.firebaseUrl,
+									id: state.imageId,
+								}) as ImageElement,
+						),
 				},
 			},
 			{
@@ -209,15 +223,19 @@ export default function CreateBoardPostScreen() {
 		);
 	};
 
-	const [imageUrls, setImageUrls] = useState<ImageState[]>(isEditMode ? editPost?.elements?.image?.map((i) => {
-		const image = i as ImageElement
-		return {
-			localUrl: image.url,
-			firebaseUrl: image.url,
-			imageId: image.id,
-			state: "uploaded"
-		}
-	}) || [] : []);
+	const [imageUrls, setImageUrls] = useState<ImageState[]>(
+		isEditMode
+			? editPost?.elements?.image?.map((i) => {
+					const image = i as ImageElement;
+					return {
+						localUrl: image.url,
+						firebaseUrl: image.url,
+						imageId: image.id,
+						state: 'uploaded',
+					};
+				}) || []
+			: [],
+	);
 
 	const handlePressAddImage = async () => {
 		// Request permission
@@ -244,19 +262,19 @@ export default function CreateBoardPostScreen() {
 		});
 
 		if (!result.canceled && result.assets && result.assets.length > 0) {
-			const selectedImages = result.assets.map(asset => ({
+			const selectedImages = result.assets.map((asset) => ({
 				localUrl: asset.uri,
-				state: "uploading"
+				state: 'uploading',
 			})) as ImageState[];
 
-			setImageUrls(prev => [...prev, ...selectedImages]);
+			setImageUrls((prev) => [...prev, ...selectedImages]);
 			Keyboard.dismiss();
 		}
 	};
 
 	useEffect(() => {
 		// 업로드가 필요한 이미지만 선별
-		const imagesToUpload = imageUrls.filter(img => img.state !== "uploaded");
+		const imagesToUpload = imageUrls.filter((img) => img.state !== 'uploaded');
 
 		if (imagesToUpload.length === 0) return;
 
@@ -273,30 +291,49 @@ export default function CreateBoardPostScreen() {
 						try {
 							const { photoUrl, imageId } = await uploadPostImage(
 								{ groupId: currentGroup.groupId, userId: user.id },
-								image.localUrl
+								image.localUrl,
 							);
-							return { localUrl: image.localUrl, firebaseUrl: photoUrl, imageId, success: true };
+							return {
+								localUrl: image.localUrl,
+								firebaseUrl: photoUrl,
+								imageId,
+								success: true,
+							};
 						} catch (error) {
 							console.error('이미지 업로드 실패:', error);
 							showError('이미지 업로드에 실패했어요');
-							return { localUrl: image.localUrl, firebaseUrl: undefined, imageId: undefined, success: false };
+							return {
+								localUrl: image.localUrl,
+								firebaseUrl: undefined,
+								imageId: undefined,
+								success: false,
+							};
 						}
-					})
+					}),
 				);
 
 				if (!isCancelled) {
-					setImageUrls(prev =>
-						prev.map(img => {
-							const result = results.find(r => r.localUrl === img.localUrl);
+					setImageUrls((prev) =>
+						prev.map((img) => {
+							const result = results.find((r) => r.localUrl === img.localUrl);
 							if (result?.success) {
-								return { ...img, state: "uploaded", firebaseUrl: result.firebaseUrl, imageId: result.imageId };
+								return {
+									...img,
+									state: 'uploaded',
+									firebaseUrl: result.firebaseUrl,
+									imageId: result.imageId,
+								};
 							}
 							return img;
-						})
+						}),
 					);
 				}
 			} catch (e) {
-				setImageUrls(prev => prev.map(img => { return { ...img, state: "failed" } }));
+				setImageUrls((prev) =>
+					prev.map((img) => {
+						return { ...img, state: 'failed' };
+					}),
+				);
 				showError('이미지 업로드 중 오류가 발생했어요');
 			}
 		};
@@ -304,12 +341,14 @@ export default function CreateBoardPostScreen() {
 		uploadImages();
 
 		// 컴포넌트 언마운트 시 업로드 중단 방지
-		return () => { isCancelled = true; };
+		return () => {
+			isCancelled = true;
+		};
 	}, [imageUrls, currentGroup, user, showError]);
 
 	const handlePressDeleteImage = async (state: ImageState) => {
 		if (state.state !== 'uploaded') {
-			setImageUrls(prev => prev.filter((i) => i.localUrl !== state.localUrl));
+			setImageUrls((prev) => prev.filter((i) => i.localUrl !== state.localUrl));
 			return;
 		}
 
@@ -321,12 +360,12 @@ export default function CreateBoardPostScreen() {
 				groupId: currentGroup?.groupId || '',
 				imageId: state.imageId,
 			});
-			setImageUrls(prev => prev.filter((i) => i.localUrl !== state.localUrl));
+			setImageUrls((prev) => prev.filter((i) => i.localUrl !== state.localUrl));
 		} catch (error) {
 			console.error('이미지 삭제 실패:', error);
 			showError('이미지 삭제에 실패했어요');
 		}
-	}
+	};
 
 	return (
 		<>
@@ -337,7 +376,11 @@ export default function CreateBoardPostScreen() {
 						<Header className="justify-between pr-5">
 							<Button
 								variant="text"
-								disabled={!title.trim() || !content.trim() || imageUrls.some(img => img.state !== 'uploaded')}
+								disabled={
+									!title.trim() ||
+									!content.trim() ||
+									imageUrls.some((img) => img.state !== 'uploaded')
+								}
 								onPress={handleSubmit}
 							>
 								<ButtonText>{isEditMode ? '수정하기' : '남기기'}</ButtonText>
@@ -396,9 +439,12 @@ export default function CreateBoardPostScreen() {
 								{/* 사진 표시 영역 */}
 								<VStack space="sm" className="px-5">
 									{imageUrls.map((state) => {
-										const isUploading = state.state === 'uploading'
+										const isUploading = state.state === 'uploading';
 										return (
-											<View key={state.localUrl} className="mb-4 rounded-lg overflow-hidden">
+											<View
+												key={state.localUrl}
+												className="mb-4 rounded-lg overflow-hidden"
+											>
 												<Image
 													source={{ uri: state.localUrl }}
 													style={{
@@ -411,19 +457,29 @@ export default function CreateBoardPostScreen() {
 													contentFit="cover"
 													transition={200}
 												/>
-												{!isUploading &&
-													<AnimatedPressable className="absolute top-2 right-2 p-3 bg-black/50 rounded-full" onPress={() => handlePressDeleteImage(state)}>
+												{!isUploading && (
+													<AnimatedPressable
+														className="absolute top-2 right-2 p-3 bg-black/50 rounded-full"
+														onPress={() => handlePressDeleteImage(state)}
+													>
 														<Icon as={X} className="text-white" />
 													</AnimatedPressable>
-												}
-												{isUploading && <View className="absolute top-0 left-0 z-10 bg-black/50 w-full h-full items-center justify-center">
-													<Text size="lg" weight="medium" className="text-typography-50">이미지 업로드중...</Text>
-													<AnimatedProgress />
-												</View>}
+												)}
+												{isUploading && (
+													<View className="absolute top-0 left-0 z-10 bg-black/50 w-full h-full items-center justify-center">
+														<Text
+															size="lg"
+															weight="medium"
+															className="text-typography-50"
+														>
+															이미지 업로드중...
+														</Text>
+														<AnimatedProgress />
+													</View>
+												)}
 											</View>
-										)
-									}
-									)}
+										);
+									})}
 								</VStack>
 							</VStack>
 						</KeyboardAwareScrollView>
@@ -456,7 +512,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'FREE' &&
-										'font-pretendard-bold text-primary-400',
+											'font-pretendard-bold text-primary-400',
 									)}
 								>
 									자유게시판
@@ -479,7 +535,7 @@ export default function CreateBoardPostScreen() {
 									size="lg"
 									className={cn(
 										selectedCategory === 'NOTICE' &&
-										'font-pretendard-bold text-primary-400',
+											'font-pretendard-bold text-primary-400',
 									)}
 								>
 									공지사항

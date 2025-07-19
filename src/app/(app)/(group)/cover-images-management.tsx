@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+	Alert,
+	FlatList,
+	View,
+	ActivityIndicator,
+	TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { ImageIcon, PlusIcon, TrashIcon, ArrowUpDownIcon } from 'lucide-react-native';
+import {
+	ImageIcon,
+	PlusIcon,
+	TrashIcon,
+	ArrowUpDownIcon,
+} from 'lucide-react-native';
 
 import Header from '@/components/common/Header';
 import { VStack } from '#/components/ui/vstack';
@@ -23,339 +34,373 @@ import { AnimatedProgress } from '@/shared/components/animated-progress';
 const MAX_IMAGE_COUNT = 3;
 
 export default function CoverImagesManagement() {
-  const { currentGroup } = useAuthStore();
-  const { group, isLoading, updateGroup, isUpdating: isGroupUpdating } = useGroup(currentGroup?.groupId);
-  const { showToast } = useToastStore();
+	const { currentGroup } = useAuthStore();
+	const {
+		group,
+		isLoading,
+		updateGroup,
+		isUpdating: isGroupUpdating,
+	} = useGroup(currentGroup?.groupId);
+	const { showToast } = useToastStore();
 
-  const [images, setImages] = useState<CoverImage[]>([]);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isReordering, setIsReordering] = useState(false);
-  const [uploadingImages, setUploadingImages] = useState<{ uri: string; loading: boolean }[]>([]);
+	const [images, setImages] = useState<CoverImage[]>([]);
+	const [isUpdating, setIsUpdating] = useState(false);
+	const [isReordering, setIsReordering] = useState(false);
+	const [uploadingImages, setUploadingImages] = useState<
+		{ uri: string; loading: boolean }[]
+	>([]);
 
+	// Initialize images state from group data when loaded
+	useEffect(() => {
+		if (group?.coverImages) {
+			setImages([...group.coverImages].sort((a, b) => a.order - b.order));
+		}
+	}, [group]);
 
-  // Initialize images state from group data when loaded
-  useEffect(() => {
-    if (group?.coverImages) {
-      setImages([...group.coverImages].sort((a, b) => a.order - b.order));
-    }
-  }, [group]);
+	// Update cover images using the existing updateGroup function
+	const updateCoverImages = async (
+		updatedImages: CoverImage[],
+		action?: 'add' | 'remove' | 'reorder',
+	) => {
+		if (!currentGroup?.groupId) return;
 
-  // Update cover images using the existing updateGroup function
-  const updateCoverImages = async (updatedImages: CoverImage[], action?: 'add' | 'remove' | 'reorder') => {
-    if (!currentGroup?.groupId) return;
+		try {
+			setIsUpdating(true);
 
-    try {
-      setIsUpdating(true);
+			const updateData: UpdateGroupInput = {
+				coverImages: updatedImages,
+			};
 
-      const updateData: UpdateGroupInput = {
-        coverImages: updatedImages,
-      };
+			// Get appropriate success message based on the action
+			let successMessage = '커버 이미지가 업데이트되었어요.';
+			if (action === 'add') {
+				successMessage = '새 이미지가 추가되었어요.';
+			} else if (action === 'remove') {
+				successMessage = '이미지가 삭제되었어요.';
+			} else if (action === 'reorder') {
+				successMessage = '이미지 순서가 변경되었어요.';
+			}
 
-      // Get appropriate success message based on the action
-      let successMessage = '커버 이미지가 업데이트되었어요.';
-      if (action === 'add') {
-        successMessage = '새 이미지가 추가되었어요.';
-      } else if (action === 'remove') {
-        successMessage = '이미지가 삭제되었어요.';
-      } else if (action === 'reorder') {
-        successMessage = '이미지 순서가 변경되었어요.';
-      }
+			// Use the existing updateGroup function with custom success message
+			await updateGroup(updateData, successMessage);
+		} catch (error) {
+			console.error('Error updating cover images:', error);
+		} finally {
+			setIsUpdating(false);
+		}
+	};
 
-      // Use the existing updateGroup function with custom success message
-      await updateGroup(updateData, successMessage);
-    } catch (error) {
-      console.error('Error updating cover images:', error);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
+	const handleAddImage = async () => {
+		if (images.length >= MAX_IMAGE_COUNT) {
+			showToast({
+				type: 'info',
+				title: '알림',
+				message: `이미지는 최대 ${MAX_IMAGE_COUNT}개까지 추가할 수 있어요.`,
+			});
+			return;
+		}
 
+		try {
+			// Request permissions
+			const permissionResult =
+				await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-  const handleAddImage = async () => {
-    if (images.length >= MAX_IMAGE_COUNT) {
-      showToast({
-        type: 'info',
-        title: '알림',
-        message: `이미지는 최대 ${MAX_IMAGE_COUNT}개까지 추가할 수 있어요.`,
-      });
-      return;
-    }
+			if (!permissionResult.granted) {
+				showToast({
+					type: 'error',
+					title: '권한 필요',
+					message: '갤러리 접근 권한이 필요해요.',
+				});
+				return;
+			}
 
-    try {
-      // Request permissions
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+			// Launch image picker
+			const result = await ImagePicker.launchImageLibraryAsync({
+				mediaTypes: ImagePicker.MediaTypeOptions.Images,
+				allowsEditing: true,
+				quality: 0.8,
+				allowsMultipleSelection: false,
+			});
 
-      if (!permissionResult.granted) {
-        showToast({
-          type: 'error',
-          title: '권한 필요',
-          message: '갤러리 접근 권한이 필요해요.',
-        });
-        return;
-      }
+			if (!result.canceled && result.assets && result.assets.length > 0) {
+				const selectedImageUri = result.assets[0].uri;
 
-      // Launch image picker
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 0.8,
-        allowsMultipleSelection: false,
-      });
+				// Get current order values and determine next order
+				const maxOrder =
+					images.length > 0 ? Math.max(...images.map((img) => img.order)) : -1;
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const selectedImageUri = result.assets[0].uri;
+				// Create temporary placeholder image
+				const tempImageId = `temp-${Date.now()}`;
+				const tempImage: CoverImage = {
+					uri: tempImageId, // Temporary ID for tracking
+					order: maxOrder + 1,
+				};
 
-        // Get current order values and determine next order
-        const maxOrder = images.length > 0
-          ? Math.max(...images.map(img => img.order))
-          : -1;
+				// Add placeholder to images list
+				setImages([...images, tempImage]);
 
-        // Create temporary placeholder image
-        const tempImageId = `temp-${Date.now()}`;
-        const tempImage: CoverImage = {
-          uri: tempImageId, // Temporary ID for tracking
-          order: maxOrder + 1,
-        };
+				// Add to loading images list
+				setUploadingImages([
+					...uploadingImages,
+					{ uri: tempImageId, loading: true },
+				]);
 
-        // Add placeholder to images list
-        setImages([...images, tempImage]);
+				// Create new image
+				const newImage: CoverImage = {
+					uri: selectedImageUri,
+					order: maxOrder + 1,
+				};
 
-        // Add to loading images list
-        setUploadingImages([...uploadingImages, { uri: tempImageId, loading: true }]);
+				// Add to current images and update
+				const updatedImagesWithoutTemp = [
+					...images.filter((img) => img.uri !== tempImageId),
+					newImage,
+				];
+				await updateCoverImages(updatedImagesWithoutTemp, 'add');
 
-        // Create new image
-        const newImage: CoverImage = {
-          uri: selectedImageUri,
-          order: maxOrder + 1,
-        };
+				// Remove from loading images
+				setUploadingImages((prev) =>
+					prev.filter((img) => img.uri !== tempImageId),
+				);
+			}
+		} catch (error) {
+			console.error('Error selecting image:', error);
+			showToast({
+				type: 'error',
+				title: '오류',
+				message: '이미지 선택 중 오류가 발생했어요.',
+			});
 
-        // Add to current images and update
-        const updatedImagesWithoutTemp = [...images.filter(img => img.uri !== tempImageId), newImage];
-        await updateCoverImages(updatedImagesWithoutTemp, 'add');
+			// Remove any temporary images on error
+			setImages(images.filter((img) => !img.uri.startsWith('temp-')));
+			setUploadingImages([]);
+		}
+	};
 
-        // Remove from loading images
-        setUploadingImages(prev => prev.filter(img => img.uri !== tempImageId));
-      }
-    } catch (error) {
-      console.error('Error selecting image:', error);
-      showToast({
-        type: 'error',
-        title: '오류',
-        message: '이미지 선택 중 오류가 발생했어요.',
-      });
+	const handleRemoveImage = (imageUri: string) => {
+		Alert.alert('이미지 삭제', '이 이미지를 삭제할까요?', [
+			{ text: '취소', style: 'cancel' },
+			{
+				text: '삭제',
+				style: 'destructive',
+				onPress: async () => {
+					try {
+						// Filter out the image to remove
+						const filteredImages = images.filter((img) => img.uri !== imageUri);
 
-      // Remove any temporary images on error
-      setImages(images.filter(img => !img.uri.startsWith('temp-')));
-      setUploadingImages([]);
-    }
-  };
+						// Reorder the remaining images
+						const reorderedImages = filteredImages.map((img, index) => ({
+							...img,
+							order: index,
+						}));
 
-  const handleRemoveImage = (imageUri: string) => {
-    Alert.alert(
-      '이미지 삭제',
-      '이 이미지를 삭제할까요?',
-      [
-        { text: '취소', style: 'cancel' },
-        {
-          text: '삭제',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // Filter out the image to remove
-              const filteredImages = images.filter(img => img.uri !== imageUri);
+						await updateCoverImages(reorderedImages, 'remove');
+					} catch (error) {
+						console.error('Error removing image:', error);
+					}
+				},
+			},
+		]);
+	};
 
-              // Reorder the remaining images
-              const reorderedImages = filteredImages.map((img, index) => ({
-                ...img,
-                order: index,
-              }));
+	const moveImage = (imageUri: string, direction: 'up' | 'down') => {
+		// Find current image index
+		const currentIndex = images.findIndex((img) => img.uri === imageUri);
+		if (currentIndex === -1) return;
 
-              await updateCoverImages(reorderedImages, 'remove');
-            } catch (error) {
-              console.error('Error removing image:', error);
-            }
-          }
-        },
-      ]
-    );
-  };
+		// Calculate new index
+		const newIndex =
+			direction === 'up'
+				? Math.max(0, currentIndex - 1)
+				: Math.min(images.length - 1, currentIndex + 1);
 
-  const moveImage = (imageUri: string, direction: 'up' | 'down') => {
-    // Find current image index
-    const currentIndex = images.findIndex(img => img.uri === imageUri);
-    if (currentIndex === -1) return;
+		// Don't do anything if already at the edge
+		if (newIndex === currentIndex) return;
 
-    // Calculate new index
-    const newIndex = direction === 'up'
-      ? Math.max(0, currentIndex - 1)
-      : Math.min(images.length - 1, currentIndex + 1);
+		// Create a copy of the array and swap items
+		const updatedImages = [...images];
+		[updatedImages[currentIndex], updatedImages[newIndex]] = [
+			updatedImages[newIndex],
+			updatedImages[currentIndex],
+		];
 
-    // Don't do anything if already at the edge
-    if (newIndex === currentIndex) return;
+		// Update order properties
+		const reorderedImages = updatedImages.map((img, index) => ({
+			...img,
+			order: index,
+		}));
 
-    // Create a copy of the array and swap items
-    const updatedImages = [...images];
-    [updatedImages[currentIndex], updatedImages[newIndex]] =
-      [updatedImages[newIndex], updatedImages[currentIndex]];
+		// Save new order
+		setImages(reorderedImages);
+		updateCoverImages(reorderedImages, 'reorder');
+	};
 
-    // Update order properties
-    const reorderedImages = updatedImages.map((img, index) => ({
-      ...img,
-      order: index,
-    }));
+	const toggleReordering = () => {
+		setIsReordering(!isReordering);
+	};
 
-    // Save new order
-    setImages(reorderedImages);
-    updateCoverImages(reorderedImages, 'reorder');
-  };
+	if (isLoading) {
+		return (
+			<SafeAreaView className="flex-1 bg-white">
+				<Header />
+				<View className="flex-1 justify-center items-center">
+					<ActivityIndicator size="large" color="#0000ff" />
+				</View>
+			</SafeAreaView>
+		);
+	}
 
-  const toggleReordering = () => {
-    setIsReordering(!isReordering);
-  };
+	return (
+		<SafeAreaView className="flex-1 bg-white">
+			<KeyboardDismissView className="flex-1">
+				<Header />
 
+				<VStack space="md" className="p-4 flex-1">
+					<Heading size="2xl">커버 이미지 관리하기</Heading>
 
-  if (isLoading) {
-    return (
-      <SafeAreaView className="flex-1 bg-white">
-        <Header />
-        <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      </SafeAreaView>
-    );
-  }
+					<Text size="md" className="text-typography-500">
+						이미지는 최대 {MAX_IMAGE_COUNT}개까지 추가할 수 있어요.
+					</Text>
 
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <KeyboardDismissView className="flex-1">
-        <Header />
+					{/* Action buttons */}
+					<HStack space="md" className="my-2">
+						<Button
+							className="flex-1"
+							onPress={handleAddImage}
+							disabled={
+								images.length >= MAX_IMAGE_COUNT ||
+								isUpdating ||
+								isGroupUpdating
+							}
+						>
+							<ButtonText>
+								{isUpdating || isGroupUpdating
+									? '업데이트 중...'
+									: '이미지 추가'}
+							</ButtonText>
+							<ButtonIcon as={PlusIcon} />
+						</Button>
 
-        <VStack space="md" className="p-4 flex-1">
-          <Heading size="2xl">커버 이미지 관리하기</Heading>
+						{images.length > 1 && (
+							<Button
+								variant="outline"
+								className="flex-1"
+								onPress={toggleReordering}
+							>
+								<ButtonText>
+									{isReordering ? '순서 변경 완료' : '순서 변경'}
+								</ButtonText>
+								<ButtonIcon as={ArrowUpDownIcon} />
+							</Button>
+						)}
+					</HStack>
 
-          <Text size="md" className='text-typography-500'>
-            이미지는 최대 {MAX_IMAGE_COUNT}개까지 추가할 수 있어요.
-          </Text>
-
-          {/* Action buttons */}
-          <HStack space="md" className="my-2">
-            <Button
-              className="flex-1"
-              onPress={handleAddImage}
-              disabled={images.length >= MAX_IMAGE_COUNT || isUpdating || isGroupUpdating}
-            >
-              <ButtonText>{isUpdating || isGroupUpdating ? '업데이트 중...' : '이미지 추가'}</ButtonText>
-              <ButtonIcon as={PlusIcon} />
-            </Button>
-
-            {images.length > 1 && (
-              <Button
-                variant="outline"
-                className="flex-1"
-                onPress={toggleReordering}
-              >
-                <ButtonText>{isReordering ? '순서 변경 완료' : '순서 변경'}</ButtonText>
-                <ButtonIcon as={ArrowUpDownIcon} />
-              </Button>
-            )}
-          </HStack>
-
-          {/* Images list */}
-          {images.length === 0 ? (
-            <View className="h-[180px] justify-center items-center bg-gray-100 rounded-lg">
-              <ImageIcon size={48} color="#ccc" />
-              <Text size="md" className="text-typography-600 mt-4">
-                그룹 커버 이미지가 없어요
-              </Text>
-              <Text size="sm" className="text-typography-600 mt-2">
-                '이미지 추가' 버튼을 눌러 이미지를 추가해보세요
-              </Text>
-            </View>
-          ) : isReordering ? (
-            <FlatList
-              data={images}
-              keyExtractor={(item: CoverImage) => item.uri}
-              renderItem={({ item, index }: { item: CoverImage; index: number }) => (
-                <View className="mb-3 rounded-lg overflow-hidden">
-                  {item.uri.startsWith('temp-') ? (
-                    <View className="bg-gray-100 h-[160px] justify-center items-center rounded-lg">
-                      <Text size="lg" className="text-typography-600 mt-4">
-                        이미지를 추가 중이에요
-                      </Text>
-                      <Text size="sm" className="text-typography-600 mt-2 px-4 text-center">
-                        이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
-                      </Text>
-                      <AnimatedProgress />
-                    </View>
-                  ) : (
-                    <Image
-                      source={getImageSourceForSignedImageUrl(item.uri)}
-                      style={{ width: '100%', height: 160 }}
-                      contentFit="cover"
-                    />
-                  )}
-                  {index > 0 && !item.uri.startsWith('temp-') && (
-                    <AnimatedPressable
-                      className="absolute top-2 right-2 bg-black/50 rounded-md px-2 py-1"
-                      onPress={() => moveImage(item.uri, 'up')}
-                      disabled={isUpdating}
-                    >
-                      <Text className="text-white">↑</Text>
-                    </AnimatedPressable>
-                  )}
-                  {index < images.length - 1 && !item.uri.startsWith('temp-') && (
-                    <AnimatedPressable
-                      className="absolute top-2 right-2 bg-black/50 rounded-md px-2 py-1"
-                      onPress={() => moveImage(item.uri, 'down')}
-                      disabled={isUpdating}
-                    >
-                      <Text className="text-white">↓</Text>
-                    </AnimatedPressable>
-                  )}
-                </View>
-              )}
-              showsVerticalScrollIndicator={false}
-            />
-          ) : (
-            <FlatList
-              data={images}
-              keyExtractor={(item: CoverImage) => item.uri}
-              renderItem={({ item }: { item: CoverImage }) => (
-                <View className="mb-3 relative">
-                  {item.uri.startsWith('temp-') ? (
-                    <View className="bg-gray-100 h-[160px] justify-center items-center rounded-lg">
-                      <Text size="lg" className="text-typography-600 mt-4">
-                        이미지를 추가 중이에요
-                      </Text>
-                      <Text size="sm" className="text-typography-600 mt-2 px-4 text-center">
-                        이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
-                      </Text>
-                      <AnimatedProgress />
-                    </View>
-                  ) : (
-                    <>
-                      <Image
-                        source={getImageSourceForSignedImageUrl(item.uri)}
-                        style={{ width: '100%', height: 160 }}
-                        contentFit="cover"
-                        className="rounded-lg"
-                      />
-                      <TouchableOpacity
-                        className="absolute top-2 right-2 bg-black/50 rounded-full p-2"
-                        onPress={() => handleRemoveImage(item.uri)}
-                        disabled={isUpdating}
-                      >
-                        <TrashIcon size={16} color="white" />
-                      </TouchableOpacity>
-                    </>
-                  )}
-                </View>
-              )}
-              showsVerticalScrollIndicator={false}
-            />
-          )}
-        </VStack>
-      </KeyboardDismissView>
-    </SafeAreaView>
-  );
+					{/* Images list */}
+					{images.length === 0 ? (
+						<View className="h-[180px] justify-center items-center bg-gray-100 rounded-lg">
+							<ImageIcon size={48} color="#ccc" />
+							<Text size="md" className="text-typography-600 mt-4">
+								그룹 커버 이미지가 없어요
+							</Text>
+							<Text size="sm" className="text-typography-600 mt-2">
+								'이미지 추가' 버튼을 눌러 이미지를 추가해보세요
+							</Text>
+						</View>
+					) : isReordering ? (
+						<FlatList
+							data={images}
+							keyExtractor={(item: CoverImage) => item.uri}
+							renderItem={({
+								item,
+								index,
+							}: { item: CoverImage; index: number }) => (
+								<View className="mb-3 rounded-lg overflow-hidden">
+									{item.uri.startsWith('temp-') ? (
+										<View className="bg-gray-100 h-[160px] justify-center items-center rounded-lg">
+											<Text size="lg" className="text-typography-600 mt-4">
+												이미지를 추가 중이에요
+											</Text>
+											<Text
+												size="sm"
+												className="text-typography-600 mt-2 px-4 text-center"
+											>
+												이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
+											</Text>
+											<AnimatedProgress />
+										</View>
+									) : (
+										<Image
+											source={getImageSourceForSignedImageUrl(item.uri)}
+											style={{ width: '100%', height: 160 }}
+											contentFit="cover"
+										/>
+									)}
+									{index > 0 && !item.uri.startsWith('temp-') && (
+										<AnimatedPressable
+											className="absolute top-2 right-2 bg-black/50 rounded-md px-2 py-1"
+											onPress={() => moveImage(item.uri, 'up')}
+											disabled={isUpdating}
+										>
+											<Text className="text-white">↑</Text>
+										</AnimatedPressable>
+									)}
+									{index < images.length - 1 &&
+										!item.uri.startsWith('temp-') && (
+											<AnimatedPressable
+												className="absolute top-2 right-2 bg-black/50 rounded-md px-2 py-1"
+												onPress={() => moveImage(item.uri, 'down')}
+												disabled={isUpdating}
+											>
+												<Text className="text-white">↓</Text>
+											</AnimatedPressable>
+										)}
+								</View>
+							)}
+							showsVerticalScrollIndicator={false}
+						/>
+					) : (
+						<FlatList
+							data={images}
+							keyExtractor={(item: CoverImage) => item.uri}
+							renderItem={({ item }: { item: CoverImage }) => (
+								<View className="mb-3 relative">
+									{item.uri.startsWith('temp-') ? (
+										<View className="bg-gray-100 h-[160px] justify-center items-center rounded-lg">
+											<Text size="lg" className="text-typography-600 mt-4">
+												이미지를 추가 중이에요
+											</Text>
+											<Text
+												size="sm"
+												className="text-typography-600 mt-2 px-4 text-center"
+											>
+												이미지 추가에는 시간이 소요됩니다. 잠시만 기다려 주세요.
+											</Text>
+											<AnimatedProgress />
+										</View>
+									) : (
+										<>
+											<Image
+												source={getImageSourceForSignedImageUrl(item.uri)}
+												style={{ width: '100%', height: 160 }}
+												contentFit="cover"
+												className="rounded-lg"
+											/>
+											<TouchableOpacity
+												className="absolute top-2 right-2 bg-black/50 rounded-full p-2"
+												onPress={() => handleRemoveImage(item.uri)}
+												disabled={isUpdating}
+											>
+												<TrashIcon size={16} color="white" />
+											</TouchableOpacity>
+										</>
+									)}
+								</View>
+							)}
+							showsVerticalScrollIndicator={false}
+						/>
+					)}
+				</VStack>
+			</KeyboardDismissView>
+		</SafeAreaView>
+	);
 }

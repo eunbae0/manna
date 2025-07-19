@@ -37,7 +37,10 @@ import * as Haptics from 'expo-haptics';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { useToastStore } from '@/store/toast';
 import { PRAYER_REQUESTS_QUERY_KEY } from '@/features/group/hooks/usePrayerRequestsByDate';
-import { ALL_PRAYER_REQUESTS_QUERY_KEY, usePrayerRequestToggleLike } from '../hooks/usePrayerRequests';
+import {
+	ALL_PRAYER_REQUESTS_QUERY_KEY,
+	usePrayerRequestToggleLike,
+} from '../hooks/usePrayerRequests';
 import type { AmplitudeEventType } from '@/shared/constants/amplitude';
 import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { useLikeAnimation } from '@/shared/hooks/animation/useLikeAnimation';
@@ -57,14 +60,15 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 
 	const { showSuccess, showError } = useToastStore();
 
-	const { heartScale, heartTranslateY, performLikeAnimation } = useLikeAnimation(hasLiked);
+	const { heartScale, heartTranslateY, performLikeAnimation } =
+		useLikeAnimation(hasLiked);
 
 	const { toggleLike } = usePrayerRequestToggleLike({
 		userId: user?.id || '',
 		prayerRequestId: prayerRequest.id,
 		groupId: currentGroup?.groupId || '',
 		performLikeAnimation,
-	})
+	});
 
 	const doubleTap = Gesture.Tap()
 		.maxDuration(250)
@@ -159,7 +163,12 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 								</Text>
 							</VStack>
 							{isOwner && (
-								<Button className="absolute -top-2 right-0" onPress={handlePressMoreButton} size="sm" variant="icon">
+								<Button
+									className="absolute -top-2 right-0"
+									onPress={handlePressMoreButton}
+									size="sm"
+									variant="icon"
+								>
 									<ButtonIcon as={MoreHorizontal} />
 								</Button>
 							)}
@@ -167,10 +176,7 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 						<Text size="xl" className="text-typography-800 pr-12">
 							{prayerRequest.value}
 						</Text>
-						<Pressable
-							onPress={() => toggleLike()}
-							className="ml-auto mr-4"
-						>
+						<Pressable onPress={() => toggleLike()} className="ml-auto mr-4">
 							<HStack space="xs" className="items-center">
 								<Animated.View
 									style={useAnimatedStyle(() => ({
@@ -184,11 +190,7 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 										size="lg"
 										as={Heart}
 										fill={hasLiked ? '#362303' : undefined}
-										className={
-											hasLiked
-												? 'text-primary-500'
-												: 'color-black'
-										}
+										className={hasLiked ? 'text-primary-500' : 'color-black'}
 									/>
 								</Animated.View>
 								<Text size="md" className={hasLiked ? 'text-primary-500' : ''}>

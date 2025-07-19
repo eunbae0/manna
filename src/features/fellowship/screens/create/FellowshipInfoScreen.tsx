@@ -109,20 +109,22 @@ export default function FellowshipInfoScreen() {
 	});
 
 	// const [preachText, setPreachText] = useState<string>(info.preachText || '');
-	const [preachText, setPreachText] = useState<string | SelectedBible[]>(info.preachText || []);
+	const [preachText, setPreachText] = useState<string | SelectedBible[]>(
+		info.preachText || [],
+	);
 	const [preacher, setPreacher] = useState<string>(info.preacher || '');
 	const [participants, setParticipants] = useState<
 		ClientFellowshipParticipantV2[]
 	>(
 		info.participants.length === 0
 			? [
-				{
-					id: user?.id || '1',
-					displayName: user?.displayName || '',
-					photoUrl: user?.photoUrl || '',
-					isGuest: false,
-				},
-			]
+					{
+						id: user?.id || '1',
+						displayName: user?.displayName || '',
+						photoUrl: user?.photoUrl || '',
+						isGuest: false,
+					},
+				]
 			: info.participants,
 	);
 	const [memberNameInput, setMemberNameInput] = useState('');
@@ -342,7 +344,13 @@ export default function FellowshipInfoScreen() {
 												className="text-typography-700 w-2/3 text-right"
 												numberOfLines={1}
 											>
-												{typeof preachText === 'string' ? preachText : preachText.length === 0 ? '없음' : preachText.length === 1 ? preachText[0].title : `${preachText.length}개`}
+												{typeof preachText === 'string'
+													? preachText
+													: preachText.length === 0
+														? '없음'
+														: preachText.length === 1
+															? preachText[0].title
+															: `${preachText.length}개`}
 											</Text>
 											<Animated.View style={[preachTextIconStyle]}>
 												<Icon
@@ -361,7 +369,9 @@ export default function FellowshipInfoScreen() {
 										onLayout={onPreachTextContentLayout}
 									>
 										<SelectedBibleList
-											selectedBible={typeof preachText === 'string' ? [] : preachText}
+											selectedBible={
+												typeof preachText === 'string' ? [] : preachText
+											}
 											setSelectedBible={setPreachText}
 											handleOpenBibleSelector={handleOpenBibleSelector}
 										/>

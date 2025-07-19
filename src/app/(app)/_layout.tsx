@@ -19,7 +19,8 @@ export default function RootLayout() {
 		useAppVersionCheck();
 	const [showUpdateModal, setShowUpdateModal] = useState(false);
 	const { checkShouldShowUpdateSheet } = useAppUpdateStore();
-	const { isAnimationComplete, setAnimationComplete } = useSplashAnimationStore();
+	const { isAnimationComplete, setAnimationComplete } =
+		useSplashAnimationStore();
 
 	useEffect(() => {
 		if (loaded) {
@@ -42,7 +43,13 @@ export default function RootLayout() {
 				})();
 			}
 		}
-	}, [loaded, needsUpdate, isAuthenticated, isAnimationComplete, checkShouldShowUpdateSheet]);
+	}, [
+		loaded,
+		needsUpdate,
+		isAuthenticated,
+		isAnimationComplete,
+		checkShouldShowUpdateSheet,
+	]);
 
 	// 로딩이 완료되었지만 애니메이션이 아직 진행 중인 경우 커스텀 스플래시 화면을 표시합니다
 	if (!loaded) {

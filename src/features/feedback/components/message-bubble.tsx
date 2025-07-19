@@ -38,10 +38,11 @@ export function MessageBubble({
 					</Text>
 				)}
 				<View
-					className={`rounded-2xl p-3 ${isSentByCurrentUser
+					className={`rounded-2xl p-3 ${
+						isSentByCurrentUser
 							? 'bg-primary-500 rounded-tr-none'
 							: 'bg-gray-200 rounded-tl-none'
-						}`}
+					}`}
 				>
 					<Text
 						className={`text-sm ${isSentByCurrentUser ? 'text-white' : 'text-gray-800'}`}

@@ -16,7 +16,9 @@ export function ShareInviteCode({
 
 	return (
 		<VStack space="md" className="py-2">
-			<Text size="md" weight="medium" className="text-typography-700">아래 코드를 공유하여 새로운 그룹원을 초대해보세요</Text>
+			<Text size="md" weight="medium" className="text-typography-700">
+				아래 코드를 공유하여 새로운 그룹원을 초대해보세요
+			</Text>
 			<HStack className="items-center justify-between bg-gray-100 rounded-lg p-4">
 				<Text size="lg" className="font-pretendard-semi-bold">
 					{inviteCode}

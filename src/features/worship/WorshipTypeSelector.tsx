@@ -29,7 +29,7 @@ export function WorshipTypeSelector() {
 
 	const handlePressPlusButton = () => {
 		router.push('/(app)/selectWorshipTypeModal');
-	}
+	};
 
 	if (isLoading) {
 		return <WorshipTypeSelectorSkeleton />;

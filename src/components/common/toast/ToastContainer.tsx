@@ -164,9 +164,15 @@ const AnimatedToast = ({ toast, onRemove }: AnimatedToastProps) => {
 						<Icon as={IconComponent} size="lg" className={color} />
 						<VStack space="xs" className="flex-1">
 							{toast.title && (
-								<Text weight="semi-bold" className="text-typography-700">{toast.title}</Text>
+								<Text weight="semi-bold" className="text-typography-700">
+									{toast.title}
+								</Text>
 							)}
-							<Text size="lg" weight="medium" className="text-typography-700 pr-4">
+							<Text
+								size="lg"
+								weight="medium"
+								className="text-typography-700 pr-4"
+							>
 								{toast.message}
 							</Text>
 						</VStack>

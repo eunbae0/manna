@@ -5,10 +5,10 @@ type AppStateType = 'active' | 'background' | 'inactive' | 'unknown';
 
 /**
  * 앱의 포커스 상태를 관리하는 훅
- * 
+ *
  * 앱이 활성화 상태(active), 백그라운드 상태(background), 비활성 상태(inactive)를 추적합니다.
  * 사용자가 앱 설정 화면에 갔다가 돌아오는 경우 등을 감지할 수 있습니다.
- * 
+ *
  * @returns {Object} 앱의 상태 정보
  * - isActive: 앱이 활성 상태인지 여부 (사용자가 앱을 사용 중)
  * - isBackground: 앱이 백그라운드 상태인지 여부 (홈 화면으로 나갔거나 다른 앱으로 전환)
@@ -20,7 +20,8 @@ type AppStateType = 'active' | 'background' | 'inactive' | 'unknown';
 export function useAppFocusState() {
 	const [appState, setAppState] = useState<AppStateType>('unknown');
 	const previousAppStateRef = useRef<AppStateType>('unknown');
-	const [isReturningFromBackground, setIsReturningFromBackground] = useState(false);
+	const [isReturningFromBackground, setIsReturningFromBackground] =
+		useState(false);
 
 	useEffect(() => {
 		const subscription = AppState.addEventListener(

@@ -5,14 +5,9 @@ import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
 import { Heading } from '@/shared/components/heading';
-import {
-	ChevronLeft,
-	UserPlus,
-} from 'lucide-react-native';
+import { ChevronLeft, UserPlus } from 'lucide-react-native';
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import {
-	BottomSheetListHeader,
-} from '@/components/common/bottom-sheet';
+import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
 import { Avatar, AvatarGroup } from '@/components/common/avatar';
 import type { ClientGroup } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
@@ -60,11 +55,11 @@ function GroupHomeHeader({ groups }: Props) {
 		});
 		setIsExpanded((prev) => !prev);
 		handleOpenMember();
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
-			.then(() =>
-				setTimeout(() => {
-					Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-				}, 50));
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft).then(() =>
+			setTimeout(() => {
+				Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+			}, 50),
+		);
 	};
 
 	const handlePressQrCode = () => {
@@ -84,14 +79,14 @@ function GroupHomeHeader({ groups }: Props) {
 	};
 
 	const handlePressInvite = () => {
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
 		trackAmplitudeEvent('홈 메뉴 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 			location: 'Group_Menu_Bottom_Sheet',
 		});
 		handleOpenMenu();
-	}
+	};
 
 	return (
 		<HStack
@@ -110,21 +105,17 @@ function GroupHomeHeader({ groups }: Props) {
 				<AvatarGroup onPress={handlePressMemberGroup} isExpanded={isExpanded}>
 					{group?.members
 						? group.members.map((member) => (
-							<Avatar
-								key={member.id}
-								photoUrl={member.photoUrl ?? undefined}
-								size="sm"
-								className="bg-primary-400"
-							/>
-						))
+								<Avatar
+									key={member.id}
+									photoUrl={member.photoUrl ?? undefined}
+									size="sm"
+									className="bg-primary-400"
+								/>
+							))
 						: []}
 				</AvatarGroup>
 
-				<Button
-					size="lg"
-					variant="icon"
-					onPress={handlePressInvite}
-				>
+				<Button size="lg" variant="icon" onPress={handlePressInvite}>
 					<ButtonIcon as={UserPlus} />
 				</Button>
 			</HStack>

@@ -88,12 +88,12 @@ export function useGroup(groupId: string | undefined) {
 		successMessage?: string;
 	}
 
-	const updateGroupMutation = useMutation<UpdateGroupResult, Error, { groupId: string; data: UpdateGroupInput; successMessage?: string }>({
-		mutationFn: async ({
-			groupId,
-			data,
-			successMessage,
-		}) => {
+	const updateGroupMutation = useMutation<
+		UpdateGroupResult,
+		Error,
+		{ groupId: string; data: UpdateGroupInput; successMessage?: string }
+	>({
+		mutationFn: async ({ groupId, data, successMessage }) => {
 			await updateGroup(groupId, data);
 			return { successMessage };
 		},

@@ -1,7 +1,5 @@
 import { useBottomSheet } from '@/hooks/useBottomSheet';
-import {
-	BottomSheetListHeader,
-} from '@/components/common/bottom-sheet';
+import { BottomSheetListHeader } from '@/components/common/bottom-sheet';
 import { useState } from 'react';
 import { Alert, View, type ViewProps } from 'react-native';
 import { HStack } from '#/components/ui/hstack';
@@ -15,7 +13,11 @@ import { Text } from '@/shared/components/text';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import type { Comment } from '../types';
 import { Box } from '#/components/ui/box';
-import { PopupMenu, PopupMenuItem, PopupMenuItemLabel } from '@/shared/components/popup-menu';
+import {
+	PopupMenu,
+	PopupMenuItem,
+	PopupMenuItemLabel,
+} from '@/shared/components/popup-menu';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 type CommentItemProps = {
@@ -71,14 +73,11 @@ export const CommentItem = ({
 	return (
 		<HStack space="md" className="py-4" {...props}>
 			<View className="mt-1">
-				<Avatar
-					size="md"
-					photoUrl={comment.author.photoUrl || ''}
-				/>
+				<Avatar size="md" photoUrl={comment.author.photoUrl || ''} />
 			</View>
 			<VStack space="sm" className="flex-1">
 				<HStack space="sm" className="items-center justify-between">
-					<VStack className='gap-px'>
+					<VStack className="gap-px">
 						<HStack space="xs" className="items-center">
 							<Text size="lg" weight="semi-bold">
 								{comment.author.displayName || '이름없음'}
@@ -135,7 +134,9 @@ export const CommentItem = ({
 						</PopupMenu>
 					)}
 				</HStack>
-				<Text size="xl" className="text-typography-700">{comment.content}</Text>
+				<Text size="xl" className="text-typography-700">
+					{comment.content}
+				</Text>
 			</VStack>
 
 			{/* 댓글 수정 바텀시트 */}
@@ -145,7 +146,7 @@ export const CommentItem = ({
 						label="댓글 수정하기"
 						onPress={closeEditSheet}
 					/>
-					<VStack space="md" >
+					<VStack space="md">
 						<BottomSheetTextInput
 							className="text-lg bg-gray-100 rounded-md p-3 text-typography-700 min-h-[100px] font-pretendard-Regular"
 							placeholder="댓글을 입력하세요"

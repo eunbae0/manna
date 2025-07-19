@@ -11,7 +11,11 @@ import { useFellowship } from '../hooks/useFellowship';
 import { router } from 'expo-router';
 import { Box } from '#/components/ui/box';
 import { Icon } from '#/components/ui/icon';
-import type { ClientFellowship, ClientFellowshipParticipantV2, FellowshipContentItemV2 } from '@/features/fellowship/api/types';
+import type {
+	ClientFellowship,
+	ClientFellowshipParticipantV2,
+	FellowshipContentItemV2,
+} from '@/features/fellowship/api/types';
 import { useMemo } from 'react';
 import { cn } from '@/shared/utils/cn';
 
@@ -47,8 +51,8 @@ export default React.memo(function FellowshipContent({
 		if (!answers || !fellowship?.info.participants) return [];
 
 		return fellowship.info.participants
-			.filter(participant => answers[participant.id]) // 답변이 있는 참가자만 필터링
-			.map(participant => ({
+			.filter((participant) => answers[participant.id]) // 답변이 있는 참가자만 필터링
+			.map((participant) => ({
 				participant,
 				content: answers[participant.id] || '',
 			}));
@@ -57,33 +61,38 @@ export default React.memo(function FellowshipContent({
 	return (
 		<>
 			<VStack space="2xl">
-				{contentType !== 'prayerRequest' && <HStack space="xs" className="items-center justify-between">
-					<HStack space="xs" className="items-start flex-1">
-						<Box className="p-1 rounded-full bg-primary-100">
-							<Icon as={CircleHelp} size="md" className="text-primary-500" />
-						</Box>
-						<Text size="xl" className="font-pretendard-semi-bold flex-1 mr-2 mt-[2px]">
-							{title}
-						</Text>
+				{contentType !== 'prayerRequest' && (
+					<HStack space="xs" className="items-center justify-between">
+						<HStack space="xs" className="items-start flex-1">
+							<Box className="p-1 rounded-full bg-primary-100">
+								<Icon as={CircleHelp} size="md" className="text-primary-500" />
+							</Box>
+							<Text
+								size="xl"
+								className="font-pretendard-semi-bold flex-1 mr-2 mt-[2px]"
+							>
+								{title}
+							</Text>
+						</HStack>
+						{enableReply && (
+							<Button variant="icon" onPress={handlePressSummaryButton}>
+								<ButtonIcon as={Edit3} />
+							</Button>
+						)}
 					</HStack>
-					{enableReply && (
-						<Button variant="icon" onPress={handlePressSummaryButton}>
-							<ButtonIcon as={Edit3} />
-						</Button>
-					)}
-				</HStack>}
-				<VStack space="xl" className={cn("pl-2", answersWithParticipant.length !== 0 && "pb-6")}>
+				)}
+				<VStack
+					space="xl"
+					className={cn('pl-2', answersWithParticipant.length !== 0 && 'pb-6')}
+				>
 					{answersWithParticipant.map((answer) => (
-						<AnswerItem
-							key={answer.participant?.id}
-							answer={answer}
-						/>
+						<AnswerItem key={answer.participant?.id} answer={answer} />
 					))}
 				</VStack>
 			</VStack>
 		</>
 	);
-})
+});
 
 function AnswerItem({
 	answer,
@@ -99,8 +108,7 @@ function AnswerItem({
 				<AnimatedPressable
 					scale="sm"
 					onPress={() =>
-						!answer.participant?.isGuest &&
-						openProfile(answer.participant?.id)
+						!answer.participant?.isGuest && openProfile(answer.participant?.id)
 					}
 				>
 					<HStack space="sm" className="items-center">
@@ -121,5 +129,5 @@ function AnswerItem({
 				</Text>
 			</VStack>
 		</VStack>
-	)
+	);
 }

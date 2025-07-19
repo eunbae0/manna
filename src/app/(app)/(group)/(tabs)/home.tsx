@@ -1,5 +1,5 @@
-import GroupHomeScreen from "@/features/group/screens/GroupHomeScreen";
+import GroupHomeScreen from '@/features/group/screens/GroupHomeScreen';
 
 export default function GroupHomeMainScreen() {
-  return <GroupHomeScreen />
+	return <GroupHomeScreen />;
 }

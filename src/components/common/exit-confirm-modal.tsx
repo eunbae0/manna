@@ -37,7 +37,6 @@ export function ExitConfirmModal({
 	continueText = '계속 작성하기',
 	exitText = '나가기',
 }: ExitConfirmModalProps) {
-
 	useBackHandler(() => {
 		if (!isOpen) {
 			return false;
@@ -49,7 +48,11 @@ export function ExitConfirmModal({
 	return (
 		<BottomSheetContainer>
 			<VStack space="xl" className="items-start justify-center pt-6 pb-5 px-4">
-				<Icon as={AlertCircle} size="xl" className="text-red-500 mx-auto w-full" />
+				<Icon
+					as={AlertCircle}
+					size="xl"
+					className="text-red-500 mx-auto w-full"
+				/>
 				<VStack className="items-start justify-center gap-10">
 					<VStack className="items-center justify-center" space="lg">
 						<VStack className="items-start" space="sm">

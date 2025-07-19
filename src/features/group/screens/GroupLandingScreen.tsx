@@ -83,10 +83,18 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 										<Heading size="lg">소그룹장</Heading>
 									</HStack>
 									<VStack>
-										<Text size="lg" weight="medium" className="text-typography-600">
+										<Text
+											size="lg"
+											weight="medium"
+											className="text-typography-600"
+										>
 											그룹장으로
 										</Text>
-										<Text size="lg" weight="medium" className="text-typography-600">
+										<Text
+											size="lg"
+											weight="medium"
+											className="text-typography-600"
+										>
 											그룹을 만들고 싶어요
 										</Text>
 									</VStack>
@@ -118,7 +126,11 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 										<Heading size="lg">소그룹원</Heading>
 									</HStack>
 									<VStack>
-										<Text size="lg" weight="medium" className="text-typography-600">
+										<Text
+											size="lg"
+											weight="medium"
+											className="text-typography-600"
+										>
 											이미 그룹이 있어요
 										</Text>
 									</VStack>
@@ -137,11 +149,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 							<ButtonIcon as={ChevronRight} />
 						</Button>
 						{isOnboarding && (
-							<Button
-								size="lg"
-								variant="link"
-								onPress={handlePressLater}
-							>
+							<Button size="lg" variant="link" onPress={handlePressLater}>
 								<ButtonText>다음에 할래요</ButtonText>
 							</Button>
 						)}

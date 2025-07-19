@@ -28,7 +28,7 @@ export const NoteCard = ({ note }: { note: Note }) => {
 						>
 							{(() => {
 								try {
-									return formatLocalDate(new Date(date))
+									return formatLocalDate(new Date(date));
 								} catch (error) {
 									console.error('Error formatting date:', error);
 									return 'Invalid date';

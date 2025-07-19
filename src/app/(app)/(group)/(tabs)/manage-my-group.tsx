@@ -114,7 +114,10 @@ export default function ManageMyGroupScreen() {
 		};
 
 		return (
-			<Box style={shadowStyle.shadow} className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-4">
+			<Box
+				style={shadowStyle.shadow}
+				className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-4"
+			>
 				<VStack space="md">
 					<HStack className="justify-between items-center">
 						<HStack space="sm" className="items-center">
@@ -185,10 +188,10 @@ export default function ManageMyGroupScreen() {
 	};
 
 	return (
-		<View className='flex-1'>
+		<View className="flex-1">
 			<Header label="내 그룹 관리" />
 			<VStack space="lg" className="flex-1 px-4 py-5 justify-between">
-				<VStack space="lg" className='flex-1'>
+				<VStack space="lg" className="flex-1">
 					<Heading size="xl">내가 가입한 그룹</Heading>
 					{groups.length === 0 ? (
 						<VStack className="items-center justify-center flex-1">

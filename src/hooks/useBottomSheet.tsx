@@ -52,10 +52,10 @@ const WebContent = ({
 
 type Props =
 	| {
-		variant?: 'modal' | 'bottomSheet';
-		onOpen?: () => void;
-		onClose?: () => void;
-	}
+			variant?: 'modal' | 'bottomSheet';
+			onOpen?: () => void;
+			onClose?: () => void;
+	  }
 	| undefined;
 
 export const useBottomSheet = ({
@@ -127,13 +127,13 @@ export const useBottomSheet = ({
 		() =>
 			Platform.OS === 'web'
 				? {
-					onKeyDown: (e: React.KeyboardEvent) => {
-						if (e.key === 'Escape') {
-							e.preventDefault();
-							handleClose();
-						}
-					},
-				}
+						onKeyDown: (e: React.KeyboardEvent) => {
+							if (e.key === 'Escape') {
+								e.preventDefault();
+								handleClose();
+							}
+						},
+					}
 				: {},
 		[handleClose],
 	);
@@ -162,23 +162,29 @@ export const useBottomSheet = ({
 				detached={isModal}
 				onDismiss={onClose}
 				keyboardBehavior="interactive"
-				keyboardBlurBehavior='restore'
+				keyboardBlurBehavior="restore"
 				handleComponent={isModal ? null : BottomSheetHandleComponent}
 				bottomInset={isModal ? bottomInset : 0}
-				style={enableBackdrop ?
-					{ marginHorizontal: isModal ? 32 : 0 } : {
-						borderRadius: 24,
-						shadowColor: 'black',
-						shadowOffset: { width: 0, height: 4 },
-						shadowOpacity: 0.2,
-						shadowRadius: 8,
-						elevation: 4,
-					}}
+				style={
+					enableBackdrop
+						? { marginHorizontal: isModal ? 32 : 0 }
+						: {
+								borderRadius: 24,
+								shadowColor: 'black',
+								shadowOffset: { width: 0, height: 4 },
+								shadowOpacity: 0.2,
+								shadowRadius: 8,
+								elevation: 4,
+							}
+				}
 				{...props}
 			>
 				<KeyboardDismissView>
 					<BottomSheetView
-						style={{ height: props.snapPoints ? '100%' : undefined, paddingBottom: isModal ? 0 : insets.bottom }}
+						style={{
+							height: props.snapPoints ? '100%' : undefined,
+							paddingBottom: isModal ? 0 : insets.bottom,
+						}}
 						onLayout={handleContentLayout}
 						{...keyDownHandlers}
 					>

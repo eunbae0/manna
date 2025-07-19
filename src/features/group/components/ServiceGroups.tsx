@@ -75,8 +75,10 @@ export default function ServiceGroups() {
 						className="items-center justify-center px-2 py-3 h-full"
 					>
 						<Icon as={MessageSquare} size="2xl" className="text-primary-400" />
-						<Text size="sm" weight="medium" className="text-primary-500">나눔 만들기</Text>
-					</VStack >
+						<Text size="sm" weight="medium" className="text-primary-500">
+							나눔 만들기
+						</Text>
+					</VStack>
 				</AnimatedPressable>
 				<AnimatedPressable
 					withBackground
@@ -88,9 +90,11 @@ export default function ServiceGroups() {
 						className="items-center justify-center px-2 py-3 h-full"
 					>
 						<Icon as={History} size="2xl" className="text-primary-400" />
-						<Text size="sm" weight="medium" className="text-primary-500">나눔 기록</Text>
+						<Text size="sm" weight="medium" className="text-primary-500">
+							나눔 기록
+						</Text>
 					</VStack>
-				</AnimatedPressable >
+				</AnimatedPressable>
 
 				<AnimatedPressable
 					withBackground
@@ -102,9 +106,11 @@ export default function ServiceGroups() {
 						className="items-center justify-center px-2 py-3 h-full"
 					>
 						<Icon as={Presentation} size="2xl" className="text-primary-400" />
-						<Text size="sm" weight="medium" className="text-primary-500">게시판</Text>
+						<Text size="sm" weight="medium" className="text-primary-500">
+							게시판
+						</Text>
 					</VStack>
-				</AnimatedPressable >
+				</AnimatedPressable>
 
 				<AnimatedPressable
 					withBackground
@@ -116,13 +122,20 @@ export default function ServiceGroups() {
 						className="items-center justify-center px-2 py-3 h-full"
 					>
 						<Icon as={NotebookPen} size="2xl" className="text-primary-400" />
-						<Text size="sm" weight="medium" className="text-primary-500">설교 노트</Text>
+						<Text size="sm" weight="medium" className="text-primary-500">
+							설교 노트
+						</Text>
 					</VStack>
 				</AnimatedPressable>
 			</HStack>
 			{/* 고정된 게시글이 있을 때만 표시 */}
 			{!isLoading && pinnedPost && (
-				<AnimatedPressable scale="sm" withBackground className="flex-1 rounded-2xl" onPress={handlePressPinnedPost}>
+				<AnimatedPressable
+					scale="sm"
+					withBackground
+					className="flex-1 rounded-2xl"
+					onPress={handlePressPinnedPost}
+				>
 					<HStack
 						space="sm"
 						className="my-1 items-center justify-center py-3 pl-5 pr-4"
@@ -143,4 +156,3 @@ export default function ServiceGroups() {
 		</VStack>
 	);
 }
-

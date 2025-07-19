@@ -1,5 +1,5 @@
-import NoteMainScreen from "@/features/note/screens/NoteMainScreen";
+import NoteMainScreen from '@/features/note/screens/NoteMainScreen';
 
 export default function NoteScreen() {
-	return <NoteMainScreen />
+	return <NoteMainScreen />;
 }

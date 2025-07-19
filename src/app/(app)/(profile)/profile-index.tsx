@@ -116,10 +116,14 @@ export default function ProfileScreen() {
 	const { handleOpen, handleClose, BottomSheetContainer } = useBottomSheet();
 	const { showToast } = useToastStore();
 
-	const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
+	const [displayName, setDisplayName] = useState(
+		currentUser?.displayName || '',
+	);
 	const [photoUrl, setPhotoUrl] = useState(currentUser?.photoUrl || '');
 
-	const [statusMessage, setStatusMessage] = useState(currentUser?.statusMessage || '');
+	const [statusMessage, setStatusMessage] = useState(
+		currentUser?.statusMessage || '',
+	);
 
 	// 프로필 정보가 변경되었는지 확인
 	const isDisplayNameChanged = useMemo(() => {
@@ -211,10 +215,7 @@ export default function ProfileScreen() {
 			});
 
 			// 이미지 캐시 초기화 (유저의 photo url의 cache key가 동일함)
-			await Promise.all([
-				Image.clearDiskCache(),
-				Image.clearMemoryCache(),
-			]);
+			await Promise.all([Image.clearDiskCache(), Image.clearMemoryCache()]);
 
 			setIsPhotoUrlChanged(false);
 			handleClose();
@@ -306,25 +307,26 @@ export default function ProfileScreen() {
 							>
 								{user.displayName || '이름 없음'}
 							</Text>
-							{!isCurrentUser && (isLeader ? (
-								<Box className="px-3 py-1 bg-primary-100 rounded-full">
-									<Text
-										size="xs"
-										className="text-primary-700 font-pretendard-Medium"
-									>
-										리더
-									</Text>
-								</Box>
-							) : (
-								<Box className="px-3 py-1 bg-gray-100 rounded-full">
-									<Text
-										size="xs"
-										className="text-gray-700 font-pretendard-Medium"
-									>
-										그룹원
-									</Text>
-								</Box>
-							))}
+							{!isCurrentUser &&
+								(isLeader ? (
+									<Box className="px-3 py-1 bg-primary-100 rounded-full">
+										<Text
+											size="xs"
+											className="text-primary-700 font-pretendard-Medium"
+										>
+											리더
+										</Text>
+									</Box>
+								) : (
+									<Box className="px-3 py-1 bg-gray-100 rounded-full">
+										<Text
+											size="xs"
+											className="text-gray-700 font-pretendard-Medium"
+										>
+											그룹원
+										</Text>
+									</Box>
+								))}
 							<Text size="md" className="text-typography-600 text-center mt-2">
 								{user?.statusMessage || '상태메세지가 없어요.'}
 							</Text>

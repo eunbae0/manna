@@ -53,7 +53,7 @@ export default function CreateGroupFirstStepScreen({
 					id: user?.id ?? '',
 					displayName: isOnboarding
 						? userData.displayName
-						: (user?.displayName ?? ''),
+						: user?.displayName ?? '',
 					photoUrl: user?.photoUrl ?? '',
 					role: 'leader',
 				},
@@ -110,7 +110,8 @@ export default function CreateGroupFirstStepScreen({
 							value={groupName}
 							onChangeText={setGroupName}
 							placeholder="ex. OO 순, OO 사랑방"
-							className={BG_TEXT_INPUT_STYLE} />
+							className={BG_TEXT_INPUT_STYLE}
+						/>
 					</VStack>
 				</VStack>
 			</VStack>
@@ -130,11 +131,15 @@ export default function CreateGroupFirstStepScreen({
 							<Heading size="2xl" className="text-center font-pretendard-bold">
 								아래 정보로 소그룹을 생성할게요
 							</Heading>
-							<HStack className='items-center'>
+							<HStack className="items-center">
 								<Text size="xl" className="text-center text-typography-500">
-									소그룹 이름: {" "}
+									소그룹 이름:{' '}
 								</Text>
-								<Text weight='medium' size="xl" className="text-center text-typography-600">
+								<Text
+									weight="medium"
+									size="xl"
+									className="text-center text-typography-600"
+								>
 									{groupName}
 								</Text>
 							</HStack>

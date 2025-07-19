@@ -40,7 +40,10 @@ export default function MemberListScreen() {
 						<FlashList
 							data={members}
 							renderItem={({ item: member }) => (
-								<MemberListItem member={member} onPress={() => openProfile(member.id)} />
+								<MemberListItem
+									member={member}
+									onPress={() => openProfile(member.id)}
+								/>
 							)}
 							keyExtractor={(member) => member.id}
 							estimatedItemSize={70}
@@ -51,9 +54,8 @@ export default function MemberListScreen() {
 					</View>
 				) : (
 					<Text className="text-center py-4">그룹원이 없어요.</Text>
-				)
-				}
-			</VStack >
+				)}
+			</VStack>
 			<VStack space="md" className="mx-5">
 				<ShareInviteCode
 					inviteCode={group?.inviteCode || ''}

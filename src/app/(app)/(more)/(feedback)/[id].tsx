@@ -87,9 +87,7 @@ export default function FeedbackChatScreen() {
 
 	return (
 		<SafeAreaView className="flex-1">
-			<KeyboardAvoidingView
-				className="flex-1"
-			>
+			<KeyboardAvoidingView className="flex-1">
 				<VStack className="flex-1">
 					<Header label={selectedChatRoom} />
 

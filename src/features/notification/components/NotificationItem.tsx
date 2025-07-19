@@ -3,7 +3,14 @@ import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import { Icon } from '#/components/ui/icon';
-import { Bell, HandHeart, MessageCircle, MessageSquareText, NotebookPen, Trash2Icon } from 'lucide-react-native';
+import {
+	Bell,
+	HandHeart,
+	MessageCircle,
+	MessageSquareText,
+	NotebookPen,
+	Trash2Icon,
+} from 'lucide-react-native';
 import type { ClientNotification } from '../api/types';
 import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import { Dimensions, StyleSheet, View, Pressable } from 'react-native';
@@ -252,13 +259,13 @@ export function NotificationItem({
 								<VStack space="xs" className="flex-1 ml-1">
 									<VStack space="xs">
 										<HStack className="justify-between items-center">
-											<HStack space="sm" className="mt-[2px] items-center flex-wrap">
+											<HStack
+												space="sm"
+												className="mt-[2px] items-center flex-wrap"
+											>
 												{item.metadata?.groupName && (
 													<HStack space="sm" className="items-center">
-														<Text
-															size="sm"
-															className="text-typography-600"
-														>
+														<Text size="sm" className="text-typography-600">
 															{item.metadata.groupName}
 														</Text>
 														<Box className="w-[2px] h-[2px] bg-typography-600 rounded-full" />
@@ -274,7 +281,13 @@ export function NotificationItem({
 											</Text>
 										</HStack>
 									</VStack>
-									<Text size="lg" weight="medium" className="text-typography-700">{item.body}</Text>
+									<Text
+										size="lg"
+										weight="medium"
+										className="text-typography-700"
+									>
+										{item.body}
+									</Text>
 								</VStack>
 							</HStack>
 						</AnimatedPressable>

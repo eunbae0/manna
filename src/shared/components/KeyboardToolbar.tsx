@@ -21,16 +21,16 @@ export interface KeyboardToolbarProps
 	 */
 	insets?: RNKeyboardToolbarProps['insets'];
 	buttons?: {
-		richText?: ButtonsProps
-		image?: ButtonsProps
-	}
+		richText?: ButtonsProps;
+		image?: ButtonsProps;
+	};
 }
 
-type ButtonsKey = keyof KeyboardToolbarProps['buttons']
+type ButtonsKey = keyof KeyboardToolbarProps['buttons'];
 
 type ButtonsProps = {
 	onPress: () => void;
-}
+};
 
 const haptic = () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -67,17 +67,23 @@ export function KeyboardToolbar({
 			theme={theme}
 			opacity="EE"
 			content={
-				buttons ?
+				buttons ? (
 					<HStack className="items-center">
-						{
-							Object.entries(buttons).map(([key, value]) => (
-								<Button key={key} variant="icon" size="lg" onPress={value.onPress}>
-									<ButtonIcon as={buttonsKeyToImageIcon(key as ButtonsKey)} className='text-primary-500' />
-								</Button>
-							))
-						}
+						{Object.entries(buttons).map(([key, value]) => (
+							<Button
+								key={key}
+								variant="icon"
+								size="lg"
+								onPress={value.onPress}
+							>
+								<ButtonIcon
+									as={buttonsKeyToImageIcon(key as ButtonsKey)}
+									className="text-primary-500"
+								/>
+							</Button>
+						))}
 					</HStack>
-					: null
+				) : null
 			}
 			{...rest}
 		/>

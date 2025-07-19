@@ -1,5 +1,5 @@
-import GroupSelectionScreen from "@/features/home/screens/GroupSelectionScreen";
+import GroupSelectionScreen from '@/features/home/screens/GroupSelectionScreen';
 
 export default function GroupSelection() {
-  return <GroupSelectionScreen />
+	return <GroupSelectionScreen />;
 }

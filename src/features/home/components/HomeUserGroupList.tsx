@@ -14,63 +14,71 @@ import HomeUserGroupListSkeleton from './HomeUserGroupListSkeleton';
 import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 
 type Props = {
-  groups: UserGroup[];
+	groups: UserGroup[];
 };
 
 export function HomeUserGroupList({ groups }: Props) {
-  const { groups: groupsData, isLoading } = useGroups(groups);
-  return (
-    <View className="w-full">
-      {isLoading ?
-        <HomeUserGroupListSkeleton /> :
-        <FlashList
-          data={groupsData}
-          horizontal
-          renderItem={({ item }) => <GroupItem group={item} />}
-          style={{ width: '100%' }}
-          keyExtractor={(item) => item.id}
-          estimatedListSize={{ width: 120, height: 90 }}
-          estimatedItemSize={120}
-          showsHorizontalScrollIndicator={false}
-        />
-      }
-    </View>
-  );
+	const { groups: groupsData, isLoading } = useGroups(groups);
+	return (
+		<View className="w-full">
+			{isLoading ? (
+				<HomeUserGroupListSkeleton />
+			) : (
+				<FlashList
+					data={groupsData}
+					horizontal
+					renderItem={({ item }) => <GroupItem group={item} />}
+					style={{ width: '100%' }}
+					keyExtractor={(item) => item.id}
+					estimatedListSize={{ width: 120, height: 90 }}
+					estimatedItemSize={120}
+					showsHorizontalScrollIndicator={false}
+				/>
+			)}
+		</View>
+	);
 }
 
 function GroupItem({ group }: { group: ClientGroup }) {
-  const hasCoverImage = group.coverImages?.length;
+	const hasCoverImage = group.coverImages?.length;
 
-  const { uri } = group.coverImages?.[0] || {};
-  const { updateCurrentGroup } = useAuthStore();
+	const { uri } = group.coverImages?.[0] || {};
+	const { updateCurrentGroup } = useAuthStore();
 
-  const handlePressGroupItem = useCallback(() => {
-    router.push('/(app)/(group)/(tabs)/home');
-    updateCurrentGroup({
-      groupId: group.id,
-    })
-  }, [group.id, updateCurrentGroup])
+	const handlePressGroupItem = useCallback(() => {
+		router.push('/(app)/(group)/(tabs)/home');
+		updateCurrentGroup({
+			groupId: group.id,
+		});
+	}, [group.id, updateCurrentGroup]);
 
-  return (
-    <AnimatedPressable onPress={handlePressGroupItem}>
-      <VStack space="sm" className="items-center pr-4">
-        {hasCoverImage ? <Image
-          source={getImageSourceForSignedImageUrl(uri)}
-          contentFit="cover"
-          style={{ width: 120, height: 80, borderRadius: 14 }}
-          priority="high"
-          cachePolicy="memory-disk"
-        /> : (
-          <View style={{ width: 120, height: 80, borderRadius: 14 }} className='items-center justify-center bg-primary-100'>
-            <Image
-              source={require('../../../../assets/images/icons/manna_icon_beige.png')}
-              style={{ width: 58, height: 40, opacity: 0.8 }}
-              contentFit="cover"
-            />
-          </View>
-        )}
-        <Text size="sm" weight="medium" className="text-typography-800">{group.groupName}</Text>
-      </VStack>
-    </AnimatedPressable>
-  );
+	return (
+		<AnimatedPressable onPress={handlePressGroupItem}>
+			<VStack space="sm" className="items-center pr-4">
+				{hasCoverImage ? (
+					<Image
+						source={getImageSourceForSignedImageUrl(uri)}
+						contentFit="cover"
+						style={{ width: 120, height: 80, borderRadius: 14 }}
+						priority="high"
+						cachePolicy="memory-disk"
+					/>
+				) : (
+					<View
+						style={{ width: 120, height: 80, borderRadius: 14 }}
+						className="items-center justify-center bg-primary-100"
+					>
+						<Image
+							source={require('../../../../assets/images/icons/manna_icon_beige.png')}
+							style={{ width: 58, height: 40, opacity: 0.8 }}
+							contentFit="cover"
+						/>
+					</View>
+				)}
+				<Text size="sm" weight="medium" className="text-typography-800">
+					{group.groupName}
+				</Text>
+			</VStack>
+		</AnimatedPressable>
+	);
 }

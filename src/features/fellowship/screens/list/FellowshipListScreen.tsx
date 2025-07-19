@@ -20,7 +20,6 @@ import FellowshipListView from './view/FellowshipListView';
 
 type ViewMode = 'list' | 'calendar';
 
-
 export default function FellowshipListScreen() {
 	const [viewMode, setViewMode] = useState<ViewMode>('list');
 	const { setType } = useFellowshipStore();
@@ -52,29 +51,33 @@ export default function FellowshipListScreen() {
 								onPress={() => setViewMode('list')}
 								withHaptic
 								className={cn(
-									"rounded-xl",
-									viewMode === 'list' ? "bg-white" : "bg-transparent"
+									'rounded-xl',
+									viewMode === 'list' ? 'bg-white' : 'bg-transparent',
 								)}
 								pressableClassName="px-3 py-2 rounded-xl"
 							>
 								<Icon
 									as={Rows3}
 									size="lg"
-									className={viewMode === 'list' ? "text-primary-500" : "text-white"}
+									className={
+										viewMode === 'list' ? 'text-primary-500' : 'text-white'
+									}
 								/>
 							</AnimatedPressable>
 							<AnimatedPressable
 								onPress={() => setViewMode('calendar')}
 								withHaptic
 								className={cn(
-									"px-3 py-2 rounded-xl",
-									viewMode === 'calendar' ? "bg-white" : "bg-transparent"
+									'px-3 py-2 rounded-xl',
+									viewMode === 'calendar' ? 'bg-white' : 'bg-transparent',
 								)}
 							>
 								<Icon
 									as={Calendar}
 									size="lg"
-									className={viewMode === 'calendar' ? "text-primary-500" : "text-white"}
+									className={
+										viewMode === 'calendar' ? 'text-primary-500' : 'text-white'
+									}
 								/>
 							</AnimatedPressable>
 						</HStack>
@@ -84,7 +87,9 @@ export default function FellowshipListScreen() {
 						<FellowshipListView handlePressFellowship={handlePressFellowship} />
 					) : (
 						// 캘린더 뷰
-						<FellowshipCalendarView handlePressFellowship={handlePressFellowship} />
+						<FellowshipCalendarView
+							handlePressFellowship={handlePressFellowship}
+						/>
 					)}
 					<Box className="absolute bottom-6 left-0 w-full">
 						<Button

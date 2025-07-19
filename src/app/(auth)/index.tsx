@@ -20,7 +20,13 @@ import Carousel, {
 	type ICarouselInstance,
 	Pagination,
 } from 'react-native-reanimated-carousel';
-import Animated, { SlideInRight, SlideOutLeft, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+	SlideInRight,
+	SlideOutLeft,
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+} from 'react-native-reanimated';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { useSharedValueState } from '@/shared/hooks/animation/useSharedValueState';
 import Heading from '@/shared/components/heading';
@@ -41,10 +47,7 @@ function AuthStepScreen() {
 					<LoginScreen />
 				</Animated.View>
 			) : (
-				<Animated.View
-					exiting={SlideOutLeft.duration(300)}
-					style={{ flex: 1 }}
-				>
+				<Animated.View exiting={SlideOutLeft.duration(300)} style={{ flex: 1 }}>
 					<OnboardingCarousel setIsPressStart={handlePressStart} />
 				</Animated.View>
 			)}
@@ -185,14 +188,15 @@ function LoginScreen() {
 				</HStack>
 			</VStack>
 		</VStack>
-	)
+	);
 }
 
-function OnboardingCarousel({ setIsPressStart }: { setIsPressStart: () => void }) {
+function OnboardingCarousel({
+	setIsPressStart,
+}: { setIsPressStart: () => void }) {
 	const { width } = useWindowDimensions();
 	const imageHeight = width * 1.3;
 	const ref = useRef<ICarouselInstance>(null);
-
 
 	const progress = useSharedValue<number>(0);
 	const currentProgress = useSharedValueState(progress);
@@ -213,19 +217,22 @@ function OnboardingCarousel({ setIsPressStart }: { setIsPressStart: () => void }
 		{
 			id: 3,
 			title: '설교 나눔',
-			description: '설교 나눔지를 편하게 생성해보세요. 나눔에 참여할 그룹원을 선택할 수 있어요.',
+			description:
+				'설교 나눔지를 편하게 생성해보세요. 나눔에 참여할 그룹원을 선택할 수 있어요.',
 			image: require('../../../assets/images/onboarding/onboarding_03.png'),
 		},
 		{
 			id: 4,
 			title: '설교 나눔 답변',
-			description: '소그룹원들의 답변을 강력한 녹음과 AI 요약 기능으로 편하게 기록해보세요',
+			description:
+				'소그룹원들의 답변을 강력한 녹음과 AI 요약 기능으로 편하게 기록해보세요',
 			image: require('../../../assets/images/onboarding/onboarding_04.png'),
 		},
 		{
 			id: 5,
 			title: '성경',
-			description: '성경을 편리하게 하이라이트하고, 구절을 선택해 설교 노트를 작성해보세요',
+			description:
+				'성경을 편리하게 하이라이트하고, 구절을 선택해 설교 노트를 작성해보세요',
 			image: require('../../../assets/images/onboarding/onboarding_05.png'),
 		},
 	];
@@ -236,9 +243,9 @@ function OnboardingCarousel({ setIsPressStart }: { setIsPressStart: () => void }
 			opacity: withTiming(isLastPage ? 0 : 1, { duration: 100 }),
 			transform: [
 				{
-					translateY: withTiming(isLastPage ? 10 : 0, { duration: 100 })
-				}
-			]
+					translateY: withTiming(isLastPage ? 10 : 0, { duration: 100 }),
+				},
+			],
 		};
 	});
 
@@ -253,16 +260,19 @@ function OnboardingCarousel({ setIsPressStart }: { setIsPressStart: () => void }
 		if (isLastPage) {
 			setIsPressStart();
 		}
-		ref.current?.next()
-	}
+		ref.current?.next();
+	};
 
 	const onPressSkip = () => {
 		setIsPressStart();
-	}
+	};
 
 	const isLastPage = currentProgress === data.length - 1;
 
-	const nextLabel = useMemo(() => isLastPage ? '시작하기' : '다음', [isLastPage]);
+	const nextLabel = useMemo(
+		() => (isLastPage ? '시작하기' : '다음'),
+		[isLastPage],
+	);
 
 	return (
 		<View className="flex-1 items-center justify-between">
@@ -274,10 +284,21 @@ function OnboardingCarousel({ setIsPressStart }: { setIsPressStart: () => void }
 				onProgressChange={progress}
 				loop={false}
 				renderItem={({ item }) => (
-					<VStack space="md" className="pt-12 flex-1 items-center justify-start">
+					<VStack
+						space="md"
+						className="pt-12 flex-1 items-center justify-start"
+					>
 						<VStack space="sm" className="items-center px-6">
-							<Text size="3xl" weight="bold" className="text-typography-900">{item.title}</Text>
-							<Text size="xl" weight="semi-bold" className="max-w-[80%] text-center text-typography-500">{item.description}</Text>
+							<Text size="3xl" weight="bold" className="text-typography-900">
+								{item.title}
+							</Text>
+							<Text
+								size="xl"
+								weight="semi-bold"
+								className="max-w-[80%] text-center text-typography-500"
+							>
+								{item.description}
+							</Text>
 						</VStack>
 						<Image
 							source={item.image}
@@ -295,13 +316,13 @@ function OnboardingCarousel({ setIsPressStart }: { setIsPressStart: () => void }
 					dotStyle={{
 						width: 25,
 						height: 4,
-						backgroundColor: "rgba(0,0,0,0.1)",
+						backgroundColor: 'rgba(0,0,0,0.1)',
 						borderRadius: 4,
 					}}
 					activeDotStyle={{
 						width: 25,
 						height: 4,
-						backgroundColor: "#362303",
+						backgroundColor: '#362303',
 						borderRadius: 4,
 					}}
 					containerStyle={{
@@ -312,9 +333,23 @@ function OnboardingCarousel({ setIsPressStart }: { setIsPressStart: () => void }
 					onPress={onPressPagination}
 				/>
 				<VStack space="sm" className="w-full items-center">
-					<AnimatedPressable scale="sm" className='w-full items-center mb-4' onPress={onPressNext} withHaptic>
-						<HStack space="xs" className="w-full items-center px-28 py-3 bg-primary-500 rounded-full">
-							<Text size="lg" weight="semi-bold" className="pl-2 text-typography-0">{nextLabel}</Text>
+					<AnimatedPressable
+						scale="sm"
+						className="w-full items-center mb-4"
+						onPress={onPressNext}
+						withHaptic
+					>
+						<HStack
+							space="xs"
+							className="w-full items-center px-28 py-3 bg-primary-500 rounded-full"
+						>
+							<Text
+								size="lg"
+								weight="semi-bold"
+								className="pl-2 text-typography-0"
+							>
+								{nextLabel}
+							</Text>
 							<Icon as={ChevronRight} size="lg" className="text-typography-0" />
 						</HStack>
 					</AnimatedPressable>

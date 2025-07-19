@@ -44,7 +44,7 @@ const headingStyles = cva('font-pretendard-bold', {
 
 export interface HeadingProps
 	extends ComponentPropsWithoutRef<typeof Text>,
-	VariantProps<typeof headingStyles> {
+		VariantProps<typeof headingStyles> {
 	size?: HeadingSize;
 }
 

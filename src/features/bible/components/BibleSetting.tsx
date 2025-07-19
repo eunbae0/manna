@@ -13,46 +13,49 @@ import { useBibleStore } from '@/features/bible/store/bible';
 import { MAX_BIBLE_FONT_SIZE, MIN_BIBLE_FONT_SIZE } from '../constants';
 
 type Props = {
-  BottomSheetContainer: ReturnType<
-    typeof useBottomSheet
-  >['BottomSheetContainer'];
-  closeSetting: () => void;
+	BottomSheetContainer: ReturnType<
+		typeof useBottomSheet
+	>['BottomSheetContainer'];
+	closeSetting: () => void;
 };
 
 export function BibleSetting({ BottomSheetContainer, closeSetting }: Props) {
-  const { fontSize, setFontSize } = useBibleStore();
+	const { fontSize, setFontSize } = useBibleStore();
 
-  const handleSetFontSize = useCallback(async (value: number) => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-    setFontSize(value);
-  }, [setFontSize]);
+	const handleSetFontSize = useCallback(
+		async (value: number) => {
+			await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+			setFontSize(value);
+		},
+		[setFontSize],
+	);
 
-  return (
-    <BottomSheetContainer>
-      <BottomSheetListLayout>
-        <VStack className="mt-12 mb-8">
-          <HStack className="justify-between items-center">
-            <HStack space="sm" className="items-center">
-              <Icon as={Type} size="xl" />
-              <Slider
-                style={{ width: '80%', height: 32 }}
-                lowerLimit={MIN_BIBLE_FONT_SIZE}
-                upperLimit={MAX_BIBLE_FONT_SIZE}
-                minimumValue={MIN_BIBLE_FONT_SIZE}
-                maximumValue={MAX_BIBLE_FONT_SIZE}
-                step={10}
-                value={fontSize}
-                tapToSeek
-                thumbTintColor="#362303"
-                minimumTrackTintColor="#362303"
-                maximumTrackTintColor="#fef8ef"
-                onValueChange={handleSetFontSize}
-              />
-            </HStack>
-            <Text size="lg">{fontSize}%</Text>
-          </HStack>
-        </VStack>
-      </BottomSheetListLayout>
-    </BottomSheetContainer>
-  );
+	return (
+		<BottomSheetContainer>
+			<BottomSheetListLayout>
+				<VStack className="mt-12 mb-8">
+					<HStack className="justify-between items-center">
+						<HStack space="sm" className="items-center">
+							<Icon as={Type} size="xl" />
+							<Slider
+								style={{ width: '80%', height: 32 }}
+								lowerLimit={MIN_BIBLE_FONT_SIZE}
+								upperLimit={MAX_BIBLE_FONT_SIZE}
+								minimumValue={MIN_BIBLE_FONT_SIZE}
+								maximumValue={MAX_BIBLE_FONT_SIZE}
+								step={10}
+								value={fontSize}
+								tapToSeek
+								thumbTintColor="#362303"
+								minimumTrackTintColor="#362303"
+								maximumTrackTintColor="#fef8ef"
+								onValueChange={handleSetFontSize}
+							/>
+						</HStack>
+						<Text size="lg">{fontSize}%</Text>
+					</HStack>
+				</VStack>
+			</BottomSheetListLayout>
+		</BottomSheetContainer>
+	);
 }

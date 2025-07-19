@@ -309,7 +309,7 @@ const buttonIconStyles = cva('', {
 
 export interface ButtonProps
 	extends Omit<ComponentPropsWithoutRef<typeof Pressable>, 'children'>,
-	VariantProps<typeof buttonStyles> {
+		VariantProps<typeof buttonStyles> {
 	children?: ReactNode;
 	size?: ButtonSize;
 	variant?: 'solid' | 'outline' | 'link' | 'text' | 'icon';

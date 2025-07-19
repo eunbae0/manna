@@ -44,7 +44,11 @@ export default function PendingSubmitScreen() {
 							? `${userData.displayName}님을 맞이할 준비를 하고 있어요`
 							: '회원님을 맞이할 준비를 하고 있어요'}
 					</Heading>
-					<Text size="lg" weight="medium" className="text-typography-600 text-center">
+					<Text
+						size="lg"
+						weight="medium"
+						className="text-typography-600 text-center"
+					>
 						잠시만 기다려주세요 🙂
 					</Text>
 				</VStack>

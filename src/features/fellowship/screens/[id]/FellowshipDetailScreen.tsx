@@ -47,8 +47,7 @@ import type {
 import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
 import { FellowshipSkeleton } from './FellowshipSkeleton';
 import FellowshipContentList from '../../components/FellowshipContentList';
-import FellowshipPrayerRequestList, {
-} from '../../components/FellowshipPrayerRequestList';
+import FellowshipPrayerRequestList, {} from '../../components/FellowshipPrayerRequestList';
 import FellowshipContentLayout from '../../components/FellowshipContentLayout';
 import {
 	BottomSheetListHeader,
@@ -82,13 +81,8 @@ export default function FellowshipDetailScreen({
 	} = useFellowshipStore();
 
 	// 실시간 데이터 페칭
-	const {
-		fellowship,
-		isLoading,
-		isError,
-		updateFellowship,
-		deleteFellowship,
-	} = useFellowship(id);
+	const { fellowship, isLoading, isError, updateFellowship, deleteFellowship } =
+		useFellowship(id);
 
 	// null을 undefined로 변환하여 타입 호환성 유지
 	const fellowshipData = fellowship || undefined;
@@ -137,9 +131,9 @@ export default function FellowshipDetailScreen({
 		() =>
 			fellowshipData
 				? user?.id ===
-				fellowshipData.info.participants.find(
-					(participant) => participant.id === fellowshipData.roles.leaderId,
-				)?.id
+					fellowshipData.info.participants.find(
+						(participant) => participant.id === fellowshipData.roles.leaderId,
+					)?.id
 				: false,
 		[fellowshipData, user],
 	);
@@ -155,11 +149,10 @@ export default function FellowshipDetailScreen({
 		isExpanded: detailExpanded,
 		containerStyle: detailContainerStyle,
 		iconStyle: detailIconStyle,
-		onContentLayout: onDetailContentLayout
+		onContentLayout: onDetailContentLayout,
 	} = useExpandAnimation({
 		initiallyExpanded: true,
 	});
-
 
 	if (isLoading) {
 		return <FellowshipSkeleton />;
@@ -197,9 +190,7 @@ export default function FellowshipDetailScreen({
 					)}
 				</Header>
 
-				<ScrollView
-					showsVerticalScrollIndicator={false}
-				>
+				<ScrollView showsVerticalScrollIndicator={false}>
 					<VStack>
 						{/* 나눔 노트 제목 및 정보 */}
 						<VStack space="sm" className="px-5">
@@ -213,7 +204,9 @@ export default function FellowshipDetailScreen({
 								나눔
 							</Text>
 							<HStack space="sm" className="items-center justify-between">
-								<Heading size="3xl" className="flex-1">{fellowshipData?.info.title}</Heading>
+								<Heading size="3xl" className="flex-1">
+									{fellowshipData?.info.title}
+								</Heading>
 								<AnimatedPressable onPress={() => toggleDetail()}>
 									<Animated.View style={[detailIconStyle]}>
 										<Icon
@@ -228,7 +221,11 @@ export default function FellowshipDetailScreen({
 						</VStack>
 
 						<Animated.View style={[detailContainerStyle]} className="px-5">
-							<VStack space="xl" className="pt-6" onLayout={onDetailContentLayout}>
+							<VStack
+								space="xl"
+								className="pt-6"
+								onLayout={onDetailContentLayout}
+							>
 								{/* 설교 본문 */}
 								<VStack space="xs">
 									<HStack space="sm" className="items-center">
@@ -237,17 +234,23 @@ export default function FellowshipDetailScreen({
 											size="sm"
 											className="text-typography-600"
 										/>
-										<Text size="lg" weight="medium" className="text-typography-500">
+										<Text
+											size="lg"
+											weight="medium"
+											className="text-typography-500"
+										>
 											설교 본문
 										</Text>
 									</HStack>
 
-									{typeof fellowship?.info.preachText !== 'string' ?
+									{typeof fellowship?.info.preachText !== 'string' ? (
 										<SelectedBibleList
 											selectedBible={fellowship?.info.preachText || []}
 											isReadonly
 											className="mt-1"
-										/> : <Text
+										/>
+									) : (
+										<Text
 											size="xl"
 											className={cn(
 												'ml-6',
@@ -255,7 +258,8 @@ export default function FellowshipDetailScreen({
 											)}
 										>
 											{fellowship?.info.preachText || '비어 있음'}
-										</Text>}
+										</Text>
+									)}
 								</VStack>
 								{/* 설교자 */}
 								<VStack space="xs">
@@ -265,7 +269,11 @@ export default function FellowshipDetailScreen({
 											size="sm"
 											className="text-typography-600"
 										/>
-										<Text size="lg" weight="medium" className="text-typography-500">
+										<Text
+											size="lg"
+											weight="medium"
+											className="text-typography-500"
+										>
 											설교자
 										</Text>
 									</HStack>
@@ -281,19 +289,30 @@ export default function FellowshipDetailScreen({
 								</VStack>
 								<VStack space="xs">
 									<HStack space="sm" className="items-center">
-										<Icon as={Users} size="sm" className="text-typography-600" />
+										<Icon
+											as={Users}
+											size="sm"
+											className="text-typography-600"
+										/>
 										<Text size="md" className="text-typography-600">
 											참여자
 										</Text>
 									</HStack>
 									<HStack space="sm" className="flex-wrap ml-6">
-										{fellowship?.info.participants && fellowship.info.participants.length > 0 ? (
-											<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+										{fellowship?.info.participants &&
+										fellowship.info.participants.length > 0 ? (
+											<ScrollView
+												horizontal
+												showsHorizontalScrollIndicator={false}
+											>
 												<HStack space="md" className="itmes-center">
 													{fellowship.info.participants.map((participant) => (
 														<AnimatedPressable
 															key={participant.id}
-															onPress={() => !participant.isGuest && openProfile(participant.id)}
+															onPress={() =>
+																!participant.isGuest &&
+																openProfile(participant.id)
+															}
 														>
 															<Avatar
 																label={participant.displayName || ''}
@@ -318,9 +337,9 @@ export default function FellowshipDetailScreen({
 
 						{/* 말씀 내용 */}
 						<VStack className="gap-8 pb-10 px-5">
-							{
-								fellowshipData?.content.categories.iceBreaking.items &&
-								Object.keys(fellowshipData.content.categories.iceBreaking.items).length > 0 && (
+							{fellowshipData?.content.categories.iceBreaking.items &&
+								Object.keys(fellowshipData.content.categories.iceBreaking.items)
+									.length > 0 && (
 									<FellowshipContentLayout title="아이스 브레이킹">
 										<FellowshipContentList
 											fellowshipId={id}
@@ -330,7 +349,8 @@ export default function FellowshipDetailScreen({
 									</FellowshipContentLayout>
 								)}
 							{fellowshipData?.content.categories.sermonTopic.items &&
-								Object.keys(fellowshipData.content.categories.sermonTopic.items).length > 0 && (
+								Object.keys(fellowshipData.content.categories.sermonTopic.items)
+									.length > 0 && (
 									<FellowshipContentLayout title="설교 나눔">
 										<FellowshipContentList
 											fellowshipId={id}
@@ -347,10 +367,12 @@ export default function FellowshipDetailScreen({
 										// id가 content id
 										router.push({
 											pathname: `/(app)/(fellowship)/${id}/answer`,
-											params: { contentType: "prayerRequest", answerId: "prayerRequest" }
+											params: {
+												contentType: 'prayerRequest',
+												answerId: 'prayerRequest',
+											},
 										});
-									}
-									}
+									}}
 								>
 									<FellowshipContentList
 										fellowshipId={id}

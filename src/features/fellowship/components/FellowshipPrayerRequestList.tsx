@@ -3,9 +3,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
-import type {
-	ClientFellowshipAnswerV2,
-} from '@/features/fellowship/api/types';
+import type { ClientFellowshipAnswerV2 } from '@/features/fellowship/api/types';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
 
@@ -24,7 +22,8 @@ export default function FellowshipPrayerRequestList({
 						<VStack space="sm" className="">
 							<AnimatedPressable
 								onPress={() =>
-									!answer.participant.isGuest && openProfile(answer.participant.id)
+									!answer.participant.isGuest &&
+									openProfile(answer.participant.id)
 								}
 							>
 								<HStack space="sm" className="items-center">

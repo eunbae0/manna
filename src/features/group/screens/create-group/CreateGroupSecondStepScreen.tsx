@@ -39,24 +39,23 @@ export default function CreateGroupSecondStepScreen({ group }: Props) {
 				<VStack className="px-5 py-6">
 					<VStack className="gap-20">
 						<VStack space="md">
-							<Heading size="3xl">
-								소그룹 코드를 발급했어요
-							</Heading>
+							<Heading size="3xl">소그룹 코드를 발급했어요</Heading>
 							<Text size="lg" weight="medium" className="text-typography-600">
 								초대 코드를 공유해 친구를 초대해보세요
 							</Text>
 						</VStack>
 						<VStack space="xl">
 							<Box className="w-full rounded-2xl bg-background-50 border-background-300 border-2 p-4">
-								<Text size="3xl" weight="medium" className="text-typography-800 text-center">
+								<Text
+									size="3xl"
+									weight="medium"
+									className="text-typography-800 text-center"
+								>
 									{group?.inviteCode ?? ''}
 								</Text>
 							</Box>
 							<HStack space="sm">
-								<Button
-									onPress={copyInviteCode}
-									className="flex-1"
-								>
+								<Button onPress={copyInviteCode} className="flex-1">
 									<ButtonText>코드 복사하기</ButtonText>
 									<ButtonIcon as={Copy} />
 								</Button>

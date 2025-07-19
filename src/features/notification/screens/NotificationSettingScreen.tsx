@@ -93,11 +93,11 @@ export default function NotificationSettingScreen() {
 				fellowship:
 					type === 'fellowship'
 						? value
-						: (userGroup.notificationPreferences?.fellowship ?? true),
+						: userGroup.notificationPreferences?.fellowship ?? true,
 				prayerRequest:
 					type === 'prayerRequest'
 						? value
-						: (userGroup.notificationPreferences?.prayerRequest ?? true),
+						: userGroup.notificationPreferences?.prayerRequest ?? true,
 				board: {
 					...userGroup.notificationPreferences?.board,
 				},

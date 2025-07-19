@@ -1,10 +1,10 @@
-import { useWebViewMessage } from "@/shared/hooks/useWebViewMessage";
-import WebView from "react-native-webview";
+import { useWebViewMessage } from '@/shared/hooks/useWebViewMessage';
+import WebView from 'react-native-webview';
 
 export function OfficialHomepageWebView({ uri }: { uri: string }) {
 	const webViewRef = useWebViewMessage({
 		hideHeader: true,
-		platform: 'native'
+		platform: 'native',
 	});
 
 	return (
@@ -15,5 +15,5 @@ export function OfficialHomepageWebView({ uri }: { uri: string }) {
 				uri,
 			}}
 		/>
-	)
+	);
 }

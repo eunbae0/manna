@@ -109,11 +109,7 @@ const PrayerRequestList = ({
 							className="bg-white rounded-xl py-4 px-4 items-center justify-between"
 						>
 							<Text size="lg">기도제목을 추가해보세요</Text>
-							<Icon
-								as={ChevronRight}
-								size="md"
-								className="text-primary-500"
-							/>
+							<Icon as={ChevronRight} size="md" className="text-primary-500" />
 						</HStack>
 					</Pressable>
 				)}

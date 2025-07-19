@@ -71,10 +71,9 @@ import {
 import { goBackOrReplaceHome, openProfile } from '@/shared/utils/router';
 import TextWithLinks from '@/shared/components/text-with-links';
 import * as Haptics from 'expo-haptics';
-import { Image } from 'expo-image'
+import { Image } from 'expo-image';
 import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
-import ImageModal from 'react-native-image-modal'
-
+import ImageModal from 'react-native-image-modal';
 
 /**
  * 로딩 상태 컴포넌트
@@ -165,20 +164,18 @@ export default function BoardPostDetailScreen() {
 		};
 	}, [currentGroup?.groupId, postId]);
 
-	const {
-		data: reactions,
-		refetch: refetchReactions,
-	} = useReactions(reactionMetadata);
+	const { data: reactions, refetch: refetchReactions } =
+		useReactions(reactionMetadata);
 
 	// 현재 사용자가 좋아요를 눌렀는지 확인
 	const isLiked = useMemo(() => {
 		return reactions
 			? Object.values(reactions).some((reactions) =>
-				reactions.some(
-					(reaction) =>
-						reaction.userId === user?.id && reaction.type === 'like',
-				),
-			)
+					reactions.some(
+						(reaction) =>
+							reaction.userId === user?.id && reaction.type === 'like',
+					),
+				)
 			: false;
 	}, [reactions, user]);
 
@@ -204,7 +201,15 @@ export default function BoardPostDetailScreen() {
 				},
 			},
 		);
-	}, [post, user, currentGroup?.groupId, reactionMetadata, isLiked, reactionToggleMutation, showError]);
+	}, [
+		post,
+		user,
+		currentGroup?.groupId,
+		reactionMetadata,
+		isLiked,
+		reactionToggleMutation,
+		showError,
+	]);
 
 	// 댓글 생성 뮤테이션
 	const createCommentMutation = useCreateComment();
@@ -432,7 +437,6 @@ export default function BoardPostDetailScreen() {
 		handleClose: handlePostSettingClose,
 	} = useBottomSheet();
 
-
 	// 로딩 상태 표시
 	if (isPostLoading) {
 		return (
@@ -534,35 +538,51 @@ export default function BoardPostDetailScreen() {
 
 						{/* 게시글 내용 */}
 						<Box className="mb-6">
-							<TextWithLinks text={post?.content || ''} size="xl" className="text-typography-700" />
+							<TextWithLinks
+								text={post?.content || ''}
+								size="xl"
+								className="text-typography-700"
+							/>
 						</Box>
 
 						{/* 게시글 이미지 */}
 						<VStack space="sm" className="mb-6">
-							{post?.elements?.image?.sort((a, b) => a.position - b.position).map((i) => {
-								const image = i as ImageElement
-								return (
-									// @ts-expect-error: source prop is not necessary
-									<ImageModal
-										key={image.position}
-										style={{ width: '100%', height: 300, aspectRatio: 1, borderRadius: 8, borderWidth: 1, borderColor: '#ECECEC' }}
-										resizeMode='contain'
-										renderImageComponent={({ style }) => (
-											<Image
-												key={image.position}
-												source={getImageSourceForSignedImageUrl(image.url)}
-												style={style}
-												contentFit='contain'
-											/>
-										)}
-									/>
-								)
-							})}
+							{post?.elements?.image
+								?.sort((a, b) => a.position - b.position)
+								.map((i) => {
+									const image = i as ImageElement;
+									return (
+										// @ts-expect-error: source prop is not necessary
+										<ImageModal
+											key={image.position}
+											style={{
+												width: '100%',
+												height: 300,
+												aspectRatio: 1,
+												borderRadius: 8,
+												borderWidth: 1,
+												borderColor: '#ECECEC',
+											}}
+											resizeMode="contain"
+											renderImageComponent={({ style }) => (
+												<Image
+													key={image.position}
+													source={getImageSourceForSignedImageUrl(image.url)}
+													style={style}
+													contentFit="contain"
+												/>
+											)}
+										/>
+									);
+								})}
 						</VStack>
 
 						{/* 게시글 통계 */}
 						{reactions?.like && reactions?.like.length > 0 && (
-							<AnimatedPressable scale={0.98} onPress={handleLikeMemberListOpen}>
+							<AnimatedPressable
+								scale={0.98}
+								onPress={handleLikeMemberListOpen}
+							>
 								<HStack space="sm" className="items-center pb-1">
 									<AvatarGroup max={2} onPress={handleLikeMemberListOpen}>
 										{reactions?.like?.map((reaction) => (
@@ -588,9 +608,7 @@ export default function BoardPostDetailScreen() {
 											size="xl"
 											fill={isLiked ? '#362303' : undefined}
 											className={
-												isLiked
-													? 'text-primary-500'
-													: 'text-typography-900'
+												isLiked ? 'text-primary-500' : 'text-typography-900'
 											}
 										/>
 										<Text
@@ -680,7 +698,9 @@ export default function BoardPostDetailScreen() {
 								variant="icon"
 								rounded
 								onPress={handleSubmitComment}
-								disabled={!commentText.trim() || createCommentMutation.isPending}
+								disabled={
+									!commentText.trim() || createCommentMutation.isPending
+								}
 							>
 								{createCommentMutation.isPending ? (
 									<ActivityIndicator size="small" color="#6366f1" />
@@ -731,19 +751,25 @@ export default function BoardPostDetailScreen() {
 							onPress={handleLikeMemberListClose}
 						/>
 						<ScrollView style={{ maxHeight: 300 }}>
-							{reactions?.like && reactions?.like?.length > 0 ? reactions?.like?.map((item: ClientReaction) => (
-								<HStack key={item.userId} space="md" className="items-center py-3">
-									<Avatar size="lg" photoUrl={item.member.photoUrl} />
-									<VStack>
-										<Text size="lg" className="font-pretendard-semi-bold">
-											{item.member.displayName}
-										</Text>
-										<Text size="sm" className="text-typography-500">
-											{item.member.role === UserRole.LEADER ? '리더' : '멤버'}
-										</Text>
-									</VStack>
-								</HStack>
-							)) : (
+							{reactions?.like && reactions?.like?.length > 0 ? (
+								reactions?.like?.map((item: ClientReaction) => (
+									<HStack
+										key={item.userId}
+										space="md"
+										className="items-center py-3"
+									>
+										<Avatar size="lg" photoUrl={item.member.photoUrl} />
+										<VStack>
+											<Text size="lg" className="font-pretendard-semi-bold">
+												{item.member.displayName}
+											</Text>
+											<Text size="sm" className="text-typography-500">
+												{item.member.role === UserRole.LEADER ? '리더' : '멤버'}
+											</Text>
+										</VStack>
+									</HStack>
+								))
+							) : (
 								<Box className="items-center justify-center py-10">
 									<Text className="text-typography-500">
 										아직 공감한 멤버가 없어요
