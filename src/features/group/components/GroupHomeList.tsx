@@ -525,7 +525,7 @@ function GroupHomeList() {
 									},
 									data: post,
 								}}
-								isCommentVisible={false}
+								isCommentVisible
 							/>
 						))
 					)}
