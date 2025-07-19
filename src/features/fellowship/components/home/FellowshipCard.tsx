@@ -19,7 +19,10 @@ import Animated, {
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated';
-import { getFellowshipContentItemList, getFellowshipContentTitleList } from '../../utils';
+import {
+	getFellowshipContentItemList,
+	getFellowshipContentTitleList,
+} from '../../utils';
 
 // 애니메이션 적용된 카테고리 제목 컴포넌트
 export const AnimatedCategoryTitle = memo(function AnimatedCategoryTitle({
@@ -130,13 +133,15 @@ export default function FellowshipCard({
 }) {
 	const findMemberInfo = useCallback(
 		(id: string) => {
-			return fellowship.info.participants.find(
-				(participant) => participant.id === id,
-			) ?? {
-						id,
-						displayName: '알수없음',
-						isGuest: false,
-					};
+			return (
+				fellowship.info.participants.find(
+					(participant) => participant.id === id,
+				) ?? {
+					id,
+					displayName: '알수없음',
+					isGuest: false,
+				}
+			);
 		},
 		[fellowship],
 	);
@@ -147,7 +152,7 @@ export default function FellowshipCard({
 		items: ClientFellowshipV2['content']['categories'][string]['items'];
 	}> = useMemo(
 		() => getFellowshipContentTitleList(fellowship.content),
-		[fellowship]
+		[fellowship],
 	);
 
 	const [currentId, setCurrentId] = useState<string | null>(

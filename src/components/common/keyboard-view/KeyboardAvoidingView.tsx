@@ -11,7 +11,7 @@ const KeyboardAvoidingView = ({
 			behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 			style={{ flex: 1 }}
 			keyboardVerticalOffset={
-				Platform.OS === 'ios' ? keyboardVerticalOffset ?? 12 : 0
+				Platform.OS === 'ios' ? (keyboardVerticalOffset ?? 12) : 0
 			}
 		>
 			<KeyboardDismissView>{children}</KeyboardDismissView>

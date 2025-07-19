@@ -53,7 +53,7 @@ export default function CreateGroupFirstStepScreen({
 					id: user?.id ?? '',
 					displayName: isOnboarding
 						? userData.displayName
-						: user?.displayName ?? '',
+						: (user?.displayName ?? ''),
 					photoUrl: user?.photoUrl ?? '',
 					role: 'leader',
 				},
