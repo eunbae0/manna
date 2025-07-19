@@ -82,6 +82,7 @@ export function NotificationItem({
 	});
 
 	const panGesture = Gesture.Pan()
+		.hitSlop({ left: -20 })
 		// 수직 스크롤과의 충돌 방지를 위한 설정
 		.activeOffsetX([-10, 10]) // 수평으로 10px 이상 움직여야 활성화
 		.failOffsetY([-20, 20]) // 수직으로 20px 이상 움직이면 제스처 실패 처리
@@ -247,7 +248,7 @@ export function NotificationItem({
 						style={animatedContentStyle}
 						className={cn('w-full', item.isRead ? '' : 'bg-primary-100')}
 					>
-						<AnimatedPressable onPress={onItemPress} className="w-full">
+						<AnimatedPressable scale="sm" onPress={onItemPress} className="w-full">
 							<HStack space="sm" className="px-5 py-5 justify-start">
 								<Box className="w-6 h-6 bg-primary-200/50 rounded-full items-center justify-center">
 									<Icon
