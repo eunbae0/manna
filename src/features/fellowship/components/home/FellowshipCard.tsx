@@ -19,6 +19,7 @@ import Animated, {
 	withSpring,
 	withTiming,
 } from 'react-native-reanimated';
+import { getFellowshipContentItemList, getFellowshipContentTitleList } from '../../utils';
 
 // 애니메이션 적용된 카테고리 제목 컴포넌트
 export const AnimatedCategoryTitle = memo(function AnimatedCategoryTitle({
@@ -131,7 +132,11 @@ export default function FellowshipCard({
 		(id: string) => {
 			return fellowship.info.participants.find(
 				(participant) => participant.id === id,
-			);
+			) ?? {
+						id,
+						displayName: '알수없음',
+						isGuest: false,
+					};
 		},
 		[fellowship],
 	);
@@ -141,20 +146,8 @@ export default function FellowshipCard({
 		title: string;
 		items: ClientFellowshipV2['content']['categories'][string]['items'];
 	}> = useMemo(
-		() =>
-			Object.values(fellowship.content.categories)
-				.filter(
-					(category) =>
-						category.isActive &&
-						Object.values(Object.values(category.items)[0]?.answers || {})
-							.length > 0,
-				)
-				.map((category) => ({
-					id: category.id,
-					title: category.title,
-					items: category.items,
-				})),
-		[fellowship],
+		() => getFellowshipContentTitleList(fellowship.content),
+		[fellowship]
 	);
 
 	const [currentId, setCurrentId] = useState<string | null>(
@@ -163,20 +156,7 @@ export default function FellowshipCard({
 
 	const fellowshipContentItemList: Array<FellowshipContentItem> = useMemo(
 		() =>
-			fellowshipContentTitleList.map((content) => ({
-				id: content.id,
-				content: Object.entries(
-					Object.values(content.items).sort((a, b) => a.order - b.order)[0]
-						?.answers || {},
-				).map(([memberId, answer]) => ({
-					member: findMemberInfo(memberId) || {
-						id: memberId,
-						displayName: '알수없음',
-						isGuest: false,
-					},
-					answer,
-				})),
-			})),
+			getFellowshipContentItemList(fellowshipContentTitleList, findMemberInfo),
 		[fellowshipContentTitleList, findMemberInfo],
 	);
 

@@ -1,5 +1,5 @@
 import type { GroupMember } from '@/api/group/types';
-import type { ClientFellowshipV2 } from '../api/types';
+import type { ClientFellowshipParticipantV2, ClientFellowshipV2 } from '../api/types';
 
 // utils/fellowship.ts
 export function getFellowshipContentTitleList(
@@ -27,14 +27,14 @@ export function getFellowshipContentItemList(
 	}>,
 	findMemberInfo: (
 		id: string,
-	) => GroupMember | { id: string; displayName: string },
+	) => ClientFellowshipParticipantV2,
 ) {
 	return fellowshipContentTitleList.map((content) => ({
 		id: content.id,
 		content: Object.entries(
 			Object.values(content.items).sort((a, b) => a.order - b.order)[0]
 				?.answers || {},
-		).map(([memberId, answer]) => ({
+		).filter(([, answer]) => !!answer).map(([memberId, answer]) => ({
 			member: findMemberInfo(memberId),
 			answer,
 		})),
