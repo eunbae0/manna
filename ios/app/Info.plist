@@ -29,8 +29,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>sogroup-development</string>
-          <string>sogroup</string>
+          <string>manna</string>
           <string>com.eunbae.sogroup</string>
         </array>
       </dict>

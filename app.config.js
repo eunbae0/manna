@@ -4,8 +4,8 @@ export default {
 	expo: {
 		name: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
 		displayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
-		slug: 'so-group',
-		scheme: ['sogroup-development', 'sogroup'],
+		slug: 'manna',
+		scheme: ['manna'],
 		version: '1.3.1',
 		orientation: 'portrait',
 		icon: './assets/images/icons/manna_icon_white.png',
