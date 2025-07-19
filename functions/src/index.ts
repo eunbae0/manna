@@ -5,6 +5,7 @@ import { boardNewPostNotification } from './notification/boardNewPostNotificatio
 import { fellowshipNotification } from './notification/fellowshipNotification';
 import { boardActivityNotification } from './notification/boardActivityNotification';
 import { getUserFeeds } from './caller/getUserFeeds';
+import { sendPushNotificationToAllUsers } from './caller/pushNotification';
 
 admin.initializeApp();
 
@@ -21,3 +22,5 @@ exports.boardActivityNotification = boardActivityNotification();
 // caller
 
 exports.getUserFeeds = getUserFeeds();
+
+exports.sendPushNotificationToAllUsers = sendPushNotificationToAllUsers();
