@@ -47,6 +47,7 @@ import { SelectedBibleList } from '@/shared/components/bible';
 import type { SelectedBible } from '@/features/bible/types/selectedBible';
 import { BibleSelector } from '@/features/bible/components/BibleSelector';
 import { useWorshipTypes } from '../hooks/useWorshipTypes';
+import { useShowStoreReview } from '@/shared/hooks/useShowStoreReview';
 
 export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
 	const isCreateScreen = screen === 'create';
@@ -55,6 +56,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
 		id?: string;
 		sermon?: string;
 	}>();
+	const { showReview } = useShowStoreReview();
 
 	const paramSermon = sermon ? ([JSON.parse(sermon)] as SelectedBible[]) : [];
 
@@ -170,7 +172,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
 		setIsEditing(true);
 	};
 
-	const handleUpdateNoteSubmit = () => {
+	const handleUpdateNoteSubmit = async () => {
 		if (!editableNote.title) {
 			showSuccess('설교 제목을 입력해주세요.');
 			return;
@@ -193,6 +195,7 @@ export default function NoteScreen({ screen }: { screen: 'create' | 'view' }) {
 
 		if (isCreateScreen) {
 			createNote(noteData);
+			await showReview();
 			return;
 		}
 

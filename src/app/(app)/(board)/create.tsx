@@ -41,6 +41,7 @@ import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScroll
 import * as ImagePicker from 'expo-image-picker';
 import { deletePostImage, uploadPostImage } from '@/features/board/api';
 import { AnimatedProgress } from '@/shared/components/animated-progress';
+import { useShowStoreReview } from '@/shared/hooks/useShowStoreReview';
 
 const MAX_IMAGE_COUNT = 2;
 type ImageState = {
@@ -55,6 +56,7 @@ type ImageState = {
  */
 export default function CreateBoardPostScreen() {
 	const { user, currentGroup } = useAuthStore();
+	const { showReview } = useShowStoreReview();
 	const { showSuccess, showError, showInfo } = useToastStore();
 	const { isEdit, id } = useLocalSearchParams<{
 		id?: string;
@@ -211,9 +213,10 @@ export default function CreateBoardPostScreen() {
 				},
 			},
 			{
-				onSuccess: (postId) => {
+				onSuccess: async (postId) => {
 					showSuccess('게시글이 등록되었어요');
 					router.replace(`/(app)/(board)/${postId.id}`);
+					await showReview();
 				},
 				onError: (error) => {
 					console.error('게시글 등록 실패:', error);

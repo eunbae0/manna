@@ -23,6 +23,7 @@ import { cn } from '@/shared/utils/cn';
 import { useAiSummary } from '../../hooks/useAiSummary';
 import { useToastStore } from '@/store/toast';
 import { EMBED_NOTE_AI_SUMMARY_PROMPT } from '../../constants/aiSummary';
+import { useShowStoreReview } from '@/shared/hooks/useShowStoreReview';
 
 type Props = {
 	notes: Note[] | null;
@@ -31,6 +32,7 @@ type Props = {
 };
 
 export function EmbedNoteSheet({ notes, updateAnswer, ref }: Props) {
+	const { showReview } = useShowStoreReview();
 	const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 	const [text, setText] = useState('');
 	const { showInfo, showError, showSuccess } = useToastStore();
@@ -96,7 +98,7 @@ export function EmbedNoteSheet({ notes, updateAnswer, ref }: Props) {
 		[selectedSummaryIndex],
 	);
 
-	const handlePressApplyNote = useCallback(() => {
+	const handlePressApplyNote = useCallback(async () => {
 		if (summaries && selectedSummaryIndex !== -1) {
 			updateAnswer(summaries[selectedSummaryIndex]);
 			showSuccess('설교 노트가 적용되었어요.');
@@ -112,6 +114,7 @@ export function EmbedNoteSheet({ notes, updateAnswer, ref }: Props) {
 		showSuccess('설교 노트가 적용되었어요.');
 		handleCloseSheet();
 		resetState();
+		await showReview();
 	}, [
 		text,
 		summaries,
@@ -120,6 +123,7 @@ export function EmbedNoteSheet({ notes, updateAnswer, ref }: Props) {
 		showError,
 		resetState,
 		showSuccess,
+		showReview,
 		handleCloseSheet,
 	]);
 

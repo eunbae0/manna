@@ -39,6 +39,7 @@ import { NoteStorageService } from '@/features/note/storage';
 import type { Note } from '@/features/note/types';
 import { EmbedNoteSheet } from './EmbedNoteSheet';
 import { FELLOWSHIP_AI_SUMMARY_PROMPT } from '../../constants/aiSummary';
+import { useShowStoreReview } from '../../../../shared/hooks/useShowStoreReview';
 
 export function AnswerField({
 	member,
@@ -49,6 +50,7 @@ export function AnswerField({
 	answer: string;
 	updateAnswer: (memberId: string, content: string) => void;
 }) {
+	const { showReview } = useShowStoreReview();
 	const { showSuccess, showInfo } = useToastStore();
 	const { user } = useAuthStore();
 	const isMe = user?.id === member.id;
@@ -152,7 +154,7 @@ export function AnswerField({
 	};
 
 	// 선택한 요약 적용 및 트랜스크립트 초기화
-	const handleApplyRecording = () => {
+	const handleApplyRecording = async () => {
 		if (!summaries) return;
 		const answer = summaries[selectedSummaryIndex] || localAnswer;
 		// 답변 업데이트
@@ -165,6 +167,7 @@ export function AnswerField({
 		}
 
 		handleCloseSummarizeSheet();
+		await showReview();
 	};
 
 	const isRecordingCurrentMember = isRecording && recordingId === member.id;

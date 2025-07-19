@@ -4,10 +4,10 @@ import { useFonts } from 'expo-font';
 import { useEffect, useState } from 'react';
 import { getAnalytics } from '@react-native-firebase/analytics';
 import { setUserId, logEvent, AnalyticsEvents } from '@/utils/analytics';
-import { getToken, requestNotificationPermission } from '@/api/messaging';
+import { requestNotificationPermission } from '@/api/messaging';
 import { useAppVersionCheck } from './useAppVersionCheck';
 import * as Sentry from '@sentry/react';
-import { onUserSignIn } from '@/shared/utils/amplitude';
+import { useShowStoreReview } from '@/shared/hooks/useShowStoreReview';
 
 export function useInitializeApp() {
 	const [loaded, setIsLoaded] = useState(false);
@@ -25,6 +25,7 @@ export function useInitializeApp() {
 
 	const { onAuthStateChanged, isAuthenticated } = useAuthStore();
 	const [authLoading, setAuthLoading] = useState(true);
+	const { incrementAppLaunchCount } = useShowStoreReview();
 
 	useEffect(() => {
 		const subscriber = auth.onAuthStateChanged(async (user) => {
@@ -52,10 +53,12 @@ export function useInitializeApp() {
 	useEffect(() => {
 		if (!fontLoaded || authLoading || versionCheckLoading) return;
 
+		incrementAppLaunchCount();
+
 		// Initialize analytics when app is loaded
 		initAnalytics();
 		setIsLoaded(true);
-	}, [fontLoaded, authLoading, versionCheckLoading]);
+	}, [incrementAppLaunchCount, fontLoaded, authLoading, versionCheckLoading]);
 
 	// 앱 버전 체크 상태도 로딩에 포함
 

@@ -13,8 +13,10 @@ import { KeyboardAwareScrollView } from '@/shared/components/KeyboardAwareScroll
 import { FELLOWSHIPS_QUERY_KEY } from '../../constants/queyKeys';
 import { useQueryClient } from '@tanstack/react-query';
 import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
+import { useShowStoreReview } from '@/shared/hooks/useShowStoreReview';
 
 export default function FellowshipContentScreen() {
+	const { showReview } = useShowStoreReview();
 	const { currentGroup } = useAuthStore();
 	const {
 		type,
@@ -103,6 +105,7 @@ export default function FellowshipContentScreen() {
 							queryClient.invalidateQueries({
 								queryKey: [FEEDS_QUERY_KEY],
 							});
+							await showReview();
 						}}
 					>
 						<ButtonText>

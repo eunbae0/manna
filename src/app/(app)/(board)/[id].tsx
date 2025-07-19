@@ -74,6 +74,7 @@ import * as Haptics from 'expo-haptics';
 import { Image } from 'expo-image';
 import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
 import ImageModal from 'react-native-image-modal';
+import { useShowStoreReview } from '@/shared/hooks/useShowStoreReview';
 
 /**
  * 로딩 상태 컴포넌트
@@ -108,6 +109,7 @@ export default function BoardPostDetailScreen() {
 	const commentInputRef = useRef<TextInput>(null);
 	const [commentText, setCommentText] = useState('');
 	const [refreshing, setRefreshing] = useState(false);
+	const { showReview } = useShowStoreReview();
 
 	// 현재 사용자 및 그룹 정보 가져오기
 	const { user, currentGroup } = useAuthStore();
@@ -228,12 +230,13 @@ export default function BoardPostDetailScreen() {
 				},
 			},
 			{
-				onSuccess: () => {
+				onSuccess: async () => {
 					setCommentText('');
 					showSuccess('댓글이 등록되었어요');
 					// 댓글 입력 후 키보드 닫기
 					commentInputRef.current?.blur();
 					Keyboard.dismiss();
+					await showReview();
 				},
 				onError: () => {
 					Keyboard.dismiss();
