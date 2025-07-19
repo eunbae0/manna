@@ -585,7 +585,7 @@ export default function BoardPostDetailScreen() {
 							<AnimatedPressable
 								scale={0.98}
 								onPress={handleLikeMemberListOpen}
-								className='self-start'
+								className="self-start"
 							>
 								<HStack space="sm" className="items-center pb-1">
 									<AvatarGroup max={2} onPress={handleLikeMemberListOpen}>
@@ -627,8 +627,16 @@ export default function BoardPostDetailScreen() {
 									</HStack>
 								</AnimatedPressable>
 								<HStack space="xs" className="items-center">
-									<Icon size="xl" as={MessageCircle} className="text-typography-500" />
-									<Text size="lg" weight="medium" className="text-typography-500">
+									<Icon
+										size="xl"
+										as={MessageCircle}
+										className="text-typography-500"
+									/>
+									<Text
+										size="lg"
+										weight="medium"
+										className="text-typography-500"
+									>
 										{post.commentCount}
 									</Text>
 								</HStack>

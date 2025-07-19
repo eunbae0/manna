@@ -191,10 +191,18 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 									size="lg"
 									as={Heart}
 									fill={hasLiked ? '#362303' : undefined}
-									className={hasLiked ? 'text-primary-500' : 'text-typography-500'}
+									className={
+										hasLiked ? 'text-primary-500' : 'text-typography-500'
+									}
 								/>
 							</Animated.View>
-							<Text size="lg" weight="medium" className={hasLiked ? 'text-primary-500' : 'text-typography-500'}>
+							<Text
+								size="lg"
+								weight="medium"
+								className={
+									hasLiked ? 'text-primary-500' : 'text-typography-500'
+								}
+							>
 								{prayerRequest.reactions.length}
 							</Text>
 						</HStack>

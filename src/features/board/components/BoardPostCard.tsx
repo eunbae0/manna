@@ -29,6 +29,7 @@ import {
 import { useAuthStore } from '@/store/auth';
 import { useToastStore } from '@/store/toast';
 import {
+	type ImageElement,
 	UserRole,
 	type BoardPost,
 	type PostReactionMetadata,
@@ -38,6 +39,10 @@ import { useReactions, useDeleteBoardPost, useReactionToggle } from '../hooks';
 import { usePinPostUtils } from '../utils/pin';
 import { checkPinnedPost } from '../api';
 import { useCallback, useMemo } from 'react';
+import { Image } from 'expo-image';
+import { getImageSourceForSignedImageUrl } from '@/shared/utils/image';
+import { ScrollView } from 'react-native-gesture-handler';
+import * as Haptics from 'expo-haptics';
 
 interface BoardPostCardProps {
 	post: BoardPost;
@@ -208,13 +213,16 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 				onError: () => {
 					showError('좋아요를 취소하지 못했어요');
 				},
+				onSettled: () => {
+					Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+				},
 			},
 		);
 	}, [post, user, currentGroup?.groupId, reactionMetadata, isLiked]);
 
 	return (
 		<>
-			<AnimatedPressable onPress={handlePressPost}>
+			<AnimatedPressable scale="sm" onPress={handlePressPost}>
 				<HStack space="md" className={cn('py-5 pl-4', isPinnedStyle)}>
 					<Avatar
 						size="md"
@@ -253,29 +261,55 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 										<HStack space="xs" className="items-center mr-12">
 											<Text
 												size="xs"
-												className="text-typography-700 font-pretendard-Medium"
+												weight="semi-bold"
+												className="text-typography-600"
 											>
 												고정됨
 											</Text>
 											<Icon
 												as={Pin}
 												size="xs"
-												className="text-typography-700"
+												className="text-typography-600"
 											/>
 										</HStack>
 									)}
 								</HStack>
 							</HStack>
-							<VStack space="xs">
-								<Text size="lg" className="pr-12 font-pretendard-Medium">
-									{post.title}
-								</Text>
-								<Text
-									numberOfLines={2}
-									className="pr-12 text-typography-600 mb-2"
-								>
-									{post.content}
-								</Text>
+							<VStack space="sm" className="">
+								<VStack space="xs">
+									<Text size="xl" weight="medium" className="pr-12">
+										{post.title}
+									</Text>
+									<Text
+										numberOfLines={2}
+										size="lg"
+										className="pr-12 text-typography-600"
+									>
+										{post.content}
+									</Text>
+								</VStack>
+								<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+									<HStack space="sm" className="">
+										{post.elements?.image?.map((i) => {
+											const image = i as ImageElement;
+											return (
+												<Image
+													key={image.position}
+													source={getImageSourceForSignedImageUrl(image.url)}
+													style={{
+														width: 160,
+														height: 160,
+														borderRadius: 8,
+														borderWidth: 1,
+														borderColor: '#ECECEC',
+														marginVertical: 8,
+													}}
+													contentFit="cover"
+												/>
+											);
+										})}
+									</HStack>
+								</ScrollView>
 							</VStack>
 						</VStack>
 						<HStack className="items-center justify-between pr-4">
@@ -287,12 +321,14 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 											size="xl"
 											fill={isLiked ? '#362303' : undefined}
 											className={
-												isLiked ? 'text-primary-500' : 'text-typography-900'
+												isLiked ? 'text-primary-500' : 'text-typography-500'
 											}
 										/>
 										<Text
+											size="lg"
+											weight="medium"
 											className={
-												isLiked ? 'text-primary-500' : 'text-typography-900'
+												isLiked ? 'text-primary-500' : 'text-typography-500'
 											}
 										>
 											{post.reactionSummary?.like || 0}
@@ -300,8 +336,16 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 									</HStack>
 								</AnimatedPressable>
 								<HStack space="xs" className="items-center">
-									<Icon size="xl" as={MessageCircle} />
-									<Text className="text-typography-900">
+									<Icon
+										size="xl"
+										as={MessageCircle}
+										className="text-typography-500"
+									/>
+									<Text
+										size="lg"
+										weight="medium"
+										className="text-typography-500"
+									>
 										{post.commentCount}
 									</Text>
 								</HStack>
@@ -315,7 +359,7 @@ export function BoardPostCard({ post }: BoardPostCardProps) {
 						</HStack>
 					</VStack>
 					{isOwner && (
-						<Box className="absolute top-2 right-2">
+						<Box className="absolute top-2 right-1">
 							<Button onPress={handlePressMoreButton} variant="icon">
 								<ButtonIcon as={MoreHorizontal} />
 							</Button>

@@ -183,7 +183,13 @@ export function PostFeedItem({
 										}
 										fill={isLiked ? '#362303' : ''}
 									/>
-									<Text size="lg" weight="medium" className={isLiked ? 'text-primary-500' : "text-typography-500"}>
+									<Text
+										size="lg"
+										weight="medium"
+										className={
+											isLiked ? 'text-primary-500' : 'text-typography-500'
+										}
+									>
 										{item.data.reactionSummary?.like || 0}
 									</Text>
 								</HStack>
