@@ -585,6 +585,7 @@ export default function BoardPostDetailScreen() {
 							<AnimatedPressable
 								scale={0.98}
 								onPress={handleLikeMemberListOpen}
+								className='self-start'
 							>
 								<HStack space="sm" className="items-center pb-1">
 									<AvatarGroup max={2} onPress={handleLikeMemberListOpen}>
@@ -611,12 +612,14 @@ export default function BoardPostDetailScreen() {
 											size="xl"
 											fill={isLiked ? '#362303' : undefined}
 											className={
-												isLiked ? 'text-primary-500' : 'text-typography-900'
+												isLiked ? 'text-primary-500' : 'text-typography-500'
 											}
 										/>
 										<Text
+											size="lg"
+											weight="medium"
 											className={
-												isLiked ? 'text-primary-500' : 'text-typography-900'
+												isLiked ? 'text-primary-500' : 'text-typography-500'
 											}
 										>
 											{post.reactionSummary?.like || 0}
@@ -624,15 +627,15 @@ export default function BoardPostDetailScreen() {
 									</HStack>
 								</AnimatedPressable>
 								<HStack space="xs" className="items-center">
-									<Icon size="xl" as={MessageCircle} />
-									<Text className="text-typography-900">
+									<Icon size="xl" as={MessageCircle} className="text-typography-500" />
+									<Text size="lg" weight="medium" className="text-typography-500">
 										{post.commentCount}
 									</Text>
 								</HStack>
 							</HStack>
 							<HStack space="xs" className="items-center">
-								<Icon size="xl" as={Eye} className="text-gray-500" />
-								<Text size="sm" className="text-gray-500">
+								<Icon size="xl" as={Eye} className="text-typography-500" />
+								<Text size="sm" weight="medium" className="text-typography-500">
 									{post.viewCount}
 								</Text>
 							</HStack>

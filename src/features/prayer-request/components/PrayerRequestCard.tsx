@@ -136,19 +136,19 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 	return (
 		<>
 			<GestureDetector gesture={doubleTap}>
-				<HStack space="md" className="py-5 pl-4">
-					<Avatar
-						size="md"
-						className="mt-1"
-						photoUrl={
-							prayerRequest.isAnonymous
-								? ''
-								: prayerRequest.member?.photoUrl || ''
-						}
-					/>
-					<VStack space="md" className="flex-1">
-						<HStack className="justify-between items-start mr-1">
-							<VStack className="gap-[2px] flex-1">
+				<VStack space="lg" className="py-5 pl-4 flex-1">
+					<HStack space="md" className="">
+						<Avatar
+							size="md"
+							className="mt-1"
+							photoUrl={
+								prayerRequest.isAnonymous
+									? ''
+									: prayerRequest.member?.photoUrl || ''
+							}
+						/>
+						<HStack className="flex-1 justify-between items-start mr-1">
+							<VStack className="gap-[2px]">
 								<Text
 									size="lg"
 									weight="semi-bold"
@@ -173,33 +173,33 @@ const PrayerRequestCard = ({ prayerRequest }: Props) => {
 								</Button>
 							)}
 						</HStack>
-						<Text size="xl" className="text-typography-800 pr-12">
-							{prayerRequest.value}
-						</Text>
-						<Pressable onPress={() => toggleLike()} className="ml-auto mr-4">
-							<HStack space="xs" className="items-center">
-								<Animated.View
-									style={useAnimatedStyle(() => ({
-										transform: [
-											{ scale: heartScale.value },
-											{ translateY: heartTranslateY.value },
-										],
-									}))}
-								>
-									<Icon
-										size="lg"
-										as={Heart}
-										fill={hasLiked ? '#362303' : undefined}
-										className={hasLiked ? 'text-primary-500' : 'color-black'}
-									/>
-								</Animated.View>
-								<Text size="md" className={hasLiked ? 'text-primary-500' : ''}>
-									{prayerRequest.reactions.length}
-								</Text>
-							</HStack>
-						</Pressable>
-					</VStack>
-				</HStack>
+					</HStack>
+					<Text size="xl" className="text-typography-900 pr-12">
+						{prayerRequest.value}
+					</Text>
+					<Pressable onPress={() => toggleLike()} className="ml-auto mr-4">
+						<HStack space="xs" className="items-center">
+							<Animated.View
+								style={useAnimatedStyle(() => ({
+									transform: [
+										{ scale: heartScale.value },
+										{ translateY: heartTranslateY.value },
+									],
+								}))}
+							>
+								<Icon
+									size="lg"
+									as={Heart}
+									fill={hasLiked ? '#362303' : undefined}
+									className={hasLiked ? 'text-primary-500' : 'text-typography-500'}
+								/>
+							</Animated.View>
+							<Text size="lg" weight="medium" className={hasLiked ? 'text-primary-500' : 'text-typography-500'}>
+								{prayerRequest.reactions.length}
+							</Text>
+						</HStack>
+					</Pressable>
+				</VStack>
 			</GestureDetector>
 			<BottomSheetContainer>
 				<BottomSheetListLayout>
