@@ -405,9 +405,9 @@ const Button = React.forwardRef<View, ButtonProps>(
 					}}
 					onPressOut={(e) => {
 						handlePressOut();
-						onPress?.(e);
 						props.onPressOut?.(e);
 					}}
+					onPress={onPress}
 					{...props}
 				>
 					{childrenWithProps}
