@@ -6,7 +6,7 @@ export default {
 		displayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
 		slug: 'manna',
 		scheme: ['manna'],
-		version: '1.3.1',
+		version: '1.3.2',
 		orientation: 'portrait',
 		icon: './assets/images/icons/manna_icon_white.png',
 		userInterfaceStyle: 'automatic',
@@ -22,7 +22,7 @@ export default {
 				CADisableMinimumFrameDurationOnPhone: true,
 				UIBackgroundModes: ['remote-notification'],
 				CFBundleDisplayName: IS_DEVELOPMENT ? '만나 (개발)' : '만나',
-				CFBundleVersion: '1.3.1',
+				CFBundleVersion: '1.3.2',
 			},
 			entitlements: {
 				'com.apple.developer.applesignin': ['Default'],
@@ -33,10 +33,10 @@ export default {
 				? './assets/google/development/GoogleService-Info.plist'
 				: './assets/google/GoogleService-Info.plist',
 			appleTeamId: 'AQ62DT56AM',
-			version: '1.3.1',
+			version: '1.3.2',
 		},
 		android: {
-			versionCode: 13100,
+			versionCode: 13200,
 			adaptiveIcon: {
 				foregroundImage: './assets/images/icons/manna_icon_android_white.png',
 				backgroundColor: '#FFFFFF',
