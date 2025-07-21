@@ -23,6 +23,7 @@ import { useToastStore } from '@/store/toast';
 import { Icon } from '#/components/ui/icon';
 import { goBackOrReplaceHome } from '@/shared/utils/router';
 import { SECTIONS_ORDER_KEY } from '@/features/group/components/GroupHomeList';
+import * as Haptics from 'expo-haptics';
 
 // 섹션 타입 정의
 interface SectionItem {
@@ -113,7 +114,7 @@ export default function MainOrderSetting() {
 		try {
 			await AsyncStorage.setItem(SECTIONS_ORDER_KEY, JSON.stringify(sections));
 
-			router.replace('/(app)/(tabs)');
+			goBackOrReplaceHome();
 
 			showSuccess('메인 화면 설정이 저장되었어요.');
 			setHasChanges(false);
@@ -202,6 +203,9 @@ export default function MainOrderSetting() {
 				<DraggableFlatList
 					data={sections}
 					onDragEnd={handleDragEnd}
+					onDragBegin={() =>
+						Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+					}
 					keyExtractor={(item) => item.id}
 					renderItem={renderItem}
 					containerStyle={{ flex: 1 }}
