@@ -75,7 +75,7 @@ function GroupItem({ group }: { group: ClientGroup }) {
 						/>
 					</View>
 				)}
-				<Text size="sm" weight="medium" className="text-typography-800">
+				<Text size="sm" weight="medium" className="text-typography-900">
 					{group.groupName}
 				</Text>
 			</VStack>

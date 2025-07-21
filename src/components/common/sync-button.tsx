@@ -1,18 +1,10 @@
 import React, { useEffect } from 'react';
-import { TouchableOpacity } from 'react-native';
 import { Text } from '@/shared/components/text';
 import { Icon } from '#/components/ui/icon';
 import { useSyncStore } from '@/features/note/store/sync';
-import {
-	CloudOff,
-	CloudDownload,
-	Cloud,
-	CloudAlert,
-	CloudCogIcon,
-} from 'lucide-react-native';
+import { CloudOff, CloudCogIcon, CloudCheck } from 'lucide-react-native';
 import { Spinner } from './spinner';
 import { useAuthStore } from '@/store/auth';
-import { formatRelativeTime } from '@/shared/utils/formatRelativeTime';
 import { Button } from './button';
 import { HStack } from '#/components/ui/hstack';
 
@@ -53,11 +45,6 @@ export function SyncButton({ className, onSyncComplete }: SyncButtonProps) {
 		syncNotes(user?.id, onSyncComplete);
 	};
 
-	const getFormattedTime = () => {
-		if (!lastSyncTime) return null;
-		return formatRelativeTime(new Date(lastSyncTime));
-	};
-
 	return (
 		<Button
 			onPress={handleSync}
@@ -71,12 +58,12 @@ export function SyncButton({ className, onSyncComplete }: SyncButtonProps) {
 				) : syncError ? (
 					<Icon as={CloudOff} size="md" className="text-error-500" />
 				) : pendingChangesCount > 0 ? (
-					<Icon as={CloudCogIcon} size="md" className="text-yellow-600" />
+					<Icon as={CloudCogIcon} size="md" className="text-yellow-600/90" />
 				) : (
-					<Icon as={Cloud} size="md" className="text-success-500" />
+					<Icon as={CloudCheck} size="lg" className="text-success-400" />
 				)}
 				{pendingChangesCount > 0 && !isSyncing && (
-					<Text size="sm" weight="medium" className="ml-1 text-yellow-600">
+					<Text size="sm" weight="semi-bold" className="text-yellow-600/90">
 						{pendingChangesCount}개의 노트 동기화 대기 중
 					</Text>
 				)}
@@ -84,12 +71,12 @@ export function SyncButton({ className, onSyncComplete }: SyncButtonProps) {
 					lastSyncTime &&
 					!isSyncing &&
 					!syncError && (
-						<Text size="sm" weight="medium" className="ml-1 text-gray-500">
-							{getFormattedTime()} 동기화 완료됨
+						<Text size="sm" weight="semi-bold" className="text-success-400">
+							동기화 완료
 						</Text>
 					)}
 				{syncError && !isSyncing && (
-					<Text size="sm" weight="medium" className="ml-1 text-error-500">
+					<Text size="sm" weight="semi-bold" className="ml-1 text-error-500">
 						동기화 실패
 					</Text>
 				)}

@@ -70,12 +70,12 @@ export default function NoteMainScreen() {
 		<View className="relative">
 			<VStack space="xl" className="h-full">
 				<VStack space="sm">
-					<VStack space="xl">
+					<VStack space="lg">
 						<HStack
 							className={cn(
 								'justify-between items-center',
-								isIOS ? 'pt-7' : 'pt-8',
-								'pl-4 pr-2',
+								isIOS ? 'pt-3' : 'pt-4',
+								'pl-5 pr-2',
 							)}
 						>
 							<Heading size="2xl">설교 노트</Heading>

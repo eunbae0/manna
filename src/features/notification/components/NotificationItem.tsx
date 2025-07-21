@@ -248,7 +248,11 @@ export function NotificationItem({
 						style={animatedContentStyle}
 						className={cn('w-full', item.isRead ? '' : 'bg-primary-100')}
 					>
-						<AnimatedPressable scale="sm" onPress={onItemPress} className="w-full">
+						<AnimatedPressable
+							scale="sm"
+							onPress={onItemPress}
+							className="w-full"
+						>
 							<HStack space="sm" className="px-5 py-5 justify-start">
 								<Box className="w-6 h-6 bg-primary-200/50 rounded-full items-center justify-center">
 									<Icon

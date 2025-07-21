@@ -49,7 +49,7 @@ export function FellowshipFeedItem({ item }: { item: FellowshipFeed }) {
 	}, [item, updateCurrentGroup]);
 
 	return (
-		<AnimatedPressable onPress={handlePress}>
+		<AnimatedPressable scale="sm" onPress={handlePress}>
 			<View className="bg-white rounded-xl p-4">
 				<HStack space="sm" className="items-center mb-3">
 					<VStack space="xs" className="flex-1">

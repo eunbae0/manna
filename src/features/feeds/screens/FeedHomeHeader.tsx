@@ -39,7 +39,7 @@ export function FeedHomeHeader() {
 
 	return (
 		<>
-			<HStack className="w-full pl-5 pr-3 pt-2 pb-2 items-center justify-between">
+			<HStack className="w-full pl-5 pr-3 pt-3 pb-2 items-center justify-between">
 				<Heading size="2xl" className="">
 					최근 피드
 				</Heading>
