@@ -1562,6 +1562,8 @@ PODS:
     - ExpoModulesCore
   - ExpoSystemUI (5.0.9):
     - ExpoModulesCore
+  - ExpoTrackingTransparency (5.2.4):
+    - ExpoModulesCore
   - ExpoWebBrowser (14.2.0):
     - ExpoModulesCore
   - EXUpdatesInterface (1.1.0):
@@ -4358,6 +4360,7 @@ DEPENDENCIES:
   - ExpoStoreReview (from `../node_modules/expo-store-review/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
+  - ExpoTrackingTransparency (from `../node_modules/expo-tracking-transparency/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - fast_float (from `../node_modules/react-native/third-party-podspecs/fast_float.podspec`)
@@ -4591,6 +4594,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-symbols/ios"
   ExpoSystemUI:
     :path: "../node_modules/expo-system-ui/ios"
+  ExpoTrackingTransparency:
+    :path: "../node_modules/expo-tracking-transparency/ios"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
   EXUpdatesInterface:
@@ -4838,6 +4843,7 @@ SPEC CHECKSUMS:
   ExpoStoreReview: bed43bea90a5876a6a480504f95fea1521dacaa7
   ExpoSymbols: bd4e20b0b6a9dbacc31dd7c861e0d6d01b56e1f2
   ExpoSystemUI: 5dce97654754330ba6e2c39e7242c5d71c8d9952
+  ExpoTrackingTransparency: 843029c42d70de59bb0503f6fc747b9d2fe67f7b
   ExpoWebBrowser: eeb47f52e85b2686b56178749675cf90d0822f86
   EXUpdatesInterface: 64f35449b8ef89ce08cdd8952a4d119b5de6821d
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
