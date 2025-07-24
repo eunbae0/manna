@@ -7,14 +7,20 @@
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <queries>
+    <package android:name="com.google.android.googlequicksearchbox"/>
+    <package android:name="com.facebook.katana"/>
+    <package android:name="com.instagram.android"/>
+    <package android:name="com.twitter.android"/>
+    <package android:name="com.zhiliaoapp.musically"/>
+    <package android:name="com.facebook.katana"/>
+    <package android:name="com.instagram.android"/>
+    <package android:name="com.twitter.android"/>
+    <package android:name="com.zhiliaoapp.musically"/>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
       <category android:name="android.intent.category.BROWSABLE"/>
       <data android:scheme="https"/>
     </intent>
-  </queries>
-  <queries>
-    <package android:name="com.google.android.googlequicksearchbox"/>
     <intent>
       <action android:name="android.speech.RecognitionService"/>
     </intent>
@@ -33,6 +39,18 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="manna"/>
+      </intent-filter>
+      <intent-filter data-generated="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <data android:scheme="https" android:host="manna-app.onelink.me" android:pathPrefix="/Mnn"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+      <intent-filter data-generated="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <data android:scheme="manna"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
   </application>

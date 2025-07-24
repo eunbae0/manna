@@ -1200,6 +1200,7 @@ PODS:
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - PromisesObjC (~> 2.4)
+  - AppsFlyerFramework/Strict (6.17.1)
   - boost (1.84.0)
   - BoringSSL-GRPC (0.0.37):
     - BoringSSL-GRPC/Implementation (= 0.0.37)
@@ -3263,6 +3264,9 @@ PODS:
     - React-jsiexecutor
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
+  - react-native-appsflyer (6.17.1):
+    - AppsFlyerFramework/Strict (= 6.17.1)
+    - React
   - react-native-get-random-values (1.11.0):
     - React-Core
   - react-native-keyboard-controller (1.17.5):
@@ -3465,6 +3469,30 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - react-native-slider/common (4.5.6):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
+  - react-native-view-shot (4.0.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -4198,6 +4226,30 @@ PODS:
     - ReactCommon/turbomodule/core
     - Sentry/HybridSDK (= 8.50.2)
     - Yoga
+  - RNShare (12.1.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNSVG (15.11.2):
     - DoubleConversion
     - glog
@@ -4347,12 +4399,14 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
+  - react-native-appsflyer (from `../node_modules/react-native-appsflyer`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-keyboard-controller (from `../node_modules/react-native-keyboard-controller`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - react-native-view-shot (from `../node_modules/react-native-view-shot`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -4403,6 +4457,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -4412,6 +4467,7 @@ SPEC REPOS:
     - abseil
     - AppAuth
     - AppCheckCore
+    - AppsFlyerFramework
     - BoringSSL-GRPC
     - Firebase
     - FirebaseABTesting
@@ -4614,6 +4670,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
+  react-native-appsflyer:
+    :path: "../node_modules/react-native-appsflyer"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
   react-native-keyboard-controller:
@@ -4626,6 +4684,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@shopify/react-native-skia"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
+  react-native-view-shot:
+    :path: "../node_modules/react-native-view-shot"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -4726,6 +4786,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNShare:
+    :path: "../node_modules/react-native-share"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   VisionCamera:
@@ -4738,6 +4800,7 @@ SPEC CHECKSUMS:
   amplitude-react-native: ee5dc7fd064fc4456d662eb483b02afa27e3dbae
   AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
+  AppsFlyerFramework: 11ef2dea3fa755f9ed8ba53267012ee1c62d7dc0
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
@@ -4853,12 +4916,14 @@ SPEC CHECKSUMS:
   React-logger: 87be6adebb6b0d0000d2ba9346c73cd3ee74d7c3
   React-Mapbuffer: a277896f59b5e763ac49fa94d8adfca330b8f884
   React-microtasksnativemodule: 3fe68fd19e77d569a33b74f458691846babaf242
+  react-native-appsflyer: 89b0369e96930d2410d5a90f354503088c281afe
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-keyboard-controller: 627042ee5608096bdeb0e1187e25eac026512b5d
   react-native-mmkv: 1d37043029380c491c83a4c48649376135a762b7
   react-native-safe-area-context: 6cec90ce53951d3b52dc73e873323a4a7662fc0c
   react-native-skia: cb1f027b2399cdd0591ceec3ed0a627c13eaa9cf
   react-native-slider: 2ceb3abcc54e14ea0591aa54e8f550f2976820e8
+  react-native-view-shot: 92c37eb33b41948a68d0c4a07674cb8ac1a487a9
   react-native-webview: 02c782d78f1a20bcb739f4556d936f84e4ca4f5c
   React-NativeModulesApple: 5566582f6bfc49eacd70ab42aeb1d29e173dacc6
   React-oscompat: 472a446c740e39ee39cd57cd7bfd32177c763a2b
@@ -4910,6 +4975,7 @@ SPEC CHECKSUMS:
   RNReanimated: 2b314b18e28adf1b300f606eb0f205a1a6a643e1
   RNScreens: d9d5d8a2a484bb4446968bfa00db991f1117db44
   RNSentry: 262fe7fc57a3b459c5b0948e6c7eb4d936e06618
+  RNShare: 4ce7743290428e446b50398a1c7e356620b28ac1
   RNSVG: 257f59c952e296c9c36035a8f49b61fda48e398a
   SDWebImage: f29024626962457f3470184232766516dee8dfea
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
@@ -4920,6 +4986,6 @@ SPEC CHECKSUMS:
   VisionCamera: b5c2b3c45e641102902a5194af11dc532805221e
   Yoga: 2a3a4c38a8441b6359d5e5914d35db7b2b67aebd
 
-PODFILE CHECKSUM: 868baf01f35aa8ec9f2392f3ff89c7df74fde9aa
+PODFILE CHECKSUM: dc5bcfc969f5052560f931457af688b6fe02092f
 
 COCOAPODS: 1.16.2

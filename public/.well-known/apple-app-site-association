@@ -4,7 +4,11 @@
     "details": [
       {
         "appID": "AQ62DT56AM.com.eunbae.sogroup",
-        "paths": ["/login/*"]
+        "components": [
+          {
+            "/": "/*"
+          }
+        ]
       }
     ]
   },

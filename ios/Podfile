@@ -14,6 +14,9 @@ install! 'cocoapods',
 prepare_react_native_project!
 
 target 'app' do
+# @generated begin AppsFlyer Strict Mode - expo prebuild (DO NOT MODIFY) sync-ad7b6d63cd1d217b02539e1f0c6eb5b03d107de8
+$RNAppsFlyerStrictMode=true
+# @generated end AppsFlyer Strict Mode
   use_expo_modules!
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'

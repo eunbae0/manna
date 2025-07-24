@@ -12,7 +12,10 @@ export default {
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
 		ios: {
-			associatedDomains: ['applinks:so-group.firebaseapp.com'],
+			associatedDomains: [
+				'applinks:so-group.firebaseapp.com',
+				'applinks:manna-app.onelink.me',
+			],
 			supportsTablet: true,
 			bundleIdentifier: IS_DEVELOPMENT
 				? 'com.eunbae.sogroup.development'
@@ -42,6 +45,28 @@ export default {
 				backgroundColor: '#FFFFFF',
 			},
 			package: 'com.eunbae.sogroup',
+			intentFilters: [
+				{
+					action: 'VIEW',
+					data: [
+						{
+							scheme: 'https',
+							host: 'manna-app.onelink.me',
+							pathPrefix: '/Mna', // onelink template id
+						},
+					],
+					category: ['BROWSABLE', 'DEFAULT'],
+				},
+				{
+					action: 'VIEW',
+					data: [
+						{
+							scheme: 'manna',
+						},
+					],
+					category: ['BROWSABLE', 'DEFAULT'],
+				},
+			],
 			googleServicesFile: './assets/google/google-services.json',
 		},
 		web: {
@@ -121,6 +146,22 @@ export default {
 			],
 			['expo-font'],
 			['expo-web-browser'],
+			[
+				'react-native-appsflyer',
+				{ shouldUseStrictMode: true }, // <<-- only for strict mode
+			],
+			[
+				'react-native-share',
+				{
+					ios: ['fb', 'instagram', 'twitter', 'tiktoksharesdk'],
+					android: [
+						'com.facebook.katana',
+						'com.instagram.android',
+						'com.twitter.android',
+						'com.zhiliaoapp.musically',
+					],
+				},
+			],
 		],
 		experiments: {
 			typedRoutes: true,

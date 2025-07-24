@@ -28,6 +28,7 @@ import { useBackAlertOnExit } from '@/shared/hooks/useBackAlertOnExit';
 import { isAndroid } from '@/shared/utils/platform';
 import * as amplitude from '@amplitude/analytics-react-native';
 import { useNotificationGroupChange } from '@/shared/hooks/useNotificationGroupChange';
+import { useDeepLink } from '@/hooks/useDeeplink';
 
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
@@ -64,6 +65,8 @@ function RootLayout() {
 	useReactQueryDevTools(queryClient);
 
 	useNotification();
+
+	useDeepLink();
 
 	// Android
 	if (isAndroid) {
