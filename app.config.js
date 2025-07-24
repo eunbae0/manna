@@ -52,7 +52,7 @@ export default {
 						{
 							scheme: 'https',
 							host: 'manna-app.onelink.me',
-							pathPrefix: '/Mna', // onelink template id
+							pathPrefix: '/1Wgq', // onelink template id
 						},
 					],
 					category: ['BROWSABLE', 'DEFAULT'],
