@@ -163,11 +163,12 @@ export default {
 				},
 			],
 			[
-        "expo-tracking-transparency",
-        {
-          "userTrackingPermission": "허용하면 관심사에 맞는 콘텐츠 및 광고를 제공하고, 부적절한 광고의 노출이 제어될 수 있어요."
-        }
-      ]
+				'expo-tracking-transparency',
+				{
+					userTrackingPermission:
+						'허용하면 관심사에 맞는 콘텐츠 및 광고를 제공하고, 부적절한 광고의 노출이 제어될 수 있어요.',
+				},
+			],
 		],
 		experiments: {
 			typedRoutes: true,
