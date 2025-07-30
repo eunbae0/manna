@@ -9,6 +9,8 @@ import {
 	GROUPS_QUERY_KEY,
 } from '@/features/group/hooks/useGroups';
 import { router } from 'expo-router';
+import { routingToHome } from '@/shared/utils/router';
+import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
 
 /**
  * Hook for leaving a group
@@ -56,8 +58,9 @@ export function useLeaveGroup() {
 			// Invalidate queries
 			queryClient.invalidateQueries({ queryKey: [GROUP_QUERY_KEY] });
 			queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
+			queryClient.invalidateQueries({ queryKey: [FEEDS_QUERY_KEY] });
 
-			router.replace('/(app)/(tabs)');
+			routingToHome();
 		},
 		onError: () => {
 			showToast({

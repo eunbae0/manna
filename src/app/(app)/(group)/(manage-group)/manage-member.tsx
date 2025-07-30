@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { VStack } from '#/components/ui/vstack';
-import { View, ScrollView, Pressable, Alert } from 'react-native';
+import { View, ScrollView, Alert } from 'react-native';
 import { Avatar } from '@/components/common/avatar';
-import { Icon } from '#/components/ui/icon';
 import { Divider } from '#/components/ui/divider';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
@@ -15,15 +14,8 @@ import {
 import { useBottomSheet } from '@/hooks/useBottomSheet';
 import { useGroupMembers } from '@/features/group/hooks/useGroupMembers';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import {
-	UserPlus,
-	Trash2,
-	Copy,
-	MoreHorizontal,
-	UserCog,
-	LogOut,
-} from 'lucide-react-native';
-import type { GroupMemberRole, GroupUser } from '@/api/group/types';
+import { Copy, MoreHorizontal, UserCog, LogOut } from 'lucide-react-native';
+import type { GroupMemberRole } from '@/api/group/types';
 import { useAuthStore } from '@/store/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
@@ -92,15 +84,11 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 
 	// const [newRole, setNewRole] = useState<GroupMemberRole>('member');
 
-	const handleInvite = () => {
-		handleOpenInvite();
-	};
-
-	const { copyInviteCode } = useCopyInviteCode(group?.inviteCode || '');
+	const { copyInviteCode } = useCopyInviteCode();
 
 	const handleCopyInviteCode = async () => {
 		if (group?.inviteCode) {
-			copyInviteCode();
+			copyInviteCode(group?.inviteCode || '');
 		}
 	};
 
@@ -162,10 +150,6 @@ function GroupMemberList({ groupId }: GroupMemberListProps) {
 				<VStack space="md">
 					<HStack className="items-center justify-between py-2">
 						<Heading className="text-[24px]">그룹원 관리</Heading>
-						<Button variant="outline" size="sm" onPress={handleInvite} rounded>
-							<ButtonIcon as={UserPlus} />
-							<ButtonText>초대하기</ButtonText>
-						</Button>
 					</HStack>
 					<Divider />
 					{members.length > 0 ? (

@@ -34,7 +34,7 @@ export default function NameStepScreen() {
 
 	return (
 		<VStack className="flex-1 h-full">
-			<VStack className="flex-1 px-4 mt-16 gap-12">
+			<VStack className="flex-1 px-5 mt-16 gap-12">
 				<VStack className="gap-12">
 					<VStack space="sm">
 						<Heading size="3xl">만나에 오신 것을 환영해요 🙌</Heading>
@@ -58,7 +58,7 @@ export default function NameStepScreen() {
 			</VStack>
 			<Button
 				size="lg"
-				className="mx-5 mb-4 rounded-full"
+				className="mx-5 mb-2 rounded-full"
 				onPress={handlePressNext}
 				disabled={name.trim().length === 0}
 			>

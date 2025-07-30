@@ -1,21 +1,12 @@
-import GroupLandingScreen, {
-	type GroupLandingOption,
-} from '@/features/group/screens/GroupLandingScreen';
-import { useOnboardingStore } from '@/store/onboarding';
+import GroupLandingScreen from '@/features/group/screens/GroupLandingScreen';
+import GroupInvitedScreen from '@/features/group/screens/InvitedGroupScreen';
+import { STORATE_INVITE_GROUP_CODE } from '@/hooks/useDeeplink';
+import { storage } from '@/storage';
 
 export default function GroupStepScreen() {
-	const { setStep } = useOnboardingStore();
+	const inviteCode = storage.getString(STORATE_INVITE_GROUP_CODE);
 
-	const handleOptionPress = (option: GroupLandingOption) => {
-		switch (option) {
-			case 'create':
-				setStep('GROUP_CREATE');
-				break;
-			case 'join':
-				setStep('GROUP_JOIN');
-				break;
-		}
-	};
+	if (inviteCode) return <GroupInvitedScreen />;
 
-	return <GroupLandingScreen handlePressOption={handleOptionPress} />;
+	return <GroupLandingScreen />;
 }

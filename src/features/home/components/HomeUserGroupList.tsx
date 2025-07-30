@@ -19,6 +19,7 @@ type Props = {
 
 export function HomeUserGroupList({ groups }: Props) {
 	const { groups: groupsData, isLoading } = useGroups(groups);
+
 	return (
 		<View className="w-full">
 			{isLoading ? (

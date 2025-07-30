@@ -31,6 +31,8 @@ import {
 import type { OnboardingState } from '../onboarding';
 import { onUserSignIn, onUserSignOut } from '@/shared/utils/amplitude';
 import { resetBadgeCountAsync } from '@/shared/utils/notification_badge';
+import { useOnboardingStore } from '../onboarding/index';
+import { routingToHome } from '@/shared/utils/router';
 
 type AuthState = {
 	user: ClientUser | null;
@@ -122,7 +124,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 									loading: false,
 								});
 								if (existUser) {
-									router.replace('/(app)');
+									routingToHome();
 								} else {
 									router.replace('/(auth)/onboarding');
 								}
@@ -143,7 +145,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 									loading: false,
 								});
 								if (existUser) {
-									router.replace('/(app)');
+									routingToHome();
 								} else {
 									router.replace('/(auth)/onboarding');
 								}

@@ -61,7 +61,7 @@ function FeedItemList({ ref }: { ref: React.Ref<FlashList<Feed>> }) {
 
 	const feeds = data?.pages.flatMap((page) => page.feeds) ?? [];
 
-	const hasGroup = user?.groups;
+	const hasGroup = user?.groups ? user.groups.length > 0 : false;
 
 	const emptyLabel = useMemo(() => {
 		return hasGroup

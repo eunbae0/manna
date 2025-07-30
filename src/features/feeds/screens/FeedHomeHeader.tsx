@@ -18,7 +18,7 @@ export function FeedHomeHeader() {
 	const { user, updateCurrentGroup } = useAuthStore();
 	const { groups } = useGroups(user?.groups || []);
 
-	const hasGroup = user?.groups;
+	const hasGroup = user.groups ? user.groups.length > 0 : false;
 
 	const { BottomSheetContainer, handleOpen, handleClose } = useBottomSheet();
 

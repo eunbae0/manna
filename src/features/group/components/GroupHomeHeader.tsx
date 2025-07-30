@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, ButtonIcon } from '@/components/common/button';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
@@ -19,7 +19,7 @@ import { trackAmplitudeEvent } from '@/shared/utils/amplitude';
 import { openProfile } from '@/shared/utils/router';
 import { MemberListItem } from '../../profile/components/MemberListItem';
 import * as Haptics from 'expo-haptics';
-import { ShareInviteCode } from '@/shared/components/invite-code';
+import { ShareInviteCodeSheet } from '@/shared/components/invite-code-sheet';
 
 const MAX_INNER_MEMBER_LIST_HEIGHT = 400;
 
@@ -30,12 +30,8 @@ type Props = {
 function GroupHomeHeader({ groups }: Props) {
 	const { currentGroup } = useAuthStore();
 	const [isExpanded, setIsExpanded] = useState(false);
+	const ref = useRef<{ handleOpenInviteCodeSheet: () => void }>(null);
 
-	const {
-		handleOpen: handleOpenMenu,
-		handleClose: handleCloseMenu,
-		BottomSheetContainer: InviteBottomSheetContainer,
-	} = useBottomSheet();
 	const {
 		handleOpen: handleOpenMember,
 		handleClose: handleCloseMember,
@@ -49,7 +45,7 @@ function GroupHomeHeader({ groups }: Props) {
 	const group = groups.find((group) => group.id === currentGroup?.groupId);
 
 	const handlePressMemberGroup = () => {
-		trackAmplitudeEvent('홈 아바타 그룹 클릭', {
+		trackAmplitudeEvent('그룹 홈 멤버 list 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 		});
@@ -62,30 +58,14 @@ function GroupHomeHeader({ groups }: Props) {
 		);
 	};
 
-	const handlePressQrCode = () => {
-		trackAmplitudeEvent('QR코드 보기 클릭', {
-			screen: 'Tab_Home',
-			symbol: 'Home_Header',
-			location: 'Group_List_Menu',
-		});
-		handleCloseMember();
-		handleCloseMenu();
-		router.push({
-			pathname: '/(app)/inviteQrCodeModal',
-			params: {
-				inviteCode: group?.inviteCode,
-			},
-		});
-	};
-
 	const handlePressInvite = () => {
 		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-		trackAmplitudeEvent('홈 메뉴 클릭', {
+		trackAmplitudeEvent('그룹 홈 그룹원 초대 sheet 클릭', {
 			screen: 'Tab_Home',
 			symbol: 'Home_Header',
 			location: 'Group_Menu_Bottom_Sheet',
 		});
-		handleOpenMenu();
+		ref.current?.handleOpenInviteCodeSheet();
 	};
 
 	return (
@@ -119,15 +99,6 @@ function GroupHomeHeader({ groups }: Props) {
 					<ButtonIcon as={UserPlus} />
 				</Button>
 			</HStack>
-			<InviteBottomSheetContainer>
-				<View className="px-4 pt-5 pb-2">
-					<ShareInviteCode
-						inviteCode={group?.inviteCode || ''}
-						handlePressQrCode={handlePressQrCode}
-					/>
-				</View>
-			</InviteBottomSheetContainer>
-
 			{/* Group Members Bottom Sheet */}
 			<MemberBottomSheetContainer>
 				<VStack className="px-6 py-2">
@@ -135,8 +106,6 @@ function GroupHomeHeader({ groups }: Props) {
 						label="그룹원 목록"
 						onPress={handleCloseMember}
 					/>
-
-					{/* Group Members List */}
 					<View className="pb-5">
 						{group?.members && group.members.length > 0 ? (
 							<FlatList
@@ -161,6 +130,7 @@ function GroupHomeHeader({ groups }: Props) {
 					</View>
 				</VStack>
 			</MemberBottomSheetContainer>
+			<ShareInviteCodeSheet inviteCode={group?.inviteCode || ''} ref={ref} />
 		</HStack>
 	);
 }

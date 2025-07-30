@@ -6,7 +6,6 @@ import { Text } from '@/shared/components/text';
 
 import { useOnboardingStore } from '@/store/onboarding';
 import { Heading } from '@/shared/components/heading';
-import { Input, InputField } from '#/components/ui/input';
 import { VStack } from '#/components/ui/vstack';
 import { cn } from '@/shared/utils/cn';
 import { router } from 'expo-router';
@@ -26,8 +25,10 @@ import {
 	useCameraDevice,
 } from 'react-native-vision-camera';
 
-import { View, Linking, Platform } from 'react-native';
+import { View, Linking, Platform, TextInput } from 'react-native';
 import { openAppSettings } from '@/shared/utils/app/open_app_settings';
+import { BG_TEXT_INPUT_STYLE } from '@/components/common/text-input';
+import { routingToHome } from '@/shared/utils/router';
 
 export default function JoinGroupScreen() {
 	const { user, addUserGroupProfile } = useAuthStore();
@@ -142,7 +143,7 @@ export default function JoinGroupScreen() {
 				});
 			}
 
-			router.push('/(app)/(tabs)');
+			routingToHome();
 		} catch (error) {
 			//@ts-ignore
 			showError(error.message);
@@ -221,26 +222,17 @@ export default function JoinGroupScreen() {
 										<Text>초대된 그룹이 없다면 넘어갈 수 있어요.</Text>
 									)}
 								</VStack>
-								<Input
-									variant="outline"
-									size="lg"
-									isDisabled={false}
-									isInvalid={false}
-									isReadOnly={false}
-									className="rounded-2xl"
-								>
-									<InputField
-										value={code}
-										onChangeText={(text) => {
-											const newText = text.trim().toUpperCase();
-											setCode(newText);
-										}}
-										placeholder="6자리 초대코드"
-										maxLength={6}
-										autoCapitalize="characters"
-										className="text-md font-pretendard-Regular"
-									/>
-								</Input>
+								<TextInput
+									value={code}
+									onChangeText={(text) => {
+										const newText = text.trim().toUpperCase();
+										setCode(newText);
+									}}
+									maxLength={6}
+									autoCapitalize="characters"
+									placeholder="6자리 초대코드"
+									className={BG_TEXT_INPUT_STYLE}
+								/>
 							</VStack>
 						</VStack>
 						<VStack

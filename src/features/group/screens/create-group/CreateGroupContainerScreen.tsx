@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Redirect } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { KeyboardAvoidingView } from '@/components/common/keyboard-view/KeyboardAvoidingView';
 import CreateGroupFirstStepScreen from '@/features/group/screens/create-group/CreateGroupFirstStepScreen';

@@ -14,6 +14,7 @@ export default function GroupLayout() {
 			<Stack.Screen name="join-group" />
 			<Stack.Screen name="create-group" />
 			<Stack.Screen name="cover-images-management" />
+			<Stack.Screen name="group-invited" />
 		</Stack>
 	);
 }

@@ -1,5 +1,6 @@
 import { handleApiError } from '@/api';
 import { updateUser } from '@/api/user';
+import { routingToHome } from '@/shared/utils/router';
 import { router } from 'expo-router';
 import { create } from 'zustand';
 
@@ -22,7 +23,7 @@ export type OnboardingState = {
 		displayName: string;
 		photoUrl: string | null;
 	};
-	isPendingCompleteOnboarding: boolean;
+	isOnboarding: boolean;
 	setStep: (step: OnboardingStep) => void;
 	setOnboarding: () => void;
 	updateUserData: (data: Partial<OnboardingState['userData']>) => void;
@@ -36,11 +37,12 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 		displayName: '',
 		photoUrl: null,
 	},
-	isPendingCompleteOnboarding: true,
+	isOnboarding: true,
 	setStep: (step) => set({ currentStep: step }),
 	setOnboarding: () =>
 		set({
 			currentStep: 'NAME',
+			isOnboarding: true,
 		}),
 	updateUserData: (data) =>
 		set((state) => ({
@@ -57,15 +59,15 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 		} catch (error) {
 			throw handleApiError(error);
 		} finally {
-			set({ isPendingCompleteOnboarding: false });
+			set({ isOnboarding: false });
 		}
 	},
 	completeOnboarding: () => {
 		set({
 			currentStep: DEFAULT_STEP,
 			userData: { displayName: '', photoUrl: null },
-			isPendingCompleteOnboarding: true,
+			isOnboarding: false,
 		});
-		router.replace('/(app)');
+		routingToHome();
 	},
 }));

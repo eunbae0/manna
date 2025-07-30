@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 
 export const goBackOrReplaceHome = () => {
-	router.canGoBack() ? router.back() : router.replace('/(app)');
+	router.canGoBack() ? router.back() : routingToHome();
 };
 
 export const openProfile = (userId: string) => {
@@ -9,4 +9,8 @@ export const openProfile = (userId: string) => {
 		pathname: '/(app)/(profile)/profile-index',
 		params: { userId },
 	});
+};
+
+export const routingToHome = () => {
+	router.dismissTo('/(app)');
 };

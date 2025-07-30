@@ -14,8 +14,7 @@ import LottieView from 'lottie-react-native';
 import { runOnJS } from 'react-native-reanimated';
 
 export default function PendingSubmitScreen() {
-	const { userData, isPendingCompleteOnboarding, setStep } =
-		useOnboardingStore();
+	const { userData, isOnboarding, setStep } = useOnboardingStore();
 	const progress = useSharedValue(0);
 	const [isDurationDone, setIsDurationDone] = useState(false);
 
@@ -26,10 +25,10 @@ export default function PendingSubmitScreen() {
 	}, [progress]);
 
 	useEffect(() => {
-		if (isDurationDone && !isPendingCompleteOnboarding) {
+		if (isDurationDone && !isOnboarding) {
 			setStep('FINISH');
 		}
-	}, [isDurationDone, isPendingCompleteOnboarding, setStep]);
+	}, [isDurationDone, isOnboarding, setStep]);
 
 	const animatedBarStyle = useAnimatedStyle(() => ({
 		width: `${progress.value}%`,

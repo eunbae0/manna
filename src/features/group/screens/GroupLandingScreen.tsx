@@ -15,16 +15,23 @@ import { useAuthStore } from '@/store/auth';
 
 export type GroupLandingOption = 'create' | 'join';
 
-type Props = {
-	handlePressOption: (option: GroupLandingOption) => void;
-};
-
-export default function GroupLandingScreen({ handlePressOption }: Props) {
+export default function GroupLandingScreen() {
 	const [selectedOption, setSelectedOption] =
 		useState<GroupLandingOption>('create');
 
 	const { currentStep, setStep, submitOnboardingData } = useOnboardingStore();
 	const { user } = useAuthStore();
+
+	const handleOptionPress = (option: GroupLandingOption) => {
+		switch (option) {
+			case 'create':
+				setStep('GROUP_CREATE');
+				break;
+			case 'join':
+				setStep('GROUP_JOIN');
+				break;
+		}
+	};
 
 	const isOnboarding = currentStep === 'GROUP_LANDING';
 
@@ -143,7 +150,7 @@ export default function GroupLandingScreen({ handlePressOption }: Props) {
 						<Button
 							size="lg"
 							disabled={!selectedOption}
-							onPress={() => handlePressOption(selectedOption)}
+							onPress={() => handleOptionPress(selectedOption)}
 						>
 							<ButtonText>{buttonText}</ButtonText>
 							<ButtonIcon as={ChevronRight} />

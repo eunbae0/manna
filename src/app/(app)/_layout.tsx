@@ -107,13 +107,6 @@ export default function RootLayout() {
 					}}
 				/>
 				<Stack.Screen
-					name="inviteQrCodeModal"
-					options={{
-						headerShown: false,
-						presentation: 'modal',
-					}}
-				/>
-				<Stack.Screen
 					name="updateInfoModal"
 					options={{
 						headerShown: false,

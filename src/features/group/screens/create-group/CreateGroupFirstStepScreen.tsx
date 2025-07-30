@@ -2,7 +2,6 @@ import { type Dispatch, type SetStateAction, useState } from 'react';
 import { VStack } from '#/components/ui/vstack';
 import Header from '@/components/common/Header';
 import { Heading } from '@/shared/components/heading';
-import { Input, InputField } from '#/components/ui/input';
 import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useRef, useEffect } from 'react';
 import { Keyboard, TextInput } from 'react-native';
@@ -69,7 +68,11 @@ export default function CreateGroupFirstStepScreen({
 			const isMain = user.groups?.findIndex((g) => g.isMain === true) === -1;
 			updateUserGroupProfile(user.id, {
 				groupId: res.id,
-				notificationPreferences: { fellowship: true, prayerRequest: true },
+				notificationPreferences: {
+					fellowship: true,
+					prayerRequest: true,
+					board: { activity: true, newPost: true },
+				},
 				isMain,
 			});
 			queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });

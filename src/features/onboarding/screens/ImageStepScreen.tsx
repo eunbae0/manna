@@ -56,7 +56,7 @@ export default function ImageStepScreen() {
 	return (
 		<VStack className="flex-1 h-full">
 			<Header onPressBackButton={() => setStep('NAME')} />
-			<VStack className="flex-1 px-4 mt-8 gap-12">
+			<VStack className="flex-1 px-5 mt-8 gap-12">
 				<VStack className="gap-16">
 					<VStack space="sm">
 						<Heading size="3xl">프로필 이미지를 설정해보세요</Heading>
@@ -123,7 +123,7 @@ export default function ImageStepScreen() {
 					</VStack>
 				</VStack>
 			</VStack>
-			<VStack space="sm" className="mx-5 mb-6">
+			<VStack space="sm" className="mx-5 mb-2">
 				<Button size="lg" onPress={handlePressNext}>
 					<ButtonText>다음</ButtonText>
 				</Button>

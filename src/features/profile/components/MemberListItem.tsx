@@ -15,15 +15,13 @@ export function MemberListItem({
 } & Omit<React.ComponentProps<typeof AnimatedPressable>, 'children'>) {
 	return (
 		<AnimatedPressable {...props} scale="sm">
-			<HStack className="items-center justify-between py-4">
+			<HStack className="items-center justify-between py-3">
 				<HStack space="lg" className="items-center">
 					<HStack space="md" className="items-center">
 						<Avatar size="md" photoUrl={member.photoUrl ?? undefined} />
 						<VStack className="gap-[2px]">
 							<HStack space="sm" className="items-center">
-								<Text size="md" className="font-pretendard-Medium">
-									{member.displayName ?? '이름없음'}
-								</Text>
+								<Text size="lg">{member.displayName ?? '이름없음'}</Text>
 								<Box
 									className={
 										member.role === 'leader'
@@ -31,13 +29,17 @@ export function MemberListItem({
 											: 'px-2 rounded-2xl py-[2px] bg-background-100 border border-background-200'
 									}
 								>
-									<Text size="2xs" className="text-typography-800">
+									<Text
+										size="xs"
+										weight="semi-bold"
+										className="text-typography-500"
+									>
 										{member.role === 'leader' ? '리더' : '그룹원'}
 									</Text>
 								</Box>
 							</HStack>
 
-							<Text size="sm" className="text-typography-600">
+							<Text size="md" className="text-typography-600/80">
 								{member?.statusMessage ?? '상태메세지가 없어요.'}
 							</Text>
 						</VStack>
