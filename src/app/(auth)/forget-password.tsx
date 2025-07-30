@@ -52,84 +52,80 @@ export default function ForgetPasswordScreen() {
 	};
 
 	return (
-		<KeyboardDismissView>
-			<KeyboardAvoidingView>
-				<SafeAreaView>
-					<VStack className="h-full">
-						<Header
-							label="비밀번호 찾기"
-							onPressBackButton={() =>
-								router.canGoBack() ? router.back() : router.push('/(auth)')
-							}
-						/>
-						<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
-							<VStack space="4xl">
-								<VStack space="sm">
-									{!isEmailSent && (
-										<Heading size="xl">비밀번호를 잊으셨나요?</Heading>
-									)}
-									{isEmailSent && (
-										<Heading size="xl">
-											비밀번호 재설정 이메일을 전송했어요
-										</Heading>
-									)}
-									<Text size="lg">
-										{isEmailSent
-											? '입력하신 이메일의 메일함을 확인해주세요'
-											: '가입한 이메일을 입력하면 재설정 링크를 보내드려요'}
-									</Text>
-								</VStack>
+		<KeyboardAvoidingView>
+			<SafeAreaView>
+				<VStack className="h-full">
+					<Header
+						label="비밀번호 찾기"
+						onPressBackButton={() =>
+							router.canGoBack() ? router.back() : router.push('/(auth)')
+						}
+					/>
+					<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
+						<VStack space="4xl">
+							<VStack space="sm">
 								{!isEmailSent && (
-									<VStack space="lg" reversed={false}>
-										<VStack space="sm">
-											<Input
-												variant="rounded"
-												size="xl"
-												isDisabled={isLoading}
-												className="rounded-2xl"
-											>
-												<InputField
-													//@ts-ignore
-													ref={inputRef}
-													value={email}
-													onChangeText={setEmail}
-													placeholder="example@gmail.com"
-													autoCapitalize="none"
-													keyboardType="email-address"
-												/>
-											</Input>
-										</VStack>
+									<Heading size="2xl">비밀번호를 잊으셨나요?</Heading>
+								)}
+								{isEmailSent && (
+									<Heading size="2xl">
+										비밀번호 재설정 이메일을 전송했어요
+									</Heading>
+								)}
+								<Text size="lg" weight="medium" className="text-typography-600">
+									{isEmailSent
+										? '입력하신 이메일의 메일함을 확인해주세요'
+										: '가입한 이메일을 입력하면 재설정 링크를 보내드려요'}
+								</Text>
+							</VStack>
+							{!isEmailSent && (
+								<VStack space="lg" reversed={false}>
+									<VStack space="sm">
+										<Input
+											variant="rounded"
+											size="xl"
+											isDisabled={isLoading}
+											className="rounded-2xl"
+										>
+											<InputField
+												//@ts-ignore
+												ref={inputRef}
+												value={email}
+												onChangeText={setEmail}
+												placeholder="example@gmail.com"
+												autoCapitalize="none"
+												keyboardType="email-address"
+											/>
+										</Input>
 									</VStack>
-								)}
-							</VStack>
-							<VStack space="lg">
-								{isEmailSent ? (
-									<Button
-										onPress={() => router.push('/(auth)')}
-										size="xl"
-										className="rounded-full mb-2"
-									>
-										<ButtonText>로그인 화면으로 돌아가기</ButtonText>
-									</Button>
-								) : (
-									<Button
-										onPress={handleSendResetEmail}
-										disabled={email.length === 0 || isLoading}
-										size="xl"
-										className="rounded-full mb-2"
-									>
-										<ButtonText>
-											{isLoading
-												? '전송 중...'
-												: '비밀번호 재설정 이메일 보내기'}
-										</ButtonText>
-									</Button>
-								)}
-							</VStack>
+								</VStack>
+							)}
+						</VStack>
+						<VStack space="lg">
+							{isEmailSent ? (
+								<Button
+									onPress={() => router.push('/(auth)')}
+									size="xl"
+									className="rounded-full mb-2"
+								>
+									<ButtonText>로그인 화면으로 돌아가기</ButtonText>
+								</Button>
+							) : (
+								<Button
+									onPress={handleSendResetEmail}
+									disabled={email.length === 0 || isLoading}
+									size="lg"
+									className="rounded-full mb-2"
+								>
+									<ButtonText>
+										{isLoading ? '전송 중...' : '비밀번호 재설정 이메일 보내기'}
+									</ButtonText>
+								</Button>
+							)}
 						</VStack>
 					</VStack>
-				</SafeAreaView>
-			</KeyboardAvoidingView>
-		</KeyboardDismissView>
+				</VStack>
+			</SafeAreaView>
+		</KeyboardAvoidingView>
 	);
 }

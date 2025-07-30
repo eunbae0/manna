@@ -32,8 +32,10 @@ function EmailSignInStepScreen() {
 				<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
 					<VStack space="4xl">
 						<VStack space="sm">
-							<Heading size="xl">계속하기 위해 로그인해주세요</Heading>
-							<Text size="lg">이메일과 비밀번호를 입력해주세요</Text>
+							<Heading size="2xl">계속하기 위해 로그인해주세요</Heading>
+							<Text size="lg" weight="medium" className="text-typography-600">
+								이메일과 비밀번호를 입력해주세요
+							</Text>
 						</VStack>
 						<VStack space="lg" reversed={false}>
 							<VStack space="sm">
@@ -108,9 +110,8 @@ function EmailSignInStepScreen() {
 							disabled={
 								email.length === 0 || password.length === 0 || isLoading
 							}
-							size="xl"
-							className="mb-5"
-							rounded
+							size="lg"
+							className="mb-2"
 						>
 							<ButtonText>{isLoading ? '로그인 중...' : '로그인'}</ButtonText>
 						</Button>

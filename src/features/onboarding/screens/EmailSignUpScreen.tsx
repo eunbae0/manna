@@ -106,8 +106,8 @@ export default function EmailSignUpScreen() {
 				<VStack className="flex-1 px-4 mt-8 justify-between" space="4xl">
 					<VStack space="4xl">
 						<VStack space="sm">
-							<Heading size="xl">이메일과 비밀번호를 입력해주세요</Heading>
-							<Text size="lg" className="text-gray-500">
+							<Heading size="2xl">이메일과 비밀번호를 입력해주세요</Heading>
+							<Text size="lg" weight="medium" className="text-typography-600">
 								비밀번호는 특수문자가 포함된 6자 이상이어야 해요
 							</Text>
 						</VStack>
@@ -198,9 +198,8 @@ export default function EmailSignUpScreen() {
 								Boolean(passwordError) ||
 								Boolean(passwordFormatError)
 							}
-							size="xl"
-							className="mb-5"
-							rounded
+							size="lg"
+							className="mb-2"
 						>
 							<ButtonText>{isLoading ? '가입 중...' : '가입하기'}</ButtonText>
 						</Button>
