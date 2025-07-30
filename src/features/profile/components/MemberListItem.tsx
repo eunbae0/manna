@@ -1,4 +1,3 @@
-import { openProfile } from '@/shared/utils/router';
 import { HStack } from '#/components/ui/hstack';
 import { VStack } from '#/components/ui/vstack';
 import { Text } from '@/shared/components/text';
@@ -6,16 +5,25 @@ import { Box } from '#/components/ui/box';
 import { Avatar } from '@/components/common/avatar';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import type { GroupMember } from '@/api/group/types';
+import { Button, ButtonIcon } from '@/components/common/button';
+import { MoreHorizontal } from 'lucide-react-native';
 
 export function MemberListItem({
 	member,
+	handlePressManageMember,
 	...props
 }: {
 	member: GroupMember;
+	handlePressManageMember?: () => void;
 } & Omit<React.ComponentProps<typeof AnimatedPressable>, 'children'>) {
 	return (
-		<AnimatedPressable {...props} scale="sm">
-			<HStack className="items-center justify-between py-3">
+		<AnimatedPressable
+			{...props}
+			scale="sm"
+			withBackground
+			pressableClassName="py-3 pl-5 pr-2"
+		>
+			<HStack className="items-center justify-between">
 				<HStack space="lg" className="items-center">
 					<HStack space="md" className="items-center">
 						<Avatar size="md" photoUrl={member.photoUrl ?? undefined} />
@@ -45,6 +53,11 @@ export function MemberListItem({
 						</VStack>
 					</HStack>
 				</HStack>
+				{handlePressManageMember && (
+					<Button onPress={handlePressManageMember} variant="icon">
+						<ButtonIcon as={MoreHorizontal} />
+					</Button>
+				)}
 			</HStack>
 		</AnimatedPressable>
 	);

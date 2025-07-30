@@ -18,13 +18,24 @@ import {
 	PopupMenuItem,
 	PopupMenuItemLabel,
 } from '@/shared/components/popup-menu';
+import { ManageMemberSheet } from '@/features/group/components/ManageMemberSheet';
+import type { GroupMemberRole } from '@/api/group/types';
 
 export default function MemberListScreen() {
-	const { currentGroup } = useAuthStore();
+	const { user, currentGroup } = useAuthStore();
 	const groupId = currentGroup?.groupId;
 	const { group, members } = useGroupMembers(groupId || '');
 	const ref = useRef<{ handleOpenInviteCodeSheet: () => void }>(null);
 	const memberListRef = useRef<FlashList<any>>(null);
+
+	const isLeader =
+		group?.members
+			.filter((m) => m.role === 'leader')
+			.findIndex((m) => m.id === user?.id) !== -1;
+
+	const manageMemberSheetRef = useRef<{ handleOpenMemberManage: () => void }>(
+		null,
+	);
 
 	const [sort, setSort] = useState<'기본 순' | '가나다 순'>('기본 순');
 
@@ -48,6 +59,21 @@ export default function MemberListScreen() {
 	const handlePressSort = (_sort: '기본 순' | '가나다 순') => {
 		setSort(_sort);
 		memberListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+	};
+
+	const [selectedMember, setSelectedMember] = useState<{
+		userId: string;
+		displayName: string;
+		role: GroupMemberRole;
+	} | null>(null);
+
+	const handleOpenMemberOptions = (
+		userId: string,
+		displayName: string,
+		currentRole: GroupMemberRole,
+	) => {
+		setSelectedMember({ userId, displayName, role: currentRole });
+		manageMemberSheetRef.current?.handleOpenMemberManage();
 	};
 
 	return (
@@ -112,7 +138,7 @@ export default function MemberListScreen() {
 					</PopupMenuItem>
 				</PopupMenu>
 				{members && members.length > 0 ? (
-					<View className="flex-1 px-5">
+					<View className="flex-1">
 						<FlashList
 							ref={memberListRef}
 							data={sortedMemberList}
@@ -120,6 +146,16 @@ export default function MemberListScreen() {
 								<MemberListItem
 									member={member}
 									onPress={() => openProfile(member.id)}
+									handlePressManageMember={
+										isLeader
+											? () =>
+													handleOpenMemberOptions(
+														member.id,
+														member.displayName,
+														member.role,
+													)
+											: undefined
+									}
 								/>
 							)}
 							keyExtractor={(item) => item.id} // ID와 인덱스 조합
@@ -136,6 +172,11 @@ export default function MemberListScreen() {
 				)}
 			</VStack>
 			<ShareInviteCodeSheet inviteCode={group?.inviteCode || ''} ref={ref} />
+			<ManageMemberSheet
+				ref={manageMemberSheetRef}
+				groupId={groupId || ''}
+				selectedMember={selectedMember}
+			/>
 		</>
 	);
 }

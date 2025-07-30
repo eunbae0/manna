@@ -10,7 +10,6 @@ export default function GroupLayout() {
 			initialRouteName="manage-group-index"
 		>
 			<Stack.Screen name="manage-group-index" />
-			<Stack.Screen name="manage-member" />
 		</Stack>
 	);
 }

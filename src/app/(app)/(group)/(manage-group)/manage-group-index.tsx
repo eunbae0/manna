@@ -14,16 +14,6 @@ export default function ManageGroupIndexScreen() {
 			<Header label="소그룹 관리하기" />
 			<VStack space="xl" className="py-5 px-6">
 				<ListItem
-					icon={Users}
-					label="그룹원 관리"
-					onPress={() => {
-						router.push({
-							pathname: '/(app)/(group)/(manage-group)/manage-member',
-							params: { groupId },
-						});
-					}}
-				/>
-				<ListItem
 					icon={Settings}
 					label="그룹 설정"
 					onPress={() => {
