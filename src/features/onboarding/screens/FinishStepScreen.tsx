@@ -7,12 +7,15 @@ import { Button, ButtonIcon, ButtonText } from '@/components/common/button';
 import { useOnboardingStore } from '@/store/onboarding';
 import { Box } from '#/components/ui/box';
 import { ChevronRight } from 'lucide-react-native';
+import { useUpdateATT } from '@/shared/hooks/useUpdateATT';
 
 export default function FinishStepScreen() {
 	const { completeOnboarding } = useOnboardingStore();
+	const { updateATT } = useUpdateATT();
 
-	const handleStart = () => {
+	const handlePressStart = async () => {
 		completeOnboarding();
+		await updateATT();
 	};
 
 	return (
@@ -35,7 +38,7 @@ export default function FinishStepScreen() {
 				</Text>
 			</VStack>
 			<Box className="absolute mb-12 mx-4 bottom-0 left-0 w-full">
-				<Button size="lg" onPress={handleStart} withHaptic>
+				<Button size="lg" onPress={handlePressStart} withHaptic>
 					<ButtonText>시작하기</ButtonText>
 					<ButtonIcon as={ChevronRight} />
 				</Button>

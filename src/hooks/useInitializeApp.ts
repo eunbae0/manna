@@ -8,6 +8,7 @@ import { requestNotificationPermission } from '@/api/messaging';
 import { useAppVersionCheck } from './useAppVersionCheck';
 import * as Sentry from '@sentry/react';
 import { useShowStoreReview } from '@/shared/hooks/useShowStoreReview';
+import { useUpdateATT } from '@/shared/hooks/useUpdateATT';
 
 export function useInitializeApp() {
 	const [loaded, setIsLoaded] = useState(false);
@@ -26,6 +27,7 @@ export function useInitializeApp() {
 	const { onAuthStateChanged, isAuthenticated } = useAuthStore();
 	const [authLoading, setAuthLoading] = useState(true);
 	const { incrementAppLaunchCount } = useShowStoreReview();
+	const { updateATT } = useUpdateATT();
 
 	useEffect(() => {
 		const subscriber = auth.onAuthStateChanged(async (user) => {
@@ -33,6 +35,7 @@ export function useInitializeApp() {
 			try {
 				const fcmToken = await requestNotificationPermission();
 				await onAuthStateChanged(user, fcmToken ?? '');
+				await updateATT();
 			} catch (error) {
 				console.error('Error initializing auth state:', error);
 				Sentry.captureException(error);

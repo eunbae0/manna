@@ -1,4 +1,6 @@
+import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 export const goBackOrReplaceHome = () => {
 	router.canGoBack() ? router.back() : routingToHome();

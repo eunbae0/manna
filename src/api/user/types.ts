@@ -37,6 +37,13 @@ export interface FirestoreUser {
 	isDeleted?: boolean;
 	deletedAt?: FieldValue;
 	fcmTokens?: string[] | null;
+	permissions: {
+		tracking?: {
+			isGranted: boolean;
+			canAskAgain: boolean;
+			lastAsked?: FieldValue;
+		};
+	};
 }
 
 /**
