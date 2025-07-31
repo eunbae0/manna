@@ -3,23 +3,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/common/Header';
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import {
-	Alert,
-	Pressable,
-	ScrollView,
-	View,
-	RefreshControl,
-} from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 import { Icon } from '#/components/ui/icon';
 import { Text } from '@/shared/components/text';
 import {
 	BookText,
 	Text as TextIcon,
-	Edit,
 	Megaphone,
 	RefreshCw,
 	Users,
-	ChevronUp,
 	MoreHorizontal,
 	Edit2,
 	Trash,
@@ -27,27 +19,15 @@ import {
 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import Animated, {
-	useAnimatedStyle,
-	useSharedValue,
-	withTiming,
-	interpolate,
-	Easing,
-} from 'react-native-reanimated';
+import Animated, {} from 'react-native-reanimated';
 import { useFellowshipStore } from '@/store/createFellowship';
 import { Heading } from '@/shared/components/heading';
 import { Avatar } from '@/components/common/avatar';
 import { useAuthStore } from '@/store/auth';
 import { Button, ButtonText, ButtonIcon } from '@/components/common/button';
-import type {
-	ClientFellowship,
-	ClientFellowshipV2,
-	ServerFellowshipMember,
-} from '@/features/fellowship/api/types';
 import { useFellowship } from '@/features/fellowship/hooks/useFellowship';
 import { FellowshipSkeleton } from './FellowshipSkeleton';
 import FellowshipContentList from '../../components/FellowshipContentList';
-import FellowshipPrayerRequestList, {} from '../../components/FellowshipPrayerRequestList';
 import FellowshipContentLayout from '../../components/FellowshipContentLayout';
 import {
 	BottomSheetListHeader,
@@ -247,7 +227,7 @@ export default function FellowshipDetailScreen({
 										<SelectedBibleList
 											selectedBible={fellowship?.info.preachText || []}
 											isReadonly
-											className="mt-1"
+											className="mt-1 ml-6"
 										/>
 									) : (
 										<Text
@@ -281,7 +261,9 @@ export default function FellowshipDetailScreen({
 										size="xl"
 										className={cn(
 											'ml-6',
-											!fellowship?.info.preacher && 'text-typography-500',
+											!fellowship?.info.preacher
+												? 'text-typography-500'
+												: 'text-typography-800',
 										)}
 									>
 										{fellowship?.info.preacher || '비어 있음'}

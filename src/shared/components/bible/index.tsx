@@ -42,7 +42,7 @@ export function SelectedBibleList({
 					{...props}
 				>
 					<HStack className="items-center justify-between">
-						<Text size="xl" weight="medium" className="text-typography-800">
+						<Text size="xl" className="text-typography-800">
 							{verse.title}
 						</Text>
 						{!isReadonly && (
@@ -56,7 +56,7 @@ export function SelectedBibleList({
 							</Button>
 						)}
 					</HStack>
-					<VStack className="gap-px">
+					<VStack space="xs">
 						{verse.content.map((content) => (
 							<AnimatedPressable
 								scale="sm"
@@ -70,25 +70,20 @@ export function SelectedBibleList({
 									});
 								}}
 							>
-								<VStack key={content.verse}>
-									<HStack space="xs">
-										<Text
-											size="sm"
-											weight="medium"
-											className="text-primary-600/55"
-										>
-											{' '}
-											{content.verse}.
-										</Text>
-										<Text
-											size="sm"
-											weight="regular"
-											className="text-typography-600 flex-1"
-										>
-											{content.text}
-										</Text>
-									</HStack>
-								</VStack>
+								<Text
+									size="sm"
+									weight="regular"
+									className="text-typography-600"
+								>
+									<Text
+										size="sm"
+										weight="medium"
+										className="text-primary-600/55"
+									>
+										{content.verse}{' '}
+									</Text>
+									{content.text}
+								</Text>
 							</AnimatedPressable>
 						))}
 					</VStack>

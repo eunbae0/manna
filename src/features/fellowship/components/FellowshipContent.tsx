@@ -3,8 +3,7 @@ import { VStack } from '#/components/ui/vstack';
 import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
-import { Edit3, CircleHelp } from 'lucide-react-native';
-import { Button, ButtonIcon } from '@/components/common/button';
+import { MessageCircleQuestionMark, Pen } from 'lucide-react-native';
 import AnimatedPressable from '@/components/common/animated-pressable';
 import { openProfile } from '@/shared/utils/router';
 import { useFellowship } from '../hooks/useFellowship';
@@ -58,37 +57,61 @@ export default React.memo(function FellowshipContent({
 			}));
 	}, [answers, fellowship?.info.participants]);
 
+	const replyLabel = useMemo(() => {
+		switch (contentType) {
+			case 'prayerRequest':
+				return '기도제목 작성하기';
+			default:
+				return '답변 작성하기';
+		}
+	}, [contentType]);
+
 	return (
 		<>
 			<VStack space="2xl">
 				{contentType !== 'prayerRequest' && (
 					<HStack space="xs" className="items-center justify-between">
-						<HStack space="xs" className="items-start flex-1">
-							<Box className="p-1 rounded-full bg-primary-100">
-								<Icon as={CircleHelp} size="md" className="text-primary-500" />
-							</Box>
+						<HStack space="sm" className="items-start flex-1">
+							<Icon
+								as={MessageCircleQuestionMark}
+								size="lg"
+								className="text-primary-400 mt-[2px]"
+							/>
 							<Text
 								size="xl"
-								className="font-pretendard-semi-bold flex-1 mr-2 mt-[2px]"
+								weight="semi-bold"
+								className="text-typography-800 flex-1 mr-2"
 							>
 								{title}
 							</Text>
 						</HStack>
-						{enableReply && (
-							<Button variant="icon" onPress={handlePressSummaryButton}>
-								<ButtonIcon as={Edit3} />
-							</Button>
-						)}
 					</HStack>
 				)}
 				<VStack
-					space="xl"
-					className={cn('pl-2', answersWithParticipant.length !== 0 && 'pb-6')}
+					space="4xl"
+					className={cn(answersWithParticipant.length !== 0 && 'pb-6')}
 				>
 					{answersWithParticipant.map((answer) => (
 						<AnswerItem key={answer.participant?.id} answer={answer} />
 					))}
 				</VStack>
+				{enableReply && (
+					<AnimatedPressable onPress={handlePressSummaryButton}>
+						<HStack
+							space="sm"
+							className="items-center mb-2 px-4 py-2 bg-background-200/45 rounded-full self-center"
+						>
+							<Text
+								weight="semi-bold"
+								size="lg"
+								className="text-typography-600"
+							>
+								{replyLabel}
+							</Text>
+							<Icon as={Pen} size="sm" className="text-typography-600" />
+						</HStack>
+					</AnimatedPressable>
+				)}
 			</VStack>
 		</>
 	);
@@ -106,27 +129,26 @@ function AnswerItem({
 		<VStack key={answer.participant?.id}>
 			<VStack space="sm" className="">
 				<AnimatedPressable
-					scale="sm"
 					onPress={() =>
 						!answer.participant?.isGuest && openProfile(answer.participant?.id)
 					}
+					className="self-start"
 				>
-					<HStack space="sm" className="items-center">
+					<HStack className="items-center gap-[6px]">
 						<Avatar
 							size="2xs"
 							photoUrl={answer.participant?.photoUrl || undefined}
 						/>
-						<Text
-							size="md"
-							className="font-pretendard-bold text-typography-600"
-						>
+						<Text size="lg" weight="semi-bold" className="text-typography-600">
 							{answer.participant?.displayName}
 						</Text>
 					</HStack>
 				</AnimatedPressable>
-				<Text size="lg" className="mx-1">
-					{answer.content}
-				</Text>
+				<Box className="px-4 py-3 bg-background-100/60 rounded-xl">
+					<Text size="lg" className="text-typography-800">
+						{answer.content}
+					</Text>
+				</Box>
 			</VStack>
 		</VStack>
 	);

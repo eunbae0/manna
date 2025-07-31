@@ -1,9 +1,8 @@
 import { Heading } from '@/shared/components/heading';
 import { VStack } from '#/components/ui/vstack';
 import type { ViewProps } from 'react-native';
-import { Button, ButtonIcon } from '@/components/common/button';
-import { Edit3 } from 'lucide-react-native';
 import { HStack } from '#/components/ui/hstack';
+import Divider from '@/shared/components/divider';
 
 type Props = ViewProps & {
 	title: string;
@@ -19,18 +18,14 @@ export default function FellowshipContentLayout({
 	...props
 }: Props) {
 	return (
-		<VStack space="lg" {...props}>
+		<VStack space="2xl" {...props}>
 			<HStack className="items-center justify-between">
 				<Heading size="2xl" className="text-typography-900">
 					{title}
 				</Heading>
-				{enableReply && (
-					<Button variant="icon" onPress={onPressEdit}>
-						<ButtonIcon as={Edit3} />
-					</Button>
-				)}
 			</HStack>
 			{children}
+			<Divider />
 		</VStack>
 	);
 }
