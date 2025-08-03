@@ -45,21 +45,13 @@ export default function FellowshipContentScreen() {
 								<Heading className="text-[24px]">
 									나눔 옵션을 설정해보세요
 								</Heading>
-								{/* TODO: 도움말 모달 추가하기 */}
-								{/* <Pressable>
-									<Icon
-										as={CircleHelp}
-										size="lg"
-										className="color-typography-600"
-									/>
-								</Pressable> */}
 							</HStack>
 							<VStack className="gap-6">
 								<HStack className="items-center justify-between">
 									<VStack space="xs">
 										<Heading size="xl">그룹원도 나눔 답변 작성</Heading>
 										<Text className="text-typography-600">
-											활성화하면 그룹원도 함께 나눔 답변을 작성할 수 있어요
+											비활성화하면 그룹원은 함께 나눔 답변을 작성하지 못해요
 										</Text>
 									</VStack>
 									<Switch

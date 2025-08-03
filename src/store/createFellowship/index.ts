@@ -104,7 +104,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 		},
 	},
 	options: {
-		enableMemberReply: false,
+		enableMemberReply: true,
 	},
 	setStep: (step) => set({ currentStep: step }),
 	setType: (type) => set({ type }),
@@ -304,7 +304,7 @@ export const useFellowshipStore = create<FellowShipStoreState>((set, get) => ({
 				},
 			},
 			options: {
-				enableMemberReply: false,
+				enableMemberReply: true,
 			},
 		});
 	},
