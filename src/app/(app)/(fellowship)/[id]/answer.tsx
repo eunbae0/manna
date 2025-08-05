@@ -25,6 +25,16 @@ export default function AnswerScreen() {
 	const isPrayerRequest = contentType === 'prayerRequest';
 
 	const updateAnswer = (memberId: string, content: string) => {
+		const answerContent =
+			fellowship?.content?.categories?.[contentType]?.items?.[answerId]
+				?.answers?.[memberId];
+
+		const isSchemaV2 = typeof answerContent === 'string';
+
+		const newAnswercontent = isSchemaV2
+			? content
+			: { ...answerContent, content };
+
 		updateFellowship({
 			content: {
 				categories: {
@@ -32,7 +42,7 @@ export default function AnswerScreen() {
 						items: {
 							[answerId]: {
 								answers: {
-									[memberId]: content,
+									[memberId]: newAnswercontent,
 								},
 							},
 						},
@@ -101,18 +111,24 @@ export default function AnswerScreen() {
 											{isPrayerRequest ? '기도제목 작성' : '나눔 답변 작성'}
 										</Heading>
 										<VStack className="gap-10">
-											{fellowship.info.participants.map((member) => (
-												<AnswerField
-													key={member.id}
-													member={member}
-													answer={
-														fellowship.content.categories[contentType].items[
-															answerId
-														].answers[member.id] || ''
-													}
-													updateAnswer={updateAnswer}
-												/>
-											))}
+											{fellowship.info.participants.map((member) => {
+												const answerContent =
+													fellowship.content.categories[contentType].items[
+														answerId
+													].answers[member.id];
+												const answerText =
+													typeof answerContent === 'string'
+														? answerContent
+														: answerContent.content;
+												return (
+													<AnswerField
+														key={member.id}
+														member={member}
+														answer={answerText}
+														updateAnswer={updateAnswer}
+													/>
+												);
+											})}
 										</VStack>
 									</VStack>
 								</VStack>
