@@ -1,22 +1,22 @@
 import React from 'react';
 import { VStack } from '#/components/ui/vstack';
-import { Avatar } from '@/components/common/avatar';
 import { Text } from '@/shared/components/text';
 import { HStack } from '#/components/ui/hstack';
 import { MessageCircleQuestionMark, Pen } from 'lucide-react-native';
 import AnimatedPressable from '@/components/common/animated-pressable';
-import { openProfile } from '@/shared/utils/router';
 import { useFellowship } from '../hooks/useFellowship';
 import { router } from 'expo-router';
-import { Box } from '#/components/ui/box';
 import { Icon } from '#/components/ui/icon';
 import type {
+	AnswerCommentWithAuthorInfo,
+	AnswerContentWithAuthorInfo,
 	ClientFellowship,
-	ClientFellowshipParticipantV2,
 	FellowshipContentItemV2,
 } from '@/features/fellowship/api/types';
 import { useMemo } from 'react';
 import { cn } from '@/shared/utils/cn';
+import { AnswerItem } from './answer/AnswerItem';
+import { useGroupMembers } from '@/features/group/hooks/useGroupMembers';
 
 type SermonContentItemProps = {
 	fellowshipId: string;
@@ -35,6 +35,10 @@ export default React.memo(function FellowshipContent({
 
 	const { fellowship } = useFellowship(fellowshipId);
 
+	const { members: groupMembers } = useGroupMembers(
+		fellowship?.identifiers.groupId ?? '',
+	);
+
 	if (!fellowship) {
 		return null;
 	}
@@ -46,16 +50,57 @@ export default React.memo(function FellowshipContent({
 		});
 	};
 
-	const answersWithParticipant = useMemo(() => {
+	const answersWithParticipant: AnswerContentWithAuthorInfo[] = useMemo(() => {
 		if (!answers || !fellowship?.info.participants) return [];
 
 		return fellowship.info.participants
-			.filter((participant) => answers[participant.id]) // 답변이 있는 참가자만 필터링
-			.map((participant) => ({
-				participant,
-				content: answers[participant.id] || '',
-			}));
-	}, [answers, fellowship?.info.participants]);
+			.filter((participant) => {
+				const answerContent = answers[participant.id];
+				if (typeof answerContent === 'string') return !!answerContent;
+				return !!answerContent?.content;
+			}) // 답변이 있는 참가자만 필터링
+			.map((author) => {
+				const answerContent = answers[author.id];
+				if (typeof answerContent === 'string') {
+					return {
+						author,
+						commentCount: 0,
+						comments: {},
+						content: answerContent,
+						reactions: {
+							likes: [],
+							likeCount: 0,
+						},
+						// answerContent,
+					};
+				}
+
+				const commentsWithAuthorInfo = Object.entries(
+					answerContent.comments || {},
+				).reduce<Record<string, AnswerCommentWithAuthorInfo>>(
+					(acc, [commentId, comment]) => {
+						const commentAuthor = groupMembers.find(
+							(p) => p.id === comment.authorId,
+						);
+						if (commentAuthor) {
+							const { authorId, ...rest } = comment;
+							acc[commentId] = {
+								...rest,
+								author: { ...commentAuthor, isGuest: false },
+							};
+						}
+						return acc;
+					},
+					{},
+				);
+
+				return {
+					author,
+					...answerContent,
+					comments: commentsWithAuthorInfo,
+				};
+			});
+	}, [groupMembers, answers, fellowship?.info.participants]);
 
 	const replyLabel = useMemo(() => {
 		switch (contentType) {
@@ -92,7 +137,13 @@ export default React.memo(function FellowshipContent({
 					className={cn(answersWithParticipant.length !== 0 && 'pb-6')}
 				>
 					{answersWithParticipant.map((answer) => (
-						<AnswerItem key={answer.participant?.id} answer={answer} />
+						<AnswerItem
+							fellowshipId={fellowshipId}
+							answerId={contentId}
+							contentType={contentType}
+							key={answer.author.id}
+							answer={answer}
+						/>
 					))}
 				</VStack>
 				{enableReply && (
@@ -116,40 +167,3 @@ export default React.memo(function FellowshipContent({
 		</>
 	);
 });
-
-function AnswerItem({
-	answer,
-}: {
-	answer: {
-		participant: ClientFellowshipParticipantV2;
-		content: string;
-	};
-}) {
-	return (
-		<VStack key={answer.participant?.id}>
-			<VStack space="sm" className="">
-				<AnimatedPressable
-					onPress={() =>
-						!answer.participant?.isGuest && openProfile(answer.participant?.id)
-					}
-					className="self-start"
-				>
-					<HStack className="items-center gap-[6px]">
-						<Avatar
-							size="2xs"
-							photoUrl={answer.participant?.photoUrl || undefined}
-						/>
-						<Text size="lg" weight="semi-bold" className="text-typography-600">
-							{answer.participant?.displayName}
-						</Text>
-					</HStack>
-				</AnimatedPressable>
-				<Box className="px-4 py-3 bg-background-100/60 rounded-xl">
-					<Text size="lg" className="text-typography-800">
-						{answer.content}
-					</Text>
-				</Box>
-			</VStack>
-		</VStack>
-	);
-}

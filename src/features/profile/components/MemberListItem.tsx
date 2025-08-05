@@ -48,7 +48,7 @@ export function MemberListItem({
 							</HStack>
 
 							<Text size="md" className="text-typography-600/80">
-								{member?.statusMessage ?? '상태메세지가 없어요.'}
+								{member?.statusMessage}
 							</Text>
 						</VStack>
 					</HStack>

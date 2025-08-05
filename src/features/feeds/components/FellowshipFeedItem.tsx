@@ -99,10 +99,14 @@ function ContentItem({
 	item,
 }: { item: ReturnType<typeof getCompactFellowshipContents>[number] }) {
 	if (!item.content) return null;
+	const answerText =
+		typeof item.content.answer === 'string'
+			? item.content.answer
+			: item.content.answer.content;
 	return (
 		<VStack space="xs">
 			<Text size="lg" numberOfLines={1} className="text-typography-800">
-				{item.content.answer}
+				{answerText}
 			</Text>
 			<HStack className="gap-[2px] items-center">
 				<HStack space="xs" className="items-center">

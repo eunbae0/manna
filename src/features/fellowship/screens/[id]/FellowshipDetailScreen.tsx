@@ -371,7 +371,7 @@ export default function FellowshipDetailScreen({
 				<BottomSheetListLayout>
 					<BottomSheetListHeader label={'나눔 관리'} onPress={handleClose} />
 					<BottomSheetListItem
-						label={'나눔 수정하기'}
+						label={'나눔 정보 수정하기'}
 						icon={Edit2}
 						onPress={handlePressEditButton}
 					/>

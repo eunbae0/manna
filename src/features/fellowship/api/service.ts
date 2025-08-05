@@ -600,7 +600,6 @@ export class FirestoreFellowshipService {
 			updateData[key] = value as FieldValue | Partial<unknown> | undefined;
 		}
 
-		console.log(updateData);
 		await updateDoc(docRef, updateData);
 	}
 

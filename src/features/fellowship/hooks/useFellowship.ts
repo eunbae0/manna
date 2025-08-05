@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useCallback } from 'react';
-import type { ClientFellowshipV2, UpdateFellowshipInputV2 } from '../api/types';
+import type {
+	ClientFellowshipV2,
+	UpdateFellowshipInputV2,
+	FellowshipContentType,
+} from '../api/types';
 import {
 	fetchFellowshipById,
 	deleteFellowship,
@@ -10,8 +14,14 @@ import { getFellowshipService } from '../api/service';
 import { useToastStore } from '@/store/toast';
 import { useAuthStore } from '@/store/auth';
 import { router } from 'expo-router';
+import {
+	serverTimestamp,
+	Timestamp,
+	FieldValue,
+} from '@react-native-firebase/firestore';
 import { FELLOWSHIPS_QUERY_KEY } from '../constants/queyKeys';
 import { FEEDS_QUERY_KEY } from '@/features/feeds/hooks/useFeeds';
+import { v4 as uuidv4 } from 'uuid';
 
 export const FELLOWSHIP_QUERY_KEY = 'fellowship';
 
@@ -132,6 +142,249 @@ export function useFellowship(id: string | undefined) {
 		deleteMutation.mutate();
 	}, [deleteMutation]);
 
+	const toggleLike = useCallback(
+		(
+			contentType: FellowshipContentType,
+			answerId: string,
+			answerMemberId: string,
+			authorId: string,
+			isLiked: boolean,
+		) => {
+			const AnswerContent =
+				fellowshipQuery.data?.content?.categories?.[contentType]?.items?.[
+					answerId
+				]?.answers?.[answerMemberId];
+
+			if (!AnswerContent) return;
+
+			if (typeof AnswerContent === 'string') {
+				updateFellowshipState({
+					content: {
+						categories: {
+							[contentType]: {
+								items: {
+									[answerId]: {
+										answers: {
+											[answerMemberId]: {
+												comments: {},
+												commentCount: 0,
+												content: AnswerContent,
+												reactions: {
+													likeCount: 1,
+													likes: [authorId],
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				});
+				return;
+			}
+
+			// 현재 좋아요 상태를 기반으로 likeCount와 likes 배열을 업데이트
+			const updatedLikes = isLiked
+				? AnswerContent.reactions?.likes?.filter((id) => id !== authorId) || []
+				: [...(AnswerContent.reactions?.likes || []), authorId];
+
+			const updatedLikeCount = updatedLikes.length;
+
+			updateFellowshipState({
+				content: {
+					categories: {
+						[contentType]: {
+							items: {
+								[answerId]: {
+									answers: {
+										[answerMemberId]: {
+											reactions: {
+												likeCount: updatedLikeCount,
+												likes: updatedLikes,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			});
+		},
+		[fellowshipQuery.data, updateFellowshipState],
+	);
+
+	const addComment = useCallback(
+		(
+			contentType: FellowshipContentType,
+			answerId: string,
+			answerMemberId: string,
+			authorId: string,
+			commentText: string,
+		) => {
+			const AnswerContent =
+				fellowshipQuery.data?.content?.categories?.[contentType]?.items?.[
+					answerId
+				]?.answers?.[answerMemberId];
+
+			const newCommentId = uuidv4();
+			const newComment = {
+				id: newCommentId,
+				authorId: authorId,
+				content: commentText,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+				isDeleted: false,
+			};
+
+			if (!AnswerContent) return;
+
+			if (typeof AnswerContent === 'string') {
+				updateFellowshipState({
+					content: {
+						categories: {
+							[contentType]: {
+								items: {
+									[answerId]: {
+										answers: {
+											[answerMemberId]: {
+												content: AnswerContent,
+												reactions: {
+													likeCount: 0,
+													likes: [],
+												},
+												commentCount: 1,
+												comments: {
+													[newCommentId]: newComment,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				});
+				return;
+			}
+
+			updateFellowshipState({
+				content: {
+					categories: {
+						[contentType]: {
+							items: {
+								[answerId]: {
+									answers: {
+										[answerMemberId]: {
+											comments: {
+												[newCommentId]: newComment,
+											},
+											commentCount: AnswerContent.commentCount + 1,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			});
+		},
+		[fellowshipQuery.data, updateFellowshipState],
+	);
+
+	const updateComment = useCallback(
+		(
+			contentType: FellowshipContentType,
+			answerId: string,
+			answerMemberId: string,
+			commentId: string,
+			updatedText: string,
+		) => {
+			const AnswerContent =
+				fellowshipQuery.data?.content?.categories?.[contentType]?.items?.[
+					answerId
+				]?.answers?.[answerMemberId];
+
+			if (typeof AnswerContent === 'string') {
+				return;
+			}
+
+			const updatedComment = {
+				id: commentId,
+				authorId: answerMemberId,
+				content: updatedText,
+				updatedAt: new Date(),
+			};
+
+			updateFellowshipState({
+				content: {
+					categories: {
+						[contentType]: {
+							items: {
+								[answerId]: {
+									answers: {
+										[answerMemberId]: {
+											comments: {
+												[commentId]: updatedComment,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			});
+		},
+		[fellowshipQuery.data, updateFellowshipState],
+	);
+
+	const deleteComment = useCallback(
+		(
+			contentType: FellowshipContentType,
+			answerId: string,
+			answerMemberId: string,
+			commentId: string,
+		) => {
+			const AnswerContent =
+				fellowshipQuery.data?.content?.categories?.[contentType]?.items?.[
+					answerId
+				]?.answers?.[answerMemberId];
+
+			if (typeof AnswerContent === 'string' || !AnswerContent) {
+				return;
+			}
+
+			const newCommentCount = AnswerContent.commentCount - 1;
+
+			updateFellowshipState({
+				content: {
+					categories: {
+						[contentType]: {
+							items: {
+								[answerId]: {
+									answers: {
+										[answerMemberId]: {
+											comments: {
+												[commentId]: {
+													isDeleted: true,
+													deletedAt: new Date(),
+												},
+											},
+											commentCount: newCommentCount,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			});
+		},
+		[fellowshipQuery.data, updateFellowshipState],
+	);
+
 	return {
 		fellowship: fellowshipQuery.data,
 		isLoading: fellowshipQuery.isLoading,
@@ -144,5 +397,9 @@ export function useFellowship(id: string | undefined) {
 		deleteFellowship: deleteFellowshipState,
 		isDeleting: deleteMutation.isPending,
 		deleteError: deleteMutation.error,
+		toggleLike,
+		addComment,
+		updateComment,
+		deleteComment,
 	};
 }

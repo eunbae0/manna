@@ -7,7 +7,43 @@ import type { FieldValue, Timestamp } from '@react-native-firebase/firestore';
 export type categoryId = string;
 export type contentId = string;
 export type participantId = string;
-export type answerContent = string;
+export type AnswerContent =
+	| {
+			content: string;
+			reactions: {
+				likes: string[];
+				likeCount: number;
+			};
+			comments: Record<string, AnswerComment>;
+			commentCount: number;
+	  }
+	| string;
+
+export type AnswerContentWithAuthorInfo = {
+	content: string;
+	reactions: {
+		likes: string[];
+		likeCount: number;
+	};
+	author: ClientFellowshipParticipantV2;
+	comments: Record<string, AnswerCommentWithAuthorInfo>;
+	commentCount: number;
+};
+
+export type AnswerComment = {
+	id: string;
+	authorId: string;
+	content: string;
+	createdAt: Date;
+	updatedAt: Date;
+	deletedAt?: Date;
+	isDeleted: boolean;
+	parentCommentId?: string;
+};
+
+export type AnswerCommentWithAuthorInfo = Omit<AnswerComment, 'authorId'> & {
+	author: ClientFellowshipParticipantV2;
+};
 
 export type FellowshipCategoryType =
 	| 'iceBreaking'
@@ -47,7 +83,7 @@ export interface FellowshipContentItemV2Base {
 
 // 서버/클라이언트 콘텐츠 아이템 타입
 export interface FellowshipContentItemV2 extends FellowshipContentItemV2Base {
-	answers: Record<participantId, answerContent>;
+	answers: Record<participantId, AnswerContent>;
 }
 
 // 카테고리 기본 타입
@@ -62,7 +98,7 @@ export interface FellowshipCategoryV2 {
 // 기도 요청 필드 타입
 export interface ServerFellowshipPrayerRequestFieldV2 {
 	isActive: boolean;
-	answers: Record<participantId, answerContent>;
+	answers: Record<participantId, AnswerContent>;
 }
 
 export interface ClientFellowshipPrayerRequestFieldV2 {
