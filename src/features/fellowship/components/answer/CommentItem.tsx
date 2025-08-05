@@ -147,10 +147,10 @@ export const CommentItem = React.memo(function CommentItem({
 			</HStack>
 			<BottomSheetContainer>
 				<VStack space="md" className="px-5 pt-3">
-					<BottomSheetListHeader label="댓글 수정하기" onPress={handleClose} />
+					<BottomSheetListHeader label="답글 수정하기" onPress={handleClose} />
 					<VStack space="4xl">
 						<BottomSheetTextInput
-							placeholder="댓글을 입력해주세요."
+							placeholder="답글을 입력해주세요."
 							className={TEXT_INPUT_STYLE}
 							multiline
 							defaultValue={commentText}

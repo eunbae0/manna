@@ -183,7 +183,7 @@ export function ReactionBox({
 					/>
 					<VStack space="4xl">
 						<BottomSheetTextInput
-							placeholder="댓글을 입력해주세요."
+							placeholder="답글을 입력해주세요."
 							className={TEXT_INPUT_STYLE}
 							multiline
 							defaultValue={commentText}
