@@ -42,7 +42,7 @@ export type PraiseSong = {
 	createdAt: Date;
 };
 
-type YTMusicSearchResult = {
+export type YTMusicSearchResult = {
 	album: string;
 	artist: string;
 	duration: 379;
